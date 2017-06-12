@@ -44,6 +44,8 @@ for(year in (Settings$startyear:Settings$endyear))
   save(Tables,file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
 }
 
+# A test comment
+
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
