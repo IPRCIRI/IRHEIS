@@ -24,6 +24,7 @@ Settings <- list(HEISPath          =HEISPath,
                  MDS_EC_A          = "EduCodes-A",
                  MDS_EC_B          = "EduCodes-B",
                  MDS_EC_C          = "EduCodes-C",
+                 MDS_Food          = "FoodTables",
                  MDS_Loans         = "LoanTables",
                  MDS_House         = "HouseTables",
                  
