@@ -14,7 +14,6 @@ MDS_P1Cols: P1Cols
 MDS_EC_A: EduCodes-A
 MDS_EC_B: EduCodes-B
 MDS_EC_C: EduCodes-C
-MDS_Food: FoodTables
 MDS_Loans: LoanTables
 MDS_House: HouseTables
 MDS_Rough_Weights: RegionWeights
