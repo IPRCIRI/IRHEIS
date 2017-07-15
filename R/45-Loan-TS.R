@@ -52,8 +52,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 #  cat("\n",year,",",sum(D$ServiceFee*D$Weight, na.rm = TRUE))
 }
 
+BigD[is.na(ServiceFee),ServiceFee:=0]
+BigD[is.na(HServiceFee),HServiceFee:=0]
+
+
 S <- BigD[,list(SF=sum(ServiceFee*Weight, na.rm = TRUE),
-                HSF=sum(HServiceFee*Weight, na.rm = TRUE)),
+                HSF=sum(HServiceFee*Weight, na.rm = TRUE),
+                LP=weighted.mean(ifelse(ServiceFee>0,1,0),Weight),
+                HLP=weighted.mean(ifelse(HServiceFee>0,1,0),Weight)),
           by=list(Year,Quarter)]
 
 writeWorksheetToFile(data = S, file = paste0(Settings$HEISResultsPath,"Timeseries.xlsx"),
