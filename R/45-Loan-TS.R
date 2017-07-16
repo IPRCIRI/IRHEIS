@@ -27,6 +27,8 @@ BigD <- data.table(Region = character(0), HHID = numeric(0), Year = integer(0),
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  if(!file.exists(paste0(Settings$HEISProcessedPath,"Y",year,"Loans.rda")))
+     next
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Loans.rda"))
@@ -54,22 +56,26 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 BigD[is.na(ServiceFee),ServiceFee:=0]
 BigD[is.na(HServiceFee),HServiceFee:=0]
+BigD <- BigD[!is.na(Weight)]
 
+S.Q <- BigD[,.(SF=sum(ServiceFee*Weight, na.rm = TRUE),
+                  HSF=sum(HServiceFee*Weight, na.rm = TRUE),
+                  LP=weighted.mean(ifelse(ServiceFee>0,1,0),Weight, na.rm = TRUE),
+                  HLP=weighted.mean(ifelse(HServiceFee>0,1,0),Weight, na.rm = TRUE)),
+            by=.(Year,Quarter)]
+S.Y <- BigD[,.(SF=sum(ServiceFee*Weight, na.rm = TRUE),
+                  HSF=sum(HServiceFee*Weight, na.rm = TRUE),
+                  LP=weighted.mean(ifelse(ServiceFee>0,1,0),Weight, na.rm = TRUE),
+                  HLP=weighted.mean(ifelse(HServiceFee>0,1,0),Weight, na.rm = TRUE)),
+            by=Year]
 
-S <- BigD[,list(SF=sum(ServiceFee*Weight, na.rm = TRUE),
-                HSF=sum(HServiceFee*Weight, na.rm = TRUE),
-                LP=weighted.mean(ifelse(ServiceFee>0,1,0),Weight),
-                HLP=weighted.mean(ifelse(HServiceFee>0,1,0),Weight)),
-          by=list(Year,Quarter)]
-
-writeWorksheetToFile(data = S, file = paste0(Settings$HEISResultsPath,"Timeseries.xlsx"),
-                     sheet = "Loan")
+writeWorksheetToFile(data = S.Q, file = paste0(Settings$HEISResultsPath,"Timeseries.xlsx"),
+                     sheet = "Loan.Q")
+writeWorksheetToFile(data = S.Y, file = paste0(Settings$HEISResultsPath,"Timeseries.xlsx"),
+                     sheet = "Loan.Y")
 
 
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
-
-  
-
