@@ -21,13 +21,18 @@ library(stringr)
 
 for(year in (Settings$startyear:Settings$endyear))
 {
-   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  D <- merge(HHBase,HHI, by="HHID")
   
-  cat("\n",year,":",nrow(HHBase),
-      ",",nrow(HHBase[Region=="Urban"]),
-      ",",nrow(HHBase[Region=="Rural"]))
+  cat("\n",year,",",nrow(D),
+      ",",nrow(D[Region=="Rural"]),
+      ",",nrow(D[Region=="Urban"]),
+      ",",sum(D$Size),
+      ",",sum(D[Region=="Rural"]$Size),
+      ",",sum(D[Region=="Urban"]$Size))
  
-  rm(HHBase)
+  #rm(HHBase)
 }
 
 endtime <- proc.time()
