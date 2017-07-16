@@ -25,6 +25,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   ty <- LoanTables[Year==year]
   tab <- ty$Table
+  if(is.na(tab))
+    next
   
   UTL <- Tables[[paste0("U",year,tab)]]
   RTL <- Tables[[paste0("R",year,tab)]]
