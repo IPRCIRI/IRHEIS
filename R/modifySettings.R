@@ -27,6 +27,7 @@ Settings <- list(HEISPath          =HEISPath,
                  MDS_Food          = "FoodTables",
                  MDS_Loans         = "LoanTables",
                  MDS_House         = "HouseTables",
+                 MDS_Insurance     = "InsuranceTables",
                  
                  MDS_Rough_Weights = "RegionWeights",
                  
