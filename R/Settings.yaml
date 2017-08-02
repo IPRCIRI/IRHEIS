@@ -17,6 +17,7 @@ MDS_EC_C: EduCodes-C
 MDS_Food: FoodTables
 MDS_Loans: LoanTables
 MDS_House: HouseTables
+MDS_Insurance: InsuranceTables
 MDS_Rough_Weights: RegionWeights
 weightsFile: ../Data/AllWeights.rda
 D80LinkSource: ../Data/D80Link.accdb
