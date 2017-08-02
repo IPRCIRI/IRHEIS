@@ -28,7 +28,9 @@ BigD <- data.table(Region = character(0), HHID = numeric(0), Year = integer(0),
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   if(!file.exists(paste0(Settings$HEISProcessedPath,"Y",year,"Loans.rda")))
+  { cat("next")
      next
+  }
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Loans.rda"))
