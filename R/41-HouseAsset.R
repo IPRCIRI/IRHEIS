@@ -36,7 +36,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TL),c("HHID","Code","ServiceExp"))
   TL <- TL[,pcols,with=FALSE]
   TL <- TL[Code %in% ty$StartCode:ty$EndCode]
-  TL[,ServiceExp:=as.numeric(ServiceExp)]
+  if(year %in% 84:94){
+    TL[,ServiceExp:=as.numeric(ServiceExp)]
+  }
+  #TL[,ServiceExp:=as.numeric(ServiceExp)]
   TL[,Code:=NULL]
 
 
