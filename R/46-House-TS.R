@@ -42,18 +42,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   }else{
     D <- merge(D,W,by="HHID", all.x = TRUE)
   }
-  
+  D <- D[,list(HHID, Region, Year, Quarter, Month, ProvinceCode, ServiceExp, Weight)]
+ 
   D[is.na(Quarter), Quarter:=4]
-  
+
   BigD <- rbind(BigD,D)
   
     # cat("\n",year,",",sum(D$ServiceExp, na.rm = TRUE),
     #     ",",sum(D$Weight, na.rm = TRUE),
     #     ",",sum(D$ServiceExp*D$Weight, na.rm = TRUE))
 }
-
-S <- BigD[,list(SX=sum(ServiceExp*Weight, na.rm = TRUE)),
-          by=list(Year,Quarter)]
+if(year %in% 63:69){
+  BigD[,ServiceExp:=as.numeric(ServiceExp)]
+  BigD[,ServiceExp=0]
+}
+S <- BigD[,list(SX=sum(ServiceExp*Weight, na.rm = TRUE)), by=list(Year,Quarter)]
+         
 
 writeWorksheetToFile(data = S, file = paste0(Settings$HEISResultsPath,"Timeseries.xlsx"),
                      sheet = "House")
