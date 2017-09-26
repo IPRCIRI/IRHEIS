@@ -18,6 +18,7 @@ MDS_Food: FoodTables
 MDS_Medical: MedicalTables
 MDS_Loans: LoanTables
 MDS_House: HouseTables
+MDS_Education: EducationTables
 MDS_Insurance: InsuranceTables
 MDS_Wage: PubWageTable
 MDS_Rough_Weights: RegionWeights
