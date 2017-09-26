@@ -28,6 +28,7 @@ Settings <- list(HEISPath          =HEISPath,
                  MDS_Medical       = "MedicalTables",
                  MDS_Loans         = "LoanTables",
                  MDS_House         = "HouseTables",
+                 MDS_Education     = "EducationTables",
                  MDS_Insurance     = "InsuranceTables",
                  MDS_Wage          = "PubWageTable",
                  
