@@ -1,4 +1,4 @@
-# 31-Foods-TS
+# 25-Foods-TS
 # 
 #
 # Copyright © 2017: Arin Shahbazian
@@ -50,14 +50,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   D <- D[,list(HHID, Region, Year, Quarter, Month, ProvinceCode, FoodExpenditure, Weight)]
   
   D[is.na(Quarter), Quarter:=4]
-  
+  BigD[is.na(FoodExpenditure),FoodExpenditure:=0]
+  BigD <- BigD[!is.na(Weight)]
   BigD <- rbind(BigD,D)
   
   #  cat("\n",year,",",sum(D$FoodExpenditure*D$Weight))
 }
 
-BigD[is.na(FoodExpenditure),FoodExpenditure:=0]
-BigD <- BigD[!is.na(Weight)]
+
 
 
 F.Q <- BigD[,.(SF=sum(FoodExpenditure*Weight, na.rm = TRUE)),by=.(Year,Quarter)]

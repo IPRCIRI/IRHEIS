@@ -31,7 +31,7 @@ Settings <- list(HEISPath          =HEISPath,
                  MDS_Education     = "EducationTables",
                  MDS_Insurance     = "InsuranceTables",
                  MDS_Wage          = "PubWageTable",
-                 
+                 MDS_PrvWage       = "PrvWageTable",
                  MDS_Rough_Weights = "RegionWeights",
                  
                  weightsFile       ="../Data/AllWeights.rda",
