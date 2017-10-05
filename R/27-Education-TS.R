@@ -60,9 +60,9 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 
 
-E.Q <- BigD[,.(SF=sum(EducExpenditure*Weight, na.rm = TRUE)),by=.(Year,Quarter)]
+E.Q <- BigD[,.(SE=sum(EducExpenditure*Weight, na.rm = TRUE)),by=.(Year,Quarter)]
 
-E.Y <- BigD[,.(SF=sum(EducExpenditure*Weight, na.rm = TRUE)),by=Year]
+E.Y <- BigD[,.(SE=sum(EducExpenditure*Weight, na.rm = TRUE)),by=Year]
 
 
 writeWorksheetToFile(data = E.Q, file = paste0(Settings$HEISResultsPath,"Timeseries.xlsx"),sheet = "Education.Q")

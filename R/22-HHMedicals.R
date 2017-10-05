@@ -1,4 +1,4 @@
-# 32-HHMedical.R
+# 22-HHMedical.R
 # Builds the Medical expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian

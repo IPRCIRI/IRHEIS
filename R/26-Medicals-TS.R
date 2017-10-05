@@ -60,9 +60,9 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 
 
-M.Q <- BigD[,.(SF=sum(Medical_Exp*Weight, na.rm = TRUE)),by=.(Year,Quarter)]
+M.Q <- BigD[,.(SM=sum(Medical_Exp*Weight, na.rm = TRUE)),by=.(Year,Quarter)]
 
-M.Y <- BigD[,.(SF=sum(Medical_Exp*Weight, na.rm = TRUE)),by=Year]
+M.Y <- BigD[,.(SM=sum(Medical_Exp*Weight, na.rm = TRUE)),by=Year]
 
 
 writeWorksheetToFile(data = M.Q, file = paste0(Settings$HEISResultsPath,"Timeseries.xlsx"),sheet = "Medical.Q")

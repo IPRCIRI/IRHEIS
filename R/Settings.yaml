@@ -21,6 +21,7 @@ MDS_House: HouseTables
 MDS_Education: EducationTables
 MDS_Insurance: InsuranceTables
 MDS_Wage: PubWageTable
+MDS_PrvWage: PrvWageTable
 MDS_Rough_Weights: RegionWeights
 weightsFile: ../Data/AllWeights.rda
 D80LinkSource: ../Data/D80Link.accdb

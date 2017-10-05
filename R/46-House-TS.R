@@ -66,6 +66,3 @@ endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
-
-
-

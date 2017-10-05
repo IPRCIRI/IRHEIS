@@ -1,5 +1,5 @@
-# 50-Wage.R
-# Builds the Incomes data.table for households
+# 31-Wage.R
+# Builds the Wages data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -36,11 +36,10 @@ for(year in (Settings$startyear:Settings$endyear)){
     }
    pcols <- intersect(names(TW),c("HHID","indiv","shaghel","shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
     TW <- TW[,pcols,with=FALSE]
-
-    TW[,net_income_m:=as.numeric(net_income_m)]
+    
  
    TW[is.na(TW)] <- 0
-  # WageData <- TW[,lapply(.SD,sum),by=HHID]
+   WageData <- TW[,lapply(.SD,sum),by=HHID]
    # save(WageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Wages.rda"))
   }
 endtime <- proc.time()

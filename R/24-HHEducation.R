@@ -39,12 +39,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   TE <- TE[,pcols,with=FALSE]
   #if(year %in% 89:94){
   #TE[,Code:=as.numeric(Code)]
-  #TE <- TE[Code %in% et$StartCode:et$EndCode]
   #}
   #if(year %in% 84:94){
    # TF[,Kilos:=as.numeric(Kilos)]
-   # TF[,FoodExpenditure:=as.numeric(FoodExpenditure)]
-  
+   TE[,EducExpenditure:=as.numeric(EducExpenditure)]
+  TE <- TE[Code %in% et$StartCode:et$EndCode]
   TE[,Code:=NULL]
   TE[is.na(TE)] <- 0
   EducData <- TE[,lapply(.SD,sum),by=HHID]
