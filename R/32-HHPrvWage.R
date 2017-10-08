@@ -34,13 +34,18 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TPrvW,n,names(prvwt)[x])
   }
-  pcols <- intersect(names(TPrvW),c("HHID","indiv","shaghel","shoghl","faaliat","job condition","agriculture","hour_in_day","day_in_week","cost1","cost2","cost3","cost4","cost5","sell","net_income_y"))
+  pcols <- intersect(names(TPrvW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
   TPrvW <- TPrvW[,pcols,with=FALSE]
   
+  if(year %in% 69:76){
+    TPrvW <- TPrvW[ section ==2 ] 
+  } else if(year %in% 77:94){
+    TPrvW <- TPrvW[ section ==3 ] 
+  } 
   
   TPrvW[is.na(TPrvW)] <- 0
-  PrvWageData <- TPrvW[,lapply(.SD,sum),by=HHID]
-   save(PrvWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
+ # PrvWageData <- TPrvW[,lapply(.SD,sum),by=HHID]
+  # save(PrvWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

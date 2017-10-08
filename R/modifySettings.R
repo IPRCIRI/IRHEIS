@@ -30,11 +30,14 @@ Settings <- list(HEISPath          =HEISPath,
                  MDS_House         = "HouseTables",
                  MDS_Education     = "EducationTables",
                  MDS_Insurance     = "InsuranceTables",
-                 MDS_Wage          = "PubWageTable",
+                 MDS_PubWage       = "PubWageTable",
                  MDS_PrvWage       = "PrvWageTable",
+                 MDS_AgriWage      ="AggrIncTable",
+                 MDS_BussWage      ="BussIncTable",
+                 MDS_OtherWage     ="OthrIncTable",
+                 MDS_SubsidyWage   ="SubsidyTable",
                  MDS_Rough_Weights = "RegionWeights",
-                 
-                 weightsFile       ="../Data/AllWeights.rda",
+                                  weightsFile       ="../Data/AllWeights.rda",
                  D80LinkSource     ="../Data/D80Link.accdb",
                  D80LinkDest       =D80LinkDest
 )
