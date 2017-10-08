@@ -1,4 +1,4 @@
-# 31-Wage.R
+# 31-PubWage.R
 # Builds the Wages data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHWage =====================================\n")
+cat("\n\n================ HHPubWage =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,30 +16,35 @@ library(stringr)
 library(readxl)
 
 
-PubWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Wage))
+PubWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_PubWage))
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  wt <- PubWageTable[Year==year]
-  tab <- wt$Table
+  pubwt <- PubWageTable[Year==year]
+  tab <- pubwt$Table
    if(is.na(tab))
       next
-   UTW <- Tables[[paste0("U",year,tab)]]
-   RTW <- Tables[[paste0("R",year,tab)]]
-   TW <- rbind(UTW,RTW,fill=TRUE)
-   for(n in names(TW)){
-    x <- which(wt==n)
+   UTpubW <- Tables[[paste0("U",year,tab)]]
+   RTpubW <- Tables[[paste0("R",year,tab)]]
+   TpubW <- rbind(UTpubW,RTpubW,fill=TRUE)
+   for(n in names(TpubW)){
+    x <- which(pubwt==n)
    if(length(x)>0)
-      setnames(TW,n,names(wt)[x])
+      setnames(TpubW,n,names(pubwt)[x])
     }
-   pcols <- intersect(names(TW),c("HHID","indiv","shaghel","shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
-    TW <- TW[,pcols,with=FALSE]
+   pcols <- intersect(names(TpubW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
+    TpubW <- TpubW[,pcols,with=FALSE]
     
- 
-   TW[is.na(TW)] <- 0
-   WageData <- TW[,lapply(.SD,sum),by=HHID]
+    if(year %in% 69:76){
+      TpubW <- TpubW[ section ==1 ] 
+    } else if(year %in% 77:94){
+      TpubW <- TpubW[ section ==1 ] 
+    } 
+  
+   TpubW[is.na(TpubW)] <- 0
+  # PubWageData <- TpubW[,lapply(.SD,sum),by=HHID]
    # save(WageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Wages.rda"))
   }
 endtime <- proc.time()
