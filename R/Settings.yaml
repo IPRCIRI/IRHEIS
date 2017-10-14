@@ -16,6 +16,9 @@ MDS_EC_B: EduCodes-B
 MDS_EC_C: EduCodes-C
 MDS_Food: FoodTables
 MDS_Medical: MedicalTables
+MDS_Cloth: ClothTables
+MDS_Energy: EnergyTables
+MDS_Furniture: FurnitureTables
 MDS_Loans: LoanTables
 MDS_House: HouseTables
 MDS_Education: EducationTables
