@@ -19,6 +19,9 @@ MDS_Medical: MedicalTables
 MDS_Cloth: ClothTables
 MDS_Energy: EnergyTables
 MDS_Furniture: FurnitureTables
+MDS_Transportation: TransportationTables
+MDS_Communication: CommunicationTables
+MDS_Amusement: AmusementTables
 MDS_Loans: LoanTables
 MDS_House: HouseTables
 MDS_Education: EducationTables
