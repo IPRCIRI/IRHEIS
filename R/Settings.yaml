@@ -22,6 +22,10 @@ MDS_Furniture: FurnitureTables
 MDS_Transportation: TransportationTables
 MDS_Communication: CommunicationTables
 MDS_Amusement: AmusementTables
+MDS_Hotel: HotelTables
+MDS_Other: OtherTables
+MDS_Durable: DurableTables
+MDS_Investment: InvestmentTables
 MDS_Loans: LoanTables
 MDS_House: HouseTables
 MDS_Education: EducationTables
