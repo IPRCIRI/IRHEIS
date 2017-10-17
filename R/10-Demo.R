@@ -143,10 +143,10 @@ for(year in years)
   P[,NInfants:=ifelse(Age<=2,1,0)]
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
 
-  P[,NElementary:= ifelse(EduLevel0=="Elementary",1,0)]
-  P[,NMiddle:= ifelse(EduLevel0=="Middle",1,0)]
-  P[,NHigh:= ifelse(EduLevel0=="High",1,0)]
-  P[,NPre:= ifelse(EduLevel0=="Pre",1,0)]
+  P[,NElementary:= ifelse(EduLevel0=="Elementary" & Student==TRUE,1,0)]
+  P[,NMiddle:= ifelse(EduLevel0=="Middle" & Student==TRUE,1,0)]
+  P[,NHigh:= ifelse(EduLevel0=="High" & Student==TRUE,1,0)]
+  P[,NPre:= ifelse(EduLevel0=="Pre" & Student==TRUE,1,0)]
   
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
