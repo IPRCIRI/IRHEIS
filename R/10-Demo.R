@@ -22,14 +22,15 @@ EduCodesB <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_B))
 EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
 
 
-for(year in (Settings$startyear:Settings$endyear))
+years <- Settings$startyear:Settings$endyear
+
+for(year in years)
 {
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
 
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
-  years <- Settings$startyear:Settings$endyear
   if(year<=87){
     EduCodeT <- EduCodesA
   }else if(year %in% 88:92){
@@ -39,12 +40,19 @@ for(year in (Settings$startyear:Settings$endyear))
   }
 
   P1 <- rbind(Tables[[paste0("R",year,"P1")]],Tables[[paste0("U",year,"P1")]])
+  nP1 <- names(P1)
+  if(length(which(sapply(P1, is.character)))>0){
+    P1c <- P1[,lapply(.SD,iconv,"WINDOWS-1252","UTF-8"), .SDcols=sapply(P1,is.character)] 
+    P1nc <- P1[,!sapply(P1,is.character),with=FALSE]
+    P1 <- cbind(P1c,P1nc)[,nP1,with=FALSE]
+  }
   
   a <- unlist(P1Cols[P1Cols$Year==year,])
   ind <- which(!is.na(a))[-1]
   setnames(P1,a[ind],names(a[ind]))
   
-  P1 <- P1[, lapply(.SD, as.numeric)]
+  f <- function(x){as.numeric(str_trim(x))}
+  P1 <- P1[, lapply(.SD, f)] #  , .SDcols=which(sapply(P1, class)=="character")]
   
 
   P1[is.na(Age),Age:=0L]
@@ -74,6 +82,8 @@ for(year in (Settings$startyear:Settings$endyear))
   P1$EduYears[P1$Literate==FALSE] <- 0
   P1[,EduLevel:=cut(EduYears,breaks=c(-1,0,6,12,22),
                     labels= c("Illiterate","Primary","Secondary","University"))]
+  P1[,EduLevel0:=cut(EduYears,breaks=c(-1,0,6,9,11,12,22),
+                     labels= c("Illiterate","Elementary","Middle","High","Pre","University"))]
  
   P1[,ActivityState:=as.numeric(substr(as.character(ActivityState),1,1))]
   
@@ -106,48 +116,11 @@ for(year in (Settings$startyear:Settings$endyear))
     P1[,MarritalState:=factor(MarritalState,1:4,
                               c("Married","Widowed","Divorced","Bachelor"))]
   }
-  # P4PBW <- P4PBW[,list(PubWageIncome=sum(PubWageIncome)),by=list(HHID,IndivNo)]
-  # P4PVW <- P4PVW[,list(PrvWageIncome=sum(PrvWageIncome)),by=list(HHID,IndivNo)]
-  # P4AGR <- P4AGR[,list(AggriIncome=sum(AggriIncome)),by=list(HHID,IndivNo)]
-  # P4BUS <- P4BUS[,list(BusinessIncome=sum(BusinessIncome)),by=list(HHID,IndivNo)]
-  # 
-  # setkey(P4PBW,HHID,IndivNo)
-  # setkey(P4PVW,HHID,IndivNo)
-  # setkey(P4AGR,HHID,IndivNo)
-  # setkey(P4BUS,HHID,IndivNo)
-  # setkey(P4Other,HHID,IndivNo)
-  setkey(P1,HHID,IndivNo)
-  
-  # P4 <- merge(P1[,c("HHID","IndivNo"),with=FALSE],P4PBW,all.x=TRUE)
-  # P4 <- merge(P4,P4PVW,all.x=TRUE)
-  # P4 <- merge(P4,P4AGR,all.x=TRUE)
-  # P4 <- merge(P4,P4BUS,all.x=TRUE)
-  # P4 <- merge(P4,P4Other,all.x=TRUE)
-  
-  # P <- merge(unique(P1),unique(P4),all.x=TRUE)
-  # 
-  # P[is.na(PubWageIncome),PubWageIncome:=0]
-  # P[is.na(PrvWageIncome),PrvWageIncome:=0]
-  # P[is.na(AggriIncome),AggriIncome:=0]
-  # P[is.na(BusinessIncome),BusinessIncome:=0]
-  # P[is.na(OtherIncome),OtherIncome:=0]
-  # 
-  # P <- P[!is.na(P$Age),]
-  # 
-  # rm(P1,P4PBW,P4PVW,P4AGR,P4BUS,P4,P4Other)
-  # 
-  # P[,TotalIncome:=PubWageIncome+PrvWageIncome+AggriIncome+BusinessIncome+OtherIncome]
   
   P <- copy(P1)
   
   P <- P[order(P$HHID),]
   
-  P[,Size:=1]
-  P[,NKids:=ifelse(Age<=17,1,0)]
-  
-  PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
-            .SDcols=c("Size","NKids"),#,"TotalIncome"),
-            by="HHID"]
   # B <- P[P[Age>=10,.SD,#.I[TotalIncome==max(TotalIncome)],
   #          by=HHID][,V1]][,c("HHID","IndivNo","Sex","Age",
   #                            "Literate","Student",#"EduYears","EduLevel",
@@ -156,13 +129,31 @@ for(year in (Settings$startyear:Settings$endyear))
   setnames(B,2:length(B),sapply(X=names(B)[2:length(B)],function(X){paste("H",X,sep="")}))
   B <- B[order(HHID,HIndivNo)]
   B <- B[!duplicated(B$HHID),]
-
+  
   B[,HEmployed:=HActivityState=="Employed"]
   B[,HUnemployed:=HActivityState=="Unemployed"]
   B[,HIncomeWOWork:=HActivityState=="Income without Work"]
   
   B <- B[!is.na(HActivityState) & !is.na(HLiterate)]
   
+  
+  P[,Size:=1]
+  P[,NKids:=ifelse(Age<=17,1,0)]
+  
+  P[,NInfants:=ifelse(Age<=2,1,0)]
+  P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
+
+  P[,NElementary:= ifelse(EduLevel0=="Elementary",1,0)]
+  P[,NMiddle:= ifelse(EduLevel0=="Middle",1,0)]
+  P[,NHigh:= ifelse(EduLevel0=="High",1,0)]
+  P[,NPre:= ifelse(EduLevel0=="Pre",1,0)]
+  
+  
+  PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
+            .SDcols=c("Size","NKids","NInfants","NSmallKids","NElementary",
+                     "NMiddle","NHigh","NPre"),#,"TotalIncome"),
+            by="HHID"]
+
 #  PSum <- PSum[TotalIncome>0]
   
   HHI <- merge(B,PSum,by="HHID")
