@@ -1,5 +1,5 @@
-# 23-HHDurable.R
-# Builds the Durable expenditures data.table for households
+# 23-HHCigar.R
+# Builds the Cigar expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHDurable =====================================\n")
+cat("\n\n================ HHCigar =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,14 +16,14 @@ library(stringr)
 library(readxl)
 
 
-DurableTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Durable))
+CigarTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Cigar))
 
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- DurableTables[Year==year]
+  ct <- CigarTables[Year==year]
   tab <- ct$Table
   if(is.na(tab))
     next
@@ -35,17 +35,20 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TC,n,names(ct)[x])
   }
-  pcols <- intersect(names(TC),c("HHID","Code","Durable_Exp"))
+  pcols <- intersect(names(TC),c("HHID","Code","Cigar_Exp"))
   TC <- TC[,pcols,with=FALSE]
-
-  if(year %in% 84:94){
-    TC[,Durable_Exp:=as.numeric(Durable_Exp)]
+  
+  if(year %in% 63:82){
+  TC <- TC[Code %in% ct$StartCode:ct$EndCode]
   }
-
+  
+  if(year %in% 84:94){
+    TC[,Cigar_Exp:=as.numeric(Cigar_Exp)]
+  }
   TC[,Code:=NULL]
   TC[is.na(TC)] <- 0
-  DurableData <- TC[,lapply(.SD,sum),by=HHID]
-  save(DurableData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
+  CigarData <- TC[,lapply(.SD,sum),by=HHID]
+  save(CigarData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Cigars.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

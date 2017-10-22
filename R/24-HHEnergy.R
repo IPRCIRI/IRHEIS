@@ -33,7 +33,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TE,n,names(ty)[x])
   }
-  pcols <- intersect(names(TE),c("HHID","Code","BuyingMethod","a","b","Energy_Exp"))
+  pcols <- intersect(names(TE),c("HHID","Code","Energy_Exp"))
   TE <- TE[,pcols,with=FALSE]
   TE <- TE[Code %in% ty$StartCode:ty$EndCode]
   if(year %in% 84:94){

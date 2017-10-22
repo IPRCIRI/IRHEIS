@@ -35,7 +35,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TM,n,names(mt)[x])
   }
-  pcols <- intersect(names(TM),c("HHID","Code","BuyingMethod","Medical_Exp","Method"))
+  pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
   TM <- TM[,pcols,with=FALSE]
   #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
   if(year %in% 84:94){
