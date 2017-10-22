@@ -35,12 +35,10 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","BuyingMethod","PriceSystem","Grams","Kilos","Price","FoodExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","FoodExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-  TF[,Kilos:=as.numeric(Kilos)]
-  TF[,Price:=as.numeric(Price)]
   TF[,FoodExpenditure:=as.numeric(FoodExpenditure)]
   }
   TF[,Code:=NULL]

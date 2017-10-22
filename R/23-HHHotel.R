@@ -35,7 +35,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TC,n,names(ct)[x])
   }
-  pcols <- intersect(names(TC),c("HHID","Code","BuyingMethod","a","b","Hotel_Exp"))
+  pcols <- intersect(names(TC),c("HHID","Code","Hotel_Exp"))
   TC <- TC[,pcols,with=FALSE]
   if(year %in% 63:82){
     TC <- TC[Code %in% ct$StartCode:ct$EndCode]

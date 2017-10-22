@@ -35,12 +35,11 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TC,n,names(ct)[x])
   }
-  pcols <- intersect(names(TC),c("HHID","Code","BuyingMethod","a","Investment_Exp","b"))
+  pcols <- intersect(names(TC),c("HHID","Code","Investment_Exp"))
   TC <- TC[,pcols,with=FALSE]
   
   if(year %in% 84:94){
     TC[,Investment_Exp:=as.numeric(Investment_Exp)]
-    TC[,b:=as.numeric(b)]
   }
 
   TC[,Code:=NULL]
