@@ -34,18 +34,25 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TOtherW,n,names(Otherwt)[x])
   }
-  pcols <- intersect(names(TOtherW),c("HHID","Code","indiv","retirement","rent","interest","aid","homemade","intra"))
+  pcols <- intersect(names(TOtherW),c("HHID","Code","retirement","rent","interest","aid","homemade","intra"))
   TOtherW <- TOtherW[,pcols,with=FALSE]
   
-  #if(year %in% 63:68){
- #   TOtherW <- TOtherW[ section ==1 ] 
- # } else if(year %in% 77:94){
-  #  TOtherW <- TOtherW[ section ==1 ] 
-  #} 
-  
+ # if(year %in% 63:68){
+  #  if(Code==511){  
+  #    TOtherW <- TOtherW[ retirement ==2 ] 
+ # } else if(Code==512:514){ 
+   #   TOtherW <- TOtherW[ rent ==2 ] 
+ # } else if(Code==515:518){ 
+   # TOtherW <- TOtherW[ interest ==2 ] 
+ # } else if(Code==521:522){ 
+ #   TOtherW <- TOtherW[ aid ==2 ] 
+ # } else if(Code==519){ 
+ #   TOtherW <- TOtherW[ homemade ==2 ] 
+ # } 
+#}
   TOtherW[is.na(TOtherW)] <- 0
-   OtherWageData <- TOtherW[,lapply(.SD,sum),by=HHID]
-   save(OtherWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"OtherWage.rda"))
+  # OtherWageData <- TOtherW[,lapply(.SD,sum),by=HHID]
+  # save(OtherWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"OtherWage.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

@@ -25,6 +25,12 @@ MDS_Communication: CommunicationTables
 MDS_Amusement: AmusementTables
 MDS_Hotel: HotelTables
 MDS_Other: OtherTables
+MDS_Retirement: RetirementTables
+MDS_Interest: InterestTables
+MDS_Rent: RentTables
+MDS_Aid: AidTables
+MDS_Homemade: HomemadeTables
+MDS_Intra: IntraTables
 MDS_Durable: DurableTables
 MDS_Investment: InvestmentTables
 MDS_Loans: LoanTables

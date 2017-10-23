@@ -33,8 +33,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     x <- which(pubwt==n)
    if(length(x)>0)
       setnames(TpubW,n,names(pubwt)[x])
-    }
-   pcols <- intersect(names(TpubW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
+   }
+   pcols <- intersect(names(TpubW),c("HHID","section","net_income_pub"))
+   #pcols <- intersect(names(TpubW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
     TpubW <- TpubW[,pcols,with=FALSE]
     
     if(year %in% 69:76){
@@ -42,10 +43,14 @@ for(year in (Settings$startyear:Settings$endyear)){
     } else if(year %in% 77:94){
       TpubW <- TpubW[ section ==1 ] 
     } 
+    
+    if(year %in% 86:94){
+      TpubW[,net_income_pub:=as.numeric(net_income_pub)]
+    }
   
    TpubW[is.na(TpubW)] <- 0
-  # PubWageData <- TpubW[,lapply(.SD,sum),by=HHID]
-   # save(WageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Wages.rda"))
+   PubWageData <- TpubW[,lapply(.SD,sum),by=HHID]
+    save(PubWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

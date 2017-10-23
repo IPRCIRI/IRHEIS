@@ -34,16 +34,20 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TAgriW,n,names(Agriwt)[x])
   }
-  pcols <- intersect(names(TAgriW),c("HHID","indiv","shaghel","shoghl","faaliat","job condition","agriculture","hour_in_day","day_in_week","cost1","cost2","cost3","cost4","cost5","sell","net_income_y"))
+  pcols <- intersect(names(TAgriW),c("HHID","agriculture","net_income_agri"))
   TAgriW <- TAgriW[,pcols,with=FALSE]
   
   if(year %in% 69:94){
     TAgriW <- TAgriW[ agriculture ==1 ] 
   }
   
+  if(year %in% 84:94){
+    TAgriW[,net_income_agri:=as.numeric(net_income_agri)]
+  }
+  
   TAgriW[is.na(TAgriW)] <- 0
-  # AgriWageData <- TAgriW[,lapply(.SD,sum),by=HHID]
-  # save(AgriWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"AgriWages.rda"))
+   AgriWageData <- TAgriW[,lapply(.SD,sum),by=HHID]
+   save(AgriWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"AgriWages.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
