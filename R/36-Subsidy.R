@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TSubsidyW,n,names(Subsidywt)[x])
   }
-  pcols <- intersect(names(TSubsidyW),c("HHID","indiv","dimension","month_number","Subsidy"))
+  pcols <- intersect(names(TSubsidyW),c("HHID","dimension","Subsidy"))
   TSubsidyW <- TSubsidyW[,pcols,with=FALSE]
   
 
