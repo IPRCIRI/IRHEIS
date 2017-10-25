@@ -43,6 +43,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     } else if(year %in% 77:94){
       TpubW <- TpubW[ section ==1 ] 
     } 
+    if(year %in% 66:94){
+      TpubW[,HHID:=as.numeric(HHID)]
+    }
     
     if(year %in% 86:94){
       TpubW[,net_income_pub:=as.numeric(net_income_pub)]

@@ -42,6 +42,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   } else if(year %in% 77:94){
     TPrvW <- TPrvW[ section ==3 ] 
   } 
+  if(year %in% 74:94){
+    TPrvW[,HHID:=as.numeric(HHID)]
+  }
   
   if(year %in% 86:94){
     TPrvW[,net_income_prv:=as.numeric(net_income_prv)]
