@@ -35,14 +35,17 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","TokhmemorghExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
     TF[,TokhmemorghExpenditure:=as.numeric(TokhmemorghExpenditure)]
   }
+  
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
+  TF$TokhmemorghGram<-TF$Kilos*1000+TF$Grams
+  TF$TokhmemorghGram<- TF$TokhmemorghGram/30
   TokhmemorghData <- TF[,lapply(.SD,sum),by=HHID]
   save(TokhmemorghData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Tokhmemorghs.rda"))
 }

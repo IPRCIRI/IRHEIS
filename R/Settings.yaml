@@ -4,7 +4,7 @@ HEISAccessPath: D:/HEIS/DataAccess/
 HEISRawPath: D:/HEIS/DataRaw/
 HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
-startyear: 63.0
+startyear: 95.0
 endyear: 95.0
 OS: windows
 RawDataWebAddress: http://www.amar.org.ir/Portals/0/amarmozuii/hazinedaramad/
