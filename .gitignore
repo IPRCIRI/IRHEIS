@@ -218,3 +218,6 @@ pip-log.txt
 
 .RData
 .Rhistory
+
+.sync.ffs_db
+sync.ffs_db
