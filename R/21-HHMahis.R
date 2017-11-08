@@ -35,14 +35,17 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","MahiExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
     TF[,MahiExpenditure:=as.numeric(MahiExpenditure)]
   }
+  
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
+  TF$MahiGram<-TF$Kilos*1000+TF$Grams
+  TF$MahiGram<- TF$MahiGram/30
   MahiData <- TF[,lapply(.SD,sum),by=HHID]
   save(MahiData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Mahis.rda"))
 }

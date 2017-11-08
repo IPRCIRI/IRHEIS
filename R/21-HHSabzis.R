@@ -35,14 +35,17 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","SabziExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
     TF[,SabziExpenditure:=as.numeric(SabziExpenditure)]
   }
+  
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
+  TF$SabziGram<-TF$Kilos*1000+TF$Grams
+  TF$SabziGram<- TF$SabziGram/30
   SabziData <- TF[,lapply(.SD,sum),by=HHID]
   save(SabziData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Sabzis.rda"))
 }

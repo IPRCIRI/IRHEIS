@@ -15,6 +15,8 @@ library(readxl)
 library(data.table)
 library(stringr)
 
+#P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
+
 P1Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P1Cols))
 
 EduCodesA <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_A))
@@ -53,7 +55,7 @@ for(year in years)
   
   f <- function(x){as.numeric(str_trim(x))}
   P1 <- P1[, lapply(.SD, f)] #  , .SDcols=which(sapply(P1, class)=="character")]
-  
+
 
   P1[is.na(Age),Age:=0L]
   P1[,Relationship :=factor(Relationship, levels=1:9, 
@@ -116,6 +118,9 @@ for(year in years)
     P1[,MarritalState:=factor(MarritalState,1:4,
                               c("Married","Widowed","Divorced","Bachelor"))]
   }
+
+
+  
   
   P <- copy(P1)
   
@@ -165,6 +170,10 @@ for(year in years)
   
   
   rm(HHI)
+  
+  P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
+  HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
+  save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 }
 
 endtime <- proc.time()
