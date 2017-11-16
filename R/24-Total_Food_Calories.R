@@ -89,10 +89,35 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood<-merge(MyFood,SabziData,by =c("HHID"),all=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  #MyFood<-merge(MyFood,FoodData,by =c("HHID"),all=TRUE)
-
+  MyFood<-merge(MyFood,FoodData,by =c("HHID"),all=TRUE)
   
-  #save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Total_Food.rda"))
+ # MyFood<-MyFood[Region== 'Urban' | Region== 'Rural']
+  
+  MyFood$Ghand_Calory<- MyFood$GhandGram*4
+  MyFood$Hoboobat_Calory<- MyFood$HoboobatGram*3.5
+  MyFood$Nan_Calory<- MyFood$NanGram*2.76
+  MyFood$Berenj_Calory<- MyFood$BerenjGram*36
+  MyFood$Roghan_Calory<- MyFood$RoghanGram*1
+  MyFood$Goosht_Calory<- MyFood$GooshtGram*2.83
+  MyFood$Morgh_Calory<- MyFood$MorghGram*2.8
+  MyFood$Mahi_Calory<- MyFood$MahiGram*1.25
+  MyFood$Shir_Calory<- MyFood$ShirGram*0.65
+  MyFood$Mast_Calory<- MyFood$MastGram*0.8
+  MyFood$Panir_Calory<- MyFood$PanirGram*2.5
+  MyFood$Tokhmemorgh_Calory<- MyFood$TokhmemorghGram*1.6
+  MyFood$Mive_Calory<- MyFood$MiveGram*0.56
+  MyFood$Sabzi_Calory<- MyFood$SabziGram*0.36
+
+  MyFood[is.na(MyFood)] <- 0
+  MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=23:36][] 
+  MyFood[,Region:=NULL]
+  MyFood[,Year:=NULL]
+  MyFood[,Quarter:=NULL]
+  MyFood[,Month:=NULL]
+  MyFood[,ProvinceCode:=NULL]
+  MyFood[,Dimension:=NULL]
+  
+  save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   
 }
 endtime <- proc.time()

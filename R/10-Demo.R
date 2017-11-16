@@ -172,6 +172,7 @@ for(year in years)
   rm(HHI)
   
   P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
+  P1<-P1[Relationship== 'Head']
   HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 }
