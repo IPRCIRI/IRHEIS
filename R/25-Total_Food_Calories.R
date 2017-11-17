@@ -1,4 +1,4 @@
-# 28-Total_Food_Calories.R
+# 25-Total_Food_Calories.R
 # 
 # Copyright © 2017:Arin Shahbazian
 # Licence: GPL-3
@@ -45,6 +45,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Tokhmemorghs.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Mives.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Sabzis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Makaroonis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Sibzaminis.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
   
   MyFood<-merge(HHBase,GhandData,by =c("HHID"),all=FALSE)
@@ -89,33 +91,43 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood<-merge(MyFood,SabziData,by =c("HHID"),all=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
+  MyFood<-merge(MyFood,MakarooniData,by =c("HHID"),all=TRUE)
+  MyFood[,Grams:=NULL]
+  MyFood[,Kilos:=NULL]
+  MyFood<-merge(MyFood,SibzaminiData,by =c("HHID"),all=TRUE)
+  MyFood[,Grams:=NULL]
+  MyFood[,Kilos:=NULL]
   MyFood<-merge(MyFood,FoodData,by =c("HHID"),all=TRUE)
   
  # MyFood<-MyFood[Region== 'Urban' | Region== 'Rural']
   
   MyFood$Ghand_Calory<- MyFood$GhandGram*4
-  MyFood$Hoboobat_Calory<- MyFood$HoboobatGram*3.5
-  MyFood$Nan_Calory<- MyFood$NanGram*2.76
-  MyFood$Berenj_Calory<- MyFood$BerenjGram*36
-  MyFood$Roghan_Calory<- MyFood$RoghanGram*1
-  MyFood$Goosht_Calory<- MyFood$GooshtGram*2.83
-  MyFood$Morgh_Calory<- MyFood$MorghGram*2.8
-  MyFood$Mahi_Calory<- MyFood$MahiGram*1.25
-  MyFood$Shir_Calory<- MyFood$ShirGram*0.65
-  MyFood$Mast_Calory<- MyFood$MastGram*0.8
+  MyFood$Hoboobat_Calory<- MyFood$HoboobatGram*3
+  MyFood$Nan_Calory<- MyFood$NanGram*2.5
+  MyFood$Berenj_Calory<- MyFood$BerenjGram*1.2
+  MyFood$Roghan_Calory<- MyFood$RoghanGram*8
+  MyFood$Goosht_Calory<- MyFood$GooshtGram*2.5
+  MyFood$Morgh_Calory<- MyFood$MorghGram*2
+  MyFood$Mahi_Calory<- MyFood$MahiGram*1
+  MyFood$Shir_Calory<- MyFood$ShirGram*2.5
+  MyFood$Mast_Calory<- MyFood$MastGram*1.5
   MyFood$Panir_Calory<- MyFood$PanirGram*2.5
-  MyFood$Tokhmemorgh_Calory<- MyFood$TokhmemorghGram*1.6
-  MyFood$Mive_Calory<- MyFood$MiveGram*0.56
-  MyFood$Sabzi_Calory<- MyFood$SabziGram*0.36
+  MyFood$Tokhmemorgh_Calory<- MyFood$TokhmemorghGram*1.4
+  MyFood$Mive_Calory<- MyFood$MiveGram*0.5
+  MyFood$Sabzi_Calory<- MyFood$SabziGram*0.5
+  MyFood$Makarooni_Calory<- MyFood$MakarooniGram*3.6
+  MyFood$Sibzamini_Calory<- MyFood$SibzaminiGram*0.9
 
-  MyFood[is.na(MyFood)] <- 0
-  MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=23:36][] 
   MyFood[,Region:=NULL]
   MyFood[,Year:=NULL]
   MyFood[,Quarter:=NULL]
   MyFood[,Month:=NULL]
   MyFood[,ProvinceCode:=NULL]
   MyFood[,Dimension:=NULL]
+  MyFood[,FoodExpenditure:=NULL]
+  
+  MyFood[is.na(MyFood)] <- 0
+  MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=18:33][] 
   
   save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   
