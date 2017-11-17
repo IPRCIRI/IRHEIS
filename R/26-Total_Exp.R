@@ -1,8 +1,9 @@
-# 28-Total_Exp.R
+# 26-Total_Exp.R
 # 
 # Copyright © 2017:Arin Shahbazian
 # Licence: GPL-3
 # 
+
 rm(list=ls())
 
 starttime <- proc.time()
@@ -64,13 +65,24 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   MyData<-merge(MyData,MyFood,by =c("HHID"),all=TRUE)
+  MyData$Per_Daily_Calories<-MyData$Daily_Calories/MyData$Dimension
   
-  #for (decile in 1:10) {
-   # MyData$Average_Calories<-mean(MyData[,"Daily_Calories",by=list(decile)])
-   # MyData$Average_Calories<MyData[, Average_Calories:=mean(Daily_Calories), by=decile]
- # }
- # tapply(MyData$Daily_Calories, MyData$decile, mean)
- aggregate( Daily_Calories ~ decile, MyData, mean )
+  
+  MyData <- merge(MyData, MyData[,.(Average_Calories=mean(Per_Daily_Calories)),by=decile], by="decile")
+ # str(MyData$decile)
+ # str(MyData$Per_Daily_Calories)
+  #lapply(results, mean, na.rm = TRUE)
+ # FoodData <- TF[,lapply(.SD,sum),by=HHID]
+  #MyData$Average_Calories<-MyData[,lapply(.SD,mean),by=decile]
+ # MyData$Average_Calories<-MyData[,.(Average_Calories=mean(Per_Daily_Calories)),by=decile]
+ # MyData[,Per_Daily_Calories:=as.numeric(Per_Daily_Calories)]
+ 
+    #MyData$Average_Calories<-mean(MyData[,"Per_Daily_Calories",by=decile])
+    
+   # MyData$Average_Calories<-MyData[, Average_Calories:=mean(Daily_Calories), by=decile]
+ #MyData[,.(Per_Daily_Calories.Mean=mean(Per_Daily_Calories)), by=decile]
+ # tapply(MyData$Per_Daily_Calories, MyData$decile, mean)
+  #aggregate( Per_Daily_Calories ~ percentile, MyData, mean )
 
   
   #save(MyData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Total_Exp.rda"))
