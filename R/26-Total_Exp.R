@@ -56,33 +56,81 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyData[is.na(MyData)] <- 0
 
   MyData[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=20:34][] 
-  MyData$Total_Exp_Per_Month<-MyData$Total_Exp_Month/MyData$Dimension
+  MyData$Total_Exp_Month_Per<-MyData$Total_Exp_Month/MyData$Dimension
   
-  MyData$decile<-findInterval(MyData$Total_Exp_Per_Month, quantile(MyData$Total_Exp_Per_Month, probs=1:10/10), left.open=T)
-  MyData$decile<- MyData$decile+1
-  MyData$percentile<-findInterval(MyData$Total_Exp_Per_Month, quantile(MyData$Total_Exp_Per_Month, probs=1:100/100), left.open=T)
-  MyData$percentile<- MyData$percentile+1
-  
+
+
+
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   MyData<-merge(MyData,MyFood,by =c("HHID"),all=TRUE)
   MyData$Per_Daily_Calories<-MyData$Daily_Calories/MyData$Dimension
   
+  MyDataRural<-MyData[(MyData$Region=="Rural"),]
+  MyDataUrban<-MyData[(MyData$Region=="Urban"),]
   
-  MyData <- merge(MyData, MyData[,.(Average_Calories=mean(Per_Daily_Calories)),by=decile], by="decile")
- # str(MyData$decile)
- # str(MyData$Per_Daily_Calories)
-  #lapply(results, mean, na.rm = TRUE)
- # FoodData <- TF[,lapply(.SD,sum),by=HHID]
-  #MyData$Average_Calories<-MyData[,lapply(.SD,mean),by=decile]
- # MyData$Average_Calories<-MyData[,.(Average_Calories=mean(Per_Daily_Calories)),by=decile]
- # MyData[,Per_Daily_Calories:=as.numeric(Per_Daily_Calories)]
- 
-    #MyData$Average_Calories<-mean(MyData[,"Per_Daily_Calories",by=decile])
-    
-   # MyData$Average_Calories<-MyData[, Average_Calories:=mean(Daily_Calories), by=decile]
- #MyData[,.(Per_Daily_Calories.Mean=mean(Per_Daily_Calories)), by=decile]
- # tapply(MyData$Per_Daily_Calories, MyData$decile, mean)
-  #aggregate( Per_Daily_Calories ~ percentile, MyData, mean )
+  MyDataRural$decile<-findInterval(MyDataRural$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
+  MyDataRural$decile<- MyDataRural$decile+1
+  MyDataUrban$decile<-findInterval(MyDataUrban$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
+  MyDataUrban$decile<- MyDataUrban$decile+1
+  
+  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_decile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(decile)], by="decile")
+  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_decile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(decile)], by="decile")
+  #MyData <- merge(MyData, MyData[,.(Average_Calories_percentile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(percentile)], by="percentile")
+  
+  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Expenditure_decile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(decile)], by="decile")
+  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Expenditure_decile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(decile)], by="decile")
+  #MyData <- merge(MyData, MyData[,.(Average_Expenditure_percentile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(percentile)], by="percentile")
+  
+  MyDataRural[, Calory_price_decile := ifelse(Average_Calories_decile > 2300, Average_Expenditure_decile/Average_Calories_decile, NA)]
+  MyDataUrban[, Calory_price_decile := ifelse(Average_Calories_decile > 2300, Average_Expenditure_decile/Average_Calories_decile, NA)]
+ # MyData[, Calory_price_percentile := ifelse(Average_Calories_percentile > 2300, Average_Expenditure_percentile/Average_Calories_percentile, NA)]
+  
+  
+  MyDataRural$Excess_Expenditure_decile <-(MyDataRural$Average_Calories_decile-2300)*(MyDataRural$Calory_price_decile)
+  MyDataUrban$Excess_Expenditure_decile <-(MyDataUrban$Average_Calories_decile-2300)*(MyDataUrban$Calory_price_decile)
+  #MyData$Excess_Expenditure_percentile <-(MyData$Average_Calories_percentile-2300)*(MyData$Calory_price_percentile)
+  
+  MyDataRural$povertyline_decile <-(MyDataRural$Average_Expenditure_decile-MyDataRural$Excess_Expenditure_decile)
+  MyDataUrban$povertyline_decile <-(MyDataUrban$Average_Expenditure_decile-MyDataUrban$Excess_Expenditure_decile)
+  #MyData$povertyline_percentile <-(MyData$Average_Expenditure_percentil-MyData$Excess_Expenditure_percentile)
+  
+  PovertylineRural<-min(MyDataRural[,"povertyline_decile"], na.rm=TRUE)
+  PovertylineUrban<-min(MyDataUrban[,"povertyline_decile"], na.rm=TRUE)
+  
+  #Total
+  # MyData$decile<-findInterval(MyData$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
+  #MyData$decile<- MyData$decile+1
+  #MyData$percentile<-findInterval(MyData$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:100/100), left.open=T)
+  # MyData$percentile<- MyData$percentile+1
+  
+  # MyDataRural$decile<-findInterval(MyDataRural$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
+  # MyDataRural$decile<- MyDataRural$decile+1
+  # MyDataUrban$decile<-findInterval(MyDataUrban$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
+  # MyDataUrban$decile<- MyDataUrban$decile+1
+
+  # MyData <- merge(MyData, MyData[,.(Average_Calories_decile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(decile)], by="decile")
+  # MyData <- merge(MyData, MyData[,.(Average_Calories_percentile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(percentile)], by="percentile")
+
+  # MyData <- merge(MyData, MyData[,.(Average_Expenditure_decile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(decile)], by="decile")
+  # MyData <- merge(MyData, MyData[,.(Average_Expenditure_percentile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(percentile)], by="percentile")
+
+  # MyData[, Calory_price_percentile := ifelse(Average_Calories_percentile > 2300, Average_Expenditure_percentile/Average_Calories_percentile, NA)]
+  # MyData[, Calory_price_decile := ifelse(Average_Calories_decile > 2300, Average_Expenditure_decile/Average_Calories_decile, NA)]
+
+  # MyData$Excess_Expenditure_decile <-(MyData$Average_Calories_decile-2300)*(MyData$Calory_price_decile)
+  # MyData$Excess_Expenditure_percentile <-(MyData$Average_Calories_percentile-2300)*(MyData$Calory_price_percentile)
+  
+  # MyData$povertyline_decile <-(MyData$Average_Expenditure_decile-MyData$Excess_Expenditure_decile)
+  # MyData$povertyline_percentile <-(MyData$Average_Expenditure_percentil-MyData$Excess_Expenditure_percentile)
+  
+  # MyData$Average_Calories<-MyData[,lapply(.SD,mean),by=decile]
+  # MyData$Average_Calories<-MyData[,.(Average_Calories=mean(Per_Daily_Calories)),by=decile]
+  # MyData[, .(Average_Calories = mean(Per_Daily_Calories) ), by = .(decile)]
+  # MyData$Average_Calories<-mean(MyData[,"Per_Daily_Calories",by=.(decile)])
+  # MyData$Average_Calories<-MyData[, Average_Calories:=mean(Daily_Calories), by=decile]
+  # MyData[,.(Average_Calories=mean(Per_Daily_Calories)), by=decile]
+  # tapply(MyData$Per_Daily_Calories, MyData$decile, mean)
+  # aggregate( Per_Daily_Calories ~ percentile, MyData, mean )
 
   
   #save(MyData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Total_Exp.rda"))
