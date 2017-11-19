@@ -129,8 +129,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood[is.na(MyFood)] <- 0
   MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=18:33][] 
   
-  save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
+ # MyFoodRural<-MyFood[(MyFood$Region=="Rural"),]
+ # MyFoodUrban<-MyFood[(MyFood$Region=="Urban"),]
   
+  save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
+ # save(MyFoodRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
+ # save(MyFoodUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
 }
 endtime <- proc.time()
 
