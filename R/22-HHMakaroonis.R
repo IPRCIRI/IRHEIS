@@ -1,5 +1,5 @@
-# 21-HHRoghans.R
-# Builds the Roghan expenditures data.table for households
+# 22-HHMakaroonis.R
+# Builds the Makarooni expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHRoghans =====================================\n")
+cat("\n\n================ HHMakaroonis =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,14 +16,14 @@ library(stringr)
 library(readxl)
 
 
-RoghanTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Roghan))
+MakarooniTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Makarooni))
 
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- RoghanTables[Year==year]
+  ft <- MakarooniTables[Year==year]
   tab <- ft$Table
   if(is.na(tab))
     next
@@ -35,16 +35,19 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","RoghanExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-    TF[,RoghanExpenditure:=as.numeric(RoghanExpenditure)]
+    TF[,MakarooniExpenditure:=as.numeric(MakarooniExpenditure)]
   }
+  
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
-  RoghanData <- TF[,lapply(.SD,sum),by=HHID]
-  save(RoghanData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Roghans.rda"))
+  TF$MakarooniGram<-TF$Kilos*1000+TF$Grams
+  TF$MakarooniGram<- TF$MakarooniGram/30
+  MakarooniData <- TF[,lapply(.SD,sum),by=HHID]
+  save(MakarooniData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Makaroonis.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

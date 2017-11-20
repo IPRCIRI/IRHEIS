@@ -38,10 +38,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TC),c("HHID","Code","Durable_Exp"))
   TC <- TC[,pcols,with=FALSE]
 
-  if(year %in% 84:94){
+  if(year %in% 84:95){
     TC[,Durable_Exp:=as.numeric(Durable_Exp)]
   }
-
+  TC$Durable_Exp<-TC$Durable_Exp/12
   TC[,Code:=NULL]
   TC[is.na(TC)] <- 0
   DurableData <- TC[,lapply(.SD,sum),by=HHID]

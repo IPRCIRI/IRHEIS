@@ -66,7 +66,7 @@ for(year in (Settings$startyear:Settings$endyear))
   
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 
-  rm(HHBase)
+ # rm(HHBase)
 }
 
 endtime <- proc.time()

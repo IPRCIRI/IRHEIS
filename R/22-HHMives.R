@@ -1,5 +1,5 @@
-# 21-HHPanirs.R
-# Builds the Panir expenditures data.table for households
+# 21-HHMives.R
+# Builds the Mive expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHPanirs =====================================\n")
+cat("\n\n================ HHMives =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,14 +16,14 @@ library(stringr)
 library(readxl)
 
 
-PanirTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Panir))
+MiveTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Mive))
 
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- PanirTables[Year==year]
+  ft <- MiveTables[Year==year]
   tab <- ft$Table
   if(is.na(tab))
     next
@@ -39,15 +39,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-    TF[,PanirExpenditure:=as.numeric(PanirExpenditure)]
+    TF[,MiveExpenditure:=as.numeric(MiveExpenditure)]
   }
   
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
-  TF$PanirGram<-TF$Kilos*1000+TF$Grams
-  TF$PanirGram<- TF$PanirGram/30
-  PanirData <- TF[,lapply(.SD,sum),by=HHID]
-  save(PanirData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Panirs.rda"))
+  TF$MiveGram<-TF$Kilos*1000+TF$Grams
+  TF$MiveGram<- TF$MiveGram/30
+  MiveData <- TF[,lapply(.SD,sum),by=HHID]
+  save(MiveData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Mives.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

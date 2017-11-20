@@ -38,7 +38,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
   TM <- TM[,pcols,with=FALSE]
   #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:94){
+  if(year %in% 84:95){
     TM[,Medical_Exp:=as.numeric(Medical_Exp)]
   }
   TM[,Code:=NULL]
