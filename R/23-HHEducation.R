@@ -44,6 +44,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    # TF[,Kilos:=as.numeric(Kilos)]
    TE[,EducExpenditure:=as.numeric(EducExpenditure)]
   TE <- TE[Code %in% et$StartCode:et$EndCode]
+  TE$EducExpenditure<-TE$EducExpenditure/12
   TE[,Code:=NULL]
   TE[is.na(TE)] <- 0
   EducData <- TE[,lapply(.SD,sum),by=HHID]

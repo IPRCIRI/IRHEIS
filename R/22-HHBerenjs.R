@@ -1,5 +1,5 @@
-# 21-HHSabzis.R
-# Builds the Sabzi expenditures data.table for households
+# 21-HHBerenjs.R
+# Builds the Berenj expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHSabzis =====================================\n")
+cat("\n\n================ HHBerenjs =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,14 +16,14 @@ library(stringr)
 library(readxl)
 
 
-SabziTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Sabzi))
+BerenjTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Berenj))
 
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- SabziTables[Year==year]
+  ft <- BerenjTables[Year==year]
   tab <- ft$Table
   if(is.na(tab))
     next
@@ -35,16 +35,19 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","SabziExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-    TF[,SabziExpenditure:=as.numeric(SabziExpenditure)]
+    TF[,BerenjExpenditure:=as.numeric(BerenjExpenditure)]
   }
+
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
-  SabziData <- TF[,lapply(.SD,sum),by=HHID]
-  save(SabziData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Sabzis.rda"))
+  TF$BerenjGram<-TF$Kilos*1000+TF$Grams
+  TF$BerenjGram<- TF$BerenjGram/30
+  BerenjData <- TF[,lapply(.SD,sum),by=HHID]
+  save(BerenjData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Berenjs.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

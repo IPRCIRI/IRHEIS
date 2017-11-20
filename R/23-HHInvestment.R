@@ -41,7 +41,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   if(year %in% 84:94){
     TC[,Investment_Exp:=as.numeric(Investment_Exp)]
   }
-
+  TC$Investment_Exp<-TC$Investment_Exp/12
   TC[,Code:=NULL]
   TC[is.na(TC)] <- 0
   InvestmentData <- TC[,lapply(.SD,sum),by=HHID]

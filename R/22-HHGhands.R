@@ -1,5 +1,5 @@
-# 21-HHMives.R
-# Builds the Mive expenditures data.table for households
+# 21-HHGhands.R
+# Builds the Ghand expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHMives =====================================\n")
+cat("\n\n================ HHGhands =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,14 +16,14 @@ library(stringr)
 library(readxl)
 
 
-MiveTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Mive))
+GhandTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Ghand))
 
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- MiveTables[Year==year]
+  ft <- GhandTables[Year==year]
   tab <- ft$Table
   if(is.na(tab))
     next
@@ -35,16 +35,19 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","MiveExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-    TF[,MiveExpenditure:=as.numeric(MiveExpenditure)]
+    TF[,GhandExpenditure:=as.numeric(GhandExpenditure)]
   }
+  
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
-  MiveData <- TF[,lapply(.SD,sum),by=HHID]
-  save(MiveData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Mives.rda"))
+  TF$GhandGram<-TF$Kilos*1000+TF$Grams
+  TF$GhandGram<- TF$GhandGram/30
+  GhandData <- TF[,lapply(.SD,sum),by=HHID]
+  save(GhandData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Ghands.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

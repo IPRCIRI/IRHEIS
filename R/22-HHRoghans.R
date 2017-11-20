@@ -1,5 +1,5 @@
-# 21-HHPanirs.R
-# Builds the Panir expenditures data.table for households
+# 21-HHRoghans.R
+# Builds the Roghan expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHPanirs =====================================\n")
+cat("\n\n================ HHRoghans =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,14 +16,14 @@ library(stringr)
 library(readxl)
 
 
-PanirTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Panir))
+RoghanTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Roghan))
 
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- PanirTables[Year==year]
+  ft <- RoghanTables[Year==year]
   tab <- ft$Table
   if(is.na(tab))
     next
@@ -39,15 +39,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-    TF[,PanirExpenditure:=as.numeric(PanirExpenditure)]
+    TF[,RoghanExpenditure:=as.numeric(RoghanExpenditure)]
   }
   
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
-  TF$PanirGram<-TF$Kilos*1000+TF$Grams
-  TF$PanirGram<- TF$PanirGram/30
-  PanirData <- TF[,lapply(.SD,sum),by=HHID]
-  save(PanirData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Panirs.rda"))
+  TF$RoghanGram<-TF$Kilos*1000+TF$Grams
+  TF$RoghanGram<- TF$RoghanGram/30
+  RoghanData <- TF[,lapply(.SD,sum),by=HHID]
+  save(RoghanData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Roghans.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
