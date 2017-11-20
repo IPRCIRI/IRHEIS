@@ -59,8 +59,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyData$Total_Exp_Month_Per<-MyData$Total_Exp_Month/MyData$Dimension
   
 
-
-
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   MyData<-merge(MyData,MyFood,by =c("HHID"),all=TRUE)
   MyData$Per_Daily_Calories<-MyData$Daily_Calories/MyData$Dimension
@@ -76,6 +74,74 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_decile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(decile)], by="decile")
   MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_decile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(decile)], by="decile")
   #MyData <- merge(MyData, MyData[,.(Average_Calories_percentile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(percentile)], by="percentile")
+  
+  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
+  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
+  
+#Calculate Calories for deciles-Rural
+  d1<-subset(MyDataRural, decile==1)
+  mean(d1$Per_Daily_Calories,na.rm = TRUE)
+  
+  d2<-subset(MyDataRural, decile==2)
+  mean(d2$Per_Daily_Calories,na.rm = TRUE)
+  
+  d3<-subset(MyDataRural, decile==3)
+  mean(d3$Per_Daily_Calories,na.rm = TRUE)
+  
+  d4<-subset(MyDataRural, decile==4)
+  mean(d4$Per_Daily_Calories,na.rm = TRUE)
+  
+  d5<-subset(MyDataRural, decile==5)
+  mean(d5$Per_Daily_Calories,na.rm = TRUE)
+  
+  d6<-subset(MyDataRural, decile==6)
+  mean(d6$Per_Daily_Calories,na.rm = TRUE)
+  
+  d7<-subset(MyDataRural, decile==7)
+  mean(d7$Per_Daily_Calories,na.rm = TRUE)
+  
+  d8<-subset(MyDataRural, decile==8)
+  mean(d8$Per_Daily_Calories,na.rm = TRUE)
+  
+  d9<-subset(MyDataRural, decile==9)
+  mean(d9$Per_Daily_Calories,na.rm = TRUE)
+  
+  d10<-subset(MyDataRural, decile==10)
+  mean(d10$Per_Daily_Calories,na.rm = TRUE)
+  
+  #Calculate Calories for deciles-Urban
+  d1<-subset(MyDataUrban, decile==1)
+  mean(d1$Per_Daily_Calories,na.rm = TRUE)
+  
+  d2<-subset(MyDataUrban, decile==2)
+  mean(d2$Per_Daily_Calories,na.rm = TRUE)
+  
+  d3<-subset(MyDataUrban, decile==3)
+  mean(d3$Per_Daily_Calories,na.rm = TRUE)
+  
+  d4<-subset(MyDataUrban, decile==4)
+  mean(d4$Per_Daily_Calories,na.rm = TRUE)
+  
+  d5<-subset(MyDataUrban, decile==5)
+  mean(d5$Per_Daily_Calories,na.rm = TRUE)
+  
+  d6<-subset(MyDataUrban, decile==6)
+  mean(d6$Per_Daily_Calories,na.rm = TRUE)
+  
+  d7<-subset(MyDataUrban, decile==7)
+  mean(d7$Per_Daily_Calories,na.rm = TRUE)
+  
+  d8<-subset(MyDataUrban, decile==8)
+  mean(d8$Per_Daily_Calories,na.rm = TRUE)
+  
+  d9<-subset(MyDataUrban, decile==9)
+  mean(d9$Per_Daily_Calories,na.rm = TRUE)
+  
+  d10<-subset(MyDataUrban, decile==10)
+  mean(d10$Per_Daily_Calories,na.rm = TRUE)
+  
+  #Calculate Calories for Provinces-Rural
+
   
   MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Expenditure_decile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(decile)], by="decile")
   MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Expenditure_decile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(decile)], by="decile")
@@ -96,6 +162,25 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   PovertylineRural<-min(MyDataRural[,"povertyline_decile"], na.rm=TRUE)
   PovertylineUrban<-min(MyDataUrban[,"povertyline_decile"], na.rm=TRUE)
+  
+  PovertylineRural
+  
+  #Calculate Poor Index
+  Rural_Pop<-sum(MyDataRural$Dimension)
+  Urban_Pop<-sum(MyDataUrban$Dimension) 
+  
+  Rural_Poor<-MyDataRural[Per_Daily_Calories<2300]
+  Urban_Poor<-MyDataUrban[Per_Daily_Calories<2300]
+  
+  Rural_Poor_Pop<-sum(Rural_Poor$Dimension)
+  Urban_Poor_Pop<-sum(Urban_Poor$Dimension)
+  
+  Rural_Poor_Index<-Rural_Poor_Pop/Rural_Pop
+  Urban_Poor_Index<-Urban_Poor_Pop/Urban_Pop
+  ###
+  
+  aggregate(MyDataRural$Dimension, by=list(MyDataRural$Per_Daily_Calories < 2300), FUN=sum)
+  aggregate(MyDataUrban$Dimension, by=list(MyDataUrban$Per_Daily_Calories < 2300), FUN=sum)
   
   #Total
   # MyData$decile<-findInterval(MyData$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)

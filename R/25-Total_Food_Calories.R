@@ -47,6 +47,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Sabzis.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Makaroonis.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Sibzaminis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Shirinis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Biscuits.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Khoshkbars.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
   
   MyFood<-merge(HHBase,GhandData,by =c("HHID"),all=FALSE)
@@ -97,6 +100,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood<-merge(MyFood,SibzaminiData,by =c("HHID"),all=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
+  MyFood<-merge(MyFood,ShiriniData,by =c("HHID"),all=TRUE)
+  MyFood[,Grams:=NULL]
+  MyFood[,Kilos:=NULL]
+  MyFood<-merge(MyFood,KhoshkbarData,by =c("HHID"),all=TRUE)
+  MyFood[,Grams:=NULL]
+  MyFood[,Kilos:=NULL]
+  MyFood<-merge(MyFood,BiscuitData,by =c("HHID"),all=TRUE)
+  MyFood[,Grams:=NULL]
+  MyFood[,Kilos:=NULL]
   MyFood<-merge(MyFood,FoodData,by =c("HHID"),all=TRUE)
   
  # MyFood<-MyFood[Region== 'Urban' | Region== 'Rural']
@@ -117,6 +129,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood$Sabzi_Calory<- MyFood$SabziGram*0.5
   MyFood$Makarooni_Calory<- MyFood$MakarooniGram*3.6
   MyFood$Sibzamini_Calory<- MyFood$SibzaminiGram*0.9
+  MyFood$Shirini_Calory<- MyFood$ShiriniGram*3.5
+  MyFood$Biscuit_Calory<- MyFood$BiscuitGram*3
+  MyFood$Khoshkbar_Calory<- MyFood$KhoshkbarGram*5
 
   MyFood[,Region:=NULL]
   MyFood[,Year:=NULL]
@@ -127,7 +142,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood[,FoodExpenditure:=NULL]
   
   MyFood[is.na(MyFood)] <- 0
-  MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=18:33][] 
+  MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=21:39][] 
   
  # MyFoodRural<-MyFood[(MyFood$Region=="Rural"),]
  # MyFoodUrban<-MyFood[(MyFood$Region=="Urban"),]
