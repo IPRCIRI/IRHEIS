@@ -51,7 +51,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Biscuits.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Khoshkbars.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
-  
+
   MyFood<-merge(HHBase,GhandData,by =c("HHID"),all=FALSE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
@@ -133,7 +133,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood$Biscuit_Calory<- MyFood$BiscuitGram*3
   MyFood$Khoshkbar_Calory<- MyFood$KhoshkbarGram*5
 
-  MyFood[,Region:=NULL]
+
   MyFood[,Year:=NULL]
   MyFood[,Quarter:=NULL]
   MyFood[,Month:=NULL]
@@ -147,7 +147,15 @@ for(year in (Settings$startyear:Settings$endyear)){
  # MyFoodRural<-MyFood[(MyFood$Region=="Rural"),]
  # MyFoodUrban<-MyFood[(MyFood$Region=="Urban"),]
   
-  save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
+  MyFoodRural<-MyFood[(MyFood$Region=="Rural"),]
+  MyFoodUrban<-MyFood[(MyFood$Region=="Urban"),]
+  MyFoodRural[,Region:=NULL]
+  MyFoodUrban[,Region:=NULL]
+ save(MyFoodRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
+ save(MyFoodUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
+  
+  
+ # save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
  # save(MyFoodRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
  # save(MyFoodUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
 }

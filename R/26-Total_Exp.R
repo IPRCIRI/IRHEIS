@@ -13,30 +13,41 @@ library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
+library(dplyr)
 library(data.table)
 
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+load("AllWeights.rda")
+Weights95<-AllWeights[Year==95]
+Weights95[,HHID:=as.numeric(HHID)]
+Weights95[,Weight:=as.numeric(Weight)]
+Weights95[,Year:=NULL]
+save(Weights95, file = paste0(Settings$HEISProcessedPath,"Weights95.rda"))
 
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Cigars.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Cloths.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Amusements.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Communications.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Education.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Energy.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Furnitures.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Hotels.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Medicals.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Transportations.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Others.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Investments.rda"))
+#for(year in (Settings$startyear:Settings$endyear)){
+
+ # cat(paste0("\n------------------------------\nYear:",year,"\n"))
+
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHBase.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Foods.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Cigars.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Cloths.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Amusements.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Communications.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Durables.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Education.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Energy.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Furnitures.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Hotels.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","House.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Medicals.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Transportations.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Others.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Investments.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Weights95.rda"))
 
 
-  MyData<-merge(HHBase,FoodData,by =c("HHID"),all=TRUE)
+  MyData<-merge(HHBase,Weights95 ,by =c("HHID"),all=TRUE)
+  MyData<-merge(MyData,FoodData,by =c("HHID"),all=TRUE)
   MyData<-merge(MyData,CigarData,by =c("HHID"),all=TRUE)
   MyData<-merge(MyData,ClothData,by =c("HHID"),all=TRUE)
   MyData<-merge(MyData,AmusementData,by =c("HHID"),all=TRUE)
@@ -52,31 +63,87 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyData<-merge(MyData,OtherData,by =c("HHID"),all=TRUE)
   MyData<-merge(MyData,InvestmentData,by =c("HHID"),all=TRUE)
   
-  MyData<-MyData[Dimension!=0]
   MyData[is.na(MyData)] <- 0
+  MyData<-MyData[Dimension!=0]
 
-  MyData[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=20:34][] 
+  MyData[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=21:35][] 
+  #MyData[,lapply(.SD,weighted.mean,w=Weight,by=key,.SDcols=letters[1:5]]
   MyData$Total_Exp_Month_Per<-MyData$Total_Exp_Month/MyData$Dimension
-  
+ 
 
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
-  MyData<-merge(MyData,MyFood,by =c("HHID"),all=TRUE)
-  MyData$Per_Daily_Calories<-MyData$Daily_Calories/MyData$Dimension
-  
   MyDataRural<-MyData[(MyData$Region=="Rural"),]
   MyDataUrban<-MyData[(MyData$Region=="Urban"),]
+
+  #MyDataRural$D1<-sum(MyDataRural$Weight)/10
+
   
-  MyDataRural$decile<-findInterval(MyDataRural$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
+  #if (MyDataRural$cumweight %in% 1:600000) {
+  #  MyDataRural$decile <- 1
+  #}
+  #else if(MyDataRural$cumweight > MyDataRural$D1){
+ #   MyDataRural$decile <- 2
+  #}
+  #if_else(MyDataRural$cumweight < MyDataRural$D1,MyDataRural$decile <- 1,MyDataRural$decile <- 2)
+  
+ # MyDataRural[:cumExp] = cumsum(MyDataRural[:Total_Exp_Month_Per])
+  #MyDataRural<-MyDataRural[,cumsum(Total_Exp_Month_Per)]
+  #cumsum(MyDataRural$Total_Exp_Month_Per)
+  #MyDataRural$D1Rural<-MyDataRural[,sum(MyDataRural$Weight)]
+    #MyDataRural$cumweight <- cumsum(MyDataRural$Weight)
+
+  #MyDataRural[order(Total_Exp_Month_Per), .SD]
+  #MyDataRural[,sort(Total_Exp_Month_Per,decreasing = FALSE)]
+  #sum(MyDataRural$Weight)
+  #arrange(MyDataRural, Total_Exp_Month_Per)
+ 
+ # setorder(MyDataRural, Total_Exp_Month_Per,  na.last=FALSE)
+  #hdquantile(MyDataRural$Total_Exp_Month_Per, probs = seq(0, 1, 0.25),
+            # se = FALSE, na.rm = FALSE, names = TRUE, weights=TRUE)
+  #quantilefreq(MyDataRural, probs == c(0, 0.25, 0.5, 0.75, 1), MyDataRural$Weight = NULL)
+  #MyDataRural[preferred.order, on="Per_Daily_Calories"]
+# wtd.quantile(MyDataRural$Total_Exp_Month_Per,q=0.1,na.rm = FALSE, MyDataRural$Weight==FALSE)
+  #wtd.quantile (MyDataRural$Total_Exp_Month_Per, q=0.5, na.rm = FALSE, Weight=FALSE)
+
+  MyDataRural$decile<-findInterval(MyDataRural$Total_Exp_Month_Per, quantile(MyDataRural$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
   MyDataRural$decile<- MyDataRural$decile+1
-  MyDataUrban$decile<-findInterval(MyDataUrban$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
+  MyDataUrban$decile<-findInterval(MyDataUrban$Total_Exp_Month_Per, quantile(MyDataUrban$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
   MyDataUrban$decile<- MyDataUrban$decile+1
+ 
   
-  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_decile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(decile)], by="decile")
-  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_decile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(decile)], by="decile")
+  #load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories.rda"))
+  #MyData<-merge(MyData,MyFood,by =c("HHID"),all=TRUE)
+  #MyData$Per_Daily_Calories<-MyData$Daily_Calories/MyData$Dimension
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Rural.rda"))
+  MyDataRural<-merge(MyDataRural,MyFoodRural,by =c("HHID"),all=TRUE)
+  MyDataRural$Per_Daily_Calories<-MyDataRural$Daily_Calories/MyDataRural$Dimension
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Urban.rda"))
+  MyDataUrban<-merge(MyDataUrban,MyFoodUrban,by =c("HHID"),all=TRUE)
+  MyDataUrban$Per_Daily_Calories<-MyDataUrban$Daily_Calories/MyDataUrban$Dimension
+  
+  MyDataRural <-subset(MyDataRural,Per_Daily_Calories>0)
+  MyDataUrban <-subset(MyDataUrban,Per_Daily_Calories>0)
+  
+  MyDataRural<- MyDataRural[with(MyDataRural, order(Total_Exp_Month_Per)), ]
+  MyDataUrban<- MyDataUrban[with(MyDataUrban, order(Total_Exp_Month_Per)), ]
+  sum(MyDataRural$Weight)
+  sum(MyDataUrban$Weight)
+  MyDataRural$cumweight <- cumsum(MyDataRural$Weight)
+  MyDataUrban$cumweight <- cumsum(MyDataUrban$Weight)
+  #########
+ # dt[, Vwa := cumsum(Price * Volume)/cumsum(Volume)]
+  #MyDataRural<-MyDataRural[,Average_Calories_decile:=cumsum(Per_Daily_Calories*Weight)/cumsum(Weight), ,by=.(decile)]
+  #weighted.mean(MyDataRural$Per_Daily_Calories,MyDataRural$Weight)
+  
+  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_decile=weighted.mean(Per_Daily_Calories,Weight)),by=.(decile)], by="decile")
+  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_decile=weighted.mean(Per_Daily_Calories,Weight)),by=.(decile)], by="decile")
   #MyData <- merge(MyData, MyData[,.(Average_Calories_percentile=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(percentile)], by="percentile")
-  
-  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
-  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
+  #wtd.quantile(MyDataRural$Total_Exp_Month_Per, weights=MyDataRural$Weight, probs=c(0, .25, .5, .75, 1), 
+              # type=c('quantile','(i-1)/(n-1)','i/(n+1)','i/n'), 
+             #  normwt=TRUE, na.rm=TRUE)
+ # MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
+ # MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
   
 #Calculate Calories for deciles-Rural
   d1<-subset(MyDataRural, decile==1)
@@ -142,18 +209,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #Calculate Calories for Provinces-Rural
 
-  
-  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Expenditure_decile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(decile)], by="decile")
-  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Expenditure_decile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(decile)], by="decile")
+  MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Expenditure_decile=weighted.mean(Total_Exp_Month_Per,Weight)),by=.(decile)], by="decile")
+  MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Expenditure_decile=weighted.mean(Total_Exp_Month_Per,Weight)),by=.(decile)], by="decile")
   #MyData <- merge(MyData, MyData[,.(Average_Expenditure_percentile=mean(Total_Exp_Month_Per,na.rm=TRUE)),by=.(percentile)], by="percentile")
   
-  MyDataRural[, Calory_price_decile := ifelse(Average_Calories_decile > 2300, Average_Expenditure_decile/Average_Calories_decile, NA)]
-  MyDataUrban[, Calory_price_decile := ifelse(Average_Calories_decile > 2300, Average_Expenditure_decile/Average_Calories_decile, NA)]
+  MyDataRural[, Calory_price_decile := ifelse(Average_Calories_decile > 2000, Average_Expenditure_decile/Average_Calories_decile, NA)]
+  MyDataUrban[, Calory_price_decile := ifelse(Average_Calories_decile > 2000, Average_Expenditure_decile/Average_Calories_decile, NA)]
  # MyData[, Calory_price_percentile := ifelse(Average_Calories_percentile > 2300, Average_Expenditure_percentile/Average_Calories_percentile, NA)]
   
   
-  MyDataRural$Excess_Expenditure_decile <-(MyDataRural$Average_Calories_decile-2300)*(MyDataRural$Calory_price_decile)
-  MyDataUrban$Excess_Expenditure_decile <-(MyDataUrban$Average_Calories_decile-2300)*(MyDataUrban$Calory_price_decile)
+  MyDataRural$Excess_Expenditure_decile <-(MyDataRural$Average_Calories_decile-2000)*(MyDataRural$Calory_price_decile)
+  MyDataUrban$Excess_Expenditure_decile <-(MyDataUrban$Average_Calories_decile-2000)*(MyDataUrban$Calory_price_decile)
   #MyData$Excess_Expenditure_percentile <-(MyData$Average_Calories_percentile-2300)*(MyData$Calory_price_percentile)
   
   MyDataRural$povertyline_decile <-(MyDataRural$Average_Expenditure_decile-MyDataRural$Excess_Expenditure_decile)
@@ -163,25 +229,40 @@ for(year in (Settings$startyear:Settings$endyear)){
   PovertylineRural<-min(MyDataRural[,"povertyline_decile"], na.rm=TRUE)
   PovertylineUrban<-min(MyDataUrban[,"povertyline_decile"], na.rm=TRUE)
   
-  PovertylineRural
   
-  #Calculate Poor Index
-  Rural_Pop<-sum(MyDataRural$Dimension)
-  Urban_Pop<-sum(MyDataUrban$Dimension) 
   
-  Rural_Poor<-MyDataRural[Per_Daily_Calories<2300]
-  Urban_Poor<-MyDataUrban[Per_Daily_Calories<2300]
+  #Calculate nerkhe sarshomare faghr
+  Rural_Pop<-sum(MyDataRural$Dimension*MyDataRural$Weight)
+  Urban_Pop<-sum(MyDataUrban$Dimension*MyDataUrban$Weight) 
   
-  Rural_Poor_Pop<-sum(Rural_Poor$Dimension)
-  Urban_Poor_Pop<-sum(Urban_Poor$Dimension)
+  Rural_Poor<-MyDataRural[Per_Daily_Calories<2000]
+  Urban_Poor<-MyDataUrban[Per_Daily_Calories<2000]
   
-  Rural_Poor_Index<-Rural_Poor_Pop/Rural_Pop
-  Urban_Poor_Index<-Urban_Poor_Pop/Urban_Pop
+  Rural_Poor_Pop<-sum(Rural_Poor$Dimension*Rural_Poor$Weight)
+  Urban_Poor_Pop<-sum(Urban_Poor$Dimension*Urban_Poor$Weight)
+  
+  Rural_Poor_Index1<-Rural_Poor_Pop/Rural_Pop
+  Urban_Poor_Index1<-Urban_Poor_Pop/Urban_Pop
   ###
+  #Calculate nesbat shekafe daramadi (shedate faghr)
+  Average_income_Rural2<-(sum(Rural_Poor$Total_Exp_Month_Per*Rural_Poor$Weight))/Rural_Poor_Pop
+  Shekaf_Rural2<-PovertylineRural-Average_income_Rural2
+  Rural_Poor_Index2<-Shekaf_Rural2/PovertylineRural
   
-  aggregate(MyDataRural$Dimension, by=list(MyDataRural$Per_Daily_Calories < 2300), FUN=sum)
-  aggregate(MyDataUrban$Dimension, by=list(MyDataUrban$Per_Daily_Calories < 2300), FUN=sum)
+  Average_income_Urban2<-(sum(Urban_Poor$Total_Exp_Month_Per*Urban_Poor$Weight))/Urban_Poor_Pop
+  Shekaf_Urban2<-PovertylineUrban-Average_income_Urban2
+  Urban_Poor_Index2<-Shekaf_Urban2/PovertylineUrban
   
+  #Calculate Foster Index
+  Average_income_Rural3<-Shekaf_Rural2^2
+  Rural_Poor_Index3<-Average_income_Rural3/(PovertylineRural^2)
+  
+  Average_income_Urban3<-Shekaf_Urban2^2
+  Urban_Poor_Index3<-Average_income_Urban3/(PovertylineUrban^2)
+  
+ # aggregate(MyDataRural$Dimension, by=list(MyDataRural$Per_Daily_Calories < 2000), FUN=sum)
+ # aggregate(MyDataUrban$Dimension, by=list(MyDataUrban$Per_Daily_Calories < 2000), FUN=sum)
+#}
   #Total
   # MyData$decile<-findInterval(MyData$Total_Exp_Month_Per, quantile(MyData$Total_Exp_Month_Per, probs=1:10/10), left.open=T)
   #MyData$decile<- MyData$decile+1
@@ -220,7 +301,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #save(MyData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Total_Exp.rda"))
   
-}
+
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
