@@ -904,68 +904,6 @@ MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_decile=weighte
 # MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
 # MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_Calories_Province=mean(Per_Daily_Calories,na.rm=TRUE)),by=.(ProvinceCode)], by="ProvinceCode")
 
-#Calculate Calories for deciles-Rural
-dR1<-subset(MyDataRural, decile==1)
-weighted.mean(dR1$Per_Daily_Calories,dR1$Weight, na.rm = TRUE)
-
-dR2<-subset(MyDataRural, decile==2)
-mean(dR2$Per_Daily_Calories,na.rm = TRUE)
-
-dR3<-subset(MyDataRural, decile==3)
-mean(dR3$Per_Daily_Calories,na.rm = TRUE)
-
-dR4<-subset(MyDataRural, decile==4)
-mean(dR4$Per_Daily_Calories,na.rm = TRUE)
-
-dR5<-subset(MyDataRural, decile==5)
-mean(dR5$Per_Daily_Calories,na.rm = TRUE)
-
-dR6<-subset(MyDataRural, decile==6)
-mean(d6$Per_Daily_Calories,na.rm = TRUE)
-
-dR7<-subset(MyDataRural, decile==7)
-mean(dR7$Per_Daily_Calories,na.rm = TRUE)
-
-dR8<-subset(MyDataRural, decile==8)
-mean(dR8$Per_Daily_Calories,na.rm = TRUE)
-
-dR9<-subset(MyDataRural, decile==9)
-mean(dR9$Per_Daily_Calories,na.rm = TRUE)
-
-dR10<-subset(MyDataRural, decile==10)
-mean(dR10$Per_Daily_Calories,na.rm = TRUE)
-
-#Calculate Calories for deciles-Urban
-d1<-subset(MyDataUrban, decile==1)
-mean(d1$Per_Daily_Calories,na.rm = TRUE)
-
-d2<-subset(MyDataUrban, decile==2)
-mean(d2$Per_Daily_Calories,na.rm = TRUE)
-
-d3<-subset(MyDataUrban, decile==3)
-mean(d3$Per_Daily_Calories,na.rm = TRUE)
-
-d4<-subset(MyDataUrban, decile==4)
-mean(d4$Per_Daily_Calories,na.rm = TRUE)
-
-d5<-subset(MyDataUrban, decile==5)
-mean(d5$Per_Daily_Calories,na.rm = TRUE)
-
-d6<-subset(MyDataUrban, decile==6)
-mean(d6$Per_Daily_Calories,na.rm = TRUE)
-
-d7<-subset(MyDataUrban, decile==7)
-mean(d7$Per_Daily_Calories,na.rm = TRUE)
-
-d8<-subset(MyDataUrban, decile==8)
-mean(d8$Per_Daily_Calories,na.rm = TRUE)
-
-d9<-subset(MyDataUrban, decile==9)
-mean(d9$Per_Daily_Calories,na.rm = TRUE)
-
-d10<-subset(MyDataUrban, decile==10)
-mean(d10$Per_Daily_Calories,na.rm = TRUE)
-
 
 #Calculate average expenditures in deciles by weights
 MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_Expenditure_decile=weighted.mean(Total_Exp_Month_Per,Weight)),by=.(decile)], by="decile")
@@ -995,8 +933,8 @@ PovertylineUrban<-min(MyDataUrban[,"povertyline_decile"], na.rm=TRUE)
 Rural_Pop<-sum(MyDataRural$Dimension*MyDataRural$Weight)
 Urban_Pop<-sum(MyDataUrban$Dimension*MyDataUrban$Weight) 
 
-Rural_Poor<-MyDataRural[Per_Daily_Calories<2100]
-Urban_Poor<-MyDataUrban[Per_Daily_Calories<2100]
+Rural_Poor<-MyDataRural[Total_Exp_Month_Per<PovertylineRural]
+Urban_Poor<-MyDataUrban[Total_Exp_Month_Per<PovertylineUrban]
 
 Rural_Poor_Pop<-sum(Rural_Poor$Dimension*Rural_Poor$Weight)
 Urban_Poor_Pop<-sum(Urban_Poor$Dimension*Urban_Poor$Weight)
@@ -1005,21 +943,24 @@ Rural_Poor_Index1<-Rural_Poor_Pop/Rural_Pop
 Urban_Poor_Index1<-Urban_Poor_Pop/Urban_Pop
 ###
 #Calculate nesbat shekafe daramadi (shedate faghr)
-Average_exp_Rural2<-(sum(Rural_Poor$Total_Exp_Month_Per*Rural_Poor$Weight))/Rural_Poor_Pop
-Shekaf_Rural2<-PovertylineRural-Average_exp_Rural2
+Average_Expenditure_Poors_Rural<-weighted.mean(Rural_Poor$Total_Exp_Month_Per,Rural_Poor$Weight)
+Shekaf_Rural2<-PovertylineRural-Average_Expenditure_Poors_Rural
 Rural_Poor_Index2<-Shekaf_Rural2/PovertylineRural
 
-Average_exp_Urban2<-(sum(Urban_Poor$Total_Exp_Month_Per*Urban_Poor$Weight))/Urban_Poor_Pop
-Shekaf_Urban2<-PovertylineUrban-Average_exp_Urban2
+Average_Expenditure_Poorss_Urban<-weighted.mean(Urban_Poor$Total_Exp_Month_Per,Urban_Poor$Weight)
+Shekaf_Urban2<-PovertylineUrban-Average_Expenditure_Poorss_Urban
 Urban_Poor_Index2<-Shekaf_Urban2/PovertylineUrban
 
 #Calculate Foster Index
-Average_income_Rural3<-Shekaf_Rural2^2
-Rural_Poor_Index3<-Average_income_Rural3/(PovertylineRural^2)
+Rural_Poor$Shekaf_Rural3<-PovertylineRural-Rural_Poor$Total_Exp_Month_Per
+Rural_Poor$Shekaf_Rural3<-(Rural_Poor$Shekaf_Rural3)^2*(Rural_Poor$Weight)
+Shekaf_Rural3<-sum(Rural_Poor$Shekaf_Rural3)
+Rural_Poor_Index3<-Shekaf_Rural3/((Rural_Poor_Pop*(PovertylineRural)^2))
 
-Average_income_Urban3<-Shekaf_Urban2^2
-Urban_Poor_Index3<-Average_income_Urban3/(PovertylineUrban^2)
-
+Urban_Poor$Shekaf_Urban3<-PovertylineUrban-Urban_Poor$Total_Exp_Month_Per
+Urban_Poor$Shekaf_Urban3<-(Urban_Poor$Shekaf_Urban3)^2*(Urban_Poor$Weight)
+Shekaf_Urban3<-sum(Urban_Poor$Shekaf_Urban3)
+Urban_Poor_Index3<-Shekaf_Urban3/((Urban_Poor_Pop*(PovertylineUrban)^2))
 
 ###Aditional
 # aggregate(MyDataRural$Dimension, by=list(MyDataRural$Per_Daily_Calories < 2100), FUN=sum)

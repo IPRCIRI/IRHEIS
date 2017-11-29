@@ -14,11 +14,11 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+#for(year in (Settings$startyear:Settings$endyear)){
+  #cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
 
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHBase.rda"))
   HHBase[,IndivNo:=NULL]
   HHBase[,Relationship:=NULL]
   HHBase[,Sex:=NULL]
@@ -31,26 +31,26 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[,EduLevel0:=NULL]
   HHBase[,ActivityState:=NULL]
   HHBase[,MarritalState:=NULL]
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Ghands.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Hoboobats.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Roghans.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Berenjs.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Nans.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Gooshts.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Morghs.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Mahis.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Shirs.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Masts.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Panirs.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Tokhmemorghs.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Mives.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Sabzis.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Makaroonis.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Sibzaminis.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Shirinis.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Biscuits.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Khoshkbars.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Ghands.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Hoboobats.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Roghans.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Berenjs.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Nans.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Gooshts.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Morghs.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Mahis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Shirs.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Masts.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Panirs.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Tokhmemorghs.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Mives.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Sabzis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Makaroonis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Sibzaminis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Shirinis.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Biscuits.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Khoshkbars.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y","95","Foods.rda"))
 
   MyFood<-merge(HHBase,GhandData,by =c("HHID"),all=FALSE)
   MyFood[,Grams:=NULL]
@@ -142,7 +142,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFood[,FoodExpenditure:=NULL]
   
   MyFood[is.na(MyFood)] <- 0
-  MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=21:39][] 
+  MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=22:40][] 
   
  # MyFoodRural<-MyFood[(MyFood$Region=="Rural"),]
  # MyFoodUrban<-MyFood[(MyFood$Region=="Urban"),]
@@ -151,14 +151,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   MyFoodUrban<-MyFood[(MyFood$Region=="Urban"),]
   MyFoodRural[,Region:=NULL]
   MyFoodUrban[,Region:=NULL]
- save(MyFoodRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
- save(MyFoodUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
+ save(MyFoodRural, file = paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Rural.rda"))
+ save(MyFoodUrban, file = paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Urban.rda"))
   
   
  # save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
  # save(MyFoodRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
  # save(MyFoodUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
-}
+#}
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
