@@ -180,6 +180,28 @@ MyDataUrban1$povertyline_decile <-(MyDataUrban1$Average_Expenditure_decile-MyDat
 PovertylineRural1<-min(MyDataRural1[,"povertyline_decile"], na.rm=TRUE)
 PovertylineUrban1<-min(MyDataUrban1[,"povertyline_decile"], na.rm=TRUE)
 
+
+MyDataRural1 [, Poverty_line_dimensions := ifelse(Dimension ==1, PovertylineRural1,
+                                      ifelse(Dimension ==2, 1.7*PovertylineRural1, ifelse(Dimension ==3,2.2*PovertylineRural1,
+                                      ifelse(Dimension ==4, 2.7*PovertylineRural1, ifelse(Dimension ==5, 3.2*PovertylineRural1, 
+                                      ifelse(Dimension ==6, 3.7*PovertylineRural1, ifelse(Dimension ==7, 4.2*PovertylineRural1,
+                                      ifelse(Dimension ==8, 4.7*PovertylineRural1, ifelse(Dimension ==9, 5.2*PovertylineRural1, 
+                                      ifelse(Dimension ==10, 5.7*PovertylineRural1, ifelse(Dimension ==11, 6.2*PovertylineRural1,
+                                      ifelse(Dimension ==12, 6.7*PovertylineRural1, ifelse(Dimension ==13, 7.2*PovertylineRural1,
+                                      ifelse(Dimension ==14, 7.7*PovertylineRural1, ifelse(Dimension ==15, 8.2*PovertylineRural1, 
+                                      ifelse(Dimension ==16, 8.7*PovertylineRural1, ifelse(Dimension ==17, 9.2*PovertylineRural1,
+   ifelse(Dimension ==18, 9.7*PovertylineRural1, ifelse(Dimension ==19, 10.2*PovertylineRural1, ifelse(Dimension ==20, 10.7*PovertylineRural1, NA))))))))))))))))))))]
+
+MyDataUrban1 [, Poverty_line_dimensions := ifelse(Dimension ==1, PovertylineUrban1,
+              ifelse(Dimension ==2, 1.7*PovertylineUrban1, ifelse(Dimension ==3,2.2*PovertylineUrban1,
+              ifelse(Dimension ==4, 2.7*PovertylineUrban1, ifelse(Dimension ==5, 3.2*PovertylineUrban1, 
+              ifelse(Dimension ==6, 3.7*PovertylineUrban1, ifelse(Dimension ==7, 4.2*PovertylineUrban1,
+              ifelse(Dimension ==8, 4.7*PovertylineUrban1, ifelse(Dimension ==9, 5.2*PovertylineUrban1, 
+              ifelse(Dimension ==10, 5.7*PovertylineUrban1, ifelse(Dimension ==11, 6.2*PovertylineUrban1,
+              ifelse(Dimension ==14, 7.7*PovertylineUrban1, ifelse(Dimension ==15, 8.2*PovertylineUrban1, 
+              ifelse(Dimension ==16, 8.7*PovertylineUrban1, ifelse(Dimension ==17, 9.2*PovertylineUrban1,
+              ifelse(Dimension ==18, 9.7*PovertylineUrban1, ifelse(Dimension ==19, 10.2*PovertylineUrban1, ifelse(Dimension ==20, 10.7*PovertylineUrban1, NA))))))))))))))))))]
+
 #################################################
 #***Calculate Poverty line by  All Expenditures***
 #################################################
@@ -201,6 +223,27 @@ MyDataUrban2$povertyline_decile <-(MyDataUrban2$Average_Expenditure_decile-MyDat
 
 PovertylineRural2<-min(MyDataRural2[,"povertyline_decile"], na.rm=TRUE)
 PovertylineUrban2<-min(MyDataUrban2[,"povertyline_decile"], na.rm=TRUE)
+
+MyDataRural2 [, Poverty_line_dimensions := ifelse(Dimension ==1, PovertylineRural2,
+                                                  ifelse(Dimension ==2, 1.7*PovertylineRural2, ifelse(Dimension ==3,2.2*PovertylineRural2,
+                                                                                                      ifelse(Dimension ==4, 2.7*PovertylineRural2, ifelse(Dimension ==5, 3.2*PovertylineRural2, 
+                                                                                                                                                          ifelse(Dimension ==6, 3.7*PovertylineRural2, ifelse(Dimension ==7, 4.2*PovertylineRural2,
+                                                                                                                                                                                                              ifelse(Dimension ==8, 4.7*PovertylineRural2, ifelse(Dimension ==9, 5.2*PovertylineRural2, 
+                                                                                                                                                                                                                                                                  ifelse(Dimension ==10, 5.7*PovertylineRural2, ifelse(Dimension ==11, 6.2*PovertylineRural2,
+                                                                                                                                                                                                                                                                                                                       ifelse(Dimension ==12, 6.7*PovertylineRural2, ifelse(Dimension ==13, 7.2*PovertylineRural2,
+                                                                                                                                                                                                                                                                                                                                                                            ifelse(Dimension ==14, 7.7*PovertylineRural2, ifelse(Dimension ==15, 8.2*PovertylineRural2, 
+                                                                                                                                                                                                                                                                                                                                                                                                                                 ifelse(Dimension ==16, 8.7*PovertylineRural2, ifelse(Dimension ==17, 9.2*PovertylineRural2,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ifelse(Dimension ==18, 9.7*PovertylineRural2, ifelse(Dimension ==19, 10.2*PovertylineRural2, ifelse(Dimension ==20, 10.7*PovertylineRural2, NA))))))))))))))))))))]
+
+MyDataUrban2 [, Poverty_line_dimensions := ifelse(Dimension ==1, PovertylineUrban2,
+                                                  ifelse(Dimension ==2, 1.7*PovertylineUrban2, ifelse(Dimension ==3,2.2*PovertylineUrban2,
+                                                                                                      ifelse(Dimension ==4, 2.7*PovertylineUrban2, ifelse(Dimension ==5, 3.2*PovertylineUrban2, 
+                                                                                                                                                          ifelse(Dimension ==6, 3.7*PovertylineUrban2, ifelse(Dimension ==7, 4.2*PovertylineUrban2,
+                                                                                                                                                                                                              ifelse(Dimension ==8, 4.7*PovertylineUrban2, ifelse(Dimension ==9, 5.2*PovertylineUrban2, 
+                                                                                                                                                                                                                                                                  ifelse(Dimension ==10, 5.7*PovertylineUrban2, ifelse(Dimension ==11, 6.2*PovertylineUrban2,
+                                                                                                                                                                                                                                                                                                                       ifelse(Dimension ==14, 7.7*PovertylineUrban2, ifelse(Dimension ==15, 8.2*PovertylineUrban2, 
+                                                                                                                                                                                                                                                                                                                                                                            ifelse(Dimension ==16, 8.7*PovertylineUrban2, ifelse(Dimension ==17, 9.2*PovertylineUrban2,
+                                                                                                                                                                                                                                                                                                                                                                                                                                 ifelse(Dimension ==18, 9.7*PovertylineUrban2, ifelse(Dimension ==19, 10.2*PovertylineUrban2, ifelse(Dimension ==20, 10.7*PovertylineUrban2, NA))))))))))))))))))]
 
 #################################################
 #***Calculate Poverty Indexes
