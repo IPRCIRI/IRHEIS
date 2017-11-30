@@ -1,5 +1,5 @@
-# 22-HHMedical.R
-# Builds the Medical expenditures data.table for households
+# 23-HHBehdasht.R
+# Builds the Behdasht expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHMedical =====================================\n")
+cat("\n\n================ HHBehdasht =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -16,14 +16,14 @@ library(stringr)
 library(readxl)
 
 
-MedicalTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Medical))
+BehdashtTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Behdasht))
 
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  mt <- MedicalTables[Year==year]
+  mt <- BehdashtTables[Year==year]
   tab <- mt$Table
   if(is.na(tab))
     next
@@ -35,16 +35,17 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TM,n,names(mt)[x])
   }
-  pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
+  pcols <- intersect(names(TM),c("HHID","Code","Behdasht_Exp"))
   TM <- TM[,pcols,with=FALSE]
   #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
   if(year %in% 84:95){
-    TM[,Medical_Exp:=as.numeric(Medical_Exp)]
+    TM[,Behdasht_Exp:=as.numeric(Behdasht_Exp)]
   }
+  TM <- TM[Code %in% mt$StartCode:mt$EndCode]
   TM[,Code:=NULL]
   TM[is.na(TM)] <- 0
-  MedicalData <- TM[,lapply(.SD,sum),by=HHID]
-  save(MedicalData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Medicals.rda"))
+  BehdashtData <- TM[,lapply(.SD,sum),by=HHID]
+  save(BehdashtData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Behdashts.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

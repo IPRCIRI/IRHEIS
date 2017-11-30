@@ -52,64 +52,64 @@ library(data.table)
   load(file=paste0(Settings$HEISProcessedPath,"Y","95","Khoshkbars.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y","95","Foods.rda"))
 
-  MyFood<-merge(HHBase,GhandData,by =c("HHID"),all=FALSE)
+  MyFood<-merge(HHBase,GhandData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,HoboobatData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,HoboobatData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,RoghanData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,RoghanData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,BerenjData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,BerenjData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,NanData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,NanData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,GooshtData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,GooshtData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,MorghData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,MorghData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,MahiData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,MahiData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,ShirData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,ShirData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,MastData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,MastData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,PanirData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,PanirData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,TokhmemorghData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,TokhmemorghData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,MiveData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,MiveData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,SabziData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,SabziData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,MakarooniData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,MakarooniData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,SibzaminiData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,SibzaminiData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,ShiriniData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,ShiriniData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,KhoshkbarData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,KhoshkbarData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,BiscuitData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,BiscuitData,by =c("HHID"),all.x=TRUE)
   MyFood[,Grams:=NULL]
   MyFood[,Kilos:=NULL]
-  MyFood<-merge(MyFood,FoodData,by =c("HHID"),all=TRUE)
+  MyFood<-merge(MyFood,FoodData,by =c("HHID"),all.x=TRUE)
   
  # MyFood<-MyFood[Region== 'Urban' | Region== 'Rural']
   
@@ -144,6 +144,7 @@ library(data.table)
   MyFood[is.na(MyFood)] <- 0
   MyFood[, Daily_Calories := Reduce(`+`, .SD), .SDcols=22:40][] 
   
+  MyFood <- MyFood[Daily_Calories<100000] # arbitrary removal of outliers
  # MyFoodRural<-MyFood[(MyFood$Region=="Rural"),]
  # MyFoodUrban<-MyFood[(MyFood$Region=="Urban"),]
   

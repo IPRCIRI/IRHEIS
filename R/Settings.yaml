@@ -36,6 +36,7 @@ MDS_Shirini: Shirini
 MDS_Sabzi: Sabzi
 MDS_Cigar: CigarTables
 MDS_Medical: MedicalTables
+MDS_Behdasht: BehdashtTables
 MDS_Cloth: ClothTables
 MDS_Energy: EnergyTables
 MDS_Furniture: FurnitureTables
