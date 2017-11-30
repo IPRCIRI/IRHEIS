@@ -31,6 +31,7 @@ save(Weights95, file = paste0(Settings$HEISProcessedPath,"Weights95.rda"))
 
 #load Expenditure groups
 load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHBase.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHI.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y","95","Foods.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y","95","Cigars.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y","95","Cloths.rda"))
@@ -51,6 +52,7 @@ load(file=paste0(Settings$HEISProcessedPath,"Weights95.rda"))
 
 #merge Expenditure groups
 MyData<-merge(HHBase,Weights95 ,by =c("HHID"),all=TRUE)
+MyData<-merge(MyData,HHI ,by =c("HHID"),all=TRUE)
 MyData<-merge(MyData,FoodData,by =c("HHID"),all=TRUE)
 MyData<-merge(MyData,CigarData,by =c("HHID"),all=TRUE)
 MyData<-merge(MyData,ClothData,by =c("HHID"),all=TRUE)
@@ -71,23 +73,23 @@ MyData[is.na(MyData)] <- 0
 MyData<-MyData[Dimension!=0]
 
 #Calculate Per_Total Expenditures Monthly
-MyData[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=21:36][] 
-MyData[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=21:34][] 
-MyData[, Dimension_adjusted := ifelse(Dimension ==1, 1,
-                           ifelse(Dimension ==2, 1.7, ifelse(Dimension ==3,2.2,
-                           ifelse(Dimension ==4, 2.7, ifelse(Dimension ==5, 3.2, 
-                           ifelse(Dimension ==6, 3.7, ifelse(Dimension ==7, 4.2,
-                           ifelse(Dimension ==8, 4.7, ifelse(Dimension ==9, 5.2, 
-                           ifelse(Dimension ==10, 5.7, ifelse(Dimension ==11, 6.2,
-                           ifelse(Dimension ==12, 6.7, ifelse(Dimension ==13, 7.2, 
-                           ifelse(Dimension ==14, 7.7, ifelse(Dimension ==15, 8.2, 
-                           ifelse(Dimension ==16, 8.7, ifelse(Dimension ==17, 9.2,
-ifelse(Dimension ==18, 9.7, ifelse(Dimension ==19, 10.2, ifelse(Dimension ==20, 10.7, NA))))))))))))))))))))]
+MyData[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=45:60][] 
+MyData[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=45:58][] 
+#MyData[, EqSizeRevOECD := ifelse(Dimension ==1, 1,
+                          # ifelse(Dimension ==2, 1.7, ifelse(Dimension ==3,2.2,
+                          # ifelse(Dimension ==4, 2.7, ifelse(Dimension ==5, 3.2, 
+                          # ifelse(Dimension ==6, 3.7, ifelse(Dimension ==7, 4.2,
+                          # ifelse(Dimension ==8, 4.7, ifelse(Dimension ==9, 5.2, 
+                          # ifelse(Dimension ==10, 5.7, ifelse(Dimension ==11, 6.2,
+                          # ifelse(Dimension ==12, 6.7, ifelse(Dimension ==13, 7.2, 
+                          # ifelse(Dimension ==14, 7.7, ifelse(Dimension ==15, 8.2, 
+                          # ifelse(Dimension ==16, 8.7, ifelse(Dimension ==17, 9.2,
+#ifelse(Dimension ==18, 9.7, ifelse(Dimension ==19, 10.2, ifelse(Dimension ==20, 10.7, NA))))))))))))))))))))]
 
 
-MyData$Total_Exp_Month_Per<-MyData$Total_Exp_Month/MyData$Dimension_adjusted
-MyData$Total_Exp_Month_Per_nondurable<-MyData$Total_Exp_Month_nondurable/MyData$Dimension_adjusted
-MyData$FoodExpenditure_Per<-MyData$FoodExpenditure/MyData$Dimension_adjusted
+MyData$Total_Exp_Month_Per<-MyData$Total_Exp_Month/MyData$EqSizeRevOECD
+MyData$Total_Exp_Month_Per_nondurable<-MyData$Total_Exp_Month_nondurable/MyData$EqSizeRevOECD
+MyData$FoodExpenditure_Per<-MyData$FoodExpenditure/MyData$EqSizeRevOECD
 
 #Seperate Urban & Rural data
 MyDataRural<-MyData[(MyData$Region=="Rural"),]
@@ -262,24 +264,24 @@ Rural_Poor_Index1<-Rural_Poor_Pop/Rural_Pop
 Urban_Poor_Index1<-Urban_Poor_Pop/Urban_Pop
 ###
 #Calculate nesbat shekafe daramadi (shedate faghr)
-Average_Expenditure_Poors_Rural<-weighted.mean(Rural_Poor$Total_Exp_Month_Per,Rural_Poor$Weight)
-Shekaf_Rural2<-PovertylineRural2-Average_Expenditure_Poors_Rural
-Rural_Poor_Index2<-Shekaf_Rural2/PovertylineRural2
+#Average_Expenditure_Poors_Rural<-weighted.mean(Rural_Poor$Total_Exp_Month_Per,Rural_Poor$Weight)
+#Shekaf_Rural2<-PovertylineRural2-Average_Expenditure_Poors_Rural
+#Rural_Poor_Index2<-Shekaf_Rural2/PovertylineRural2
 
-Average_Expenditure_Poorss_Urban<-weighted.mean(Urban_Poor$Total_Exp_Month_Per,Urban_Poor$Weight)
-Shekaf_Urban2<-PovertylineUrban2-Average_Expenditure_Poorss_Urban
-Urban_Poor_Index2<-Shekaf_Urban2/PovertylineUrban2
+#Average_Expenditure_Poorss_Urban<-weighted.mean(Urban_Poor$Total_Exp_Month_Per,Urban_Poor$Weight)
+#Shekaf_Urban2<-PovertylineUrban2-Average_Expenditure_Poorss_Urban
+#Urban_Poor_Index2<-Shekaf_Urban2/PovertylineUrban2
 
 #Calculate Foster Index
-Rural_Poor$Shekaf_Rural3<-PovertylineRural2-Rural_Poor$Total_Exp_Month_Per
-Rural_Poor$Shekaf_Rural3<-(Rural_Poor$Shekaf_Rural3)^2*(Rural_Poor$Weight)
-Shekaf_Rural3<-sum(Rural_Poor$Shekaf_Rural3)
-Rural_Poor_Index3<-Shekaf_Rural3/((Rural_Poor_Pop*(PovertylineRural2)^2))
+#Rural_Poor$Shekaf_Rural3<-PovertylineRural2-Rural_Poor$Total_Exp_Month_Per
+#Rural_Poor$Shekaf_Rural3<-(Rural_Poor$Shekaf_Rural3)^2*(Rural_Poor$Weight)
+#Shekaf_Rural3<-sum(Rural_Poor$Shekaf_Rural3)
+#Rural_Poor_Index3<-Shekaf_Rural3/((Rural_Poor_Pop*(PovertylineRural2)^2))
 
-Urban_Poor$Shekaf_Urban3<-PovertylineUrban2-Urban_Poor$Total_Exp_Month_Per
-Urban_Poor$Shekaf_Urban3<-(Urban_Poor$Shekaf_Urban3)^2*(Urban_Poor$Weight)
-Shekaf_Urban3<-sum(Urban_Poor$Shekaf_Urban3)
-Urban_Poor_Index3<-Shekaf_Urban3/((Urban_Poor_Pop*(PovertylineUrban2)^2))
+#Urban_Poor$Shekaf_Urban3<-PovertylineUrban2-Urban_Poor$Total_Exp_Month_Per
+#Urban_Poor$Shekaf_Urban3<-(Urban_Poor$Shekaf_Urban3)^2*(Urban_Poor$Weight)
+#Shekaf_Urban3<-sum(Urban_Poor$Shekaf_Urban3)
+#Urban_Poor_Index3<-Shekaf_Urban3/((Urban_Poor_Pop*(PovertylineUrban2)^2))
 
 ###Aditional
 # aggregate(MyDataRural$Dimension, by=list(MyDataRural$Per_Daily_Calories < 2000), FUN=sum)
@@ -313,6 +315,97 @@ Urban_Poor_Index3<-Shekaf_Urban3/((Urban_Poor_Pop*(PovertylineUrban2)^2))
 # MyData[,.(Average_Calories=mean(Per_Daily_Calories)), by=decile]
 # tapply(MyData$Per_Daily_Calories, MyData$decile, mean)
 # aggregate( Per_Daily_Calories ~ percentile, MyData, mean )
+
+DRR1<-subset(MyDataRural2, Dimension==1)
+mean(DRR1$Poverty_line_dimensions)
+
+DRR2<-subset(MyDataRural2, Dimension==2)
+mean(DRR2$Poverty_line_dimensions)
+
+DRR3<-subset(MyDataRural2, Dimension==3)
+mean(DRR3$Poverty_line_dimensions)
+
+DRR4<-subset(MyDataRural2, Dimension==4)
+mean(DRR4$Poverty_line_dimensions)
+
+DRR5<-subset(MyDataRural2, Dimension==5)
+mean(DRR5$Poverty_line_dimensions)
+
+DRR6<-subset(MyDataRural2, Dimension==6)
+mean(DRR6$Poverty_line_dimensions)
+
+DRR7<-subset(MyDataRural2, Dimension==7)
+mean(DRR7$Poverty_line_dimensions)
+
+DRR8<-subset(MyDataRural2, Dimension==8)
+mean(DRR8$Poverty_line_dimensions)
+
+DRR9<-subset(MyDataRural2, Dimension==9)
+mean(DRR9$Poverty_line_dimensions)
+
+DRR10<-subset(MyDataRural2, Dimension==10)
+mean(DRR10$Poverty_line_dimensions)
+
+DRR11<-subset(MyDataRural2, Dimension==11)
+mean(DRR11$Poverty_line_dimensions)
+
+DRR12<-subset(MyDataRural2, Dimension==12)
+mean(DRR12$Poverty_line_dimensions)
+
+DRR13<-subset(MyDataRural2, Dimension==13)
+mean(DRR13$Poverty_line_dimensions)
+
+DRR14<-subset(MyDataRural2, Dimension==14)
+mean(DRR14$Poverty_line_dimensions)
+
+DRR15<-subset(MyDataRural2, Dimension==15)
+mean(DRR15$Poverty_line_dimensions)
+
+DRR16<-subset(MyDataRural2, Dimension==16)
+mean(DRR16$Poverty_line_dimensions)
+
+DRR17<-subset(MyDataRural2, Dimension==17)
+mean(DRR17$Poverty_line_dimensions)
+
+DRR18<-subset(MyDataRural2, Dimension==18)
+mean(DRR18$Poverty_line_dimensions)
+
+DRR19<-subset(MyDataRural2, Dimension==19)
+mean(DRR19$Poverty_line_dimensions)
+
+DRR20<-subset(MyDataRural2, Dimension==2)
+mean(DRR20$Poverty_line_dimensions)
+
+###########
+DUU1<-subset(MyDataUrban2, Dimension==1)
+mean(DUU1$Poverty_line_dimensions)
+
+DUU2<-subset(MyDataUrban2, Dimension==2)
+mean(DUU2$Poverty_line_dimensions)
+
+DUU3<-subset(MyDataUrban2, Dimension==3)
+mean(DUU3$Poverty_line_dimensions)
+
+DUU4<-subset(MyDataUrban2, Dimension==4)
+mean(DUU4$Poverty_line_dimensions)
+
+DUU5<-subset(MyDataUrban2, Dimension==5)
+mean(DUU5$Poverty_line_dimensions)
+
+DUU6<-subset(MyDataUrban2, Dimension==6)
+mean(DUU6$Poverty_line_dimensions)
+
+DUU7<-subset(MyDataUrban2, Dimension==7)
+mean(DUU7$Poverty_line_dimensions)
+
+DUU8<-subset(MyDataUrban2, Dimension==8)
+mean(DUU8$Poverty_line_dimensions)
+
+DUU9<-subset(MyDataUrban2, Dimension==9)
+mean(DUU9$Poverty_line_dimensions)
+
+DUU10<-subset(MyDataUrban2, Dimension==10)
+mean(DUU10$Poverty_line_dimensions)
 
 
 save(MyDataRural, file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataRural.rda"))
