@@ -73,8 +73,8 @@ MyData[is.na(MyData)] <- 0
 MyData<-MyData[Dimension!=0]
 
 #Calculate Per_Total Expenditures Monthly
-MyData[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=45:60][] 
-MyData[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=45:58][] 
+MyData[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(45:57,59:60)][] 
+MyData[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=45:57][] 
 #MyData[, EqSizeRevOECD := ifelse(Dimension ==1, 1,
                           # ifelse(Dimension ==2, 1.7, ifelse(Dimension ==3,2.2,
                           # ifelse(Dimension ==4, 2.7, ifelse(Dimension ==5, 3.2, 
