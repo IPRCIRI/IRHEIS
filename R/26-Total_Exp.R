@@ -116,24 +116,52 @@ MyDataUrban<-MyData[(MyData$Region=="Urban"),]
 #wtd.quantile (MyDataRural$Total_Exp_Month_Per, q=0.5, na.rm = FALSE, Weight=FALSE)
 
 #Sort Expenditure data
-MyDataRural<- MyDataRural[with(MyDataRural, order(Total_Exp_Month_Per_nondurable)), ]
-MyDataUrban<- MyDataUrban[with(MyDataUrban, order(Total_Exp_Month_Per_nondurable)), ]
+MyDataRural<- MyDataRural[order(Total_Exp_Month_Per_nondurable)]
+MyDataUrban<- MyDataUrban[order(Total_Exp_Month_Per_nondurable)]
 
 #Calculate cumulative weights
 sum(MyDataRural$Weight)
 sum(MyDataUrban$Weight)
 MyDataRural$cumweight <- cumsum(MyDataRural$Weight)
 MyDataUrban$cumweight <- cumsum(MyDataUrban$Weight)
-
-
+rx <- max(MyDataRural$cumweight)
+ux <- max(MyDataUrban$cumweight)
 #Calculate deciles by weights
-MyDataRural$decile<-findInterval(MyDataRural$Total_Exp_Month_Per_nondurable,  wtd.quantile(MyDataRural$Total_Exp_Month_Per_nondurable, weights=MyDataRural$Weight, probs=1:10/10, 
-                                                                                normwt=TRUE, na.rm=TRUE), left.open=T)
-MyDataRural$decile<- MyDataRural$decile+1
 
-MyDataUrban$decile<-findInterval(MyDataUrban$Total_Exp_Month_Per_nondurable, wtd.quantile(MyDataUrban$Total_Exp_Month_Per_nondurable, weights=MyDataUrban$Weight, probs=1:10/10, 
-                                                                               normwt=TRUE, na.rm=TRUE), left.open=T)
-MyDataUrban$decile<- MyDataUrban$decile+1
+MyDataRural[,Decile:=cut(cumweight,breaks = seq(0,rx,rx/10),labels = 1:10)]
+MyDataRural[,Percentile:=cut(cumweight,breaks=seq(0,rx,rx/100),labels=1:100)]
+
+MyDataUrban[,Decile:=cut(cumweight,breaks = seq(0,ux,ux/10),labels = 1:10)]
+MyDataUrban[,Percentile:=cut(cumweight,breaks=seq(0,ux,ux/100),labels=1:100)]
+
+
+
+
+# MyDataRural$decile<-findInterval(MyDataRural$Total_Exp_Month_Per_nondurable,  wtd.quantile(MyDataRural$Total_Exp_Month_Per_nondurable, weights=MyDataRural$Weight, probs=1:10/10, 
+#                                                                                 normwt=TRUE, na.rm=TRUE), left.open=T)
+# MyDataRural$decile<- MyDataRural$decile+1
+
+
+# MyDataUrban$decile<-findInterval(MyDataUrban$Total_Exp_Month_Per_nondurable, wtd.quantile(MyDataUrban$Total_Exp_Month_Per_nondurable, weights=MyDataUrban$Weight, probs=1:10/10, 
+#                                                                                normwt=TRUE, na.rm=TRUE), left.open=T)
+# MyDataUrban$decile<- MyDataUrban$decile+1
+
+
+
+#load and merge calories data  
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Rural.rda"))
+MyDataRural<-merge(MyDataRural,MyFoodRural,by =c("HHID"),all.x=TRUE)
+MyDataRural[,Per_Daily_Calories:=Daily_Calories/Size]
+
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Urban.rda"))
+MyDataUrban<-merge(MyDataUrban,MyFoodUrban,by =c("HHID"),all.x=TRUE)
+MyDataUrban[,Per_Daily_Calories:=Daily_Calories/Size]
+
+
+MyDataRural[,.(mean(Per_Daily_Calories, na.rm = TRUE),mean(Total_Exp_Month_Per)),by=Percentile][order(Percentile),]
+MyDataUrban[,.(mean(Per_Daily_Calories, na.rm = TRUE),mean(Total_Exp_Month_Per)),by=Percentile][order(Percentile),]
+
+
 
 # average per_Expenditures per decile
 MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_per_Expenditures_decile=weighted.mean(Total_Exp_Month_Per_nondurable,Weight)),by=.(decile)], by="decile")
@@ -144,15 +172,7 @@ MyDataRural <- merge(MyDataRural, MyDataRural[,.(Average_per_FoodExpenditures_de
 MyDataUrban <- merge(MyDataUrban, MyDataUrban[,.(Average_per_FoodExpenditures_decile=weighted.mean(FoodExpenditure_Per,Weight)),by=.(decile)], by="decile")
 
 
-#load and merge calories data  
-load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Rural.rda"))
-MyDataRural<-merge(MyDataRural,MyFoodRural,by =c("HHID"),all=TRUE)
-MyDataRural$Per_Daily_Calories<-MyDataRural$Daily_Calories/MyDataRural$Dimension
-
-load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Urban.rda"))
-MyDataUrban<-merge(MyDataUrban,MyFoodUrban,by =c("HHID"),all=TRUE)
-MyDataUrban$Per_Daily_Calories<-MyDataUrban$Daily_Calories/MyDataUrban$Dimension
-
+#### 
 MyDataRural <-subset(MyDataRural,Per_Daily_Calories>0)
 MyDataUrban <-subset(MyDataUrban,Per_Daily_Calories>0)
 
