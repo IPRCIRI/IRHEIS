@@ -3,3 +3,4 @@
 2x Expenditures
 3x Income
 4x Loans and Finance
+5x Poverty
