@@ -14,7 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 
 # TODO: set this in settings:
 MinCalories <- 2100
-
+MinCalories2 <- MinCalories^2
 # library(readxl)
 # library(reldist)
 # library(Hmisc)
@@ -30,31 +30,44 @@ load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataUrban.rda"))
 d <- MyDataRural[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,Weight)]
 setnames(d,c("pct","cal","exp","ndx","w"))
 dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=pct]
-dx2 <- dx[pct>3 & pct<50]
+#dx2 <- dx[pct>3 & pct<50]
+dx2 <- dx [pct<86]
 
 plot(cal~exp,data=dx)
 plot(cal~exp,data=dx2)
 
-model <- lm(exp ~ cal, weights = w, data=dx2)
-RuralPovLine <- predict(object = model, newdata = data.table(pct=NA,cal=MinCalories,exp=NA,ndx=NA,w=NA))[[1]]
+dx$cal2<-dx$cal^2
+dx2$cal2<-dx2$cal^2
 
+model <- lm(exp ~ cal + cal2 , weights = w, data=dx)
+RuralPovLine <- predict(object = model, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataRural[,PovLine:=RuralPovLine]
 
+model2 <- lm(exp ~ cal + cal2 , weights = w, data=dx2)
+RuralPovLine85 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+MyDataRural[,PovLine85:=RuralPovLine]
 
 # calculate Urban Pov Line based on MinCalories
 
 d <- MyDataUrban[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,Weight)]
 setnames(d,c("pct","cal","exp","ndx","w"))
 dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=pct]
-dx2 <- dx[pct>3 & pct<50]
+#dx2 <- dx[pct>3 & pct<50]
+dx2 <- dx [pct<86]
 
 plot(cal~exp,data=dx)
 plot(cal~exp,data=dx2)
 
-model <- lm(exp ~ cal, weights = w, data=dx2)
-UrbanPovLine <- predict(object = model, newdata = data.table(pct=NA,cal=MinCalories,exp=NA,ndx=NA,w=NA))[[1]]
+dx$cal2<-dx$cal^2
+dx2$cal2<-dx2$cal^2
 
+model <- lm(exp ~ cal + cal2 , weights = w, data=dx)
+UrbanPovLine <- predict(object = model, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataUrban[,PovLine:=UrbanPovLine]
+
+model2 <- lm(exp ~ cal + cal2 , weights = w, data=dx2)
+UrbanPovLine85 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+MyDataUrban[,PovLine85:=UrbanPovLine]
 
 
 ####### Pov HCR ======================= 
@@ -70,13 +83,22 @@ MyDataRural[,weighted.mean(Poor,Weight*Size)]
 MyDataUrban[,weighted.mean(Poor,Weight*Size)]
 rbind(MyDataRural,MyDataUrban)[,weighted.mean(Poor,Weight*Size)]
 
-MyDataRural[,sum(Weight)*6070547/6412096,by=Poor]
-MyDataUrban[,sum(Weight)*18125488/18441908,by=Poor]
-rbind(MyDataRural,MyDataUrban)[,sum(Weight)*24196035/24854004,by=.(Poor)]
+rxi <-sum(MyDataRural$Weight*MyDataRural$Size)
+uxi <-sum(MyDataUrban$Weight*MyDataUrban$Size)
+rx <- max(MyDataRural$cumweight)
+ux <- max(MyDataUrban$cumweight)
 
+rpi<-20730625
+upi<-59146847
+rp<-6070547
+up<-18125488
 
-MyDataRural[,sum(Weight*Size)*20730625/23402014,by=Poor]
-MyDataUrban[,sum(Weight*Size)*59146847/63183262,by=Poor]
-rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Weight*Size)*79926270/86585276]
+MyDataRural[,sum(Weight)*rp/rx,by=Poor]
+MyDataUrban[,sum(Weight)*up/ux,by=Poor]
+rbind(MyDataRural,MyDataUrban)[,sum(Weight)*(rp+up)/(rx+ux),by=.(Poor)]
 
-rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Weight*Size)*79926270/86585276,by=ProvinceCode]
+MyDataRural[,sum(Weight*Size)*rpi/rxi,by=Poor]
+MyDataUrban[,sum(Weight*Size)*upi/uxi,by=Poor]
+rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Weight*Size)*(rpi+upi)/(rxi+uxi)]
+
+rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Weight*Size)*(rpi+upi)/(rxi+uxi),by=ProvinceCode]
