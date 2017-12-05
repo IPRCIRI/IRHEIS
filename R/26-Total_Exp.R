@@ -134,6 +134,14 @@ MyDataRural[,Percentile:=cut(cumweight,breaks=seq(0,rx,rx/100),labels=1:100)]
 MyDataUrban[,Decile:=cut(cumweight,breaks = seq(0,ux,ux/10),labels = 1:10)]
 MyDataUrban[,Percentile:=cut(cumweight,breaks=seq(0,ux,ux/100),labels=1:100)]
 
+#Report tables for deciles
+MyDataRural[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight),by=Decile]
+MyDataRural[,weighted.mean(Total_Exp_Month_Per,Weight),by=Decile]
+MyDataUrban[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight),by=Decile]
+MyDataUrban[,weighted.mean(Total_Exp_Month_Per,Weight),by=Decile]
+
+MyDataRural[,weighted.mean(FoodExpenditure_Per,Weight),by=Decile]
+MyDataUrban[,weighted.mean(FoodExpenditure_Per,Weight),by=Decile]
 
 
 
@@ -157,6 +165,21 @@ load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Urban.rda"))
 MyDataUrban<-merge(MyDataUrban,MyFoodUrban,by =c("HHID"),all.x=TRUE)
 MyDataUrban[,Per_Daily_Calories:=Daily_Calories/Size]
 
+#For report tables
+MyDataRural[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=Decile]
+MyDataUrban[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=Decile]
+
+MyDataRural[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=ProvinceCode]
+MyDataUrban[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=ProvinceCode]
+
+MyDataRural[,weighted.mean(FoodExpenditure_Per/Total_Exp_Month_Per,Weight,na.rm = TRUE),by=ProvinceCode]
+MyDataUrban[,weighted.mean(FoodExpenditure_Per/Total_Exp_Month_Per,Weight,na.rm = TRUE),by=ProvinceCode]
+
+MyDataRural[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=ProvinceCode]
+MyDataUrban[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=ProvinceCode]
+
+MyDataRural[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight),by=ProvinceCode]
+MyDataUrban[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight),by=ProvinceCode]
 
 save(MyDataRural, file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataRural.rda"))
 save(MyDataUrban, file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataUrban.rda"))
