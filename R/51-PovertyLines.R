@@ -101,4 +101,5 @@ MyDataRural[,sum(Weight*Size)*rpi/rxi,by=Poor]
 MyDataUrban[,sum(Weight*Size)*upi/uxi,by=Poor]
 rbind(MyDataRural,MyDataUrban)[,sum(Weight*Size)*(rpi+upi)/(rxi+uxi),by=.(Poor)]
 
+rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Weight)*(rp+up)/(rx+ux),by=ProvinceCode]
 rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Weight*Size)*(rpi+upi)/(rxi+uxi),by=ProvinceCode]
