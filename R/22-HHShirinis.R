@@ -39,7 +39,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-    TF[,ShiriniExpenditure:=as.numeric(ShiriniExpenditure)]
+    TF[,Grams:=as.numeric(Grams)]
+    TF[,Kilos:=as.numeric(Kilos)]
   }
   
   TF[,Code:=NULL]

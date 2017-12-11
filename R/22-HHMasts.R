@@ -39,7 +39,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:94){
-    TF[,MastExpenditure:=as.numeric(MastExpenditure)]
+    TF[,Grams:=as.numeric(Grams)]
+    TF[,Kilos:=as.numeric(Kilos)]
   }
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
