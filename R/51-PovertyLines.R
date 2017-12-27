@@ -108,7 +108,10 @@ rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Weight*Size)*(rpi+upi)/(rxi+uxi),by=P
 MyDataRural[,Welfare0:= ifelse(Poor==1,Total_Exp_Month/Total_Exp_Month_Per*PovLine85-Total_Exp_Month,0)]
 MyDataUrban[,Welfare0:= ifelse(Poor==1,Total_Exp_Month/Total_Exp_Month_Per*PovLine85-Total_Exp_Month,0)]
 
-MyDataRural[,sum(Welfare0*Weight),by=Poor]
-MyDataUrban[,sum(Welfare0*Weight),by=Poor]
-rbind(MyDataRural,MyDataUrban)[,sum(Welfare0*Weight),by=.(Poor)]
+ZaribTabdil <- 1.2/1e9*1.1*1.1*1.02 # Month Rial to Year Toman/Millard*inflation96*inflation97*pop growth
+MyDataRural[Poor==1,sum(Welfare0*Weight)*rpi/rxi*ZaribTabdil]
+MyDataUrban[Poor==1,sum(Welfare0*Weight)*upi/uxi*ZaribTabdil]
+rbind(MyDataRural,MyDataUrban)[Poor==1,sum(Welfare0*Weight)*(rpi+upi)/(rxi+uxi)*ZaribTabdil]
 
+MyDataRural[Poor==1,.(Line=mean(PovLine85*EqSizeRevOECD),Count=sum(Weight)),by=Size][order(Size)]
+MyDataUrban[Poor==1,.(Line=mean(PovLine85*EqSizeRevOECD),Count=sum(Weight)),by=Size][order(Size)]
