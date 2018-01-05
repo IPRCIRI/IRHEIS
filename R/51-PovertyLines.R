@@ -26,6 +26,24 @@ load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataRural.rda"))
 load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataUrban.rda"))
 
 
+
+# Explore the Expenditures-Calories Relationship
+
+D <- rbind(MyDataRural,MyDataUrban)
+D[,Ost := factor(ProvinceCode)]
+D[,Geo5 := factor(floor(HHID/1e6))]
+
+smoothScatter(log(MyDataUrban$Total_Exp_Month_Per),log(MyDataUrban$Per_Daily_Calories))
+
+summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Region, weights = Weight, data=D))
+summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Ost * Region, weights = Weight, data=D))
+summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Geo5, weights = Weight, data=D))
+
+DSub <- D[as.integer(Percentile) %in% 10:50]
+
+summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Region, weights = Weight, data=DSub))
+summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Ost * Region, weights = Weight, data=DSub))
+summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Geo5, weights = Weight, data=DSub))
 # calculate Rural Pov Line based on MinCalories
 
 d <- MyDataRural[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,Weight)]
