@@ -32,6 +32,33 @@ load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataUrban.rda"))
 
 ######### calculate Rural Pov Line #########
 ###Rural-all
+#Sort Province and Expenditure data
+Rur <- MyDataRural[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,ProvinceCode,Weight)]
+Urb <- MyDataUrban[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,ProvinceCode,Weight)]
+
+
+Rur<- Rur[order(ProvinceCode,Total_Exp_Month_Per_nondurable)]
+Urb<- Urb[order(ProvinceCode,Total_Exp_Month_Per_nondurable)]
+
+
+#Calculate cumulative weights
+#ProvweightRural<-aggregate(Rur$Weight, by=list(Rur$ProvinceCode), FUN=sum)
+#ProvweightUrban<-aggregate(Urb$Weight, by=list(Urb$ProvinceCode), FUN=sum)
+
+Rur$cumWeightProv <-ave(Rur$Weight, Rur$ProvinceCode, FUN=cumsum)
+Urb$cumWeightProv <-ave(Urb$Weight, Urb$ProvinceCode, FUN=cumsum)
+
+#rx<-aggregate(Rur$cumWeight, by=list(Rur$ProvinceCode), FUN=max)
+#ux<-aggregate(Urb$cumWeight, by=list(Urb$ProvinceCode), FUN=max)
+
+Rur$rx<-ave(Rur$cumWeight, by=list(Rur$ProvinceCode), FUN=max)
+Urb$ux<-ave(Urb$cumWeight, by=list(Urb$ProvinceCode), FUN=max)
+
+#Calculate percentiles by weights in provinces
+#Rur[,ProvPercentile:=cut(Rur$cumWeight,breaks=seq(0,rx,rx/100),labels=1:100)]
+#Urb[,ProvPercentile:=cut(Urb$cumWeight,breaks=seq(0,ux,ux/100),labels=1:100)]
+
+
 d <- MyDataRural[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,ProvinceCode,Weight)]
 setnames(d,c("pct","cal","exp","ndx","prov","w"))
 d2 <- d [pct<86]
@@ -43,21 +70,24 @@ plot(log(cal)~log(exp),data=d2)
 d$cal2<-d$cal^2
 d2$cal2<-d2$cal^2
 
+dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=pct]
+dx2 <- d2[,lapply(.SD, mean, na.rm=TRUE),by=pct]
+
 #Rural-nonlog
-model1 <- lm(exp ~ cal + cal2 , weights = w, data=d)
+model1 <- lm(exp ~ cal + cal2 , weights = w, data=dx)
 summary(model1)
 RuralPovLine1 <- predict(object = model1, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataRural[,PovLine1:=RuralPovLine1]
 
 #Rural-nonlog with prov dummy
-model2 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=d)
+model2 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=dx)
 summary(model2)
 RuralPovLine2 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataRural[,PovLine2:=RuralPovLine2]
 
 #Rural-log
 d<-d[cal!=0]
-model3 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=d)
+model3 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=dx)
 summary(model3)
 RuralPovLine3 <- predict(object = model3, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine3<-exp(RuralPovLine3)
@@ -65,7 +95,7 @@ MyDataRural[,PovLine3:=RuralPovLine3]
 
 #Rural-log with prov dummy
 d<-d[cal!=0]
-model4 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=d)
+model4 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=dx)
 summary(model4)
 RuralPovLine4 <- predict(object = model4, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine4<-exp(RuralPovLine4)
@@ -73,20 +103,20 @@ MyDataRural[,PovLine4:=RuralPovLine4]
 
 ###Rural-85percent
 #Rural-nonlog
-model5 <- lm(exp ~ cal + cal2 , weights = w, data=d2)
+model5 <- lm(exp ~ cal + cal2 , weights = w, data=dx2)
 summary(model5)
 RuralPovLine1_2 <- predict(object = model5, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataRural[,PovLine5:=RuralPovLine1_2]
 
 #Rural-nonlog with prov dummy
-model6 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=d2)
+model6 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=dx2)
 summary(model6)
 RuralPovLine2_2 <- predict(object = model6, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataRural[,PovLine6:=RuralPovLine2_2]
 
 #Rural-log
 d2<-d2[cal!=0]
-model7 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=d2)
+model7 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=dx2)
 summary(model7)
 RuralPovLine3_2 <- predict(object = model7, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine3_2<-exp(RuralPovLine3_2)
@@ -94,7 +124,7 @@ MyDataRural[,PovLine7:=RuralPovLine3_2]
 
 #Rural-log with prov dummy
 d2<-d2[cal!=0]
-model8 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=d2)
+model8 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=dx2)
 summary(model8)
 RuralPovLine4_2 <- predict(object = model8, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine4_2<-exp(RuralPovLine4_2)
@@ -113,21 +143,24 @@ plot(log(cal)~log(exp),data=d2)
 d$cal2<-d$cal^2
 d2$cal2<-d2$cal^2
 
+dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=pct]
+dx2 <- d2[,lapply(.SD, mean, na.rm=TRUE),by=pct]
+
 #Urban-nonlog
-model1 <- lm(exp ~ cal + cal2 , weights = w, data=d)
+model1 <- lm(exp ~ cal + cal2 , weights = w, data=dx)
 summary(model1)
 UrbanPovLine1 <- predict(object = model1, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataUrban[,PovLine1:=UrbanPovLine1]
 
 #Urban-nonlog with prov dummy
-model2 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=d)
+model2 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=dx)
 summary(model2)
 UrbanPovLine2 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataUrban[,PovLine2:=UrbanPovLine2]
 
 #Urban-log
 d<-d[cal!=0]
-model3 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=d)
+model3 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=dx)
 summary(model3)
 UrbanPovLine3 <- predict(object = model3, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 UrbanPovLine3<-exp(UrbanPovLine3)
@@ -135,7 +168,7 @@ MyDataUrban[,PovLine3:=UrbanPovLine3]
 
 #Urban-log with prov dummy
 d<-d[cal!=0]
-model4 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=d)
+model4 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=dx)
 summary(model4)
 UrbanPovLine4 <- predict(object = model4, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 UrbanPovLine4<-exp(UrbanPovLine4)
@@ -143,20 +176,20 @@ MyDataUrban[,PovLine4:=UrbanPovLine4]
 
 ###Urban-85percent
 #Urban-nonlog
-model5 <- lm(exp ~ cal + cal2 , weights = w, data=d2)
+model5 <- lm(exp ~ cal + cal2 , weights = w, data=dx2)
 summary(model5)
 UrbanPovLine1_2 <- predict(object = model5, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataUrban[,PovLine5:=UrbanPovLine1_2]
 
 #Urban-nonlog with prov dummy
-model6 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=d2)
+model6 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=dx2)
 summary(model6)
 UrbanPovLine2_2 <- predict(object = model6, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataUrban[,PovLine6:=UrbanPovLine2_2]
 
 #Urban-log
 d2<-d2[cal!=0]
-model7 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=d2)
+model7 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=dx2)
 summary(model7)
 UrbanPovLine3_2 <- predict(object = model7, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 UrbanPovLine3_2<-exp(UrbanPovLine3_2)
@@ -164,7 +197,7 @@ MyDataUrban[,PovLine7:=UrbanPovLine3_2]
 
 #Urban-log with prov dummy
 d2<-d2[cal!=0]
-model8 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=d2)
+model8 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=dx2)
 summary(model8)
 UrbanPovLine4_2 <- predict(object = model8, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=10,exp=NA,ndx=NA,w=NA))[[1]]
 UrbanPovLine4_2<-exp(UrbanPovLine4_2)
@@ -172,7 +205,7 @@ MyDataUrban[,PovLine8:=UrbanPovLine4_2]
 
 
 ####### Pov HCR ======================= 
-MyDataRural[,Poor:=ifelse(Total_Exp_Month_Per<PovLine2,1,0)]
+MyDataRural[,Poor:=ifelse(Total_Exp_Month_Per<PovLine1,1,0)]
 MyDataUrban[,Poor:=ifelse(Total_Exp_Month_Per<PovLine2,1,0)]
 
 MyDataRural[,weighted.mean(Poor,Weight)]
