@@ -19,36 +19,36 @@ library(dplyr)
 library(data.table)
 
 
-for(year in (Settings$startyear:Settings$endyear)){
- cat(paste0("\n------------------------------\nYear:",year,"\n"))
+#for(year in (Settings$startyear:Settings$endyear)){
+ #cat(paste0("\n------------------------------\nYear:",year,"\n"))
 #load weight file
 load("AllWeights.rda")
-Weights<-AllWeights[Year==year]
+Weights<-AllWeights[Year=="95"]
 Weights[,HHID:=as.numeric(HHID)]
 Weights[,Weight:=as.numeric(Weight)]
 Weights[,Year:=NULL]
-save(Weights, file = paste0(Settings$HEISProcessedPath,"Y",year,"Weights.rda"))
+save(Weights, file = paste0(Settings$HEISProcessedPath,"Y","95","Weights.rda"))
 
 #load Expenditure groups
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Cigars.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Cloths.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Amusements.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Communications.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Education.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Energy.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Furnitures.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Hotels.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Medicals.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Behdashts.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Transportations.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Others.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Investments.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Weights.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHBase.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHI.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Foods.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Cigars.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Cloths.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Amusements.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Communications.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Durables.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Education.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Energy.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Furnitures.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Hotels.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","House.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Medicals.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Behdashts.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Transportations.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Others.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Investments.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Weights.rda"))
 
 #merge Expenditure groups
 MyData<-merge(HHBase,Weights ,by =c("HHID"),all=TRUE)
@@ -157,11 +157,11 @@ MyDataUrban[,weighted.mean(FoodExpenditure_Per,Weight),by=Decile]
 
 
 #load and merge calories data  
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Rural.rda"))
 MyDataRural<-merge(MyDataRural,MyFoodRural,by =c("HHID"),all.x=TRUE)
 MyDataRural[,Per_Daily_Calories:=Daily_Calories/Size]
 
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Food_Calories_Urban.rda"))
 MyDataUrban<-merge(MyDataUrban,MyFoodUrban,by =c("HHID"),all.x=TRUE)
 MyDataUrban[,Per_Daily_Calories:=Daily_Calories/Size]
 
@@ -181,8 +181,8 @@ MyDataUrban[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=ProvinceCo
 MyDataRural[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight),by=ProvinceCode]
 MyDataUrban[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight),by=ProvinceCode]
 
-save(MyDataRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"MyDataRural.rda"))
-save(MyDataUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"MyDataUrban.rda"))
+save(MyDataRural, file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataRural.rda"))
+save(MyDataUrban, file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataUrban.rda"))
 
 
 # # average per_Expenditures per decile
@@ -449,7 +449,7 @@ save(MyDataUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"MyDataUrban
 # DUU10<-subset(MyDataUrban2, Dimension==10)
 # mean(DUU10$Poverty_line_dimensions)
 # 
-}
+#}
 
 
 endtime <- proc.time()
