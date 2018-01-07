@@ -89,7 +89,7 @@ MyDataRural<-merge(MyDataRural,RuralPovLine22,by="ProvinceCode",all.x = TRUE)
 
 #Rural-log
 dx<-dx[cal!=0]
-model3 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=dx)
+model3 <- lm(log(exp) ~ log(cal) , weights = w, data=dx)
 summary(model3)
 RuralPovLine3 <- predict(object = model3, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine3<-exp(RuralPovLine3)
@@ -97,7 +97,7 @@ MyDataRural[,PovLine3:=RuralPovLine3]
 
 #Rural-log with prov dummy
 dx<-dx[cal!=0]
-model4 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=dx)
+model4 <- lm(log(exp) ~ log(cal) + factor(prov) , weights = w, data=dx)
 summary(model4)
 RuralPovLine4 <- predict(object = model4, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=0:30,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine4<-exp(RuralPovLine4)
@@ -121,7 +121,7 @@ MyDataRural<-merge(MyDataRural,RuralPovLine66,by="ProvinceCode",all.x = TRUE)
 
 #Rural-log
 dx2<-dx2[cal!=0]
-model7 <- lm(log(exp) ~ log(cal) + log(cal2) , weights = w, data=dx2)
+model7 <- lm(log(exp) ~ log(cal)  , weights = w, data=dx2)
 summary(model7)
 RuralPovLine3_2 <- predict(object = model7, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine3_2<-exp(RuralPovLine3_2)
@@ -129,7 +129,7 @@ MyDataRural[,PovLine7:=RuralPovLine3_2]
 
 #Rural-log with prov dummy
 dx2<-dx2[cal!=0]
-model8 <- lm(log(exp) ~ log(cal) + log(cal2) + factor(prov) , weights = w, data=dx2)
+model8 <- lm(log(exp) ~ log(cal)  + factor(prov) , weights = w, data=dx2)
 summary(model8)
 RuralPovLine4_2 <- predict(object = model8, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=0:30,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine4_2<-exp(RuralPovLine4_2)
