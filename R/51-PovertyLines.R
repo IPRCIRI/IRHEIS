@@ -33,6 +33,8 @@ D <- rbind(MyDataRural,MyDataUrban)
 D[,Ost := factor(ProvinceCode)]
 D[,Geo5 := factor(floor(HHID/1e6))]
 
+DD<-D[,.(Percentile,Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,ProvinceCode,Weight,Ost,Geo5)]
+  
 smoothScatter(log(MyDataUrban$Total_Exp_Month_Per),log(MyDataUrban$Per_Daily_Calories))
 
 summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Region, weights = Weight, data=D))
