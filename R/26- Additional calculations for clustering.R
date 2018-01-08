@@ -82,10 +82,16 @@ MyDataRural[,PovLine1:=RuralPovLine1]
 #Rural-nonlog with prov dummy
 model2 <- lm(exp ~ cal + cal2 + factor(prov) , weights = w, data=dx)
 summary(model2)
+<<<<<<< HEAD
 RuralPovLine2 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=0:30,exp=NA,ndx=NA,w=NA))[[1]]
 RuralPovLine22 <- data.table(PovLine2=RuralPovLine2,ProvinceCode=0:30)
 MyDataRural<-merge(MyDataRural,RuralPovLine22,by="ProvinceCode",all.x = TRUE)
 
+=======
+RuralPovLine2 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,prov=0:30,exp=NA,ndx=NA,w=NA))
+RuralPovLine2 <- data.table(PovLine2=RuralPovLine2,ProvinceCode=0:30)
+MyDataRural <- merge(MyDataRural,RuralPovLine2,by="ProvinceCode",all.x = TRUE)
+>>>>>>> origin/master
 
 #Rural-log
 dx<-dx[cal!=0]
