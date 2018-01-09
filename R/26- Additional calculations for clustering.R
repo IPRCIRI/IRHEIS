@@ -54,6 +54,10 @@ Urb$cumWeightProv <-ave(Urb$Weight, Urb$ProvinceCode, FUN=cumsum)
 Rur$rx<-ave(Rur$cumWeight, by=list(Rur$ProvinceCode), FUN=max)
 Urb$ux<-ave(Urb$cumWeight, by=list(Urb$ProvinceCode), FUN=max)
 
+#Calculate percentiles by weights for each provinces
+Rur<- Rur[, ProvincePercentile := Rur$cumWeightProv/Rur$rx]
+Rur<- Rur[, ProvincePercentile2 := round(ProvincePercentile,3)]
+
 #Calculate percentiles by weights in provinces
 #Rur[,ProvPercentile:=cut(Rur$cumWeight,breaks=seq(0,rx,rx/100),labels=1:100)]
 #Urb[,ProvPercentile:=cut(Urb$cumWeight,breaks=seq(0,ux,ux/100),labels=1:100)]
