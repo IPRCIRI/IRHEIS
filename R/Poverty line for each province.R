@@ -54,10 +54,9 @@ Urb<- Urb[, ProvincePercentile := ProvincePercentile*100]
 Urb<- Urb[, ProvincePercentile := ceiling(ProvincePercentile)]
 
 ######### calculate Rural Pov Line #########
-###Rural-all
 d <- Rur[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,ProvinceCode,Weight,cumWeightProv,ProvincePercentile)]
 setnames(d,c("pct","cal","exp","ndx","prov","w","cumw","provpct"))
-d2 <- d [pct<86]
+d2 <- d [provpct<86]
 #plot(cal~exp,data=d)
 #plot(cal~exp,data=d2)
 #plot(log(cal)~log(exp),data=d)
@@ -69,6 +68,7 @@ d2$cal2<-d2$cal^2
 dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=.(provpct,prov)]
 dx2 <- d2[,lapply(.SD, mean, na.rm=TRUE),by=.(provpct,prov)]
 
+###########Rural-all###########
 #Nonlog
 for(ostan in 0:30){  
   nam <- paste0("Rur",ostan)
@@ -111,7 +111,7 @@ for(ostan in 0:30){
   nam <- paste0("Rur",ostan)
   assign(nam,d2[prov==ostan])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
-  model4 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,d[prov==ostan]))
+  model4 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,d2[prov==ostan]))
   summary(model4)
   nam3 <- predict(object = model4, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
   nam2 <- paste0("Rural4PovLine",ostan)
@@ -119,11 +119,61 @@ for(ostan in 0:30){
   assign(nam2,nam3)
 }
 
+###########Rural-percentiles###########
+#Nonlog
+for(ostan in 0:30){  
+  nam <- paste0("Rur",ostan)
+  assign(nam,d[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model1 <- lm(exp ~ cal + cal2 , weights = w, data=assign(nam,dx[prov==ostan]))
+  summary(model1)
+  nam3 <- predict(object = model1, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Rural1PovLine",ostan)
+  assign(nam2,nam3)
+}
+#log
+dx<-dx[cal!=0]
+for(ostan in 0:30){  
+  nam <- paste0("Rur",ostan)
+  assign(nam,d[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model2 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,dx[prov==ostan]))
+  summary(model2)
+  nam3 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Rural2PovLine",ostan)
+  nam3<-exp(nam3)
+  assign(nam2,nam3)
+}
+
+#Nonlog-85 percent
+for(ostan in 0:30){  
+  nam <- paste0("Rur",ostan)
+  assign(nam,d[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model3 <- lm(exp ~ cal + cal2 , weights = w, data=assign(nam,dx2[prov==ostan]))
+  summary(model3)
+  nam3 <- predict(object = model3, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Rural3PovLine",ostan)
+  assign(nam2,nam3)
+}
+#log-85 percent
+dx2<-dx2[cal!=0]
+for(ostan in 0:30){  
+  nam <- paste0("Rur",ostan)
+  assign(nam,d2[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model4 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,dx2[prov==ostan]))
+  summary(model4)
+  nam3 <- predict(object = model4, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Rural4PovLine",ostan)
+  nam3<-exp(nam3)
+  assign(nam2,nam3)
+}
 ######### calculate Urban Pov Line #########
-###Urban-all
+
 d <- Urb[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,ProvinceCode,Weight,cumWeightProv,ProvincePercentile)]
 setnames(d,c("pct","cal","exp","ndx","prov","w","cumw","provpct"))
-d2 <- d [pct<86]
+d2 <- d [provpct<86]
 #plot(cal~exp,data=d)
 #plot(cal~exp,data=d2)
 #plot(log(cal)~log(exp),data=d)
@@ -135,6 +185,7 @@ d2$cal2<-d2$cal^2
 dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=.(provpct,prov)]
 dx2 <- d2[,lapply(.SD, mean, na.rm=TRUE),by=.(provpct,prov)]
 
+############Urban-all############
 #Nonlog
 for(ostan in 0:30){  
   nam <- paste0("Urb",ostan)
@@ -177,7 +228,58 @@ for(ostan in 0:30){
   nam <- paste0("Urb",ostan)
   assign(nam,d2[prov==ostan])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
-  model4 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,d[prov==ostan]))
+  model4 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,d2[prov==ostan]))
+  summary(model4)
+  nam3 <- predict(object = model4, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Urban4PovLine",ostan)
+  nam3<-exp(nam3)
+  assign(nam2,nam3)
+}
+
+############Urban-Percentiles############
+#Nonlog
+for(ostan in 0:30){  
+  nam <- paste0("Urb",ostan)
+  assign(nam,d[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model1 <- lm(exp ~ cal + cal2 , weights = w, data=assign(nam,dx[prov==ostan]))
+  summary(model1)
+  nam3 <- predict(object = model1, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Urban1PovLine",ostan)
+  assign(nam2,nam3)
+}
+#log
+dx<-dx[cal!=0]
+for(ostan in 0:30){  
+  nam <- paste0("Urb",ostan)
+  assign(nam,d[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model2 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,dx[prov==ostan]))
+  summary(model2)
+  nam3 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Urban2PovLine",ostan)
+  nam3<-exp(nam3)
+  assign(nam2,nam3)
+}
+
+#Nonlog-85 percent
+for(ostan in 0:30){  
+  nam <- paste0("Urb",ostan)
+  assign(nam,d[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model3 <- lm(exp ~ cal + cal2 , weights = w, data=assign(nam,dx2[prov==ostan]))
+  summary(model3)
+  nam3 <- predict(object = model3, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
+  nam2 <- paste0("Urban3PovLine",ostan)
+  assign(nam2,nam3)
+}
+#log-85 percent
+dx2<-dx2[cal!=0]
+for(ostan in 0:30){  
+  nam <- paste0("Urb",ostan)
+  assign(nam,d2[prov==ostan])
+  # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
+  model4 <- lm(log(exp) ~ log(cal), weights = w, data=assign(nam,dx2[prov==ostan]))
   summary(model4)
   nam3 <- predict(object = model4, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
   nam2 <- paste0("Urban4PovLine",ostan)
