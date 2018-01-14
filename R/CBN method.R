@@ -1,12 +1,12 @@
-# 24-Total_Food_Calories.R
+#CBN Method.R
 # 
-# Copyright © 2017:Arin Shahbazian
+# Copyright © 2018:Arin Shahbazian
 # Licence: GPL-3
 # 
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Total Calories =====================================\n")
+cat("\n\n================ Prepare Data =====================================\n")
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
@@ -16,7 +16,6 @@ library(data.table)
 
 #for(year in (Settings$startyear:Settings$endyear)){
  # cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  
   
   load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHBase.rda"))
   HHBase[,IndivNo:=NULL]
@@ -83,13 +82,9 @@ library(data.table)
   Food<-merge(Food,Makarooni_Data,by =c("HHID"),all.x=TRUE)
   Food<-merge(Food,Sibzamini_Data,by =c("HHID"),all.x=TRUE)
   Food<-merge(Food,Weights,by =c("HHID"),all.x=TRUE)
- 
   Food[is.na(Food)] <- 0
-  #Food[,Ghandgram:=as.numeric(Ghandgram)]
-  #Food[,GhandPrice:=as.numeric(GhandPrice)]
 
-  #Food<-Food[,FoodExp:=Ghand_Data$Ghandgram*Ghand_Data$GhandPrice]
-  # Food<-Food[Region== 'Urban' | Region== 'Rural']
+ # Food Calories
   Food$Ghand_Calory<- Food$Ghandgram *4
   Food$Hoboobat_Calory<- Food$Hoboobatgram *3
   Food$Nan_Calory<- Food$Nangram *2.5
@@ -170,8 +165,8 @@ library(data.table)
 
   
   #Calculate Per_Total Expenditures Monthly
-  CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(79:91,93:94)][] 
-  CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=79:91][] 
+  CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(62:74,76:77)][] 
+  CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=62:74][] 
 
   CBN$Total_Exp_Month_Per<-CBN$Total_Exp_Month/CBN$EqSizeRevOECD
   CBN$Total_Exp_Month_Per_nondurable<-CBN$Total_Exp_Month_nondurable/CBN$EqSizeRevOECD
@@ -209,8 +204,46 @@ library(data.table)
   CBN$Sabzigram<-CBN$Sabzigram/CBN$EqSizeCalory
   CBN$Makaroonigram<-CBN$Makaroonigram/CBN$EqSizeCalory
   CBN$Sibzaminigram<-CBN$Sibzaminigram/CBN$EqSizeCalory
-  
+
   CBN[,Poor:=ifelse(Decile %in% 1:2,1,0)]
+  CBNPoor<-CBN[Poor==1]
+  test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,Region,ProvinceCode,Weight)]
+  dt2 <- test[,lapply(.SD,weighted.mean,w=Weight),by=.(Region,ProvinceCode)]
+  dt2<- dt2[order(ProvinceCode,Region)]
+  dt <- dt2 [,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice)]
+   
+   pca <- princomp(dt, cor=T) 
+    PRICE <- pca$scores
+    PRICE1 <- -1*PRICE[,1] 
+    PRICE2 <- -1*PRICE[,2] 
+    PRICE3 <- -1*PRICE[,3] 
+    PRICE4 <- -1*PRICE[,4] 
+    PRICE5 <- -1*PRICE[,5]
+    PRICE6 <- -1*PRICE[,6] 
+    PRICE7 <- -1*PRICE[,7] 
+    PRICE8 <- -1*PRICE[,8] 
+    PRICE9 <- -1*PRICE[,9] 
+    PRICE10 <- -1*PRICE[,10] 
+    PRICE11 <- -1*PRICE[,11] 
+    PRICE12 <- -1*PRICE[,12] 
+    PRICE13 <- -1*PRICE[,13]
+    PRICE14 <- -1*PRICE[,14] 
+    PRICE15 <- -1*PRICE[,15] 
+    PRICE16 <- -1*PRICE[,16] 
+    
+    #X12 <- cbind(PRICE1, PRICE2)
+    cl <- kmeans(PRICE,5)
+    cl$cluster
+    dt2 <- dt2[,cluster:=data.table(cl$cluster)]
+    #plot(PRICE1, PRICE2,col=cl$cluster)
+    #points(cl$centers, pch=20)
+    CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode","Region"),all.x = TRUE)
+    C2<-CBNPoor[,.(HHID,ProvinceCode,Region,Decile,Poor,cluster)]
+ 
+  
+    
+  
+  
   CBN[,weighted.mean(Ghandgram,Weight,na.rm = TRUE),by=Poor]
   CBN[,weighted.mean(Hoboobatgram,Weight,na.rm = TRUE),by=Poor]
   CBN[,weighted.mean(Roghangram,Weight,na.rm = TRUE),by=Poor]
