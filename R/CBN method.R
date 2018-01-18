@@ -294,30 +294,50 @@ library(data.table)
   CBNPoor$Sibzamini_Calory<- CBNPoor$Sibzaminigram *0.9
   utils::View(CBNPoor)
   
-  CBNPoor[, Daily_Calories := Reduce(`+`, .SD), .SDcols=140:155][] 
   #CalculatePer_calories
+  CBNPoor[, Daily_Calories := Reduce(`+`, .SD), .SDcols=140:155][] 
   CBNPoor[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
   CBNPoor[,Per_Daily_Calories:=Daily_Calories/EqSizeCalory]
   CBNPoor <- CBNPoor[Daily_Calories<100000] # arbitrary removal of outliers
   CBNPoor[,Daily_Calories_cluster:=weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
   
-  CBNPoor[,Daily_Ghand_cluster:=weighted.mean(Ghand_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Hoboobat_cluster:=weighted.mean(Hoboobat_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Nan_cluster:=weighted.mean(Nan_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Berenj_cluster:=weighted.mean(Berenj_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Roghan_cluster:=weighted.mean(Roghan_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Goosht_cluster:=weighted.mean(Goosht_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Morgh_cluster:=weighted.mean(Morgh_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Mahi_cluster:=weighted.mean(Mahi_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Shir_cluster:=weighted.mean(Shir_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Mast_cluster:=weighted.mean(Mast_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Panir_cluster:=weighted.mean(Panir_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Tokhmemorgh_cluster:=weighted.mean(Tokhmemorgh_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[, Daily_Calories2 := Reduce(`+`, .SD), .SDcols=c(156:170,172:172)][] 
+  CBNPoor$Ghand_per_Calory<- CBNPoor$Ghandgram *4/CBNPoor$EqSizeCalory
+  CBNPoor$Hoboobat_per_Calory<- CBNPoor$Hoboobatgram *3/CBNPoor$EqSizeCalory
+  CBNPoor$Nan_per_Calory<- CBNPoor$Nangram *2.5/CBNPoor$EqSizeCalory
+  CBNPoor$Berenj_per_Calory<- CBNPoor$Berenjgram *1.2/CBNPoor$EqSizeCalory
+  CBNPoor$Roghan_per_Calory<- CBNPoor$Roghangram *8/CBNPoor$EqSizeCalory
+  CBNPoor$Goosht_per_Calory<- CBNPoor$Gooshtgram *2.5/CBNPoor$EqSizeCalory
+  CBNPoor$Morgh_per_Calory<- CBNPoor$Morghgram *2/CBNPoor$EqSizeCalory
+  CBNPoor$Mahi_per_Calory<- CBNPoor$Mahigram *1/CBNPoor$EqSizeCalory
+  CBNPoor$Shir_per_Calory<- CBNPoor$Shirgram *2.5/CBNPoor$EqSizeCalory
+  CBNPoor$Mast_per_Calory<- CBNPoor$Mastgram *1.5/CBNPoor$EqSizeCalory
+  CBNPoor$Panir_per_Calory<- CBNPoor$Mastgram *2.5/CBNPoor$EqSizeCalory
+  CBNPoor$Tokhmemorgh_per_Calory<- CBNPoor$Tokhmemorghgram *1.4/CBNPoor$EqSizeCalory
+  CBNPoor$Mive_per_Calory<- CBNPoor$Mivegram *0.5/CBNPoor$EqSizeCalory
+  CBNPoor$Sabzi_per_Calory<- CBNPoor$Sabzigram *0.5/CBNPoor$EqSizeCalory
+  CBNPoor$Makarooni_per_Calory<- CBNPoor$Makaroonigram *3.6/CBNPoor$EqSizeCalory
+  CBNPoor$Sibzamini_per_Calory<- CBNPoor$Sibzaminigram *0.9/CBNPoor$EqSizeCalory
+  
+
+  #CalculatePer_calories in clusters
+  CBNPoor[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Hoboobat_cluster:=weighted.mean(Hoboobat_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Nan_cluster:=weighted.mean(Nan_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Berenj_cluster:=weighted.mean(Berenj_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Roghan_cluster:=weighted.mean(Roghan_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Goosht_cluster:=weighted.mean(Goosht_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Morgh_cluster:=weighted.mean(Morgh_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Mahi_cluster:=weighted.mean(Mahi_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Shir_cluster:=weighted.mean(Shir_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Mast_cluster:=weighted.mean(Mast_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Panir_cluster:=weighted.mean(Panir_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Tokhmemorgh_cluster:=weighted.mean(Tokhmemorgh_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(176:191)][] 
+  utils::View(CBNPoor)
   
   CBNPoor[,Daily2_Ghand_cluster:=(Daily_Ghand_cluster*2100)/(Daily_Calories_cluster)]
   CBNPoor[,Daily2_Hoboobat_cluster:=(Daily_Hoboobat_cluster*2100)/(Daily_Calories_cluster)]
@@ -335,7 +355,8 @@ library(data.table)
   CBNPoor[,Daily2_Sabzi_cluster:=(Daily_Sabzi_cluster*2100)/(Daily_Calories_cluster)]
   CBNPoor[,Daily2_Makarooni_cluster:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluster)]
   CBNPoor[,Daily2_Sibzamini_cluster:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster)]
-  
+  CBNPoor[, Daily_Calories_cluster3 := Reduce(`+`, .SD), .SDcols=c(193:208)][] 
+
   utils::View(CBNPoor)
   
   # Food grams from Calories2
@@ -357,7 +378,7 @@ library(data.table)
   CBNPoor$Sibzaminigram2 <- CBNPoor$Daily2_Sibzamini_cluster /0.9
   utils::View(CBNPoor)
   
-  
+  # real prices
   CBNPoor[,GhandIndex:=weighted.mean(GhandPrice,Weight,na.rm = TRUE),ProvinceCode==23]
   CBNPoor[,HoboobatIndex:=weighted.mean(HoboobatPrice,Weight,na.rm = TRUE),ProvinceCode==23]
   CBNPoor[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
@@ -376,22 +397,22 @@ library(data.table)
   CBNPoor[,SibzaminiIndex:=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
 
   
-  CBNPoor<-CBNPoor[,GhandRealP:=GhandP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,HoboobatRealP:=HoboobatP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,RoghanRealP:=RoghanP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,BerenjRealP:=BerenjP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,NanRealP:=NanP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,GooshtRealP:=GooshtP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,GhandRealRealP:=MorghP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,MahiRealP:=MahiP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,ShirRealP:=ShirP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,MastRealP:=MastP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,PanirRealP:=PanirP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,TokhmemorghRealP:=TokhmemorghP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,MiveRealP:=MiveP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,SabziRealP:=SabziP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,MakarooniRealP:=MakarooniP/1.1,by=cluster]
-  CBNPoor<-CBNPoor[,SibzaminiRealP:=SibzaminiP/1.1,by=cluster]
+  CBNPoor<-CBNPoor[,GhandRealP:=GhandP/289,by=cluster]
+  CBNPoor<-CBNPoor[,HoboobatRealP:=HoboobatP/257,by=cluster]
+  CBNPoor<-CBNPoor[,RoghanRealP:=RoghanP/256,by=cluster]
+  CBNPoor<-CBNPoor[,BerenjRealP:=BerenjP/291,by=cluster]
+  CBNPoor<-CBNPoor[,NanRealP:=NanP/292,by=cluster]
+  CBNPoor<-CBNPoor[,GooshtRealP:=GooshtP/245,by=cluster]
+  CBNPoor<-CBNPoor[,GhandRealRealP:=MorghP/245,by=cluster]
+  CBNPoor<-CBNPoor[,MahiRealP:=MahiP/283,by=cluster]
+  CBNPoor<-CBNPoor[,ShirRealP:=ShirP/254,by=cluster]
+  CBNPoor<-CBNPoor[,MastRealP:=MastP/254,by=cluster]
+  CBNPoor<-CBNPoor[,PanirRealP:=PanirP/254,by=cluster]
+  CBNPoor<-CBNPoor[,TokhmemorghRealP:=TokhmemorghP/254,by=cluster]
+  CBNPoor<-CBNPoor[,MiveRealP:=MiveP/231,by=cluster]
+  CBNPoor<-CBNPoor[,SabziRealP:=SabziP/257,by=cluster]
+  CBNPoor<-CBNPoor[,MakarooniRealP:=MakarooniP/292,by=cluster]
+  CBNPoor<-CBNPoor[,SibzaminiRealP:=SibzaminiP/257,by=cluster]
  
   
   
