@@ -165,7 +165,30 @@ library(data.table)
 
   CBN$Total_Exp_Month_Per<-CBN$Total_Exp_Month/CBN$EqSizeRevOECD
   CBN$Total_Exp_Month_Per_nondurable<-CBN$Total_Exp_Month_nondurable/CBN$EqSizeRevOECD
+  
+  #Calculate Per_Food Expenditures Monthly
   CBN$FoodExpenditure_Per<-CBN$FoodExpenditure/CBN$EqSizeRevOECD
+  
+  #Calculate Per_Food Expenditures Daily
+  CBN$FoodExpenditure_Per_day<-CBN$FoodExpenditure_Per/30
+  
+  CBN$Ghandgram_Per_day<-CBN$Ghandgram/(30*CBN$EqSizeRevOECD)
+  CBN$Hoboobatgram_Per_day<-CBN$Hoboobatgram/(30*CBN$EqSizeRevOECD)
+  CBN$Berenjgram_Per_day<-CBN$Berenjgram/(30*CBN$EqSizeRevOECD)
+  CBN$Nangram_Per_day<-CBN$Nangram/(30*CBN$EqSizeRevOECD)
+  CBN$Roghangram_Per_day<-CBN$Roghangram/(30*CBN$EqSizeRevOECD)
+  CBN$Gooshtgram_Per_day<-CBN$Gooshtgram/(30*CBN$EqSizeRevOECD)
+  CBN$Morghgram_Per_day<-CBN$Morghgram/(30*CBN$EqSizeRevOECD)
+  CBN$Mahigram_Per_day<-CBN$Mahigram/(30*CBN$EqSizeRevOECD)
+  CBN$Shirgram_Per_day<-CBN$Shirgram/(30*CBN$EqSizeRevOECD)
+  CBN$Mastgram_Per_day<-CBN$Mastgram/(30*CBN$EqSizeRevOECD)
+  CBN$Panirgram_Per_day<-CBN$Panirgram/(30*CBN$EqSizeRevOECD)
+  CBN$Tokhmemorghgram_Per_day<-CBN$Tokhmemorghgram/(30*CBN$EqSizeRevOECD)
+  CBN$Mivegram_Per_day<-CBN$Mivegram/(30*CBN$EqSizeRevOECD)
+  CBN$Sabzigram_Per_day<-CBN$Sabzigram/(30*CBN$EqSizeRevOECD)
+  CBN$Makaroonigram_Per_day<-CBN$Makaroonigram/(30*CBN$EqSizeRevOECD)
+  CBN$Sibzaminigram_Per_day<-CBN$Sibzaminigram/(30*CBN$EqSizeRevOECD)
+  
   
   #Sort Expenditure data
   CBN<- CBN[order(Total_Exp_Month_Per_nondurable)]
@@ -183,7 +206,7 @@ library(data.table)
   CBN[,Poor:=ifelse(Decile %in% 1:2,1,0)]
   CBNPoor<-CBN[Poor==1]
   
-  #K-means algorithm for clustering
+  #K-means algorithm for clustering by prices
   test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,Region,ProvinceCode,Weight)]
   dt2 <- test[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Region,ProvinceCode)]
   dt2<- dt2[order(ProvinceCode,Region)]
@@ -218,7 +241,43 @@ library(data.table)
     #points(cl$centers, pch=20)
     CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode","Region"),all.x = TRUE)
     C2<-CBNPoor[,.(HHID,ProvinceCode,Region,Decile,Poor,cluster)]
-
+######################################################################    
+    #K-means algorithm for clustering by consumption
+    test3<-CBNPoor[,.(Ghandgram,Hoboobatgram,Roghangram,Berenjgram,Nangram,Gooshtgram,Morghgram,Mahigram,Shirgram,Mastgram,Panirgram,Tokhmemorghgram,Mivegram,Sabzigram,Makaroonigram,Sibzaminigram,Region,ProvinceCode,Weight)]
+    dt3 <- test3[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Region,ProvinceCode)]
+    dt3<- dt3[order(ProvinceCode,Region)]
+    #for (col in c("MahiPrice")) dt3[is.nan(get(col)), (col) := 200000]
+    dtt <- dt3 [,.(Ghandgram,Hoboobatgram,Roghangram,Berenjgram,Nangram,Gooshtgram,Morghgram,Mahigram,Shirgram,Mastgram,Panirgram,Tokhmemorghgram,Mivegram,Sabzigram,Makaroonigram,Sibzaminigram)]
+    
+    pca2 <- princomp(dtt, cor=T)
+    Gram <- pca2$scores
+    Gram1 <- -1*Gram[,1] 
+    Gram2 <- -1*Gram[,2] 
+    Gram3 <- -1*Gram[,3] 
+    Gram4 <- -1*Gram[,4] 
+    Gram5 <- -1*Gram[,5]
+    Gram6 <- -1*Gram[,6] 
+    Gram7 <- -1*Gram[,7] 
+    Gram8 <- -1*Gram[,8] 
+    Gram9 <- -1*Gram[,9] 
+    Gram10 <- -1*Gram[,10] 
+    Gram11 <- -1*Gram[,11] 
+    Gram12 <- -1*Gram[,12] 
+    Gram13 <- -1*Gram[,13]
+    Gram14 <- -1*Gram[,14] 
+    Gram15 <- -1*Gram[,15] 
+    Gram16 <- -1*Gram[,16] 
+    
+    #X12 <- cbind(Gram1, Gram2)
+    cl2 <- kmeans(Gram,5)
+    cl2$cluster
+    dt3 <- dt3[,cluster:=data.table(cl$cluster)]
+    dt3<-dt3[,.(ProvinceCode,Region,cluster)]
+    #plot(Gram1, Gram2,col=cl$cluster)
+    #points(cl$centers, pch=20)
+    CBNPoor8<-merge(CBNPoor,dt3,by=c("ProvinceCode","Region"),all.x = TRUE)
+    C28<-CBNPoor8[,.(HHID,ProvinceCode,Region,Decile,Poor,cluster)]
+##########################################################
     #weighted consumption in each cluster
   CBNPoor<-CBNPoor[,GhandG:=weighted.mean(Ghandgram,Weight,na.rm = TRUE),by=cluster]
   CBNPoor<-CBNPoor[,HoboobatG:=weighted.mean(Hoboobatgram,Weight,na.rm = TRUE),by=cluster]
@@ -256,24 +315,24 @@ library(data.table)
   CBNPoor<-CBNPoor[,SibzaminiP:=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),by=cluster]
   
   #weighted food expenditures in each cluster
-  CBNPoor[,GhandPoor:=weighted.mean(Ghandgram,Weight,na.rm = TRUE)*weighted.mean(GhandPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,HoboobatPoor:=weighted.mean(Hoboobatgram,Weight,na.rm = TRUE)*weighted.mean(HoboobatPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,RoghanPoor:=weighted.mean(Roghangram,Weight,na.rm = TRUE)*weighted.mean(RoghanPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,BerenjPoor:=weighted.mean(Berenjgram,Weight,na.rm = TRUE)*weighted.mean(BerenjPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,NanPoor:=weighted.mean(Nangram,Weight,na.rm = TRUE)*weighted.mean(NanPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,GooshtPoor:=weighted.mean(Gooshtgram,Weight,na.rm = TRUE)*weighted.mean(GooshtPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,MorghPoor:=weighted.mean(Morghgram,Weight,na.rm = TRUE)*weighted.mean(MorghPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,MahiPoor:=weighted.mean(Mahigram,Weight,na.rm = TRUE)*weighted.mean(MahiPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,ShirPoor:=weighted.mean(Shirgram,Weight,na.rm = TRUE)*weighted.mean(ShirPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,MastPoor:=weighted.mean(Mastgram,Weight,na.rm = TRUE)*weighted.mean(MastPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,PanirPoor:=weighted.mean(Panirgram,Weight,na.rm = TRUE)*weighted.mean(PanirPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,TokhmemorghPoor:=weighted.mean(Tokhmemorghgram,Weight,na.rm = TRUE)*weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,MivePoor:=weighted.mean(Mivegram,Weight,na.rm = TRUE)*weighted.mean(MivePrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,SabziPoor:=weighted.mean(Sabzigram,Weight,na.rm = TRUE)*weighted.mean(SabziPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,MakarooniPoor:=weighted.mean(Makaroonigram,Weight,na.rm = TRUE)*weighted.mean(MakarooniPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[,SibzaminiPoor:=weighted.mean(Sibzaminigram,Weight,na.rm = TRUE)*weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
-  CBNPoor[, Poors_Expenditures := Reduce(`+`, .SD), .SDcols=121:136][] 
-  
+  CBNPoor[,GhandPoorcluster:=weighted.mean(Ghandgram,Weight,na.rm = TRUE)*weighted.mean(GhandPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,HoboobatPoorcluster:=weighted.mean(Hoboobatgram,Weight,na.rm = TRUE)*weighted.mean(HoboobatPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,RoghanPoorcluster:=weighted.mean(Roghangram,Weight,na.rm = TRUE)*weighted.mean(RoghanPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,BerenjPoorcluster:=weighted.mean(Berenjgram,Weight,na.rm = TRUE)*weighted.mean(BerenjPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,NanPoorcluster:=weighted.mean(Nangram,Weight,na.rm = TRUE)*weighted.mean(NanPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,GooshtPoorcluster:=weighted.mean(Gooshtgram,Weight,na.rm = TRUE)*weighted.mean(GooshtPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,MorghPoorcluster:=weighted.mean(Morghgram,Weight,na.rm = TRUE)*weighted.mean(MorghPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,MahiPoorcluster:=weighted.mean(Mahigram,Weight,na.rm = TRUE)*weighted.mean(MahiPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,ShirPoorcluster:=weighted.mean(Shirgram,Weight,na.rm = TRUE)*weighted.mean(ShirPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,MastPoorcluster:=weighted.mean(Mastgram,Weight,na.rm = TRUE)*weighted.mean(MastPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,PanirPoorcluster:=weighted.mean(Panirgram,Weight,na.rm = TRUE)*weighted.mean(PanirPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,TokhmemorghPoorcluster:=weighted.mean(Tokhmemorghgram,Weight,na.rm = TRUE)*weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,MivePoorcluster:=weighted.mean(Mivegram,Weight,na.rm = TRUE)*weighted.mean(MivePrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,SabziPoorcluster:=weighted.mean(Sabzigram,Weight,na.rm = TRUE)*weighted.mean(SabziPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,MakarooniPoorcluster:=weighted.mean(Makaroonigram,Weight,na.rm = TRUE)*weighted.mean(MakarooniPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[,SibzaminiPoorcluster:=weighted.mean(Sibzaminigram,Weight,na.rm = TRUE)*weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor[, Poors_Food_Expenditures := Reduce(`+`, .SD), .SDcols=140:155][] 
+  utils::View(CBNPoor)
   
   # Food Calories
   CBNPoor$Ghand_Calory<- CBNPoor$Ghandgram *4
@@ -295,7 +354,7 @@ library(data.table)
   utils::View(CBNPoor)
   
   #CalculatePer_calories
-  CBNPoor[, Daily_Calories := Reduce(`+`, .SD), .SDcols=140:155][] 
+  CBNPoor[, Daily_Calories := Reduce(`+`, .SD), .SDcols=157:172][] 
   CBNPoor[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
   CBNPoor[,Per_Daily_Calories:=Daily_Calories/EqSizeCalory]
   CBNPoor <- CBNPoor[Daily_Calories<100000] # arbitrary removal of outliers
@@ -317,7 +376,7 @@ library(data.table)
   CBNPoor$Sabzi_per_Calory<- CBNPoor$Sabzigram *0.5/CBNPoor$EqSizeCalory
   CBNPoor$Makarooni_per_Calory<- CBNPoor$Makaroonigram *3.6/CBNPoor$EqSizeCalory
   CBNPoor$Sibzamini_per_Calory<- CBNPoor$Sibzaminigram *0.9/CBNPoor$EqSizeCalory
-  
+  utils::View(CBNPoor)
 
   #CalculatePer_calories in clusters
   CBNPoor[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
@@ -336,138 +395,371 @@ library(data.table)
   CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
   CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
   CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-  CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(176:191)][] 
+  CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(193:208)][] 
   utils::View(CBNPoor)
   
-  CBNPoor[,Daily2_Ghand_cluster:=(Daily_Ghand_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Hoboobat_cluster:=(Daily_Hoboobat_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Nan_cluster:=(Daily_Nan_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Berenj_cluster:=(Daily_Berenj_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Roghan_cluster:=(Daily_Roghan_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Goosht_cluster:=(Daily_Goosht_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Morgh_cluster:=(Daily_Morgh_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Mahi_cluster:=(Daily_Mahi_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Shir_cluster:=(Daily_Shir_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Mast_cluster:=(Daily_Mast_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Panir_cluster:=(Daily_Panir_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Tokhmemorgh_cluster:=(Daily_Tokhmemorgh_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Mive_cluster:=(Daily_Mive_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Sabzi_cluster:=(Daily_Sabzi_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Makarooni_cluster:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[,Daily2_Sibzamini_cluster:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster)]
-  CBNPoor[, Daily_Calories_cluster3 := Reduce(`+`, .SD), .SDcols=c(193:208)][] 
+  CBNPoor[,Daily2_Ghand:=(Ghand_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Hoboobat:=(Hoboobat_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Nan:=(Nan_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Berenj:=(Berenj_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Roghan:=(Roghan_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Goosht:=(Goosht_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Morgh:=(Morgh_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Mahi:=(Mahi_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Shir:=(Shir_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Mast:=(Mast_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Panir:=(Panir_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Tokhmemorgh:=(Tokhmemorgh_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Mive:=(Mive_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Sabzi:=(Sabzi_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Makarooni:=(Makarooni_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[,Daily2_Sibzamini:=(Sibzamini_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(210:225)][] 
 
   utils::View(CBNPoor)
   
   # Food grams from Calories2
-  CBNPoor$Ghandgram2  <- CBNPoor$Daily2_Ghand_cluster /4
-  CBNPoor$Hoboobatgram2 <- CBNPoor$Daily2_Hoboobat_cluster /3
-  CBNPoor$Nangram2 <- CBNPoor$Daily2_Nan_cluster  /2.5
-  CBNPoor$Berenjgram2 <- CBNPoor$Daily2_Berenj_cluster  /1.2
-  CBNPoor$Roghangram2 <- CBNPoor$Daily2_Roghan_cluster /8
-  CBNPoor$Gooshtgram2 <- CBNPoor$Daily2_Goosht_cluster  /2.5
-  CBNPoor$Morghgram2 <- CBNPoor$Daily2_Morgh_cluster  /2
-  CBNPoor$Mahigram2 <- CBNPoor$Daily2_Mahi_cluster  /1
-  CBNPoor$Shirgram2 <- CBNPoor$Daily2_Shir_cluster  /2.5
-  CBNPoor$Mastgram2 <- CBNPoor$Daily2_Mast_cluster  /1.5
-  CBNPoor$Mastgram2 <- CBNPoor$Daily2_Panir_cluster  /2.5
-  CBNPoor$Tokhmemorghgram2 <- CBNPoor$Daily2_Tokhmemorgh_cluster /1.4
-  CBNPoor$Mivegram2 <- CBNPoor$Daily2_Mive_cluster  /0.5
-  CBNPoor$Sabzigram2 <- CBNPoor$Daily2_Sabzi_cluster  /0.5
-  CBNPoor$Makaroonigram2 <- CBNPoor$Daily2_Makarooni_cluster  /3.6
-  CBNPoor$Sibzaminigram2 <- CBNPoor$Daily2_Sibzamini_cluster /0.9
+  CBNPoor$Ghandgram2  <- CBNPoor$Daily2_Ghand /4
+  CBNPoor$Hoboobatgram2 <- CBNPoor$Daily2_Hoboobat /3
+  CBNPoor$Nangram2 <- CBNPoor$Daily2_Nan  /2.5
+  CBNPoor$Berenjgram2 <- CBNPoor$Daily2_Berenj  /1.2
+  CBNPoor$Roghangram2 <- CBNPoor$Daily2_Roghan /8
+  CBNPoor$Gooshtgram2 <- CBNPoor$Daily2_Goosht  /2.5
+  CBNPoor$Morghgram2 <- CBNPoor$Daily2_Morgh  /2
+  CBNPoor$Mahigram2 <- CBNPoor$Daily2_Mahi  /1
+  CBNPoor$Shirgram2 <- CBNPoor$Daily2_Shir  /2.5
+  CBNPoor$Mastgram2 <- CBNPoor$Daily2_Mast  /1.5
+  CBNPoor$Panirgram2 <- CBNPoor$Daily2_Panir  /2.5
+  CBNPoor$Tokhmemorghgram2 <- CBNPoor$Daily2_Tokhmemorgh /1.4
+  CBNPoor$Mivegram2 <- CBNPoor$Daily2_Mive  /0.5
+  CBNPoor$Sabzigram2 <- CBNPoor$Daily2_Sabzi  /0.5
+  CBNPoor$Makaroonigram2 <- CBNPoor$Daily2_Makarooni  /3.6
+  CBNPoor$Sibzaminigram2 <- CBNPoor$Daily2_Sibzamini /0.9
   utils::View(CBNPoor)
   
   # real prices
-  CBNPoor[,GhandIndex:=weighted.mean(GhandPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,HoboobatIndex:=weighted.mean(HoboobatPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,NanIndex:=weighted.mean(NanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,GooshtIndex:=weighted.mean(GooshtPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,MorghIndex:=weighted.mean(MorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,MahiIndex:=weighted.mean(MahiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,ShirIndex:=weighted.mean(ShirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,MastIndex:=weighted.mean(MastPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,PanirIndex:=weighted.mean(PanirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,TokhmemorghIndex:=weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,MiveIndex:=weighted.mean(MivePrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,SabziIndex:=weighted.mean(SabziPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,MakarooniIndex:=weighted.mean(MakarooniPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  CBNPoor[,SibzaminiIndex:=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,GhandIndex:=weighted.mean(GhandPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,HoboobatIndex:=weighted.mean(HoboobatPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  #CBNPoor[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,NanIndex:=weighted.mean(NanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,GooshtIndex:=weighted.mean(GooshtPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,MorghIndex:=weighted.mean(MorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,MahiIndex:=weighted.mean(MahiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,ShirIndex:=weighted.mean(ShirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,MastIndex:=weighted.mean(MastPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,PanirIndex:=weighted.mean(PanirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,TokhmemorghIndex:=weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,MiveIndex:=weighted.mean(MivePrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  #CBNPoor[,SabziIndex:=weighted.mean(SabziPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+ # CBNPoor[,MakarooniIndex:=weighted.mean(MakarooniPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  #CBNPoor[,SibzaminiIndex:=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
 
-  
-  CBNPoor<-CBNPoor[,GhandRealP:=GhandP/289,by=cluster]
-  CBNPoor<-CBNPoor[,HoboobatRealP:=HoboobatP/257,by=cluster]
-  CBNPoor<-CBNPoor[,RoghanRealP:=RoghanP/256,by=cluster]
-  CBNPoor<-CBNPoor[,BerenjRealP:=BerenjP/291,by=cluster]
-  CBNPoor<-CBNPoor[,NanRealP:=NanP/292,by=cluster]
-  CBNPoor<-CBNPoor[,GooshtRealP:=GooshtP/245,by=cluster]
-  CBNPoor<-CBNPoor[,GhandRealRealP:=MorghP/245,by=cluster]
-  CBNPoor<-CBNPoor[,MahiRealP:=MahiP/283,by=cluster]
-  CBNPoor<-CBNPoor[,ShirRealP:=ShirP/254,by=cluster]
-  CBNPoor<-CBNPoor[,MastRealP:=MastP/254,by=cluster]
-  CBNPoor<-CBNPoor[,PanirRealP:=PanirP/254,by=cluster]
-  CBNPoor<-CBNPoor[,TokhmemorghRealP:=TokhmemorghP/254,by=cluster]
-  CBNPoor<-CBNPoor[,MiveRealP:=MiveP/231,by=cluster]
-  CBNPoor<-CBNPoor[,SabziRealP:=SabziP/257,by=cluster]
-  CBNPoor<-CBNPoor[,MakarooniRealP:=MakarooniP/292,by=cluster]
-  CBNPoor<-CBNPoor[,SibzaminiRealP:=SibzaminiP/257,by=cluster]
- 
-  
-  
-  CBNPoor[,Year:=NULL]
-  CBNPoor[,Quarter:=NULL]
-  # CBNPoor[,Month:=NULL]
-  # CBNPoor[,ProvinceCode:=NULL]
-  CBNPoor[,Dimension:=NULL]
-  CBNPoor[,CBNPoorExpenditure:=NULL]
-  
+  # New bundle
+  CBNPoor[,GhandExp2:=GhandPrice*Ghandgram2*0.001]
+  for (col in c("GhandExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,HoboobatExp2:=HoboobatPrice*Hoboobatgram2*0.001]
+  for (col in c("HoboobatExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,NanExp2:=NanPrice*Nangram2*0.001]
+  for (col in c("NanExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,BerenjExp2:=BerenjPrice*Berenjgram2*0.001]
+  for (col in c("BerenjExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,RoghanExp2:=RoghanPrice*Roghangram2*0.001]
+  for (col in c("RoghanExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,GooshtExp2:=GooshtPrice*Gooshtgram2*0.001]
+  for (col in c("GooshtExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,MorghExp2:=MorghPrice*Morghgram2*0.001]
+  for (col in c("MorghExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,MahiExp2:=MahiPrice*Mahigram2*0.001]
+  for (col in c("MahiExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,ShirExp2:=ShirPrice*Shirgram2*0.001]
+  for (col in c("ShirExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,MastExp2:=MastPrice*Mastgram2*0.001]
+  for (col in c("MastExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,PanirExp2:=PanirPrice*Panirgram2*0.001]
+  for (col in c("PanirExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,TokhmemorghExp2:=TokhmemorghPrice*Tokhmemorghgram2*0.001]
+  for (col in c("TokhmemorghExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,MiveExp2:=MivePrice*Mivegram2*0.001]
+  for (col in c("MiveExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,SabziExp2:=SabziPrice*Sabzigram2*0.001]
+  for (col in c("SabziExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,MakarooniExp2:=MakarooniPrice*Makaroonigram2*0.001]
+  for (col in c("MakarooniExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[,SibzaminiExp2:=SibzaminiPrice*Sibzaminigram2*0.001]
+  for (col in c("SibzaminiExp2")) CBNPoor[is.na(get(col)), (col) := 0]
+  CBNPoor[, FoodExpenditure_Per_day2 := Reduce(`+`, .SD), .SDcols=c(243:258)][] 
+  utils::View(CBNPoor)
+  a<-CBNPoor[,.(FoodExpenditure_Per_day,FoodExpenditure_Per_day2)]
 
-  
-  CBN$Ghandgram<-CBN$Ghandgram/CBN$EqSizeCalory
-  CBN$Hoboobatgram<-CBN$Hoboobatgram/CBN$EqSizeCalory
-  CBN$Roghangram<-CBN$Roghangram/CBN$EqSizeCalory
-  CBN$Berenjgram<-CBN$Berenjgram/CBN$EqSizeCalory
-  CBN$Nangram<-CBN$Nangram/CBN$EqSizeCalory
-  CBN$Gooshtgram<-CBN$Gooshtgram/CBN$EqSizeCalory
-  CBN$Morghgram<-CBN$Morghgram/CBN$EqSizeCalory
-  CBN$Mahigram<-CBN$Mahigram/CBN$EqSizeCalory
-  CBN$Shirgram<-CBN$Shirgram/CBN$EqSizeCalory
-  CBN$Mastgram<-CBN$Mastgram/CBN$EqSizeCalory
-  CBN$Panirgram<-CBN$Panirgram/CBN$EqSizeCalory
-  CBN$Tokhmemorghgram<-CBN$Tokhmemorghgram/CBN$EqSizeCalory
-  CBN$Mivegram<-CBN$Mivegram/CBN$EqSizeCalory
-  CBN$Sabzigram<-CBN$Sabzigram/CBN$EqSizeCalory
-  CBN$Makaroonigram<-CBN$Makaroonigram/CBN$EqSizeCalory
-  CBN$Sibzaminigram<-CBN$Sibzaminigram/CBN$EqSizeCalory
-  
-  
-  CBN[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight,na.rm = TRUE),by=Poor]
-  exp1<-2965629
-  CBN[,Poor:=ifelse(Total_Exp_Month_Per_nondurable < 2965629,1,0)]
-  CBN[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight,na.rm = TRUE),by=Poor]
-  exp1<-2240735
-  CBN[,Poor:=ifelse(Total_Exp_Month_Per_nondurable < 2240735,1,0)]
-  CBN[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight,na.rm = TRUE),by=Poor]
-  exp1<-1723594
-  CBN[,Poor:=ifelse(Total_Exp_Month_Per_nondurable < 1723594,1,0)]
-  CBN[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight,na.rm = TRUE),by=Poor]
-  exp1<-1723594
-  
-  FoodRural<-MyFood[(Food$Region=="Rural"),]
-  FoodUrban<-MyFood[(Food$Region=="Urban"),]
-  FoodRural[,Region:=NULL]
-  FoodUrban[,Region:=NULL]
-  save(Food, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food.rda"))
-  save(FoodRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Rural.rda"))
-  save(FoodUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Urban.rda"))
-#}
+   model <- lm(FoodExpenditure_Per ~ Total_Exp_Month_Per_nondurable , weights = Weight, data=CBNPoor)
+  summary(model)
+  Engel<-0.386
+  Engel_Reverse<-1/Engel
+  CBNPoor$Total_Exp_Month_Per2<-Engel_Reverse*CBNPoor$FoodExpenditure_Per
+  Povertyline<-Engel_Reverse*mean(CBNPoor$FoodExpenditure_Per)
+  b<-CBNPoor[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
+  m<-CBNPoor[,.(HHID,Total_Exp_Month_Per2, cluster)]
+  CBN<-merge(CBN,m,by =c("HHID"),all.x=TRUE)
+  utils::View(CBN)
+  for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+  c<-CBN[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2,Poor,Decile,Weight)]
 
-# save(MyFood, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
-# save(MyFoodRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
-# save(MyFoodUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
+    #Sort Food Expenditure data
+  CBN<- CBN[order(Total_Exp_Month_Per2)]
+  c<-  c[order(Total_Exp_Month_Per2)]
+  
+  #Indicate new poors
+  #Calculate cumulative weights
+  sum(CBN$Weight)
+  CBN$cumweight2 <- cumsum(CBN$Weight)
+  c$cumweight2 <- cumsum(CBN$Weight)
+  tx <- max(CBN$cumweight2)
+  
+  #Calculate deciles by weights
+  CBN[,Decile2:=cut(cumweight2,breaks = seq(0,tx,tx/10),labels = 1:10)]
+  c[,Decile2:=cut(cumweight2,breaks = seq(0,tx,tx/10),labels = 1:10)]
 
+  #CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline ,1,0)]
+  #c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline ,1,0)]
+  CBN[,Poor2:=ifelse(Decile2 %in% 1:2,1,0)]
+  c[,Poor2:=ifelse(Decile2 %in% 1:2,1,0)]
+  CBNPoor2<-CBN[Poor2==1]
+  c<-CBN[Poor2==1]
+  
+  
+  #weighted consumption in each cluster
+  CBNPoor2<-CBNPoor2[,GhandG:=weighted.mean(Ghandgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,HoboobatG:=weighted.mean(Hoboobatgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,RoghanG:=weighted.mean(Roghangram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,BerenjG:=weighted.mean(Berenjgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,NanG:=weighted.mean(Nangram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,GooshtG:=weighted.mean(Gooshtgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MorghG:=weighted.mean(Morghgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MahiG:=weighted.mean(Mahigram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,ShirG:=weighted.mean(Shirgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MastG:=weighted.mean(Mastgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,PanirG:=weighted.mean(Panirgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,TokhmemorghG:=weighted.mean(Tokhmemorghgram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MiveG:=weighted.mean(Mivegram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,SabziG:=weighted.mean(Sabzigram,Weight,na.rm = TRUE),by=Poor]
+  CBNPoor2<-CBNPoor2[,MakarooniG:=weighted.mean(Makaroonigram,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,SibzaminiG:=weighted.mean(Sibzaminigram,Weight,na.rm = TRUE),by=cluster]
+  
+  #weighted prices in each cluster
+  CBNPoor2<-CBNPoor2[,GhandP:=weighted.mean(GhandPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,HoboobatP:=weighted.mean(HoboobatPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,RoghanP:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,BerenjP:=weighted.mean(BerenjPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,NanP:=weighted.mean(NanPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,GooshtP:=weighted.mean(GooshtPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MorghP:=weighted.mean(MorghPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MahiP:=weighted.mean(MahiPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,ShirP:=weighted.mean(ShirPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MastP:=weighted.mean(MastPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,PanirP:=weighted.mean(PanirPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,TokhmemorghP:=weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,MiveP:=weighted.mean(MivePrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,SabziP:=weighted.mean(SabziPrice,Weight,na.rm = TRUE),by=Poor]
+  CBNPoor2<-CBNPoor2[,MakarooniP:=weighted.mean(MakarooniPrice,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2<-CBNPoor2[,SibzaminiP:=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),by=cluster]
+  
+  #weighted food expenditures in each cluster
+  CBNPoor2[,GhandPoorcluster:=weighted.mean(Ghandgram,Weight,na.rm = TRUE)*weighted.mean(GhandPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,HoboobatPoorcluster:=weighted.mean(Hoboobatgram,Weight,na.rm = TRUE)*weighted.mean(HoboobatPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,RoghanPoorcluster:=weighted.mean(Roghangram,Weight,na.rm = TRUE)*weighted.mean(RoghanPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,BerenjPoorcluster:=weighted.mean(Berenjgram,Weight,na.rm = TRUE)*weighted.mean(BerenjPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,NanPoorcluster:=weighted.mean(Nangram,Weight,na.rm = TRUE)*weighted.mean(NanPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,GooshtPoorcluster:=weighted.mean(Gooshtgram,Weight,na.rm = TRUE)*weighted.mean(GooshtPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,MorghPoorcluster:=weighted.mean(Morghgram,Weight,na.rm = TRUE)*weighted.mean(MorghPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,MahiPoorcluster:=weighted.mean(Mahigram,Weight,na.rm = TRUE)*weighted.mean(MahiPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,ShirPoorcluster:=weighted.mean(Shirgram,Weight,na.rm = TRUE)*weighted.mean(ShirPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,MastPoorcluster:=weighted.mean(Mastgram,Weight,na.rm = TRUE)*weighted.mean(MastPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,PanirPoorcluster:=weighted.mean(Panirgram,Weight,na.rm = TRUE)*weighted.mean(PanirPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,TokhmemorghPoorcluster:=weighted.mean(Tokhmemorghgram,Weight,na.rm = TRUE)*weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,MivePoorcluster:=weighted.mean(Mivegram,Weight,na.rm = TRUE)*weighted.mean(MivePrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,SabziPoorcluster:=weighted.mean(Sabzigram,Weight,na.rm = TRUE)*weighted.mean(SabziPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,MakarooniPoorcluster:=weighted.mean(Makaroonigram,Weight,na.rm = TRUE)*weighted.mean(MakarooniPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[,SibzaminiPoorcluster:=weighted.mean(Sibzaminigram,Weight,na.rm = TRUE)*weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*0.001,by=cluster]
+  CBNPoor2[, Poors_Food_Expenditures := Reduce(`+`, .SD), .SDcols=140:155][] 
+  utils::View(CBNPoor2)
+  
+  # Food Calories
+  CBNPoor2$Ghand_Calory<- CBNPoor2$Ghandgram *4
+  CBNPoor2$Hoboobat_Calory<- CBNPoor2$Hoboobatgram *3
+  CBNPoor2$Nan_Calory<- CBNPoor2$Nangram *2.5
+  CBNPoor2$Berenj_Calory<- CBNPoor2$Berenjgram *1.2
+  CBNPoor2$Roghan_Calory<- CBNPoor2$Roghangram *8
+  CBNPoor2$Goosht_Calory<- CBNPoor2$Gooshtgram *2.5
+  CBNPoor2$Morgh_Calory<- CBNPoor2$Morghgram *2
+  CBNPoor2$Mahi_Calory<- CBNPoor2$Mahigram *1
+  CBNPoor2$Shir_Calory<- CBNPoor2$Shirgram *2.5
+  CBNPoor2$Mast_Calory<- CBNPoor2$Mastgram *1.5
+  CBNPoor2$Panir_Calory<- CBNPoor2$Mastgram *2.5
+  CBNPoor2$Tokhmemorgh_Calory<- CBNPoor2$Tokhmemorghgram *1.4
+  CBNPoor2$Mive_Calory<- CBNPoor2$Mivegram *0.5
+  CBNPoor2$Sabzi_Calory<- CBNPoor2$Sabzigram *0.5
+  CBNPoor2$Makarooni_Calory<- CBNPoor2$Makaroonigram *3.6
+  CBNPoor2$Sibzamini_Calory<- CBNPoor2$Sibzaminigram *0.9
+  utils::View(CBNPoor2)
+  
+  #CalculatePer_calories
+  CBNPoor2[, Daily_Calories := Reduce(`+`, .SD), .SDcols=161:176][] 
+  CBNPoor2[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
+  CBNPoor2[,Per_Daily_Calories:=Daily_Calories/EqSizeCalory]
+  CBNPoor2 <- CBNPoor2[Daily_Calories<100000] # arbitrary removal of outliers
+  CBNPoor2[,Daily_Calories_cluster:=weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
+  
+  CBNPoor2$Ghand_per_Calory<- CBNPoor2$Ghandgram *4/CBNPoor2$EqSizeCalory
+  CBNPoor2$Hoboobat_per_Calory<- CBNPoor2$Hoboobatgram *3/CBNPoor2$EqSizeCalory
+  CBNPoor2$Nan_per_Calory<- CBNPoor2$Nangram *2.5/CBNPoor2$EqSizeCalory
+  CBNPoor2$Berenj_per_Calory<- CBNPoor2$Berenjgram *1.2/CBNPoor2$EqSizeCalory
+  CBNPoor2$Roghan_per_Calory<- CBNPoor2$Roghangram *8/CBNPoor2$EqSizeCalory
+  CBNPoor2$Goosht_per_Calory<- CBNPoor2$Gooshtgram *2.5/CBNPoor2$EqSizeCalory
+  CBNPoor2$Morgh_per_Calory<- CBNPoor2$Morghgram *2/CBNPoor2$EqSizeCalory
+  CBNPoor2$Mahi_per_Calory<- CBNPoor2$Mahigram *1/CBNPoor2$EqSizeCalory
+  CBNPoor2$Shir_per_Calory<- CBNPoor2$Shirgram *2.5/CBNPoor2$EqSizeCalory
+  CBNPoor2$Mast_per_Calory<- CBNPoor2$Mastgram *1.5/CBNPoor2$EqSizeCalory
+  CBNPoor2$Panir_per_Calory<- CBNPoor2$Mastgram *2.5/CBNPoor2$EqSizeCalory
+  CBNPoor2$Tokhmemorgh_per_Calory<- CBNPoor2$Tokhmemorghgram *1.4/CBNPoor2$EqSizeCalory
+  CBNPoor2$Mive_per_Calory<- CBNPoor2$Mivegram *0.5/CBNPoor2$EqSizeCalory
+  CBNPoor2$Sabzi_per_Calory<- CBNPoor2$Sabzigram *0.5/CBNPoor2$EqSizeCalory
+  CBNPoor2$Makarooni_per_Calory<- CBNPoor2$Makaroonigram *3.6/CBNPoor2$EqSizeCalory
+  CBNPoor2$Sibzamini_per_Calory<- CBNPoor2$Sibzaminigram *0.9/CBNPoor2$EqSizeCalory
+  utils::View(CBNPoor2)
+  
+  #CalculatePer_calories in clusters
+  CBNPoor2[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Hoboobat_cluster:=weighted.mean(Hoboobat_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Nan_cluster:=weighted.mean(Nan_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Berenj_cluster:=weighted.mean(Berenj_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Roghan_cluster:=weighted.mean(Roghan_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Goosht_cluster:=weighted.mean(Goosht_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Morgh_cluster:=weighted.mean(Morgh_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Mahi_cluster:=weighted.mean(Mahi_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Shir_cluster:=weighted.mean(Shir_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Mast_cluster:=weighted.mean(Mast_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Panir_cluster:=weighted.mean(Panir_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Tokhmemorgh_cluster:=weighted.mean(Tokhmemorgh_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
+  CBNPoor2[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(197:212)][] 
+  utils::View(CBNPoor2)
+  
+  CBNPoor2[,Daily2_Ghand:=(Ghand_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Hoboobat:=(Hoboobat_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Nan:=(Nan_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Berenj:=(Berenj_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Roghan:=(Roghan_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Goosht:=(Goosht_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Morgh:=(Morgh_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Mahi:=(Mahi_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Shir:=(Shir_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Mast:=(Mast_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Panir:=(Panir_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Tokhmemorgh:=(Tokhmemorgh_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Mive:=(Mive_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Sabzi:=(Sabzi_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Makarooni:=(Makarooni_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[,Daily2_Sibzamini:=(Sibzamini_per_Calory*2100)/(Per_Daily_Calories)]
+  CBNPoor2[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(214:229)][] 
+  for (col in c("Daily2_Ghand","Daily2_Hoboobat","Daily2_Nan","Daily2_Berenj","Daily2_Roghan","Daily2_Goosht","Daily2_Morgh","Daily2_Mahi","Daily2_Shir","Daily2_Mast","Daily2_Panir","Daily2_Tokhmemorgh","Daily2_Mive","Daily2_Sabzi","Daily2_Makarooni","Daily2_Sibzamini")) CBNPoor2[is.na(get(col)), (col) := 0]
+  utils::View(CBNPoor2)
+  
+  # Food grams from Calories2
+  CBNPoor2$Ghandgram2  <- CBNPoor2$Daily2_Ghand /4
+  CBNPoor2$Hoboobatgram2 <- CBNPoor2$Daily2_Hoboobat /3
+  CBNPoor2$Nangram2 <- CBNPoor2$Daily2_Nan  /2.5
+  CBNPoor2$Berenjgram2 <- CBNPoor2$Daily2_Berenj  /1.2
+  CBNPoor2$Roghangram2 <- CBNPoor2$Daily2_Roghan /8
+  CBNPoor2$Gooshtgram2 <- CBNPoor2$Daily2_Goosht  /2.5
+  CBNPoor2$Morghgram2 <- CBNPoor2$Daily2_Morgh  /2
+  CBNPoor2$Mahigram2 <- CBNPoor2$Daily2_Mahi  /1
+  CBNPoor2$Shirgram2 <- CBNPoor2$Daily2_Shir  /2.5
+  CBNPoor2$Mastgram2 <- CBNPoor2$Daily2_Mast  /1.5
+  CBNPoor2$Panirgram2 <- CBNPoor2$Daily2_Panir  /2.5
+  CBNPoor2$Tokhmemorghgram2 <- CBNPoor2$Daily2_Tokhmemorgh /1.4
+  CBNPoor2$Mivegram2 <- CBNPoor2$Daily2_Mive  /0.5
+  CBNPoor2$Sabzigram2 <- CBNPoor2$Daily2_Sabzi  /0.5
+  CBNPoor2$Makaroonigram2 <- CBNPoor2$Daily2_Makarooni  /3.6
+  CBNPoor2$Sibzaminigram2 <- CBNPoor2$Daily2_Sibzamini /0.9
+  utils::View(CBNPoor2)
+  
+  # real prices
+  # CBNPoor2[,GhandIndex:=weighted.mean(GhandPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,HoboobatIndex:=weighted.mean(HoboobatPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  #CBNPoor2[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,NanIndex:=weighted.mean(NanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,GooshtIndex:=weighted.mean(GooshtPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,MorghIndex:=weighted.mean(MorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,MahiIndex:=weighted.mean(MahiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,ShirIndex:=weighted.mean(ShirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,MastIndex:=weighted.mean(MastPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,PanirIndex:=weighted.mean(PanirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,TokhmemorghIndex:=weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,MiveIndex:=weighted.mean(MivePrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  #CBNPoor2[,SabziIndex:=weighted.mean(SabziPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  # CBNPoor2[,MakarooniIndex:=weighted.mean(MakarooniPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  #CBNPoor2[,SibzaminiIndex:=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
+  
+  # New bundle
+  CBNPoor2[,GhandExp2:=GhandPrice*Ghandgram2*0.001]
+  for (col in c("GhandExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,HoboobatExp2:=HoboobatPrice*Hoboobatgram2*0.001]
+  for (col in c("HoboobatExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,NanExp2:=NanPrice*Nangram2*0.001]
+  for (col in c("NanExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,BerenjExp2:=BerenjPrice*Berenjgram2*0.001]
+  for (col in c("BerenjExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,RoghanExp2:=RoghanPrice*Roghangram2*0.001]
+  for (col in c("RoghanExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,GooshtExp2:=GooshtPrice*Gooshtgram2*0.001]
+  for (col in c("GooshtExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,MorghExp2:=MorghPrice*Morghgram2*0.001]
+  for (col in c("MorghExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,MahiExp2:=MahiPrice*Mahigram2*0.001]
+  for (col in c("MahiExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,ShirExp2:=ShirPrice*Shirgram2*0.001]
+  for (col in c("ShirExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,MastExp2:=MastPrice*Mastgram2*0.001]
+  for (col in c("MastExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,PanirExp2:=PanirPrice*Panirgram2*0.001]
+  for (col in c("PanirExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,TokhmemorghExp2:=TokhmemorghPrice*Tokhmemorghgram2*0.001]
+  for (col in c("TokhmemorghExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,MiveExp2:=MivePrice*Mivegram2*0.001]
+  for (col in c("MiveExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,SabziExp2:=SabziPrice*Sabzigram2*0.001]
+  for (col in c("SabziExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,MakarooniExp2:=MakarooniPrice*Makaroonigram2*0.001]
+  for (col in c("MakarooniExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[,SibzaminiExp2:=SibzaminiPrice*Sibzaminigram2*0.001]
+  for (col in c("SibzaminiExp2")) CBNPoor2[is.na(get(col)), (col) := 0]
+  CBNPoor2[, FoodExpenditure_Per_day2 := Reduce(`+`, .SD), .SDcols=c(247:262)][] 
+  utils::View(CBNPoor2)
+  a<-CBNPoor2[,.(FoodExpenditure_Per_day,FoodExpenditure_Per_day2)]
+  
+  model <- lm(FoodExpenditure_Per ~ Total_Exp_Month_Per_nondurable , weights = Weight, data=CBNPoor2)
+  summary(model)
+  Engel<-0.303
+  Engel_Reverse<-1/Engel
+  CBNPoor2$Total_Exp_Month_Per2<-Engel_Reverse*CBNPoor2$FoodExpenditure_Per
+  Povertyline<-Engel_Reverse*mean(CBNPoor2$FoodExpenditure_Per)
+  b<-CBNPoor2[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
+  m<-CBNPoor2[,.(HHID,Total_Exp_Month_Per2)]
+  CBN<-merge(CBN,m,by =c("HHID"),all.x=TRUE)
+  utils::View(CBN)
+  for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+  c<-CBN[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2,Poor,Poor2,Decile,Decile2,Weight)]
+  
+  #Sort Food Expenditure data
+  CBN<- CBN[order(Total_Exp_Month_Per2)]
+  c<-  c[order(Total_Exp_Month_Per2)]
+  
+  
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
