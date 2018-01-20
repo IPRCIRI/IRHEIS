@@ -22,7 +22,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
-  ty <- HouseTables[Year==year]
+  ty <- HouseTables[Year==year][,1:7]
   tab <- ty$Table
   
   UTL <- Tables[[paste0("U",year,tab)]]
@@ -36,10 +36,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TL),c("HHID","Code","ServiceExp"))
   TL <- TL[,pcols,with=FALSE]
   TL <- TL[Code %in% ty$StartCode:ty$EndCode]
-  if(year %in% 84:94){
-    TL[,ServiceExp:=as.numeric(ServiceExp)]
-  }
-  #TL[,ServiceExp:=as.numeric(ServiceExp)]
+  TL[,ServiceExp:=as.numeric(ServiceExp)]
+
   TL[,Code:=NULL]
 
 
@@ -60,8 +58,28 @@ for(year in (Settings$startyear:Settings$endyear)){
   #   }
   
 # cat("\n",year,",",mean(HouseData$ServiceExp,na.rm = TRUE))
+  ty <- HouseTables[Year==year]
+  rt <- Tables[[paste0("R",year,ty$HATable)]]
+  ut <- Tables[[paste0("U",year,ty$HATable)]]
+  
+  if(year <= 68){
+    rt$New <- NA
+    setnames(rt,"New",ty$HACode)
+  }
+  ns <- c(ty$HAHHID,ty$HRCode,ty$HACode)
+  
+  TRA <- rbind( rt[,ns,with=FALSE], ut[,ns,with=FALSE])
+  
+  setnames(TRA,ty$HAHHID,"HHID")
+  setnames(TRA,ty$HRCode,"Rooms")
+  setnames(TRA,ty$HACode,"Area")
+  
+  TRA[Area==0,Area:=NA]
+  
+  HouseData <- merge(HouseData,TRA,by = "HHID", all = TRUE)
   
   save(HouseData, file = paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
+  cat(summary(HouseData[,ServiceExp/Area]))
 }
 
 endtime <- proc.time()
