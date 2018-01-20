@@ -158,5 +158,6 @@ Tokhmemorgh_Data[is.na(Tokhmemorgh_Data)] <- 0
 #Tokhmemorgh_Data<-merge(TokhmemorghData,Tokhmemorgh_Data,by =c("HHID"),all=TRUE)
 Tokhmemorgh_Data<-Tokhmemorgh_Data[,Tokhmemorghgram:=TokhmemorghGram11441+TokhmemorghGram11442+TokhmemorghGram11443]
 Tokhmemorgh_Data<-Tokhmemorgh_Data[,TokhmemorghPrice:=(Price11441*TokhmemorghGram11441+Price11442*TokhmemorghGram11442+Price11443*TokhmemorghGram11443)/(TokhmemorghGram11441+TokhmemorghGram11442+TokhmemorghGram11443)]
+#Tokhmemorgh_Data<-Tokhmemorgh_Data[,TokhmemorghPrice:=(Price11441^TokhmemorghGram11441*Price11442^TokhmemorghGram11442*Price11443^TokhmemorghGram11443)^(1/(TokhmemorghGram11441+TokhmemorghGram11442+TokhmemorghGram11443))]
 save(Tokhmemorgh_Data, file = paste0(Settings$HEISProcessedPath,"Y","95","Tokhmemorgh_Data.rda"))
 
