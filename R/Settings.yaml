@@ -4,8 +4,8 @@ HEISAccessPath: D:/HEIS/DataAccess/
 HEISRawPath: D:/HEIS/DataRaw/
 HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
-startyear: 95.0
-endyear: 95.0
+startyear: 63
+endyear: 95
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
 MetaDataFilePath: ../Data/MetaData.xlsx
