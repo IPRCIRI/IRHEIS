@@ -438,23 +438,23 @@ library(data.table)
   utils::View(CBNPoor)
   
   # real prices
- # CBNPoor[,GhandIndex:=weighted.mean(GhandPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,HoboobatIndex:=weighted.mean(HoboobatPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  #CBNPoor[,RoghanIndex:=weighted.mean(RoghanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,NanIndex:=weighted.mean(NanPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,GooshtIndex:=weighted.mean(GooshtPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,MorghIndex:=weighted.mean(MorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,MahiIndex:=weighted.mean(MahiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,ShirIndex:=weighted.mean(ShirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,MastIndex:=weighted.mean(MastPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,PanirIndex:=weighted.mean(PanirPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,TokhmemorghIndex:=weighted.mean(TokhmemorghPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,MiveIndex:=weighted.mean(MivePrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  #CBNPoor[,SabziIndex:=weighted.mean(SabziPrice,Weight,na.rm = TRUE),ProvinceCode==23]
- # CBNPoor[,MakarooniIndex:=weighted.mean(MakarooniPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-  #CBNPoor[,SibzaminiIndex:=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),ProvinceCode==23]
-
+  CBNPoor<-CBNPoor[,GhandPrice:=ifelse(ProvinceCode==11,GhandPrice*257/279,GhandPrice)]
+  CBNPoor<-CBNPoor[,HoboobatPrice:=ifelse(ProvinceCode==11,HoboobatPrice*257/236,HoboobatPrice)]
+  CBNPoor<-CBNPoor[,RoghanPrice:=ifelse(ProvinceCode==11,RoghanPrice*256/238,RoghanPrice)]
+  CBNPoor<-CBNPoor[,BerenjPrice:=ifelse(ProvinceCode==11,BerenjPrice*291/277,BerenjPrice)]
+  CBNPoor<-CBNPoor[,NanPrice:=ifelse(ProvinceCode==11,NanPrice*292/277,NanPrice)]
+  CBNPoor<-CBNPoor[,GooshtPrice:=ifelse(ProvinceCode==11,GooshtPrice*245/231,GooshtPrice)]
+  CBNPoor<-CBNPoor[,MorghPrice:=ifelse(ProvinceCode==11,MorghPrice*245/231,MorghPrice)]
+  CBNPoor<-CBNPoor[,MahiPrice:=ifelse(ProvinceCode==11,MahiPrice*283/281,MahiPrice)]
+  CBNPoor<-CBNPoor[,ShirPrice:=ifelse(ProvinceCode==11,ShirPrice*254/290,ShirPrice)]
+  CBNPoor<-CBNPoor[,MastPrice:=ifelse(ProvinceCode==11,MastPrice*254/290,MastPrice)]
+  CBNPoor<-CBNPoor[,PanirPrice:=ifelse(ProvinceCode==11,PanirPrice*254/290,PanirPrice)]
+  CBNPoor<-CBNPoor[,TokhmemorghPrice:=ifelse(ProvinceCode==11,TokhmemorghPrice*254/290,TokhmemorghPrice)]
+  CBNPoor<-CBNPoor[,MivePrice:=ifelse(ProvinceCode==11,MivePrice*231/279,MivePrice)]
+  CBNPoor<-CBNPoor[,SabziPrice:=ifelse(ProvinceCode==11,SabziPrice*257/236,SabziPrice)]
+  CBNPoor<-CBNPoor[,MakarooniPrice:=ifelse(ProvinceCode==11,MakarooniPrice*292/277,MakarooniPrice)]
+  CBNPoor<-CBNPoor[,SibzaminiPrice:=ifelse(ProvinceCode==11,SibzaminiPrice*257/236,SibzaminiPrice)]
+  
   # New bundle
   CBNPoor[,GhandExp2:=GhandPrice*Ghandgram2*0.001]
   for (col in c("GhandExp2")) CBNPoor[is.na(get(col)), (col) := 0]
@@ -492,12 +492,13 @@ library(data.table)
   utils::View(CBNPoor)
   a<-CBNPoor[,.(FoodExpenditure_Per_day,FoodExpenditure_Per_day2)]
 
-   model <- lm(FoodExpenditure_Per ~ Total_Exp_Month_Per_nondurable , weights = Weight, data=CBNPoor)
+
+  model <- lm(FoodExpenditure_Per ~ Total_Exp_Month_Per_nondurable , weights = Weight, data=CBNPoor)
   summary(model)
   Engel<-0.386
   Engel_Reverse<-1/Engel
   CBNPoor$Total_Exp_Month_Per2<-Engel_Reverse*CBNPoor$FoodExpenditure_Per
-  Povertyline<-Engel_Reverse*mean(CBNPoor$FoodExpenditure_Per)
+  Povertyline<-Engel_Reverse*weighted.mean(CBNPoor$FoodExpenditure_Per,CBNPoor$Weight,na.rm = TRUE)
   b<-CBNPoor[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
   m<-CBNPoor[,.(HHID,Total_Exp_Month_Per2, cluster)]
   CBN<-merge(CBN,m,by =c("HHID"),all.x=TRUE)
@@ -524,6 +525,9 @@ library(data.table)
   #c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline ,1,0)]
   CBN[,Poor2:=ifelse(Decile2 %in% 1:2,1,0)]
   c[,Poor2:=ifelse(Decile2 %in% 1:2,1,0)]
+  c[,sum(Poor),Poor2==1]
+  c[,sum(Poor2),Poor==1]
+  c[,sum(Poor2),Poor==1 & Poor2==1]
   CBNPoor2<-CBN[Poor2==1]
   c<-CBN[Poor2==1]
   
@@ -746,18 +750,41 @@ library(data.table)
   summary(model)
   Engel<-0.303
   Engel_Reverse<-1/Engel
-  CBNPoor2$Total_Exp_Month_Per2<-Engel_Reverse*CBNPoor2$FoodExpenditure_Per
+  CBNPoor2$Total_Exp_Month_Per3<-Engel_Reverse*CBNPoor2$FoodExpenditure_Per
   Povertyline<-Engel_Reverse*mean(CBNPoor2$FoodExpenditure_Per)
-  b<-CBNPoor2[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
-  m<-CBNPoor2[,.(HHID,Total_Exp_Month_Per2)]
+  b<-CBNPoor2[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per3)]
+  m<-CBNPoor2[,.(HHID,Total_Exp_Month_Per3)]
   CBN<-merge(CBN,m,by =c("HHID"),all.x=TRUE)
   utils::View(CBN)
-  for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-  c<-CBN[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2,Poor,Poor2,Decile,Decile2,Weight)]
+  for (col in c("Total_Exp_Month_Per3")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per]
+  c<-CBN[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per3,Poor,Poor2,Decile,Decile2,Weight)]
   
   #Sort Food Expenditure data
-  CBN<- CBN[order(Total_Exp_Month_Per2)]
-  c<-  c[order(Total_Exp_Month_Per2)]
+  CBN<- CBN[order(Total_Exp_Month_Per3)]
+  c<-  c[order(Total_Exp_Month_Per3)]
+  
+  #Indicate new poors
+  #Calculate cumulative weights
+  sum(CBN$Weight)
+  CBN$cumweight3 <- cumsum(CBN$Weight)
+  c$cumweight3 <- cumsum(CBN$Weight)
+  tx <- max(CBN$cumweight3)
+  
+  #Calculate deciles by weights
+  CBN[,Decile3:=cut(cumweight3,breaks = seq(0,tx,tx/10),labels = 1:10)]
+  c[,Decile3:=cut(cumweight3,breaks = seq(0,tx,tx/10),labels = 1:10)]
+  
+  #CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline ,1,0)]
+  #c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline ,1,0)]
+  CBN[,Poor3:=ifelse(Decile3 %in% 1:2,1,0)]
+  c[,Poor3:=ifelse(Decile3 %in% 1:2,1,0)]
+  c[,sum(Poor2),Poor3==1]
+  c[,sum(Poor3),Poor2==1]
+  c[,sum(Poor2),Poor==1 & Poor2==1]
+  CBNPoor3<-CBN[Poor3==1]
+  c<-CBN[Poor3==1]
+  e<-CBN[,weighted.mean(Poor3,Weight),by=ProvinceCode]
+  e<-  e[order(ProvinceCode)]
   
   
 endtime <- proc.time()
