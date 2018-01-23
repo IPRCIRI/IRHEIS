@@ -77,7 +77,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   TRA[Area==0,Area:=NA]
   
   HouseData <- merge(HouseData,TRA,by = "HHID", all = TRUE)
-  
+  HouseData$MetrPrice <-HouseData$ServiceExp/HouseData$Area
   save(HouseData, file = paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
   cat(summary(HouseData[,ServiceExp/Area]))
 }
