@@ -160,8 +160,8 @@ library(data.table)
 
   
   #Calculate Per_Total Expenditures Monthly
-  CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(65:77,79:80)][] 
-  CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=65:77][] 
+  CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(68:80,82:83)][] 
+  CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=68:80][] 
 
   CBN$Total_Exp_Month_Per<-CBN$Total_Exp_Month/CBN$EqSizeRevOECD
   CBN$Total_Exp_Month_Per_nondurable<-CBN$Total_Exp_Month_nondurable/CBN$EqSizeRevOECD
@@ -207,12 +207,14 @@ library(data.table)
   CBNPoor<-CBN[Poor==1]
   
   #K-means algorithm for clustering by prices
-  test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,Region,ProvinceCode,Weight)]
+  test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,MetrPrice,Region,ProvinceCode,Weight)]
   dt2 <- test[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Region,ProvinceCode)]
   dt2<- dt2[order(ProvinceCode,Region)]
   for (col in c("MahiPrice")) dt2[is.nan(get(col)), (col) := 200000]
-  dt <- dt2 [,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice)]
+  dt <- dt2 [,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,MetrPrice)]
 
+
+  
    pca <- princomp(dt, cor=T)
     PRICE <- pca$scores
     PRICE1 <- -1*PRICE[,1] 
@@ -231,6 +233,14 @@ library(data.table)
     PRICE14 <- -1*PRICE[,14] 
     PRICE15 <- -1*PRICE[,15] 
     PRICE16 <- -1*PRICE[,16] 
+    PRICE16 <- -1*PRICE[,17] 
+    
+    # Deciding how many clusters
+    wss <- (nrow(dt)-1)*sum(apply(dt,2,var))
+    for (i in 2:30) wss[i] <- sum(kmeans(dt,
+                                         centers=i)$withinss)
+    plot(1:30, wss, type="b", xlab="Number of Clusters",
+         ylab="Within groups sum of squares")
     
     #X12 <- cbind(PRICE1, PRICE2)
     cl <- kmeans(PRICE,5)
