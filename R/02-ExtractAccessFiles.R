@@ -23,7 +23,7 @@ years_to_extract <- setdiff(needed_years,existing_years)
 files_to_extract <- compressed_file_names_df[
   compressed_file_names_df$Year %in% years_to_extract,]$CompressedFileName
 
-if(Settings$OS=="windows"){
+if(Settings$OS=="Windows"){
 #  cmdline <- paste0(normalizePath("../exe/unrar/UnRAR.exe")," e -y ") # Use unrar binary
    cmdline <- paste0(normalizePath("../exe/7z/7z.exe")," e -y ")      # Use 7-zip binary
 }
@@ -37,7 +37,7 @@ for(year in years_to_extract)
   filename <- compressed_file_names_df[
     compressed_file_names_df$Year ==year,]$CompressedFileName
   file.copy(from = paste0(Settings$HEISCompressedPath,filename),to = ".")
-  system(paste0(cmdline,filename))
+  shell(paste0(cmdline,filename))
   l <- dir(pattern=glob2rx("*.mdb"),ignore.case = TRUE)
   if(length(l)>0){
     file.rename(from = l,to = paste0(year,".mdb"))
