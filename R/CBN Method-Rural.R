@@ -300,7 +300,11 @@ plot(1:30, wss, type="b", xlab="Number of Clusters",
 #clust5 <- wcKMedoids(PRICE, k=5, weights=PRICE)
 
 #X12 <- cbind(PRICE1, PRICE2)
-cl <- kmeans(dt,6)
+dt3.m <- dt3[,lapply(.SD, mean)]			# Weights for each vector
+dtW <- dt * sqrt(dt3.m[rep(1,nrow(dt))])	# Weighted observations
+kmeans(dtW,6)						# Simple K-means
+
+cl <- kmeans(dtW,6)
 cl$cluster
 dt2 <- dt2[,cluster:=data.table(cl$cluster)]
 dt2<-dt2[,.(ProvinceCode,cluster)]
@@ -700,7 +704,7 @@ CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline5_1 & cluster==5,1,Poor2)]
 c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline5_1 & cluster==5 ,1,Poor2)]
 CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline6_1 & cluster==6,1,Poor2)]
 c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline6_1 & cluster==6 ,1,Poor2)]
-CBN[,weighted.mean(Poor2,Total_Exp_Month_Per2),by=cluster]
+CBN[,weighted.mean(Poor2,Weight),by=cluster]
 CBNPoor2<-CBN[Poor2==1]
 
 #weighted consumption in each cluster
