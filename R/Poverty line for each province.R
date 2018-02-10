@@ -69,6 +69,8 @@ dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=.(provpct,prov)]
 dx2 <- d2[,lapply(.SD, mean, na.rm=TRUE),by=.(provpct,prov)]
 
 ###########Rural-all###########
+load(file="dt2.rda")
+Rur<-merge(Rur,dt2,by=c("ProvinceCode"),all.x = TRUE)
 #Nonlog
 for(ostan in 0:30){  
   nam <- paste0("Rur",ostan)
