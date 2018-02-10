@@ -343,12 +343,14 @@ cl <- kmeans(dtW,6)
 cl$cluster
 dt2 <- dt2[,cluster:=data.table(cl$cluster)]
 dt2<-dt2[,.(ProvinceCode,cluster)]
+save(dt2,file="dt2.rda")
+
 #plot(PRICE1, PRICE2,col=cl$cluster)
 #points(cl$centers, pch=20)
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
-CBNPoor[,sum(Weight*Size),by=cluster]
-CBNPoor[,sum(Weight),by=cluster]
-CBNPoor[,sum(Poor),by=cluster]
+CBNPoor[,sum(Poor*Size),by=cluster][order(cluster)]
+CBNPoor[,sum(Size),by=cluster][order(cluster)]
+CBNPoor[,sum(Poor*Weight),by=cluster][order(cluster)]
 C2<-CBNPoor[,.(HHID,ProvinceCode,Region,Decile,Poor,cluster)]
 ######################################################################    
 #K-means algorithm for clustering by consumption
@@ -6653,8 +6655,18 @@ CBNPoor16[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster]
 CBNPoor16[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor16[,weighted.mean(Size,Weight,na.rm = TRUE),by=cluster]
 CBNPoor16[,sum(Weight*Size),by=cluster]
-CBNPoor16[,sum(Weight),by=cluster]
-CBNPoor16[,sum(Poor16),by=cluster]
+CBNPoor16[,sum(Weight),by=cluster][order(cluster)]
+CBNPoor16[,sum(Poor16),by=cluster][order(cluster)]
+CBNPoor16[,sum(Poor16*Weight),by=cluster][order(cluster)]
+CBNPoor[,sum(Poor),by=cluster][order(cluster)]
+CBNPoor[,sum(Poor*Weight),by=cluster][order(cluster)]
+CBNPoor[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor16[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor16[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,weighted.mean(Poor,Weight),by=cluster][order(cluster)]
+CBN[,weighted.mean(Poor17,Weight),by=cluster][order(cluster)]
+CBN[,weighted.mean(Size,Weight),by=cluster][order(cluster)]
 CBNPoor17<-CBN[Poor17==1]
 
 

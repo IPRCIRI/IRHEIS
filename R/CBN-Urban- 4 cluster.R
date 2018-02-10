@@ -6270,6 +6270,20 @@ CBNPoor16[,weighted.mean(Size,Weight,na.rm = TRUE),by=cluster]
 CBNPoor16[,sum(Weight*Size),by=cluster]
 CBNPoor16[,sum(Weight),by=cluster]
 CBNPoor16[,sum(Poor16),by=cluster]
+
+
+CBNPoor16[,sum(Poor16*Weight),by=cluster][order(cluster)]
+CBNPoor[,sum(Poor*Weight),by=cluster][order(cluster)]
+CBNPoor16[,sum(Poor16),by=cluster][order(cluster)]
+CBNPoor[,sum(Poor),by=cluster][order(cluster)]
+CBNPoor[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor16[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor16[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,weighted.mean(Poor,Weight),by=cluster][order(cluster)]
+CBN[,weighted.mean(Poor17,Weight),by=cluster][order(cluster)]
+CBN[,weighted.mean(Size,Weight),by=cluster][order(cluster)]
+
 CBNPoor17<-CBN[Poor17==1]
 
 
