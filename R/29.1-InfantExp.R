@@ -6,10 +6,11 @@ library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
+year <- 95
 
-load(paste0(Settings$HEISProcessedPath,"Y95HHBase.rda"))
-load(paste0(Settings$HEISProcessedPath,"Y95HHI.rda"))
-load(paste0(Settings$HEISRawPath,"Y95Raw.rda"))
+load(paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+load(paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
+load(paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
 
 S01 <- rbind(Tables$R95P3S01,Tables$U95P3S01)
 setnames(S01, c("HHID","Code","BuyingMethod","Grams","Kilos","Price","Expenditure"))
@@ -66,33 +67,122 @@ D[is.na(D)]<-0
 
 D <- merge(HHI,D,by="HHID")
 
-load(Settings$weightsFile)
-W <- AllWeights[Year==95][,Year:=NULL]
+load(paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+
+HHWeights[,Year:=NULL]
  
-D <- merge(D, W, by="HHID")
+D <- merge(D, HHWeights, by="HHID")
+
+summary(D$X1)
+D[,X3:=X31+X32]
+Di <- D[NInfants>0]
+
+library(ggplot2)
+
+SW <- sum(Di$Weight)
+
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X1)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X1),Region)]
+Di[,weighted.mean(X1,Weight),by=sign(X1)]
+Di[,weighted.mean(X1,Weight),by=.(sign(X1),Region)]
+ggplot(Di[X1>0],aes(X1/1e7, weight=Weight)) + geom_histogram()
+
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X2)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X2),Region)]
+Di[,weighted.mean(X2,Weight),by=sign(X2)]
+Di[,weighted.mean(X2,Weight),by=.(sign(X2),Region)]
+ggplot(Di[X2>0],aes(X2/1e7, weight=Weight)) + geom_histogram()
 
 
-library(questionr)
 
-wtd.table(D$NInfants, D$NSmallKids,weights = D$Weight)
-
-library(XLConnect)
-
-writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
-                       D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45)]
-                     ,sheet = "All")
-writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
-                       D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45),by=NInfants]
-                     ,sheet = "NInfants")
-writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
-                       D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45),by=NSmallKids]
-                     ,sheet = "NSmallKids")
-writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
-                       D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45),by=.(NInfants,NSmallKids)]
-                     ,sheet = "Both")
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X3)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X3),Region)]
+Di[,weighted.mean(X3,Weight),by=sign(X3)]
+Di[,weighted.mean(X3,Weight),by=.(sign(X3),Region)]
+ggplot(Di[X3>0],aes(X3/1e7, weight=Weight)) + geom_histogram()
+Di[,weighted.mean(X3,Weight)]
+Di[,weighted.mean(X3,Weight),by=.(Region)]
 
 
-D[NInfants>0,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45)]
-D[NInfants>0,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X4)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X4),Region)]
+Di[,weighted.mean(X4,Weight),by=sign(X4)]
+Di[,weighted.mean(X4,Weight),by=.(sign(X4),Region)]
+ggplot(Di[X4>0],aes(X4/1e7, weight=Weight)) + geom_histogram()
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X1+X4)]
+Di[,.(sum(Weight),sum(Weight)/323818.9),by=.(sign(X1),sign(X4))]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X1+X4),Region)]
+Di[,weighted.mean(X4,Weight),by=sign(X1+X4)]
+Di[,weighted.mean(X4,Weight),by=.(sign(X1+X4),Region)]
 
-D[X9A>0,lapply(.SD,weighted.mean,Weight),.SDcols=c(45),by=.(NInfants,NSmallKids)]
+
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X5)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X5),Region)]
+Di[,weighted.mean(X5,Weight),by=sign(X5)]
+Di[,weighted.mean(X5,Weight),by=.(sign(X5),Region)]
+ggplot(Di[X5>0],aes(X5/1e7, weight=Weight)) + geom_histogram()
+
+
+Di[,.(.N, sum(Weight),sum(Weight)/SW),by=sign(X6)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X6),Region)]
+Di[,weighted.mean(X6,Weight),by=sign(X6)]
+Di[,weighted.mean(X6,Weight),by=.(sign(X6),Region)]
+ggplot(Di[X6>0],aes(X6/1e7, weight=Weight)) + geom_histogram()
+Di[,.(sum(Weight),sum(Weight)/SW*12),by=sign(X6)]
+Di[,weighted.mean(X6,Weight)/12,by=sign(X6)]
+Di[,weighted.mean(X6,Weight)/12,by=.(sign(X6),sign(X6-1e8))]
+ggplot(Di[X6>0],aes(X6/12e7, weight=Weight*12)) + geom_histogram()
+
+
+Di[,X7T:=X7+X7A]
+
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X7)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X7),Region)]
+Di[,weighted.mean(X7,Weight),by=sign(X7)]
+Di[,weighted.mean(X7,Weight),by=.(sign(X7),Region)]
+ggplot(Di[X7>0],aes(X7/1e7, weight=Weight)) + geom_histogram()
+
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X7A)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X7A),Region)]
+Di[,weighted.mean(X7A,Weight),by=sign(X7A)]
+Di[,weighted.mean(X7A,Weight),by=.(sign(X7A),Region)]
+ggplot(Di[X7A>0],aes(X7A/1e7, weight=Weight)) + geom_histogram()
+
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X7T)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X7T),Region)]
+Di[,weighted.mean(X7T,Weight),by=sign(X7T)]
+Di[,weighted.mean(X7T,Weight),by=.(sign(X7T),Region)]
+ggplot(Di[X7T>0],aes(X7T/1e7, weight=Weight)) + geom_histogram()
+
+
+Di[,.(sum(Weight),sum(Weight)/SW),by=sign(X9A)]
+Di[,.(sum(Weight),sum(Weight)/SW),by=.(sign(X9A),Region)]
+Di[,weighted.mean(X9A,Weight),by=sign(X9A)]
+Di[,weighted.mean(X9A,Weight),by=.(sign(X9A),Region)]
+ggplot(Di[X9A>0],aes(X9A/1e7, weight=Weight)) + geom_histogram()
+
+
+# library(questionr)
+# 
+# wtd.table(D$NInfants, D$NSmallKids,weights = D$Weight)
+# 
+# library(XLConnect)
+# 
+# writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
+#                        D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45)]
+#                      ,sheet = "All")
+# writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
+#                        D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45),by=NInfants]
+#                      ,sheet = "NInfants")
+# writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
+#                        D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45),by=NSmallKids]
+#                      ,sheet = "NSmallKids")
+# writeWorksheetToFile(file = "D:/InfantExp.xlsx", data = 
+#                        D[,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45),by=.(NInfants,NSmallKids)]
+#                      ,sheet = "Both")
+# 
+# 
+# D[NInfants>0,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45)]
+# D[NInfants>0,lapply(.SD,weighted.mean,Weight),.SDcols=c(22:23, 30:45)]
+# 
+# D[X9A>0,lapply(.SD,weighted.mean,Weight),.SDcols=c(45),by=.(NInfants,NSmallKids)]
