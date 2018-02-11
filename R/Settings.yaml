@@ -4,8 +4,8 @@ HEISAccessPath: D:/HEIS/DataAccess/
 HEISRawPath: D:/HEIS/DataRaw/
 HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
-startyear: 95
-endyear: 95
+startyear: 95.0
+endyear: 95.0
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
 MetaDataFilePath: ../Data/MetaData.xlsx
@@ -28,7 +28,7 @@ MDS_Mahi: Mahi
 MDS_Shir: Shir
 MDS_Mast: Mast
 MDS_Panir: Panir
-MDS_Tokhmemorgh: Tokhmemorgh
+MDS_Tokhmemorg: Tokhmemorgh
 MDS_Mive: Mive
 MDS_Sabzi: Sabzi
 MDS_Biscuit: Biscuit
