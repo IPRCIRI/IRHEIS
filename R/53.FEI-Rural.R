@@ -66,7 +66,7 @@ dx2 <- d2[,lapply(.SD, mean, na.rm=TRUE),by=.(clusterpct,cluster)]
 
 ############Rural-all############
 #Nonlog-d
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,d[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
@@ -78,7 +78,7 @@ for(clus in 1:4){
 }
 
 #log-d
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,d[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
@@ -91,7 +91,7 @@ for(clus in 1:4){
 }
 
 #Nonlog-d2
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,d2[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
@@ -103,7 +103,7 @@ for(clus in 1:4){
 }
 
 #log-d2
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,d2[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
@@ -132,7 +132,7 @@ dx2 <- d2[,lapply(.SD, mean, na.rm=TRUE),by=.(clusterpct,cluster)]
 
 ############Rural-all############
 #Nonlog-d
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,dx[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
@@ -144,7 +144,7 @@ for(clus in 1:4){
 }
 
 #log-d
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,dx[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
@@ -157,7 +157,7 @@ for(clus in 1:4){
 }
 
 #Nonlog-d2
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,dx2[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
@@ -169,7 +169,7 @@ for(clus in 1:4){
 }
 
 #log-d2
-for(clus in 1:4){  
+for(clus in 1:5){  
   nam <- paste0("Rur",clus)
   assign(nam,dx2[cluster==clus])
   # save(list=ls(pattern = nam),file = paste0(Settings$HEISProcessedPath,nam,".rda"))
