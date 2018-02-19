@@ -7,6 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
+  
 cat("\n\n================ HHBerenjs =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
@@ -15,7 +16,8 @@ library(data.table)
 library(stringr)
 library(readxl)
 
-
+for(year in (Settings$startyear:Settings$endyear)){
+  
 BerenjTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Berenj))
 
 
@@ -49,6 +51,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   TF$BerenjGram<- TF$BerenjGram/30
   BerenjData <- TF[,lapply(.SD,sum),by=HHID]
   save(BerenjData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Berenjs.rda"))
+}
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
