@@ -29,6 +29,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    UTpubW <- Tables[[paste0("U",year,tab)]]
    RTpubW <- Tables[[paste0("R",year,tab)]]
    TpubW <- rbind(UTpubW,RTpubW,fill=TRUE)
+   print(names(TpubW))
    for(n in names(TpubW)){
     x <- which(pubwt==n)
    if(length(x)>0)
@@ -40,14 +41,14 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     if(year %in% 69:76){
       TpubW <- TpubW[ section ==1 ] 
-    } else if(year %in% 77:94){
+    } else if(year >= 77){
       TpubW <- TpubW[ section ==1 ] 
     } 
-    if(year %in% 66:94){
+    if(year >= 66){
       TpubW[,HHID:=as.numeric(HHID)]
     }
     
-    if(year %in% 86:94){
+    if(year >= 86){
       TpubW[,net_income_pub:=as.numeric(net_income_pub)]
     }
   
