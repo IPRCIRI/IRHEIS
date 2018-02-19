@@ -4,20 +4,10 @@ HEISAccessPath: D:/HEIS/DataAccess/
 HEISRawPath: D:/HEIS/DataRaw/
 HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
-#<<<<<<< HEAD
-startyear: 95.0
-endyear: 95.0
-#=======
 HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
-<<<<<<< HEAD
 startyear: 63.0
 endyear: 95.0
-=======
-#startyear: 63.0
-#endyear: 94.0
-#>>>>>>> origin/master
->>>>>>> origin/master
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
 MetaDataFilePath: ../Data/MetaData.xlsx

@@ -51,7 +51,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   TPrvW[is.na(TPrvW)] <- 0
-  PrvWageData <- TPrvW[,lapply(.SD,sum),by=HHID]
+  
+  A <- TPrvW[,.(net_income_prv=sum(net_income_prv)),by=HHID]
+  if("sector" %in% names(TPrvW)){
+    B <- TPrvW[TPrvW[,.I[net_income_prv==max(net_income_prv)],by=HHID][,V1]][,.(HHID,prvsection=section)]
+  }else{
+    B <- TPrvW[,.(net_income_prv,prvsection=NA),by=HHID][,.(HHID,prvsection=NA)]
+  }
+  PrvWageData <- merge(A,B,by="HHID")
+  
+  
    save(PrvWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
 }
 endtime <- proc.time()

@@ -29,7 +29,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    UTpubW <- Tables[[paste0("U",year,tab)]]
    RTpubW <- Tables[[paste0("R",year,tab)]]
    TpubW <- rbind(UTpubW,RTpubW,fill=TRUE)
-   print(names(TpubW))
+ #  print(names(TpubW))
    for(n in names(TpubW)){
     x <- which(pubwt==n)
    if(length(x)>0)
@@ -39,11 +39,12 @@ for(year in (Settings$startyear:Settings$endyear)){
    #pcols <- intersect(names(TpubW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
     TpubW <- TpubW[,pcols,with=FALSE]
     
-    if(year %in% 69:76){
-      TpubW <- TpubW[ section ==1 ] 
-    } else if(year >= 77){
-      TpubW <- TpubW[ section ==1 ] 
-    } 
+    ### IMPORTANT: Why limit only to section ==1?
+    # if(year %in% 69:76){
+    #   TpubW <- TpubW[ section ==1 ] 
+    # } else if(year >= 77){
+    #   TpubW <- TpubW[ section ==1 ] 
+    # } 
     if(year >= 66){
       TpubW[,HHID:=as.numeric(HHID)]
     }
@@ -53,8 +54,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     }
   
    TpubW[is.na(TpubW)] <- 0
-   PubWageData <- TpubW[,lapply(.SD,sum),by=HHID]
-    save(PubWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
+   A <- TpubW[,.(net_income_pub=sum(net_income_pub)),by=HHID]
+   ft <- function(X){return(X[1])}
+   if("sector" %in% names(TpubW)){
+      B <- TpubW[TpubW[,.I[net_income_pub==max(net_income_pub)],by=HHID][,V1]][,.(pubsection=ft(section)),by=HHID]
+   }else{
+     B <- TpubW[,.(net_income_pub,pubsection=NA),by=HHID][,.(HHID,pubsection=NA)]
+   }
+   PubWageData <- merge(A,B,by="HHID")
+   save(PubWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
