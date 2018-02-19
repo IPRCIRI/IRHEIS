@@ -693,10 +693,7 @@ CBNPoor[,weighted.mean(FoodExpenditure_Per2100,Weight,na.rm = TRUE),by=cluster]
 
 #model for each cluster
 #cluster 1
-model <- lm(FoodExpenditure_Real~ Total_Exp_Month_Real , weights = Weight, data=CBNPoor,subset = (cluster==1))
-summary(model)
-Engel1<-coef(model)[2]
-Engel_Reverse1<-1/Engel1
+
 
 CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==1,Total_Exp_Month_nondurable_Real_Per,0)]
 CBNPoorCluster<-CBNPoor[cluster==1]
