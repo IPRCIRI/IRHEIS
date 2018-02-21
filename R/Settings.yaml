@@ -56,8 +56,8 @@ MDS_Insurance: InsuranceTables
 MDS_ActivityState: ActivityStateTables
 MDS_PubWage: PubWageTable
 MDS_PrvWage: PrvWageTable
-MDS_AgriWage: AggrIncTable
-MDS_BussWage: BussIncTable
+MDS_AgriInc: AgriIncTable
+MDS_BussInc: BussIncTable
 MDS_OtherWage: OthrIncTable
 MDS_Retirement: RetirementTables
 MDS_Interest: InterestTables
@@ -67,6 +67,18 @@ MDS_Homemade: HomemadeTables
 MDS_Intra: IntraTables
 MDS_SubsidyWage: SubsidyTable
 MDS_Rough_Weights: RegionWeights
+SectorsNumbers:
+- 1
+- 2
+- 3
+- 4
+- 5
+SectorsNames:
+- Public
+- Cooperative
+- Private
+- BussP
+- Agri
 weightsFile: ../Data/AllWeights.rda
 D80LinkSource: ../Data/D80Link.accdb
 D80LinkDest: D:/HEIS/DataAccess/D80Link.accdb

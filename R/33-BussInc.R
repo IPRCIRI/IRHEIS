@@ -34,19 +34,27 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TbussW,n,names(busswt)[x])
   }
-  pcols <- intersect(names(TbussW),c("HHID","NonWageWorkplaceActivity","AggrNetIncomeY"))
+  pcols <- intersect(names(TbussW),c("HHID","IndivNo","WorkType","JobType","BussNetIncomeY"))
   TbussW <- TbussW[,pcols,with=FALSE]
   
-  if(year %in% 69:94){
-    TbussW <- TbussW[ agriculture ==2 ] 
+  if(year <= 68){
+    TbussW[,WorkType:=2]
+  }else{
+    TbussW <- TbussW[WorkType==2] 
   }
   
-  if(year %in% 84:94){
-    TbussW[,net_income_buss:=as.numeric(net_income_buss)]
+  if(year >= 84){
+    TbussW[,BussNetIncomeY:=as.numeric(BussNetIncomeY)]
   }
   
-  TbussW[is.na(TbussW)] <- 0
-   BussIncomeData <- TbussW[,lapply(.SD,sum),by=HHID]
+   TbussW[is.na(TbussW)] <- 0
+   BussIncomeData <- TbussW[,.(BussNetIncomeY=sum(BussNetIncomeY),
+                               BussEarners=.N,
+                               Sector=4),
+                              # Sector=factor(4,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
+                            ,by=HHID]
+
+   
    save(BussIncomeData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BussIncome.rda"))
 }
 endtime <- proc.time()

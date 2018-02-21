@@ -16,16 +16,16 @@ library(stringr)
 library(readxl)
 
 
-SubsidyWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_SubsidyWage))
+SubsidyTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_SubsidyWage))
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  Subsidywt <- SubsidyWageTable[Year==year]
+  Subsidywt <- SubsidyTable[Year==year]
   tab <- Subsidywt$Table
   if(is.na(tab))
     next
+  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   UTSubsidyW <- Tables[[paste0("U",year,tab)]]
   RTSubsidyW <- Tables[[paste0("R",year,tab)]]
   TSubsidyW <- rbind(UTSubsidyW,RTSubsidyW,fill=TRUE)
