@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHBussIncTable =====================================\n")
+cat("\n\n================ BussInc =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TbussW,n,names(busswt)[x])
   }
-  pcols <- intersect(names(TbussW),c("HHID","agriculture","net_income_buss"))
+  pcols <- intersect(names(TbussW),c("HHID","NonWageWorkplaceActivity","AggrNetIncomeY"))
   TbussW <- TbussW[,pcols,with=FALSE]
   
   if(year %in% 69:94){
@@ -46,8 +46,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   TbussW[is.na(TbussW)] <- 0
-   bussWageData <- TbussW[,lapply(.SD,sum),by=HHID]
-   save(bussWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"bussWages.rda"))
+   BussIncomeData <- TbussW[,lapply(.SD,sum),by=HHID]
+   save(BussIncomeData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BussIncome.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

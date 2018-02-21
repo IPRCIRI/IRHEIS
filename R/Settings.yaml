@@ -53,6 +53,7 @@ MDS_Loans: LoanTables
 MDS_House: HouseTables
 MDS_Education: EducationTables
 MDS_Insurance: InsuranceTables
+MDS_ActivityState: ActivityStateTables
 MDS_PubWage: PubWageTable
 MDS_PrvWage: PrvWageTable
 MDS_AgriWage: AggrIncTable
