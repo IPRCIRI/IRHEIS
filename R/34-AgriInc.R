@@ -16,13 +16,13 @@ library(stringr)
 library(readxl)
 
 
-AgriWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_AgriWage))
+AgriIncTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_AgriInc))
 
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  Agriwt <- AgriWageTable[Year==year]
+  Agriwt <- AgriIncTable[Year==year]
   tab <- Agriwt$Table
   if(is.na(tab))
     next
@@ -34,20 +34,28 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TAgriW,n,names(Agriwt)[x])
   }
-  pcols <- intersect(names(TAgriW),c("HHID","agriculture","net_income_agri"))
+  pcols <- intersect(names(TAgriW),c("HHID","IndivNo","WorkType","JobType","AgriNetIncomeY"))
   TAgriW <- TAgriW[,pcols,with=FALSE]
   
-  if(year %in% 69:94){
-    TAgriW <- TAgriW[ agriculture ==1 ] 
+  if(year <= 68){
+    TAgriW[,WorkType :=1] 
+  }else{
+    TAgriW <- TAgriW[ WorkType ==1 ] 
   }
   
-  if(year %in% 84:94){
-    TAgriW[,net_income_agri:=as.numeric(net_income_agri)]
+  if(year >= 84){
+    TAgriW[,AgriNetIncomeY:=as.numeric(AgriNetIncomeY)]
   }
   
   TAgriW[is.na(TAgriW)] <- 0
-   AgriWageData <- TAgriW[,lapply(.SD,sum),by=HHID]
-   save(AgriWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"AgriWages.rda"))
+  AgriIncomeData <- TAgriW[,.(AgriNetIncomeY=sum(AgriNetIncomeY),
+                              AgriEarners=.N,
+                              Sector=5)
+                           #  Sector=factor(5,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
+                           ,by=HHID]
+  
+  
+   save(AgriIncomeData, file = paste0(Settings$HEISProcessedPath,"Y",year,"AgriWages.rda"))
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

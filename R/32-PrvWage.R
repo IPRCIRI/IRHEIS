@@ -87,10 +87,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   PrvWageData <- TprvW[,.(PrvWageNetIncomeY=sum(PrvWageNetIncomeY),
                           PrvEarners=.N,
-                          WageSector=factor(WageSector,levels = 1:3,labels = c("Prvlic","Cooperative","Private") ))
+                          Sector=WageSector)
+                          # Sector=factor(WageSector,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
                        ,by=HHID]
   
-   save(PrvWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
+    save(PrvWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
  #  print(mean(PrvWageData$PrvWageNetIncomeY))
 }
 endtime <- proc.time()

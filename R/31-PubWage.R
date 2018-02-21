@@ -77,11 +77,12 @@ for(year in (Settings$startyear:Settings$endyear)){
    
   TpubW[is.na(TpubW)] <- 0
   TpubW <- TpubW[PubWageNetIncomeY>0]
-  
+
   
   PubWageData <- TpubW[,.(PubWageNetIncomeY=sum(PubWageNetIncomeY),
                           PubEarners=.N,
-                          WageSector=factor(WageSector,levels = 1:3,labels = c("Public","Cooperative","Private") ))
+                          Sector=WageSector)
+#                          Sector=factor(WageSector,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
                        ,by=HHID]
   
    save(PubWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
