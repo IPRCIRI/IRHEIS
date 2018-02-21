@@ -16,7 +16,7 @@ library(stringr)
 library(readxl)
 
 
-bussWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_BussWage))
+bussWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_BussInc))
 
 
 for(year in (Settings$startyear:Settings$endyear)){
@@ -34,19 +34,21 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TbussW,n,names(busswt)[x])
   }
-  pcols <- intersect(names(TbussW),c("HHID","IndivNo","WorkType","JobType","BussNetIncomeY"))
+  pcols <- intersect(names(TbussW),c("HHID","IndivNo","WorkType","BSector","BussNetIncomeY"))
   TbussW <- TbussW[,pcols,with=FALSE]
   
+  
   if(year <= 68){
-    TbussW[,WorkType:=2]
+    TbussW[,BSector:=2]
   }else{
-    TbussW <- TbussW[WorkType==2] 
+    TbussW <- TbussW[BSector==2] 
   }
   
+
   if(year >= 84){
     TbussW[,BussNetIncomeY:=as.numeric(BussNetIncomeY)]
   }
-  
+
    TbussW[is.na(TbussW)] <- 0
    BussIncomeData <- TbussW[,.(BussNetIncomeY=sum(BussNetIncomeY),
                                BussEarners=.N,
@@ -54,7 +56,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                               # Sector=factor(4,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
                             ,by=HHID]
 
-   
+
    save(BussIncomeData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BussIncome.rda"))
 }
 endtime <- proc.time()

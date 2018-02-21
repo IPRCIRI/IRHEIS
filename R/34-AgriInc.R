@@ -34,13 +34,13 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TAgriW,n,names(Agriwt)[x])
   }
-  pcols <- intersect(names(TAgriW),c("HHID","IndivNo","WorkType","JobType","AgriNetIncomeY"))
+  pcols <- intersect(names(TAgriW),c("HHID","IndivNo","WorkType","BSector","AgriNetIncomeY"))
   TAgriW <- TAgriW[,pcols,with=FALSE]
   
   if(year <= 68){
-    TAgriW[,WorkType :=1] 
+    TAgriW[,BSector:=1] 
   }else{
-    TAgriW <- TAgriW[ WorkType ==1 ] 
+    TAgriW <- TAgriW[BSector==1] 
   }
   
   if(year >= 84){
