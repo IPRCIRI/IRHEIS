@@ -37,34 +37,34 @@ DD<-D[,.(Percentile,Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_n
   
 smoothScatter(log(MyDataUrban$Total_Exp_Month_Per),log(MyDataUrban$Per_Daily_Calories))
 
-summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Region, weights = Weight, data=D))
-summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Ost * Region, weights = Weight, data=D))
-summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Geo5, weights = Weight, data=D))
+#summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Region, weights = Weight, data=D))
+#summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Ost * Region, weights = Weight, data=D))
+#summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Geo5, weights = Weight, data=D))
 
 DSub <- D[as.integer(Percentile) %in% 10:50]
 
-summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Region, weights = Weight, data=DSub))
-summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Ost * Region, weights = Weight, data=DSub))
-summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Geo5, weights = Weight, data=DSub))
+#summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Region, weights = Weight, data=DSub))
+#summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Ost * Region, weights = Weight, data=DSub))
+#summary(lm(Total_Exp_Month_Per ~ Per_Daily_Calories * Geo5, weights = Weight, data=DSub))
 # calculate Rural Pov Line based on MinCalories
 
 d <- MyDataRural[,.(Percentile=as.integer(Percentile),Per_Daily_Calories,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,Weight)]
 setnames(d,c("pct","cal","exp","ndx","w"))
 dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=pct]
 #dx2 <- dx[pct>3 & pct<50]
-dx2 <- dx [pct<86]
+d2 <- d [pct<86]
 
-plot(cal~exp,data=dx)
-plot(cal~exp,data=dx2)
+#plot(cal~exp,data=dx)
+#plot(cal~exp,data=dx2)
 
-dx$cal2<-dx$cal^2
-dx2$cal2<-dx2$cal^2
+d$cal2<-d$cal^2
+d2$cal2<-d2$cal^2
 
-model <- lm(exp ~ cal + cal2 , weights = w, data=dx)
+model <- lm(exp ~ cal + cal2 , weights = w, data=d)
 RuralPovLine <- predict(object = model, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataRural[,PovLine:=RuralPovLine]
 
-model2 <- lm(exp ~ cal + cal2 , weights = w, data=dx2)
+model2 <- lm(exp ~ cal + cal2 , weights = w, data=d2)
 RuralPovLine85 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataRural[,PovLine85:=RuralPovLine85]
 
@@ -76,17 +76,17 @@ dx <- d[,lapply(.SD, mean, na.rm=TRUE),by=pct]
 #dx2 <- dx[pct>3 & pct<50]
 dx2 <- dx [pct<86]
 
-plot(cal~exp,data=dx)
-plot(cal~exp,data=dx2)
+#plot(cal~exp,data=dx)
+#plot(cal~exp,data=dx2)
 
-dx$cal2<-dx$cal^2
-dx2$cal2<-dx2$cal^2
+d$cal2<-d$cal^2
+d2$cal2<-d2$cal^2
 
-model <- lm(exp ~ cal + cal2 , weights = w, data=dx)
+model <- lm(exp ~ cal + cal2 , weights = w, data=d)
 UrbanPovLine <- predict(object = model, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataUrban[,PovLine:=UrbanPovLine]
 
-model2 <- lm(exp ~ cal + cal2 , weights = w, data=dx2)
+model2 <- lm(exp ~ cal + cal2 , weights = w, data=d2)
 UrbanPovLine85 <- predict(object = model2, newdata = data.table(pct=NA,cal=MinCalories,cal2=MinCalories2,exp=NA,ndx=NA,w=NA))[[1]]
 MyDataUrban[,PovLine85:=UrbanPovLine85]
 

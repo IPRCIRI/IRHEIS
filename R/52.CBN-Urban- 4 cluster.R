@@ -6189,7 +6189,6 @@ a<-a[,ratio3:=FoodExpenditure_Real/Total_Exp_Month_nondurable]
 summary(a$ratio1)
 #utils::View(CBNPoor16)
 
-
 #model for each cluster
 #cluster 1
 model <- lm(FoodExpenditure_Real~ Total_Exp_Month_Real , weights = Weight, data=CBNPoor16,subset = (cluster==1))
@@ -6359,6 +6358,12 @@ CBNPoor17[,weighted.mean(ifelse(HAge<=40,1,0),Weight),by=ProvinceCode][order(Pro
 CBNPoor17[,weighted.mean(ifelse(HAge>40 & HAge<50,1,0),Weight),by=ProvinceCode][order(ProvinceCode)]
 CBNPoor17[,weighted.mean(ifelse(HAge>=50,1,0),Weight),by=ProvinceCode][order(ProvinceCode)]
 
+CBN<-CBN[,ratio3:=ServiceExp/Total_Exp_Month_nondurable]
+CBN[,weighted.mean(ratio3,Weight),by=cluster]
+summary(CBN$ratio3)
+
+CBNPoor17[,weighted.mean(ratio3,Weight),by=cluster]
+summary(CBNPoor17$ratio3)
 
 endtime <- proc.time()
 
