@@ -6223,6 +6223,7 @@ Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse3<-1/Engel3
 Povertyline3_16<-Engel_Reverse3*weighted.mean(CBNPoorCluster$FoodExpenditure_Per2100,CBNPoorCluster$Weight,na.rm = TRUE)
 
+
 #cluster 4
 model <- lm(FoodExpenditure_Real~ Total_Exp_Month_Real , weights = Weight, data=CBNPoor16,subset = (cluster==4))
 summary(model)
@@ -6358,12 +6359,26 @@ CBNPoor17[,weighted.mean(ifelse(HAge<=40,1,0),Weight),by=ProvinceCode][order(Pro
 CBNPoor17[,weighted.mean(ifelse(HAge>40 & HAge<50,1,0),Weight),by=ProvinceCode][order(ProvinceCode)]
 CBNPoor17[,weighted.mean(ifelse(HAge>=50,1,0),Weight),by=ProvinceCode][order(ProvinceCode)]
 
-CBN<-CBN[,ratio3:=ServiceExp/Total_Exp_Month_nondurable]
-CBN[,weighted.mean(ratio3,Weight),by=cluster]
-summary(CBN$ratio3)
+#utils::View(CBNPoorCluster)
+CBNPoorCluster[,weighted.mean(ratio1,Weight),by=cluster]
+CBNPoorCluster<-CBNPoorCluster[,.(ProvinceCode,cluster,Weight,Size,HAge,HActivityState,HEduYears,Total_Exp_Month_nondurable,FoodExpenditure,Cloth_Exp,Energy_Exp,Behdasht_Exp,Transportation_Exp,ServiceExp)]
 
-CBNPoor17[,weighted.mean(ratio3,Weight),by=cluster]
-summary(CBNPoor17$ratio3)
+CBNPoorCluster[,ServiceExpratio:=ServiceExp/Total_Exp_Month_nondurable]
+CBNPoorCluster[,weighted.mean(ServiceExpratio,Weight),by=cluster]
+
+CBNPoorCluster[,FoodExpenditureratio:=FoodExpenditure/Total_Exp_Month_nondurable]
+CBNPoorCluster[,weighted.mean(FoodExpenditureratio,Weight),by=cluster]
+
+CBNPoorCluster[,Energy_Expratio:=Energy_Exp/Total_Exp_Month_nondurable]
+CBNPoorCluster[,weighted.mean(Energy_Expratio,Weight),by=cluster]
+
+CBNPoorCluster[,Behdasht_Expratio:=Behdasht_Exp/Total_Exp_Month_nondurable]
+CBNPoorCluster[,weighted.mean(Behdasht_Expratio,Weight),by=cluster]
+
+CBNPoorCluster[,Transportation_Expratio:=Transportation_Exp/Total_Exp_Month_nondurable]
+CBNPoorCluster[,weighted.mean(Transportation_Expratio,Weight),by=cluster]
+#save(CBNPoorCluster, file="TehranPoors.rda")
+
 
 endtime <- proc.time()
 

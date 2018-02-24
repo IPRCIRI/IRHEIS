@@ -1,13 +1,14 @@
 # 31-PubWage.R
-# Builds the Wages data.table for households
+# Builds the PubWageData data.table for wage income data of 
+# households working in public sector.
 #
-# Copyright © 2017: Arin Shahbazian
+# Copyright © 2017-2018: Arin Shahbazian & Majid Einian
 # Licence: GPL-3
 
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ HHPubWage =====================================\n")
+cat("\n\n================ PubWage =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -24,37 +25,67 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   pubwt <- PubWageTable[Year==year]
   tab <- pubwt$Table
-   if(is.na(tab))
-      next
-   UTpubW <- Tables[[paste0("U",year,tab)]]
-   RTpubW <- Tables[[paste0("R",year,tab)]]
-   TpubW <- rbind(UTpubW,RTpubW,fill=TRUE)
-   print(names(TpubW))
-   for(n in names(TpubW)){
-    x <- which(pubwt==n)
-   if(length(x)>0)
-      setnames(TpubW,n,names(pubwt)[x])
-   }
-   pcols <- intersect(names(TpubW),c("HHID","section","net_income_pub"))
-   #pcols <- intersect(names(TpubW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
-    TpubW <- TpubW[,pcols,with=FALSE]
-    
-    if(year %in% 69:76){
-      TpubW <- TpubW[ section ==1 ] 
-    } else if(year >= 77){
-      TpubW <- TpubW[ section ==1 ] 
-    } 
-    if(year >= 66){
-      TpubW[,HHID:=as.numeric(HHID)]
-    }
-    
-    if(year >= 86){
-      TpubW[,net_income_pub:=as.numeric(net_income_pub)]
-    }
+  if(is.na(tab))
+    next
+  if(length(tab)>1){
+    pubwtu <- pubwt[Region=="U"]
+    pubwtr <- pubwt[Region=="R"]
+  }else{
+    pubwtu <- pubwt
+    pubwtr <- pubwt
+  }
   
-   TpubW[is.na(TpubW)] <- 0
-   PubWageData <- TpubW[,lapply(.SD,sum),by=HHID]
-    save(PubWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
+  
+  tab <- pubwtu$Table
+  UTpubW <- Tables[[paste0("U",year,tab)]]
+  for(n in names(UTpubW)){
+    x <- which(pubwtu==n)
+    if(length(x)>0)
+      setnames(UTpubW,n,names(pubwtu)[x])
+  }
+  
+  tab <- pubwtr$Table
+  RTpubW <- Tables[[paste0("R",year,tab)]]
+  for(n in names(RTpubW)){
+    x <- which(pubwtr==n)
+    if(length(x)>0)
+      setnames(RTpubW,n,names(pubwtr)[x])
+  }
+  
+  TpubW <- rbind(RTpubW,UTpubW,fill=TRUE)
+  
+  #  print(names(TpubW))
+  
+  pcols <- intersect(names(TpubW),c("HHID","IndivNo","WageSector","PubWageNetIncomeY"))
+  #pcols <- intersect(names(TpubW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
+  TpubW <- TpubW[,pcols,with=FALSE]
+  
+  if(year <=68){
+    TpubW[,WageSector:=1]
+  }else{
+    TpubW <- TpubW[WageSector==1]
+  }
+  if(year >= 66){
+    TpubW[,HHID:=as.numeric(HHID)]
+  }
+  
+  if(year >= 86){
+    TpubW[,PubWageNetIncomeY:=as.numeric(PubWageNetIncomeY)]
+  }
+  TpubW[,IndivNo:=as.numeric(IndivNo)]
+  TpubW[is.na(IndivNo),IndivNo:=1]
+   
+  TpubW[is.na(TpubW)] <- 0
+  TpubW <- TpubW[PubWageNetIncomeY>0]
+
+  
+  PubWageData <- TpubW[,.(PubWageNetIncomeY=sum(PubWageNetIncomeY),
+                          PubEarners=.N,
+                          Sector=WageSector)
+#                          Sector=factor(WageSector,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
+                       ,by=HHID]
+  
+   save(PubWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

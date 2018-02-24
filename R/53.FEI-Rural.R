@@ -181,3 +181,7 @@ for(clus in 1:5){
   assign(nam2,nam3)
 }
 
+endtime <- proc.time()
+
+cat("\n\n============================\nIt took ")
+cat(endtime-starttime)
