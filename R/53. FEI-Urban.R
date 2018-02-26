@@ -109,6 +109,12 @@ for(clus in 1:4){
   assign(nam2,nam3)
 }
 
+MyDataUrbanCluster<-MyDataUrban[cluster==1]
+MyDataUrbanCluster[,Poor:=ifelse(Total_Exp_Month_Per_nondurable < Urban1PovLine1,1,0)]
+MyDataUrbanCluster[,sum(HIndivNo),by=cluster][order(cluster)]
+MyDataUrbanCluster[,sum(Poor),by=cluster][order(cluster)]
+MyDataUrban[,sum(Weight),by=cluster][order(cluster)]
+
 #log-d
 for(clus in 1:4){  
   nam <- paste0("Urb",clus)
@@ -212,6 +218,9 @@ for(clus in 1:4){
   nam3<-exp(nam3)
   assign(nam2,nam3)
 }
+
+
+
 
 endtime <- proc.time()
 

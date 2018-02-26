@@ -170,7 +170,8 @@ CBN$Total_Exp_Month_Per<-CBN$Total_Exp_Month/CBN$EqSizeRevOECD
 CBN$Total_Exp_Month_Per_nondurable<-CBN$Total_Exp_Month_nondurable/CBN$EqSizeRevOECD
 
 #Calculate Per_Food Expenditures Monthly
-CBN$FoodExpenditure_Per<-CBN$FoodExpenditure/CBN$EqSizeRevOECD
+CBN[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
+CBN$FoodExpenditure_Per<-CBN$FoodExpenditure/CBN$EqSizeCalory
 
 #Calculate Per_Food Expenditures Daily
 CBN$FoodExpenditure_Per_day<-CBN$FoodExpenditure_Per/30
@@ -191,6 +192,7 @@ CBN$Mivegram_Per_day<-CBN$Mivegram/(30*CBN$EqSizeRevOECD)
 CBN$Sabzigram_Per_day<-CBN$Sabzigram/(30*CBN$EqSizeRevOECD)
 CBN$Makaroonigram_Per_day<-CBN$Makaroonigram/(30*CBN$EqSizeRevOECD)
 CBN$Sibzaminigram_Per_day<-CBN$Sibzaminigram/(30*CBN$EqSizeRevOECD)
+CBN[,EqSizeCalory:=NULL]
 
 load(file="PriceIndex95.rda")
 CBN<-merge(CBN,PriceIndex95,by=c("ProvinceCode"),all.x = TRUE)
@@ -333,6 +335,11 @@ cl <- kmeans(dtW,5)
 cl$cluster
 dt2 <- dt2[,cluster:=data.table(cl$cluster)]
 dt2<-dt2[,.(ProvinceCode,cluster)]
+rm(dt2)
+load(file="dt5Rural.rda")
+#elements <- data.frame(dt2)
+#dt2 <- edit(elements)
+#save(dt2,file="dt5Rural.rda")
 #plot(PRICE1, PRICE2,col=cl$cluster)
 #points(cl$centers, pch=20)
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
@@ -677,6 +684,9 @@ summary(a$ratio1)
 CBNPoor[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_day,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per2100,Weight,na.rm = TRUE),by=cluster]
+CBNPoor16[,weighted.mean(FoodExpenditure_Per2100,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor16[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor16[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster][order(cluster)]
 
 
 #model for each cluster
@@ -6496,6 +6506,44 @@ CBNPoor17[,weighted.mean(ifelse(HSex %in% "Female",1,0),Weight),by=cluster][orde
 CBNPoor17[,weighted.mean(ifelse(HAge<=40,1,0),Weight),by=cluster][order(cluster)]
 CBNPoor17[,weighted.mean(ifelse(HAge>40 & HAge<50,1,0),Weight),by=cluster][order(cluster)]
 CBNPoor17[,weighted.mean(ifelse(HAge>=50,1,0),Weight),by=cluster][order(cluster)]
+
+CBN[,weighted.mean(Size,Weight),by=.(cluster,Poor17)][order(cluster)]
+CBNPoor17[,weighted.mean(Size,Weight),by=cluster][order(cluster)]
+
+#CBN[,weighted.mean(ifelse(HActivityState %in% "Employed",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Employed",1,0),Weight),by=cluster][order(cluster)]
+#CBN[,weighted.mean(ifelse(HActivityState %in% "Unemployed",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Unemployed",1,0),Weight),by=cluster][order(cluster)]
+#CBN[,weighted.mean(ifelse(HActivityState %in% "Income without Work",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Income without Work",1,0),Weight),by=cluster][order(cluster)]
+#CBN[,weighted.mean(ifelse(HActivityState %in% "Housekeeper",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Housekeeper",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Other",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Seasonal Unemployed",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Student",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Former Member",1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HActivityState %in% "Unemployed Not Looking for Job",1,0),Weight),by=cluster][order(cluster)]
+
+CBN[,weighted.mean(ifelse(HEmployed %in% "TRUE",1,0),Weight),by=.(cluster,Poor17)][order(cluster)]
+CBNPoor17[,weighted.mean(ifelse(HEmployed %in% "TRUE",1,0),Weight),by=cluster][order(cluster)]
+
+CBN[,weighted.mean(ifelse(HIncomeWOWork %in% "TRUE",1,0),Weight),by=.(cluster,Poor17)][order(cluster)]
+CBNPoor17[,weighted.mean(ifelse(HIncomeWOWork %in% "TRUE",1,0),Weight),by=cluster][order(cluster)]
+
+CBN[,weighted.mean(ifelse(HLiterate %in% "TRUE",1,0),Weight),by=.(cluster,Poor17)][order(cluster)]
+CBNPoor17[,weighted.mean(ifelse(HLiterate %in% "TRUE",1,0),Weight),by=cluster][order(cluster)]
+
+CBN[,weighted.mean(ifelse(HEduYears>10,1,0),Weight),by=.(cluster,Poor17)][order(cluster)]
+CBNPoor17[,weighted.mean(ifelse(HEduYears>10,1,0),Weight),by=cluster][order(cluster)]
+
+CBN[,weighted.mean(ifelse(HSex %in% "Female",1,0),Weight),by=.(cluster,Poor17)][order(cluster)]
+CBNPoor17[,weighted.mean(ifelse(HSex %in% "Female",1,0),Weight),by=cluster][order(cluster)]
+
+#CBN[,weighted.mean(ifelse(HAge<=40,1,0),Weight),by=cluster][order(cluster)]
+CBN[,weighted.mean(Poor17,Weight),by=.(HAge>50,cluster)][order(cluster)]
+#CBN[,weighted.mean(ifelse(HAge<=40,weighted.mean(Poor17,Weight),0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HAge>40 & HAge<50,1,0),Weight),by=cluster][order(cluster)]
+#CBNPoor17[,weighted.mean(ifelse(HAge>=50,1,0),Weight),by=cluster][order(cluster)]
 
 ###############
 
