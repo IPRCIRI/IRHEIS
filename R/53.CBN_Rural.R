@@ -1,4 +1,4 @@
-#CBN Method-Urban.R
+#CBN Method-Rural.R
 # 
 # Copyright © 2018:Arin Shahbazian
 # Licence: GPL-3
@@ -161,7 +161,7 @@ for (col in c("Durable_Exp")) CBN[is.na(get(col)), (col) := 0]
 CBN<-merge(CBN,ResturantData,by =c("HHID"),all=TRUE)
 for (col in c("Resturant_Exp")) CBN[is.na(get(col)), (col) := 0]
 CBN<-CBN[Size!=0]
-CBN<-CBN[Region=="Urban"]
+CBN<-CBN[Region=="Rural"]
 CBN<-CBN[FoodExpenditure!=0]
 
 
@@ -256,16 +256,6 @@ CBNKaraj[,sum(Weight*Size),by=ShahrestanCode]
 CBNKermanshah<-CBN[ProvinceCode==5]
 CBNKermanshah[,sum(Weight*Size),by=ShahrestanCode]
 
-
-CBN<-CBN[ShahrestanCode==2301,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==303,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==603,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==707,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==916,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==1002,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==3001,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==2301,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==502,ProvinceCode:=as.numeric(ShahrestanCode)]
 
 # Food Calories
 CBN$Ghand_Calory<- CBN$Ghandgram *4
@@ -377,13 +367,13 @@ plot(1:30, wss, type="b", xlab="Number of Clusters",
 #X12 <- cbind(PRICE1, PRICE2)
 dt3.m <- dt3[,lapply(.SD, mean)]			# Weights for each vector
 dtW <- dt * sqrt(dt3.m[rep(1,nrow(dt))])	# Weighted observations
-kmeans(dtW,4)						# Simple K-means
+kmeans(dtW,5)						# Simple K-means
 
-cl <- kmeans(dtW,4)
+cl <- kmeans(dtW,5)
 cl$cluster
 dt2 <- dt2[,cluster:=data.table(cl$cluster)]
 dt2<-dt2[,.(ProvinceCode,cluster)]
-load(file="dt4Urban.rda")
+load(file="dt5Rural.rda")
 #plot(PRICE1, PRICE2,col=cl$cluster)
 #points(cl$centers, pch=20)
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
@@ -551,6 +541,14 @@ Engel_Reverse4<-1/Engel4
 Povertyline4_1<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 
+#cluster 5
+CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==5,Total_Exp_Month_nondurable_Real_Per,Total_Exp_Month_Per2)]
+CBNPoorCluster<-CBNPoor[cluster==5]
+Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse5<-1/Engel5
+Povertyline5_1<-Engel_Reverse5*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+
+
 ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
 #mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
 #mean(ee[,Total_Exp_Month_Per2<3500000])
@@ -578,6 +576,8 @@ CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline3_1 & cluster==3,1,Poor2)]
 c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline3_1 & cluster==3 ,1,Poor2)]
 CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline4_1 & cluster==4,1,Poor2)]
 c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline4_1 & cluster==4 ,1,Poor2)]
+CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline5_1 & cluster==5,1,Poor2)]
+c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline5_1 & cluster==5 ,1,Poor2)]
 CBN[,weighted.mean(Poor2,Weight),by=cluster]
 CBNPoor[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2<-CBN[Poor2==1]
@@ -735,6 +735,13 @@ Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_2<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
+#cluster 5
+CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==5,Total_Exp_Month_nondurable_Real_Per,Total_Exp_Month_Per2)]
+CBNPoorCluster<-CBNPoor[cluster==5]
+Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse5<-1/Engel5
+Povertyline5_2<-Engel_Reverse5*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+
 #w<-CBNPoor2[,.(Total_Exp_Month_Per2,Total_Exp_Month_nondurable_Real,Poor,Poor2,cluster)]
 #utils::View(CBN)
 #b<-CBNPoor2[,.(Total_Exp_Month_nondurable,Total_Exp_Month_Per2)]
@@ -761,6 +768,8 @@ CBN[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline3_2 & cluster==3,1,Poor3)]
 c[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline3_2 & cluster==3 ,1,Poor3)]
 CBN[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline4_2 & cluster==4,1,Poor3)]
 c[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline4_2 & cluster==4 ,1,Poor3)]
+CBN[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline5_2 & cluster==5,1,Poor3)]
+c[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline5_2 & cluster==5 ,1,Poor3)]
 c[,weighted.mean(Poor3,Weight),by=cluster]
 CBNPoor3<-CBN[Poor3==1]
 
@@ -917,6 +926,12 @@ Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_3<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
+#cluster 5
+CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==5,Total_Exp_Month_nondurable_Real_Per,Total_Exp_Month_Per2)]
+CBNPoorCluster<-CBNPoor[cluster==5]
+Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse5<-1/Engel5
+Povertyline5_3<-Engel_Reverse5*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #w<-CBNPoor3[,.(Total_Exp_Month_Per2,Total_Exp_Month_nondurable_Real,Poor,Poor2,cluster)]
 #utils::View(CBN)
@@ -944,6 +959,8 @@ CBN[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline3_3 & cluster==3,1,Poor4)]
 c[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline3_3 & cluster==3 ,1,Poor4)]
 CBN[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline4_3 & cluster==4,1,Poor4)]
 c[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline4_3 & cluster==4 ,1,Poor4)]
+CBN[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline5_3 & cluster==5,1,Poor4)]
+c[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline5_3 & cluster==5 ,1,Poor4)]
 c[,weighted.mean(Poor4,Weight),by=cluster]
 CBNPoor4<-CBN[Poor4==1]
 
@@ -1102,6 +1119,12 @@ Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_4<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
+#cluster 5
+CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==5,Total_Exp_Month_nondurable_Real_Per,Total_Exp_Month_Per2)]
+CBNPoorCluster<-CBNPoor[cluster==5]
+Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse5<-1/Engel5
+Povertyline5_4<-Engel_Reverse5*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 
 #w<-CBNPoor4[,.(Total_Exp_Month_Per2,Total_Exp_Month_nondurable_Real,Poor,Poor2,cluster)]
@@ -1130,6 +1153,8 @@ CBN[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline3_4 & cluster==3,1,Poor5)]
 c[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline3_4 & cluster==3 ,1,Poor5)]
 CBN[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline4_4 & cluster==4,1,Poor5)]
 c[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline4_4 & cluster==4 ,1,Poor5)]
+CBN[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline5_4 & cluster==5,1,Poor5)]
+c[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline5_4 & cluster==5 ,1,Poor5)]
 c[,weighted.mean(Poor5,Weight),by=cluster]
 CBNPoor5<-CBN[Poor5==1]
 
@@ -1287,6 +1312,12 @@ Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_5<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
+#cluster 5
+CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==5,Total_Exp_Month_nondurable_Real_Per,Total_Exp_Month_Per2)]
+CBNPoorCluster<-CBNPoor[cluster==5]
+Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse5<-1/Engel5
+Povertyline5_5<-Engel_Reverse5*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 
 #w<-CBNPoor5[,.(Total_Exp_Month_Per2,Total_Exp_Month_nondurable_Real,Poor,Poor2,cluster)]
@@ -1315,6 +1346,8 @@ CBN[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline3_5 & cluster==3,1,Poor6)]
 c[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline3_5 & cluster==3 ,1,Poor6)]
 CBN[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline4_5 & cluster==4,1,Poor6)]
 c[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline4_5 & cluster==4 ,1,Poor6)]
+CBN[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline5_5 & cluster==5,1,Poor6)]
+c[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline5_5 & cluster==5 ,1,Poor6)]
 c[,weighted.mean(Poor6,Weight),by=cluster]
 CBNPoor6<-CBN[Poor6==1]
 
@@ -1471,6 +1504,12 @@ Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_6<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
+#cluster 5
+CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==5,Total_Exp_Month_nondurable_Real_Per,Total_Exp_Month_Per2)]
+CBNPoorCluster<-CBNPoor[cluster==5]
+Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse5<-1/Engel5
+Povertyline5_6<-Engel_Reverse5*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 
 #w<-CBNPoor6[,.(Total_Exp_Month_Per2,Total_Exp_Month_nondurable_Real,Poor,Poor2,cluster)]
@@ -1499,6 +1538,8 @@ CBN[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline3_6 & cluster==3,1,Poor7)]
 c[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline3_6 & cluster==3 ,1,Poor7)]
 CBN[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline4_6 & cluster==4,1,Poor7)]
 c[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline4_6 & cluster==4 ,1,Poor7)]
+CBN[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline5_6 & cluster==5,1,Poor7)]
+c[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline5_6 & cluster==5 ,1,Poor7)]
 c[,weighted.mean(Poor7,Weight),by=cluster]
 CBNPoor7<-CBN[Poor7==1]
 
@@ -1655,6 +1696,12 @@ Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_7<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
+#cluster 5
+CBNPoor<-CBNPoor[,Total_Exp_Month_Per2:=ifelse(cluster==5,Total_Exp_Month_nondurable_Real_Per,Total_Exp_Month_Per2)]
+CBNPoorCluster<-CBNPoor[cluster==5]
+Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse5<-1/Engel5
+Povertyline5_7<-Engel_Reverse5*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 
 #w<-CBNPoor7[,.(Total_Exp_Month_Per2,Total_Exp_Month_nondurable_Real,Poor,Poor2,cluster)]
@@ -1669,7 +1716,7 @@ for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_M
 c<-CBN[,.(Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
-#########Iteration 7###############
+#########Iteration 8###############
 #Sort  Expenditure data
 CBN<- CBN[order(Total_Exp_Month_Per2)]
 c<-  c[order(Total_Exp_Month_Per2)]
@@ -1683,24 +1730,12 @@ CBN[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline3_7 & cluster==3,1,Poor8)]
 c[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline3_7 & cluster==3 ,1,Poor8)]
 CBN[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline4_7 & cluster==4,1,Poor8)]
 c[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline4_7 & cluster==4 ,1,Poor8)]
+CBN[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline5_7 & cluster==5,1,Poor8)]
+c[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline5_7 & cluster==5 ,1,Poor8)]
 c[,weighted.mean(Poor8,Weight),by=cluster]
 CBNPoor8<-CBN[Poor8==1]
 
-#Calculations
-CBNPoor8[,sum(Poor8*Weight),by=cluster][order(cluster)]
-CBNPoor[,sum(Poor*Weight),by=cluster][order(cluster)]
-CBNPoor8[,sum(Poor8),by=cluster][order(cluster)]
-CBNPoor[,sum(Poor),by=cluster][order(cluster)]
-#CBNPoor[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster][order(cluster)]
-CBNPoor[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster][order(cluster)]
-#CBNPoor8[,weighted.mean(Daily_Calories_cluster,Weight,na.rm = TRUE),by=cluster][order(cluster)]
-CBNPoor8[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster][order(cluster)]
-CBN[,weighted.mean(Poor,Weight),by=cluster][order(cluster)]
-CBN[,weighted.mean(Poor8,Weight),by=cluster][order(cluster)]
-CBN[,weighted.mean(Size,Weight),by=cluster][order(cluster)]
-
-
-
+#Calculation
 CBN[,sum(HIndivNo),by=cluster][order(cluster)]
 CBN[,sum(Poor8),by=cluster][order(cluster)]
 CBN[,sum(Weight),by=cluster][order(cluster)]
@@ -1717,8 +1752,9 @@ CBN[,weighted.mean(ifelse(HEmployed %in% "TRUE",1,0),Weight),by=.(cluster,Poor8)
 CBN[,weighted.mean(ifelse(HLiterate %in% "TRUE",1,0),Weight),by=.(cluster,Poor8)][order(cluster)]
 CBN[,weighted.mean(ifelse(HEduYears>10,1,0),Weight),by=.(cluster,Poor8)][order(cluster)]
 CBN[,weighted.mean(ifelse(HSex %in% "Female",1,0),Weight),by=.(cluster,Poor8)][order(cluster)]
-CBN[,weighted.mean(Poor8,Weight),by=.(HAge>50,cluster)][order(cluster)]
+CBN[,weighted.mean(Poor8,Weight),by=.(HAge<40,cluster)][order(cluster)]
 CBN[,weighted.mean(Poor8,Weight),by=.(HAge>40 & HAge<50,cluster)][order(cluster)]
+
 
 endtime <- proc.time()
 
