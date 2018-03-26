@@ -29,7 +29,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HomemadeWage.rda"))
 
    if(year %in% 90:94){
-     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
+#     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
    }
    
    if(year %in% 78:94){
