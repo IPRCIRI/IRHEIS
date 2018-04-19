@@ -67,22 +67,25 @@ P23 <- merge(D92,D93,by="HHID",all = FALSE)
 P34 <- merge(D93,D94,by="HHID",all = FALSE)
 P45 <- merge(D94,D95,by="HHID",all = FALSE)
 
+P24 <- merge(D92,D94,by="HHID",all = FALSE)
+P35 <- merge(D93,D95,by="HHID",all = FALSE)
+
 P234 <- merge(P23,D94,by="HHID",all = FALSE)
 P345 <- merge(P34,D95,by="HHID",all = FALSE)
 
-P <- P23
+P <- P35
 
 
-table(P[,.(Region.x,Region.y)])
-summary(P[,Quarter.x-Quarter.y])
-summary(P[,Month.x-Month.y])
-table(P[,.(Month.x,Month.y)])
-table(P[,.(ProvinceCode.x-ProvinceCode.y)])
-table(P[,.(HActivityState.x,HActivityState.y)])
-table(P[,.(Sector.x,Sector.y)])
-table(P[,.(Sector.x,HActivityState.y)])
-L <- P[,.(sum(Weight.x,na.rm = TRUE),sum(Weight.y, na.rm = TRUE)),by=.(Sect.x,Sect.y)][order(Sect.x,Sect.y)]
-
-
-P24 <- merge(D92,D94,by="HHID",all = FALSE)
-table(P24[,.(HActivityState.x,HActivityState.y)])
+# table(P[,.(Region.x,Region.y)])
+# summary(P[,Quarter.x-Quarter.y])
+# summary(P[,Month.x-Month.y])
+# table(P[,.(Month.x,Month.y)])
+# table(P[,.(ProvinceCode.x-ProvinceCode.y)])
+# table(P[,.(HActivityState.x,HActivityState.y)])
+# table(P[,.(Sector.x,Sector.y)])
+# table(P[,.(Sector.x,HActivityState.y)])
+L <- P[,.(sum(Weight.x,na.rm = TRUE),sum(Weight.y, na.rm = TRUE)),by=.(Sector.x,Sector.y)][order(Sector.x,Sector.y)]
+L[,sh.x:=V1/sum(V1)*100]
+L[,sh.y:=V2/sum(V2)*100]
+library(reshape2)
+acast(L,Sector.x~Sector.y,value.var = "sh.x")
