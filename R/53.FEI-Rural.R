@@ -54,7 +54,7 @@ d <- Rur
 setnames(d,c("pct","cal","exp","ndx","prov","w","cluster","cumw","ux","clusterpct"))
 d2 <- d [clusterpct<86]
 #plot(cal~exp,data=d)
-#plot(cal~exp,data=d2)
+#plot(cal~exp,data=dx2)
 #plot(log(cal)~log(exp),data=d)
 #plot(log(cal)~log(exp),data=d2)
 
