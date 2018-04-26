@@ -50,7 +50,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   TAgriW[is.na(TAgriW)] <- 0
   AgriIncomeData <- TAgriW[,.(AgriNetIncomeY=sum(AgriNetIncomeY),
                               AgriEarners=.N,
-                              Sector=5)
+                              Sector=1000)
                            #  Sector=factor(5,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
                            ,by=HHID]
   

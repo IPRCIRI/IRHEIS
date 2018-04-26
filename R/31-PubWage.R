@@ -81,7 +81,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   PubWageData <- TpubW[,.(PubWageNetIncomeY=sum(PubWageNetIncomeY),
                           PubEarners=.N,
-                          Sector=WageSector)
+                          Sector=1)
 #                          Sector=factor(WageSector,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
                        ,by=HHID]
   

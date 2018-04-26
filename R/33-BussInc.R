@@ -52,7 +52,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    TbussW[is.na(TbussW)] <- 0
    BussIncomeData <- TbussW[,.(BussNetIncomeY=sum(BussNetIncomeY),
                                BussEarners=.N,
-                               Sector=4),
+                               Sector=100),
                               # Sector=factor(4,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
                             ,by=HHID]
 
