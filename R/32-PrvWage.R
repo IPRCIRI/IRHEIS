@@ -87,7 +87,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   PrvWageData <- TprvW[,.(PrvWageNetIncomeY=sum(PrvWageNetIncomeY),
                           PrvEarners=.N,
-                          Sector=WageSector)
+                          Sector=10)
                           # Sector=factor(WageSector,levels = Settings$SectorsNumbers, labels = Settings$SectorsNames))
                        ,by=HHID]
   
