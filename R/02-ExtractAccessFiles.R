@@ -32,8 +32,7 @@ cwd <- getwd()
 dir.create("temp")
 setwd("temp")
 
-for(year in years_to_extract)
-{
+for(year in years_to_extract){
   filename <- compressed_file_names_df[
     compressed_file_names_df$Year ==year,]$CompressedFileName
   file.copy(from = paste0(Settings$HEISCompressedPath,filename),to = ".")
