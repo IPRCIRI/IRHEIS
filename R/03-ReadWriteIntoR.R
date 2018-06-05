@@ -20,8 +20,7 @@ library(data.table)
 
 load(Settings$weightsFile)
 
-for(year in (Settings$startyear:Settings$endyear))
-{
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   l <- dir(path=Settings$HEISAccessPath, pattern=glob2rx(paste0(year,".*")),ignore.case = TRUE)
@@ -43,7 +42,7 @@ for(year in (Settings$startyear:Settings$endyear))
   close(cns)
   save(Tables,file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
 }
-
+touppe
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")

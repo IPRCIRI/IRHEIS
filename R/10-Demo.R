@@ -26,8 +26,7 @@ EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
 
 years <- Settings$startyear:Settings$endyear
 
-for(year in years)
-{
+for(year in years){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
 
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))

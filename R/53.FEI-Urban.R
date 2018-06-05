@@ -23,7 +23,7 @@ library(stringr)
 
 
 # Calories
-MinCalories <- 2100
+MinCalories <- 2300
 MinCalories2 <- MinCalories^2
 
 
