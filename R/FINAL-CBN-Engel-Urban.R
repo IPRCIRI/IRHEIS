@@ -492,7 +492,7 @@ CBNPoor[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor$ratio1)
 
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -650,7 +650,7 @@ CBNPoor2<-CBNPoor2[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor2[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor2$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor2[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -811,7 +811,7 @@ CBNPoor3<-CBNPoor3[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor3[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor3$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor3[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -968,7 +968,7 @@ CBNPoor4<-CBNPoor4[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor4[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor3$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor4[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -1127,7 +1127,7 @@ CBNPoor5<-CBNPoor5[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor5[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor5$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor5[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -1286,7 +1286,7 @@ CBNPoor6<-CBNPoor6[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor6[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor6$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor6[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -1445,7 +1445,7 @@ CBNPoor7<-CBNPoor7[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor7[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor7$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor7[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -1604,7 +1604,7 @@ CBNPoor8<-CBNPoor8[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor8[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor8$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor8[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
@@ -1763,7 +1763,7 @@ CBNPoor9<-CBNPoor9[,ratio1:=FoodExpenditure/Total_Exp_Month]
 CBNPoor9[,weighted.mean(ratio1,Weight),by=cluster]
 summary(CBNPoor9$ratio1)
 
-#Food Poverty Line for each cluster
+#Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor9[cluster==1]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
