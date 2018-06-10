@@ -1816,7 +1816,7 @@ CBN[,weighted.mean(Poor10,Weight,na.rm = TRUE),by=cluster][order(cluster)]
 CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor10<-CBN[Poor10==1]
 
-
+CBN[,weighted.mean(Poor10,Weight),by=ProvinceCode][order(ProvinceCode)]
 d<-CBN[,.(Poor,Poor2,Poor3,Poor4,Poor5,Poor6,Poor7,Poor8,Poor9,Poor10)]
 cat("\n\n============================\nIt took ")
 endtime <- proc.time()
