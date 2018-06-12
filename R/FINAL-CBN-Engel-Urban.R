@@ -459,7 +459,7 @@ CBNPoor[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 #sum of total food expenditures
-CBNPoor[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -618,7 +618,7 @@ CBNPoor2[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 #sum of total food expenditures
-CBNPoor2[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor2[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor2[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -776,7 +776,7 @@ CBNPoor3[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 
 #sum of total food expenditures
-CBNPoor3[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor3[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor3[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -936,7 +936,7 @@ CBNPoor4[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 
 #sum of total food expenditures
-CBNPoor4[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor4[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor4[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -1094,7 +1094,7 @@ CBNPoor5[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 
 #sum of total food expenditures
-CBNPoor5[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor5[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor5[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -1253,7 +1253,7 @@ CBNPoor6[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 
 #sum of total food expenditures
-CBNPoor6[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor6[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor6[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -1412,7 +1412,7 @@ CBNPoor7[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 
 #sum of total food expenditures
-CBNPoor7[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor7[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor7[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -1571,7 +1571,7 @@ CBNPoor8[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 
 #sum of total food expenditures
-CBNPoor8[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor8[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor8[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -1730,7 +1730,7 @@ CBNPoor9[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 
 #sum of total food expenditures
-CBNPoor9[,FoodExpenditure_Per_total:=FoodExpenditure_Per*(1+(Per_Calory_Resturant/Per_Daily_Exp_Calories))]
+CBNPoor9[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(Resturant_Exp/EqSizeCalory)]
 CBNPoor9[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
@@ -1817,6 +1817,7 @@ CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor10<-CBN[Poor10==1]
 
 CBN[,weighted.mean(Poor10,Weight)]
+CBN[,weighted.mean(Poor10,Weight),by=cluster][order(cluster)]
 CBN[,weighted.mean(Poor10,Weight),by=ProvinceCode][order(ProvinceCode)]
 d<-CBN[,.(Poor,Poor2,Poor3,Poor4,Poor5,Poor6,Poor7,Poor8,Poor9,Poor10)]
 cat("\n\n============================\nIt took ")
