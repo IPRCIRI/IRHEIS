@@ -233,6 +233,7 @@ CBN$Sabzi_W<-CBN$Sabzigram_Per_day*CBN$SabziPrice*0.001*30
 CBN$Makarooni_W<-CBN$Makaroonigram_Per_day*CBN$MakarooniPrice*0.001*30
 CBN$Sibzamini_W<-CBN$Sibzaminigram_Per_day*CBN$SibzaminiPrice*0.001*30
 CBN$Home_W<-CBN$ServiceExp/CBN$EqSizeRevOECD
+CBN$Home_Per_Metr<-CBN$MetrPrice/CBN$EqSizeRevOECD
 
 #Seperate big cities
 CBN[,sum(Weight*Size),by=ProvinceCode][order(V1)]
@@ -287,7 +288,7 @@ CBN$Sibzamini_Calory<- CBN$Sibzaminigram *0.9
 #utils::View(CBN)
 
 #CalculatePer_calories
-CBN[, Daily_Exp_Calories := Reduce(`+`, .SD), .SDcols=147:162][] 
+CBN[, Daily_Exp_Calories := Reduce(`+`, .SD), .SDcols=148:163][] 
 CBN[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
 CBN[,Per_Daily_Exp_Calories:=Daily_Exp_Calories/EqSizeCalory]
 CBN <- CBN[Per_Daily_Exp_Calories<100000] # arbitrary removal of outliers
@@ -385,7 +386,6 @@ C2<-CBNPoor[,.(HHID,ProvinceCode,Region,Decile,Poor,cluster)]
 ######################################################################    
 ####Iteration 1#####
 
-
 #Calculate Per_calories in clusters
 CBNPoor[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Hoboobat_cluster:=weighted.mean(Hoboobat_per_Calory,Weight,na.rm = TRUE),by=cluster]
@@ -403,9 +403,8 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(184:199)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(185:200)][] 
 #utils::View(CBNPoor)
-
 
 
 #Calculate Per_calories in clusters(=2100)
@@ -441,16 +440,16 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(201:216)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(202:217)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
-CBNPoor[,Per_Calory_Resturant:=(0.7*0.7*Resturant_Exp/EqSizeCalory)/Calory_Price]
+CBNPoor[,Per_Calory_Resturant:=(0.7*Resturant_Exp/EqSizeCalory)/Calory_Price]
 for (col in c("Per_Calory_Resturant")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor<-CBNPoor[Per_Daily_Exp_Calories!=0]
 CBNPoor[,Per_Daily_Calories:=Per_Daily_Exp_Calories+Per_Calory_Resturant]
@@ -460,24 +459,137 @@ CBNPoor[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
 
 #sum of total food expenditures
 CBNPoor[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSizeCalory)]
+CBNPoor[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
+CBN[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSizeCalory)]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
+#CBN[,weighted.mean(Poor,Weight),by=cluster][order(cluster)]
 
 #Real Prices
-T_Bundle_Value<-subset(CBNPoor, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor[,.(RealPriceIndex,ProvinceCode,Weight)]
+T_Bundle_Value<-subset(CBNPoor, ProvinceCode==2301, select=c(Bundle_Value,Home_Per_Metr,Weight))
+Tehran_Bundle_Value1<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
+Tehran_Bundle_Value2<-weighted.mean(T_Bundle_Value$Home_Per_Metr,T_Bundle_Value$Weight,na.rm = TRUE)
+CBNPoor[,RealPriceIndex1:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value1,by=ProvinceCode]
+CBNPoor[,RealPriceIndex2:=weighted.mean(Home_Per_Metr,Weight,na.rm = TRUE)/Tehran_Bundle_Value2,by=ProvinceCode]
+CBNPoor[,weighted.mean(RealPriceIndex1,Weight),by=ProvinceCode]
+CBNPoor[,weighted.mean(RealPriceIndex2,Weight),by=ProvinceCode]
+Indexes2<-CBNPoor[,.(RealPriceIndex1,RealPriceIndex2,ProvinceCode,Weight)]
+Indexes2<-Indexes2[,RealPriceIndex:=(RealPriceIndex1+RealPriceIndex2)/2]
 Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
 Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
 CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
+CBN<-CBN[,Total_Food_Month_Per2:=FoodExpenditure_Per*RealPriceIndex]
 CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
+#vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Food_Month_Per2)]
+#g<-CBNPoor[,.(HHID,FoodExpenditure_Per_total)]
+#CBN<-merge(CBN,g,by=c("HHID"),all.x = TRUE)
+#j<-CBN[,.(HHID,FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Food_Month_Per2)]
+#for (col in c("FoodExpenditure_Per_total")) CBN[is.na(get(col)), (col) := FoodExpenditure_Per]
+#utils::View(CBN)
+
+#Sort Expenditure data
+CBN<- CBN[order(Total_Exp_Month_Per2)]
+
+#Calculate cumulative weights
+sum(CBN$Weight)
+CBN$cumweight <- cumsum(CBN$Weight)
+tx <- max(CBN$cumweight)
+
+#Calculate deciles by weights
+CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
+CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
+
+#Update Poors
+CBN[,Poor:=ifelse(Decile %in% 1:2,1,0)]
+CBNPoor<-CBN[Poor==1]
+CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
+
+#Calculate Per_calories in clusters
+CBNPoor[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Hoboobat_cluster:=weighted.mean(Hoboobat_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Nan_cluster:=weighted.mean(Nan_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Berenj_cluster:=weighted.mean(Berenj_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Roghan_cluster:=weighted.mean(Roghan_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Goosht_cluster:=weighted.mean(Goosht_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Morgh_cluster:=weighted.mean(Morgh_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Mahi_cluster:=weighted.mean(Mahi_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Shir_cluster:=weighted.mean(Shir_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Mast_cluster:=weighted.mean(Mast_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Panir_cluster:=weighted.mean(Panir_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Tokhmemorgh_cluster:=weighted.mean(Tokhmemorgh_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(189:204)][] 
+#utils::View(CBNPoor)
+
+
+#Calculate Per_calories in clusters(=2100)
+CBNPoor[,Daily2_Ghand:=(Daily_Ghand_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Ghand")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Hoboobat:=(Daily_Hoboobat_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Hoboobat")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Nan:=(Daily_Nan_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Nan")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Berenj:=(Daily_Berenj_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Berenj")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Roghan:=(Daily_Roghan_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Roghan")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Goosht:=(Daily_Goosht_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Goosht")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Morgh:=(Daily_Morgh_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Morgh")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Mahi:=(Daily_Mahi_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Mahi")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Shir:=(Daily_Shir_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Shir")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Mast:=(Daily_Mast_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Mast")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Panir:=(Daily_Panir_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Panir")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Tokhmemorgh:=(Daily_Tokhmemorgh_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Tokhmemorgh")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Mive:=(Daily_Mive_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Mive")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Sabzi:=(Daily_Sabzi_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Sabzi")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
+for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(206:221)][] 
+
+CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
+
+CBNPoor[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
+CBNPoor[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
+
+#Calculate per_Calory from resturants
+CBNPoor[,Per_Calory_Resturant:=(0.7*Resturant_Exp/EqSizeCalory)/Calory_Price]
+for (col in c("Per_Calory_Resturant")) CBNPoor[is.na(get(col)), (col) := 0]
+CBNPoor<-CBNPoor[Per_Daily_Exp_Calories!=0]
+CBNPoor[,Per_Daily_Calories:=Per_Daily_Exp_Calories+Per_Calory_Resturant]
+CBNCalory<-CBNPoor[,.(Per_Daily_Calories,Per_Daily_Exp_Calories,Per_Calory_Resturant,Resturant_Exp,cluster,ProvinceCode)]
+CBNPoor[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,weighted.mean(Per_Calory_Resturant,Weight,na.rm = TRUE),by=cluster]
+
+#sum of total food expenditures
+CBNPoor[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSizeCalory)]
+CBNPoor[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
+CBN[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSizeCalory)]
+
+#Food expenditures (equal 2100 CCAL)
+CBNPoor[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
+CBNPoor[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
+CBNPoor[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
 
 #Calculations
@@ -486,65 +598,51 @@ CBNPoor[,weighted.mean(FoodExpenditure_Per_day,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
-#Engel
-CBNPoor<-CBNPoor[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor$ratio1)
 
-
-#Poverty Line for each cluster
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_1<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_1<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_1<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_1<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_1<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_1<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_1<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_1<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
 CBN<-merge(CBN,dt2,by=c("ProvinceCode"),all.x = TRUE)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 #########Iteration 2###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline1_1 & cluster==1,1,0)]
-c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline1_1 & cluster==1 ,1,0)]
-CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline2_1 & cluster==2,1,Poor2)]
-c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline2_1 & cluster==2 ,1,Poor2)]
-CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline3_1 & cluster==3,1,Poor2)]
-c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline3_1 & cluster==3 ,1,Poor2)]
-CBN[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline4_1 & cluster==4,1,Poor2)]
-c[,Poor2:=ifelse(Total_Exp_Month_Per2 < Povertyline4_1 & cluster==4 ,1,Poor2)]
-CBN[,weighted.mean(Poor2,Weight),by=cluster]
+CBN[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_1 & cluster==1,1,0)]
+c[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_1 & cluster==1 ,1,0)]
+CBN[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_1 & cluster==2,1,Poor2)]
+c[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_1 & cluster==2 ,1,Poor2)]
+CBN[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_1 & cluster==3,1,Poor2)]
+c[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_1 & cluster==3 ,1,Poor2)]
+CBN[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_1 & cluster==4,1,Poor2)]
+c[,Poor2:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_1 & cluster==4 ,1,Poor2)]
+CBN[,weighted.mean(Poor2,Weight),by=cluster][order(cluster)]
 CBNPoor[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2<-CBN[Poor2==1]
-
 
 
 #CalculatePer_calories in clusters
@@ -564,7 +662,7 @@ CBNPoor2[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor2[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor2[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
+CBNPoor2[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(190:205)][] 
 #utils::View(CBNPoor2)
 
 #Calculate Per_calories in clusters(=2100)
@@ -600,12 +698,12 @@ CBNPoor2[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor2[is.na(get(col)), (col) := 0]
 CBNPoor2[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor2[is.na(get(col)), (col) := 0]
-CBNPoor2[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
+CBNPoor2[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(207:222)][] 
 
 CBNPoor2[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor2[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor2[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor2[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -622,22 +720,11 @@ CBNPoor2[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor2[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor2[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor2[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor2[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor2, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor2[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor2[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor2[,.(RealPriceIndex,ProvinceCode,Weight)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
+
 
 #Calculations
 CBNPoor2[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -645,63 +732,53 @@ CBNPoor2[,weighted.mean(FoodExpenditure_Per_day,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor2[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
-#Engel
-CBNPoor2<-CBNPoor2[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor2[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor2$ratio1)
 
-#Poverty Line for each cluster
+
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor2[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_2<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_2<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor2[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_2<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_2<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor2[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_2<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_2<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor2[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_2<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_2<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 3###############
 #Sort  Expenditure data
-#Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-CBN[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline1_2 & cluster==1,1,0)]
-c[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline1_2 & cluster==1 ,1,0)]
-CBN[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline2_2 & cluster==2,1,Poor3)]
-c[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline2_2 & cluster==2 ,1,Poor3)]
-CBN[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline3_2 & cluster==3,1,Poor3)]
-c[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline3_2 & cluster==3 ,1,Poor3)]
-CBN[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline4_2 & cluster==4,1,Poor3)]
-c[,Poor3:=ifelse(Total_Exp_Month_Per2 < Povertyline4_2 & cluster==4 ,1,Poor3)]
+CBN[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_2 & cluster==1,1,0)]
+c[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_2 & cluster==1 ,1,0)]
+CBN[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_2 & cluster==2,1,Poor3)]
+c[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_2 & cluster==2 ,1,Poor3)]
+CBN[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_2 & cluster==3,1,Poor3)]
+c[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_2 & cluster==3 ,1,Poor3)]
+CBN[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_2 & cluster==4,1,Poor3)]
+c[,Poor3:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_2 & cluster==4 ,1,Poor3)]
 CBN[,weighted.mean(Poor3,Weight),by=cluster][order(cluster)]
 CBNPoor2[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor3<-CBN[Poor3==1]
+
+
 
 #CalculatePer_calories in clusters
 CBNPoor3[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
@@ -720,7 +797,7 @@ CBNPoor3[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor3[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor3[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor3[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor3[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor3[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor3)
 
 #Calculate Per_calories in clusters(=2100)
@@ -756,13 +833,13 @@ CBNPoor3[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor3[is.na(get(col)), (col) := 0]
 CBNPoor3[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor3[is.na(get(col)), (col) := 0]
-CBNPoor3[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor3[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(208:223)][] 
 
 
 CBNPoor3[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor3[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor3[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor3[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor3[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -780,23 +857,10 @@ CBNPoor3[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor3[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor3[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor3[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor3[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor3[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor3, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor3[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor3[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor3[,.(RealPriceIndex,ProvinceCode,Weight)]
-#CBN[,weighted.mean(Poor3,Weight),by=ProvinceCode][order(ProvinceCode)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)][order(ProvinceCode)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
 
 #Calculations
 CBNPoor3[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -806,60 +870,47 @@ CBNPoor3[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
 
 
-#Engel
-CBNPoor3<-CBNPoor3[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor3[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor3$ratio1)
-
-#Poverty Line for each cluster
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor3[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_3<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_3<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor3[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_3<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_3<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor3[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_3<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_3<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor3[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_3<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_3<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster,ProvinceCode)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 4###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-CBN[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline1_3 & cluster==1,1,0)]
-c[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline1_3 & cluster==1 ,1,0)]
-CBN[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline2_3 & cluster==2,1,Poor4)]
-c[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline2_3 & cluster==2 ,1,Poor4)]
-CBN[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline3_3 & cluster==3,1,Poor4)]
-c[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline3_3 & cluster==3 ,1,Poor4)]
-CBN[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline4_3 & cluster==4,1,Poor4)]
-c[,Poor4:=ifelse(Total_Exp_Month_Per2 < Povertyline4_3 & cluster==4,1,Poor4)]
-CBN[,weighted.mean(Poor4,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_3 & cluster==1,1,0)]
+c[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_3 & cluster==1 ,1,0)]
+CBN[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_3 & cluster==2,1,Poor4)]
+c[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_3 & cluster==2 ,1,Poor4)]
+CBN[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_3 & cluster==3,1,Poor4)]
+c[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_3 & cluster==3 ,1,Poor4)]
+CBN[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_3 & cluster==4,1,Poor4)]
+c[,Poor4:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_3 & cluster==4 ,1,Poor4)]
+CBN[,weighted.mean(Poor4,Weight),by=cluster][order(cluster)]
 CBNPoor3[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor4<-CBN[Poor4==1]
 
@@ -880,7 +931,7 @@ CBNPoor4[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor4[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor4[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor4[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor4[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor4[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor4)
 
 #Calculate Per_calories in clusters(=2100)
@@ -916,13 +967,13 @@ CBNPoor4[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor4[is.na(get(col)), (col) := 0]
 CBNPoor4[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor4[is.na(get(col)), (col) := 0]
-CBNPoor4[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor4[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(208:223)][] 
 
 
 CBNPoor4[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor4[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor4[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor4[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor4[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -940,22 +991,10 @@ CBNPoor4[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor4[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor4[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor4[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor4[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor4[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor4, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor4[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor4[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor4[,.(RealPriceIndex,ProvinceCode,Weight)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
 
 #Calculations
 CBNPoor4[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -963,61 +1002,49 @@ CBNPoor4[,weighted.mean(FoodExpenditure_Per_day,Weight,na.rm = TRUE),by=cluster]
 CBNPoor4[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor4[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
-#Engel
-CBNPoor4<-CBNPoor4[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor4[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor3$ratio1)
 
-#Poverty Line for each cluster
+
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor4[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_4<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_4<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor4[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_4<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_4<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor4[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_4<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_4<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor4[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_4<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_4<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 5###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-CBN[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline1_4 & cluster==1,1,0)]
-c[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline1_4 & cluster==1 ,1,0)]
-CBN[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline2_4 & cluster==2,1,Poor5)]
-c[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline2_4 & cluster==2 ,1,Poor5)]
-CBN[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline3_4 & cluster==3,1,Poor5)]
-c[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline3_4 & cluster==3 ,1,Poor5)]
-CBN[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline4_4 & cluster==4,1,Poor5)]
-c[,Poor5:=ifelse(Total_Exp_Month_Per2 < Povertyline4_4 & cluster==4,1,Poor5)]
-CBN[,weighted.mean(Poor5,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_4 & cluster==1,1,0)]
+c[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_4 & cluster==1 ,1,0)]
+CBN[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_4 & cluster==2,1,Poor5)]
+c[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_4 & cluster==2 ,1,Poor5)]
+CBN[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_4 & cluster==3,1,Poor5)]
+c[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_4 & cluster==3 ,1,Poor5)]
+CBN[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_4 & cluster==4,1,Poor5)]
+c[,Poor5:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_4 & cluster==4 ,1,Poor5)]
+CBN[,weighted.mean(Poor5,Weight),by=cluster][order(cluster)]
 CBNPoor4[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor5<-CBN[Poor5==1]
 
@@ -1038,7 +1065,7 @@ CBNPoor5[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor5[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor5[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor5[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor5[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor5[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor5)
 
 #Calculate Per_calories in clusters(=2100)
@@ -1074,13 +1101,13 @@ CBNPoor5[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor5[is.na(get(col)), (col) := 0]
 CBNPoor5[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor5[is.na(get(col)), (col) := 0]
-CBNPoor5[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor5[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(208:223)][] 
 
 
 CBNPoor5[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor5[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor5[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor5[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor5[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -1098,22 +1125,10 @@ CBNPoor5[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor5[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor5[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor5[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor5[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor5[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor5, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor5[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor5[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor5[,.(RealPriceIndex,ProvinceCode,Weight)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
 
 #Calculations
 CBNPoor5[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -1122,61 +1137,48 @@ CBNPoor5[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor5[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
 
-#Engel
-CBNPoor5<-CBNPoor5[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor5[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor5$ratio1)
 
-#Poverty Line for each cluster
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor5[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_5<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_5<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor5[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_5<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_5<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor5[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_5<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_5<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor5[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_5<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_5<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster,ProvinceCode)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 6###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-#Indicate new poors
-CBN[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline1_5 & cluster==1,1,0)]
-c[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline1_5 & cluster==1 ,1,0)]
-CBN[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline2_5 & cluster==2,1,Poor6)]
-c[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline2_5 & cluster==2 ,1,Poor6)]
-CBN[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline3_5 & cluster==3,1,Poor6)]
-c[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline3_5 & cluster==3 ,1,Poor6)]
-CBN[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline4_5 & cluster==4,1,Poor6)]
-c[,Poor6:=ifelse(Total_Exp_Month_Per2 < Povertyline4_5 & cluster==4,1,Poor6)]
-CBN[,weighted.mean(Poor6,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_5 & cluster==1,1,0)]
+c[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_5 & cluster==1 ,1,0)]
+CBN[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_5 & cluster==2,1,Poor6)]
+c[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_5 & cluster==2 ,1,Poor6)]
+CBN[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_5 & cluster==3,1,Poor6)]
+c[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_5 & cluster==3 ,1,Poor6)]
+CBN[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_5 & cluster==4,1,Poor6)]
+c[,Poor6:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_5 & cluster==4 ,1,Poor6)]
+CBN[,weighted.mean(Poor6,Weight),by=cluster][order(cluster)]
 CBNPoor5[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor6<-CBN[Poor6==1]
 
@@ -1197,7 +1199,7 @@ CBNPoor6[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor6[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor6[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor6[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor6[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor6[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor6)
 
 #Calculate Per_calories in clusters(=2100)
@@ -1233,13 +1235,13 @@ CBNPoor6[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor6[is.na(get(col)), (col) := 0]
 CBNPoor6[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor6[is.na(get(col)), (col) := 0]
-CBNPoor6[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor6[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(208:223)][] 
 
 
 CBNPoor6[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor6[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor6[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor6[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor6[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -1257,22 +1259,10 @@ CBNPoor6[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor6[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor6[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor6[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor6[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor6[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor6, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor6[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor6[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor6[,.(RealPriceIndex,ProvinceCode,Weight)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
 
 #Calculations
 CBNPoor6[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -1281,61 +1271,47 @@ CBNPoor6[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor6[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
 
-#Engel
-CBNPoor6<-CBNPoor6[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor6[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor6$ratio1)
-
-#Poverty Line for each cluster
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor6[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_6<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_6<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor6[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_6<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_6<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor6[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_6<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_6<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor6[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_6<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_6<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster,ProvinceCode)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 7###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-#Indicate new poors
-CBN[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline1_6 & cluster==1,1,0)]
-c[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline1_6 & cluster==1 ,1,0)]
-CBN[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline2_6 & cluster==2,1,Poor7)]
-c[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline2_6 & cluster==2 ,1,Poor7)]
-CBN[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline3_6 & cluster==3,1,Poor7)]
-c[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline3_6 & cluster==3 ,1,Poor7)]
-CBN[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline4_6 & cluster==4,1,Poor7)]
-c[,Poor7:=ifelse(Total_Exp_Month_Per2 < Povertyline4_6 & cluster==4,1,Poor7)]
-CBN[,weighted.mean(Poor7,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_6 & cluster==1,1,0)]
+c[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_6 & cluster==1 ,1,0)]
+CBN[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_6 & cluster==2,1,Poor7)]
+c[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_6 & cluster==2 ,1,Poor7)]
+CBN[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_6 & cluster==3,1,Poor7)]
+c[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_6 & cluster==3 ,1,Poor7)]
+CBN[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_6 & cluster==4,1,Poor7)]
+c[,Poor7:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_6 & cluster==4 ,1,Poor7)]
+CBN[,weighted.mean(Poor7,Weight),by=cluster][order(cluster)]
 CBNPoor6[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor7<-CBN[Poor7==1]
 
@@ -1356,7 +1332,7 @@ CBNPoor7[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor7[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor7[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor7[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor7[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor7[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor7)
 
 #Calculate Per_calories in clusters(=2100)
@@ -1392,13 +1368,13 @@ CBNPoor7[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor7[is.na(get(col)), (col) := 0]
 CBNPoor7[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor7[is.na(get(col)), (col) := 0]
-CBNPoor7[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor7[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(208:223)][] 
 
 
 CBNPoor7[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor7[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor7[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor7[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor7[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -1416,22 +1392,10 @@ CBNPoor7[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor7[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor7[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor7[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor7[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor7[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor7, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor7[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor7[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor7[,.(RealPriceIndex,ProvinceCode,Weight)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
 
 #Calculations
 CBNPoor7[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -1440,63 +1404,51 @@ CBNPoor7[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor7[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
 
-#Engel
-CBNPoor7<-CBNPoor7[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor7[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor7$ratio1)
 
-#Poverty Line for each cluster
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor7[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_7<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_7<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor7[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_7<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_7<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor7[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_7<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_7<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor7[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_7<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_7<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster,ProvinceCode)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 8###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-#Indicate new poors
-CBN[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline1_7 & cluster==1,1,0)]
-c[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline1_7 & cluster==1 ,1,0)]
-CBN[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline2_7 & cluster==2,1,Poor8)]
-c[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline2_7 & cluster==2 ,1,Poor8)]
-CBN[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline3_7 & cluster==3,1,Poor8)]
-c[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline3_7 & cluster==3 ,1,Poor8)]
-CBN[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline4_7 & cluster==4,1,Poor8)]
-c[,Poor8:=ifelse(Total_Exp_Month_Per2 < Povertyline4_7 & cluster==4,1,Poor8)]
-CBN[,weighted.mean(Poor8,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_7 & cluster==1,1,0)]
+c[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_7 & cluster==1 ,1,0)]
+CBN[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_7 & cluster==2,1,Poor8)]
+c[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_7 & cluster==2 ,1,Poor8)]
+CBN[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_7 & cluster==3,1,Poor8)]
+c[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_7 & cluster==3 ,1,Poor8)]
+CBN[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_7 & cluster==4,1,Poor8)]
+c[,Poor8:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_7 & cluster==4 ,1,Poor8)]
+CBN[,weighted.mean(Poor8,Weight),by=cluster][order(cluster)]
 CBNPoor7[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor8<-CBN[Poor8==1]
+
 
 #CalculatePer_calories in clusters
 CBNPoor8[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
@@ -1515,7 +1467,7 @@ CBNPoor8[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor8[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor8[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor8[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor8[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor8[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor8)
 
 #Calculate Per_calories in clusters(=2100)
@@ -1551,13 +1503,13 @@ CBNPoor8[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor8[is.na(get(col)), (col) := 0]
 CBNPoor8[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor8[is.na(get(col)), (col) := 0]
-CBNPoor8[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor8[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(208:223)][] 
 
 
 CBNPoor8[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor8[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor8[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor8[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor8[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -1575,22 +1527,10 @@ CBNPoor8[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor8[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor8[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor8[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor8[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor8[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor8, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor8[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor8[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor8[,.(RealPriceIndex,ProvinceCode,Weight)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
 
 #Calculations
 CBNPoor8[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -1599,63 +1539,51 @@ CBNPoor8[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor8[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
 
-#Engel
-CBNPoor8<-CBNPoor8[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor8[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor8$ratio1)
 
-#Poverty Line for each cluster
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor8[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_8<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_8<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor8[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_8<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_8<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor8[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_8<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_8<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor8[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_8<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_8<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster,ProvinceCode)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 9###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-#Indicate new poors
-CBN[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline1_8 & cluster==1,1,0)]
-c[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline1_8 & cluster==1 ,1,0)]
-CBN[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline2_8 & cluster==2,1,Poor9)]
-c[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline2_8 & cluster==2 ,1,Poor9)]
-CBN[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline3_8 & cluster==3,1,Poor9)]
-c[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline3_8 & cluster==3 ,1,Poor9)]
-CBN[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline4_8 & cluster==4,1,Poor9)]
-c[,Poor9:=ifelse(Total_Exp_Month_Per2 < Povertyline4_8 & cluster==4,1,Poor9)]
-CBN[,weighted.mean(Poor9,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_8 & cluster==1,1,0)]
+c[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_8 & cluster==1 ,1,0)]
+CBN[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_8 & cluster==2,1,Poor9)]
+c[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_8 & cluster==2 ,1,Poor9)]
+CBN[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_8 & cluster==3,1,Poor9)]
+c[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_8 & cluster==3 ,1,Poor9)]
+CBN[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_8 & cluster==4,1,Poor9)]
+c[,Poor9:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_8 & cluster==4 ,1,Poor9)]
+CBN[,weighted.mean(Poor9,Weight),by=cluster][order(cluster)]
 CBNPoor8[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor9<-CBN[Poor9==1]
+
 
 #CalculatePer_calories in clusters
 CBNPoor9[,Daily_Ghand_cluster:=weighted.mean(Ghand_per_Calory,Weight,na.rm = TRUE),by=cluster]
@@ -1674,7 +1602,7 @@ CBNPoor9[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor9[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor9[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor9[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor9[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor9[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor9)
 
 #Calculate Per_calories in clusters(=2100)
@@ -1710,13 +1638,13 @@ CBNPoor9[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_clust
 for (col in c("Daily2_Makarooni")) CBNPoor9[is.na(get(col)), (col) := 0]
 CBNPoor9[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor9[is.na(get(col)), (col) := 0]
-CBNPoor9[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor9[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(208:223)][] 
 
 
 CBNPoor9[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor9[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
 
-CBNPoor9[,Calory_Price:=(FoodExpenditure_Per_cluster/(30*Daily_Calories_cluster2))]
+CBNPoor9[,Calory_Price:=(FoodExpenditure_Per_cluster/(Daily_Calories_cluster2))]
 CBNPoor9[,weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=cluster]
 
 #Calculate per_Calory from resturants
@@ -1734,22 +1662,11 @@ CBNPoor9[,FoodExpenditure_Per_total:=FoodExpenditure_Per+(0.7*Resturant_Exp/EqSi
 CBNPoor9[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster]
 
 #Food expenditures (equal 2100 CCAL)
-CBNPoor9[,Bundle_Value:=FoodExpenditure_Per*2100/Per_Daily_Calories]
+CBNPoor9[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Calories]
 CBNPoor9[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor9[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=ProvinceCode]
 
-#Real Prices
-T_Bundle_Value<-subset(CBNPoor9, ProvinceCode==2301, select=c(Bundle_Value,Weight))
-Tehran_Bundle_Value<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
-CBNPoor9[,RealPriceIndex:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value,by=ProvinceCode]
-CBNPoor9[,weighted.mean(RealPriceIndex,Weight),by=ProvinceCode]
-Indexes2<-CBNPoor9[,.(RealPriceIndex,ProvinceCode,Weight)]
-Indexes<-Indexes2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
-CBN[,RealPriceIndex:=NULL]
-CBN<-merge(CBN,Indexes,by=c("ProvinceCode"),all.x = TRUE)
-CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
-vvv<-CBN[,.(HHID,RealPriceIndex,ProvinceCode,Total_Exp_Month_Per_nondurable,Total_Exp_Month_Per2)]
+
 
 #Calculations
 CBNPoor9[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster]
@@ -1758,71 +1675,98 @@ CBNPoor9[,weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 
 
-#Engel
-CBNPoor9<-CBNPoor9[,ratio1:=FoodExpenditure/Total_Exp_Month]
-CBNPoor9[,weighted.mean(ratio1,Weight),by=cluster]
-summary(CBNPoor9$ratio1)
 
-#Poverty Line for each cluster
+#Food Poverty Line for each cluster
 #cluster 1
 CBNPoorCluster<-CBNPoor9[cluster==1]
-Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse1<-1/Engel1
-Povertyline1_9<-Engel_Reverse1*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline1_9<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 2
 CBNPoorCluster<-CBNPoor9[cluster==2]
-Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse2<-1/Engel2
-Povertyline2_9<-Engel_Reverse2*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline2_9<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 3
 CBNPoorCluster<-CBNPoor9[cluster==3]
-Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse3<-1/Engel3
-Povertyline3_9<-Engel_Reverse3*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline3_9<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
 #cluster 4
 CBNPoorCluster<-CBNPoor9[cluster==4]
-Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
-Engel_Reverse4<-1/Engel4
-Povertyline4_9<-Engel_Reverse4*weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
+Food_Povertyline4_9<-weighted.mean(CBNPoorCluster$Bundle_Value,CBNPoorCluster$Weight,na.rm = TRUE)
 
-#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Exp_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
-#mean(ee[,Total_Exp_Month_Per2==Total_Exp_Month_nondurable_Real])
-#mean(ee[,Total_Exp_Month_Per2<3500000])
-#ee<- ee[order(Total_Exp_Month_Per2)]
+#ee<-CBNPoor[,.(Total_Exp_Month_Real,Total_Exp_Month,Total_Food_Month_Per2,Total_Exp_Month_Per_nondurable,Total_Exp_Month_nondurable_Real_Per,FoodExpenditure_Per,cluster)]
+#mean(ee[,Total_Food_Month_Per2==Total_Exp_Month_nondurable_Real])
+#mean(ee[,Total_Food_Month_Per2<3500000])
+#ee<- ee[order(Total_Food_Month_Per2)]
 #utils::View(CBN)
-for (col in c("Total_Exp_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
-c<-CBN[,.(FoodExpenditure_Per,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Exp_Month_Per2,Poor,Decile,Weight,cluster,ProvinceCode)]
+#for (col in c("Total_Food_Month_Per2")) CBN[is.na(get(col)), (col) := Total_Exp_Month_Per_nondurable]
+c<-CBN[,.(FoodExpenditure_Per,FoodExpenditure_Per_total,Total_Exp_Month_Per_nondurable,Total_Exp_Month,Total_Food_Month_Per2,Poor,Decile,Weight,cluster)]
 
 
 #########Iteration 10###############
 #Sort  Expenditure data
-CBN<- CBN[order(Total_Exp_Month_Per2)]
-c<-  c[order(Total_Exp_Month_Per2)]
-
+CBN<- CBN[order(Total_Food_Month_Per2)]
+c<-  c[order(Total_Food_Month_Per2)]
 
 #Indicate new poors
-CBN[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline1_9 & cluster==1,1,0)]
-c[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline1_9 & cluster==1 ,1,0)]
-CBN[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline2_9 & cluster==2,1,Poor10)]
-c[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline2_9 & cluster==2 ,1,Poor10)]
-CBN[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline3_9 & cluster==3,1,Poor10)]
-c[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline3_9 & cluster==3 ,1,Poor10)]
-CBN[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline4_9 & cluster==4,1,Poor10)]
-c[,Poor10:=ifelse(Total_Exp_Month_Per2 < Povertyline4_9 & cluster==4,1,Poor10)]
-CBN[,weighted.mean(Poor10,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBN[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_9 & cluster==1,1,0)]
+c[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline1_9 & cluster==1 ,1,0)]
+CBN[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_9 & cluster==2,1,Poor10)]
+c[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline2_9 & cluster==2 ,1,Poor10)]
+CBN[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_9 & cluster==3,1,Poor10)]
+c[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline3_9 & cluster==3 ,1,Poor10)]
+CBN[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_9 & cluster==4,1,Poor10)]
+c[,Poor10:=ifelse(FoodExpenditure_Per_total < Food_Povertyline4_9 & cluster==4 ,1,Poor10)]
+CBN[,weighted.mean(Poor10,Weight),by=cluster][order(cluster)]
 CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor10<-CBN[Poor10==1]
 
-CBN[,weighted.mean(Poor10,Weight)]
-CBN[,weighted.mean(Poor10,Weight),by=cluster][order(cluster)]
-CBN[,weighted.mean(Poor10,Weight),by=ProvinceCode][order(ProvinceCode)]
-d<-CBN[,.(Poor,Poor2,Poor3,Poor4,Poor5,Poor6,Poor7,Poor8,Poor9,Poor10)]
-cat("\n\n============================\nIt took ")
+#Engel
+#CBNPoor9<-CBNPoor9[,ratio1:=FoodExpenditure/Total_Exp_Month]
+#CBNPoor9[,weighted.mean(ratio1,Weight),by=cluster]
+#summary(CBNPoor9$ratio1)
+CBN<-CBN[,ratio1:=FoodExpenditure/Total_Exp_Month]
+
+# Poverty Line for each cluster
+#cluster 1
+CBNPoorCluster<-CBN[cluster==1 & FoodExpenditure_Per<1.1*Food_Povertyline1_9 & FoodExpenditure_Per>0.90*Food_Povertyline1_9]
+Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse1<-1/Engel1
+Povertyline1_9<-Engel_Reverse1*Food_Povertyline1_9
+
+#cluster 2
+CBNPoorCluster<-CBN[cluster==2 & FoodExpenditure_Per<1.1*Food_Povertyline2_9 & FoodExpenditure_Per>0.90*Food_Povertyline2_9]
+Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse2<-1/Engel2
+Povertyline2_9<-Engel_Reverse2*Food_Povertyline2_9
+
+#cluster 3
+CBNPoorCluster<-CBN[cluster==3 & FoodExpenditure_Per<1.1*Food_Povertyline3_9 & FoodExpenditure_Per>0.90*Food_Povertyline3_9]
+Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse3<-1/Engel3
+Povertyline3_9<-Engel_Reverse3*Food_Povertyline3_9
+
+#cluster 4
+CBNPoorCluster<-CBN[cluster==4 & FoodExpenditure_Per<1.1*Food_Povertyline4_9 & FoodExpenditure_Per>0.90*Food_Povertyline4_9]
+Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
+Engel_Reverse4<-1/Engel4
+Povertyline4_9<-Engel_Reverse4*Food_Povertyline4_9
+
+#Indicate final poors
+CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
+
+CBN[,Poor11:=ifelse(Total_Exp_Month_Per_nondurable < Povertyline1_9 & cluster==1,1,0)]
+CBN[,Poor11:=ifelse(Total_Exp_Month_Per_nondurable < Povertyline2_9 & cluster==2,1,Poor11)]
+CBN[,Poor11:=ifelse(Total_Exp_Month_Per_nondurable < Povertyline3_9 & cluster==3,1,Poor11)]
+CBN[,Poor11:=ifelse(Total_Exp_Month_Per_nondurable < Povertyline4_9 & cluster==4,1,Poor11)]
+CBN[,weighted.mean(Poor11,Weight),by=cluster][order(cluster)]
+CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
+CBNPoor11<-CBN[Poor11==1]
+
+CBN[,weighted.mean(Poor11,Weight)]
+CBN[,weighted.mean(Poor11,Weight),by=cluster][order(cluster)]
+CBN[,weighted.mean(Poor11,Weight),by=ProvinceCode][order(ProvinceCode)]
 endtime <- proc.time()
+
+cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
-
-
 
