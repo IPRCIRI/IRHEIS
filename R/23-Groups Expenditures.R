@@ -317,7 +317,7 @@ cat("\n\n================ HHHotel =====================================\n")
 
 HotelTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Hotel))
 
-for(year in (Settings$endyear:Settings$endyear)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   ct <- HotelTables[Year==year]
