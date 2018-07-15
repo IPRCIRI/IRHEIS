@@ -238,8 +238,10 @@ CBN$Home_Per_Metr<-CBN$MetrPrice/CBN$EqSizeRevOECD
 #Seperate big cities
 CBN[,sum(Weight*Size),by=ProvinceCode][order(V1)]
 CBN[,HHIDs:=as.character(HHID)]
-CBN[,ShahrestanCode:=as.integer(str_sub(HHIDs,2,5))]
-CBN[,sum(Weight*Size),by=ShahrestanCode][order(V1)][330:387]
+shahrestan91 <- read_dta("D:/R/shahrestan91.dta")
+CBN<-merge(CBN,shahrestan91,by =c("HHID"),all.x=TRUE)
+tt<-CBN[,.(HHID,ProvinceCode,ShahrestanCode)]
+CBN[,sum(Weight*Size),by=ShahrestanCode][order(V1)]
 CBNTehran<-CBN[ProvinceCode==23]
 CBNTehran[,sum(Weight*Size),by=ShahrestanCode]
 CBNTabriz<-CBN[ProvinceCode==3]
@@ -252,8 +254,8 @@ CBNMashhad<-CBN[ProvinceCode==9]
 CBNMashhad[,sum(Weight*Size),by=ShahrestanCode]
 CBNEsfahan<-CBN[ProvinceCode==10]
 CBNEsfahan[,sum(Weight*Size),by=ShahrestanCode]
-CBNKaraj<-CBN[ProvinceCode==30]
-CBNKaraj[,sum(Weight*Size),by=ShahrestanCode]
+#CBNKaraj<-CBN[ProvinceCode==30]
+#CBNKaraj[,sum(Weight*Size),by=ShahrestanCode]
 CBNKermanshah<-CBN[ProvinceCode==5]
 CBNKermanshah[,sum(Weight*Size),by=ShahrestanCode]
 
