@@ -27,7 +27,7 @@ MinCalories <- 2100
 MinCalories2 <- MinCalories^2
 
 
-load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataRural.rda"))
+load(file = paste0(Settings$HEISProcessedPath,"Y","92","MyDataRural.rda"))
 
 
 

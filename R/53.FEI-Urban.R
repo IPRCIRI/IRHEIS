@@ -27,7 +27,7 @@ MinCalories <- 2300
 MinCalories2 <- MinCalories^2
 
 
-load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataUrban.rda"))
+load(file = paste0(Settings$HEISProcessedPath,"Y","92","MyDataUrban.rda"))
 
 #Seperate big cities
 MyDataUrban[,sum(Weight*Size),by=ProvinceCode][order(V1)]

@@ -2881,33 +2881,52 @@ CBN[,weighted.mean(ratio1,Weight),by=ProvinceCode][order(ProvinceCode)]
 CBN<-CBN[,ratio2:=ServiceExp/Total_Exp_Month]
 CBN[,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
 
+#Engel-home ratio calculations
+CBN[cluster==1 & FoodExpenditure_Per_total<1.1*Food_Povertyline1_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,sum(HIndivNo),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==2 & FoodExpenditure_Per_total<1.1*Food_Povertyline2_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,sum(HIndivNo),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==3 & FoodExpenditure_Per_total<1.1*Food_Povertyline3_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,sum(HIndivNo),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==4 & FoodExpenditure_Per_total<1.1*Food_Povertyline4_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,sum(HIndivNo),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==5 & FoodExpenditure_Per_total<1.1*Food_Povertyline5_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,sum(HIndivNo),by=ProvinceCode][order(ProvinceCode)]
+
+CBN[cluster==1 & FoodExpenditure_Per_total<1.1*Food_Povertyline1_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio1,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==2 & FoodExpenditure_Per_total<1.1*Food_Povertyline2_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio1,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==3 & FoodExpenditure_Per_total<1.1*Food_Povertyline3_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio1,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==4 & FoodExpenditure_Per_total<1.1*Food_Povertyline4_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio1,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==5 & FoodExpenditure_Per_total<1.1*Food_Povertyline5_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio1,Weight),by=ProvinceCode][order(ProvinceCode)]
+
+CBN[cluster==1 & FoodExpenditure_Per_total<1.1*Food_Povertyline1_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==2 & FoodExpenditure_Per_total<1.1*Food_Povertyline2_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==3 & FoodExpenditure_Per_total<1.1*Food_Povertyline3_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==4 & FoodExpenditure_Per_total<1.1*Food_Povertyline4_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[cluster==5 & FoodExpenditure_Per_total<1.1*Food_Povertyline5_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
+
 # Poverty Line for each cluster
 #cluster 1
-CBNPoorCluster<-CBN[cluster==1 & FoodExpenditure_Per<1.1*Food_Povertyline1_9 & FoodExpenditure_Per>0.90*Food_Povertyline1_9]
+CBNPoorCluster<-CBN[cluster==1 & FoodExpenditure_Per_total<1.1*Food_Povertyline1_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse1<-1/Engel1
 Povertyline1_9<-Engel_Reverse1*Food_Povertyline1_9
 
 #cluster 2
-CBNPoorCluster<-CBN[cluster==2 & FoodExpenditure_Per<1.1*Food_Povertyline2_9 & FoodExpenditure_Per>0.90*Food_Povertyline2_9]
+CBNPoorCluster<-CBN[cluster==2 & FoodExpenditure_Per_total<1.1*Food_Povertyline2_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline2_9]
 Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse2<-1/Engel2
 Povertyline2_9<-Engel_Reverse2*Food_Povertyline2_9
 
 #cluster 3
-CBNPoorCluster<-CBN[cluster==3 & FoodExpenditure_Per<1.1*Food_Povertyline3_9 & FoodExpenditure_Per>0.90*Food_Povertyline3_9]
+CBNPoorCluster<-CBN[cluster==3 & FoodExpenditure_Per_total<1.1*Food_Povertyline3_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline3_9]
 Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse3<-1/Engel3
 Povertyline3_9<-Engel_Reverse3*Food_Povertyline3_9
 
 #cluster 4
-CBNPoorCluster<-CBN[cluster==4 & FoodExpenditure_Per<1.1*Food_Povertyline4_9 & FoodExpenditure_Per>0.90*Food_Povertyline4_9]
+CBNPoorCluster<-CBN[cluster==4 & FoodExpenditure_Per_total<1.1*Food_Povertyline4_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline4_9]
 Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_9<-Engel_Reverse4*Food_Povertyline4_9
 
 #cluster 5
-CBNPoorCluster<-CBN[cluster==5 & FoodExpenditure_Per<1.1*Food_Povertyline5_9 & FoodExpenditure_Per>0.90*Food_Povertyline5_9]
+CBNPoorCluster<-CBN[cluster==5 & FoodExpenditure_Per_total<1.1*Food_Povertyline5_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline5_9]
 Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse5<-1/Engel5
 Povertyline5_9<-Engel_Reverse5*Food_Povertyline5_9
@@ -2924,13 +2943,21 @@ CBN[,weighted.mean(Poor11,Weight),by=cluster][order(cluster)]
 CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBNPoor11<-CBN[Poor11==1]
 
+
 CBN[,sum(Size*Weight),by=cluster][order(cluster)]
+CBN[,sum(Size*Weight),by=.(cluster,Decile)][order(cluster,Decile)]
+CBNPoor[,sum(Size*Weight),by=cluster][order(cluster)]
+CBNPoor11[,sum(Size*Weight),by=cluster][order(cluster)]
 CBNPoor9[,sum(Size*Weight),by=cluster][order(cluster)]
 CBNPoor9[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
 CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
 CBN[,weighted.mean(Poor11,Weight)]
 CBN[,weighted.mean(Poor11,Weight),by=cluster][order(cluster)]
 CBN[,weighted.mean(Poor11,Weight),by=ProvinceCode][order(ProvinceCode)]
+CBNPoor11[,sum(Size*Weight),by=ProvinceCode][order(ProvinceCode)]
+CBNPoor11[,sum(Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[,sum(Size*Weight),by=ProvinceCode][order(ProvinceCode)]
+CBN[,sum(Size*Weight)]
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
