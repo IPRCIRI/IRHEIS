@@ -18,7 +18,7 @@ library(data.table)
 #for(year in (Settings$startyear:Settings$endyear)){
 # cat(paste0("\n------------------------------\nYear:",year,"\n"))
 
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","HHBase.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","HHBase.rda"))
 HHBase[,IndivNo:=NULL]
 HHBase[,Relationship:=NULL]
 HHBase[,Sex:=NULL]
@@ -31,23 +31,23 @@ HHBase[,EduLevel:=NULL]
 HHBase[,EduLevel0:=NULL]
 HHBase[,ActivityState:=NULL]
 HHBase[,MarritalState:=NULL]
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Ghand_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Hoboobat_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Roghan_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Berenj_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Nan_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Goosht_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Morgh_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Mahi_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Shir_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Mast_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Panir_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Tokhmemorgh_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Mive_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Sabzi_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Makarooni_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Sibzamini_Data.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Weights.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Ghand_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Hoboobat_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Roghan_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Berenj_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Nan_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Goosht_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Morgh_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Mahi_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Shir_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Mast_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Panir_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Tokhmemorgh_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Mive_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Sabzi_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Makarooni_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Sibzamini_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Weights.rda"))
 
 Ghand_Data<-Ghand_Data[,.(HHID,Ghandgram,GhandPrice)]
 Hoboobat_Data<-Hoboobat_Data[,.(HHID,Hoboobatgram,HoboobatPrice)]
@@ -103,26 +103,26 @@ Food<-merge(Food,Weights,by =c("HHID"),all.x=TRUE)
 
 
 #load Expenditure groups
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","HHBase.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","HHI.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Foods.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Cigars.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Cloths.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Amusements.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Communications.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Durables.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Education.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Energy.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Furnitures.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Hotels.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","House.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Medicals.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Behdashts.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Transportations.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Others.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Investments.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Resturants.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y","92","Weights.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","HHBase.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","HHI.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Foods.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Cigars.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Cloths.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Amusements.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Communications.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Durables.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Education.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Energy.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Furnitures.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Hotels.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","House.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Medicals.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Behdashts.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Transportations.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Others.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Investments.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Resturants.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","84","Weights.rda"))
 
 #merge Expenditure groups
 CBN<-merge(Food,HHI ,by =c("HHID"),all=TRUE)
@@ -239,7 +239,7 @@ CBN$Home_Per_Metr<-CBN$MetrPrice/CBN$EqSizeRevOECD
 CBN[,sum(Weight*Size),by=ProvinceCode][order(V1)]
 CBN[,HHIDs:=as.character(HHID)]
 CBN[,ShahrestanCode:=as.integer(str_sub(HHIDs,2,5))]
-CBN[,sum(Weight*Size),by=ShahrestanCode][order(V1)][330:387]
+CBN[,sum(Weight*Size),by=ShahrestanCode][order(V1)]
 CBNTehran<-CBN[ProvinceCode==23]
 CBNTehran[,sum(Weight*Size),by=ShahrestanCode]
 CBNTabriz<-CBN[ProvinceCode==3]
@@ -321,7 +321,7 @@ CBN$Sibzamini_per_Calory<- CBN$Sibzaminigram *0.9/CBN$EqSizeCalory
 
 
 #Assume that deciles 1 and 2 are poor
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 
 #K-means weights
@@ -336,7 +336,7 @@ test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,Goosh
 #test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,MetrPrice,Ghand_W,Hoboobat_W,Roghan_W,Berenj_W,Nan_W,Goosht_W,Morgh_W,Mahi_W,Shir_W,Mast_W,Panir_W,Tokhmemorgh_W,Mive_W,Sabzi_W,Makarooni_W,Sibzamini_W,Home_W,Region,ProvinceCode,Weight)]
 dt2 <- test[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
 dt2<- dt2[order(ProvinceCode)]
-for (col in c("BerenjPrice")) dt2[is.nan(get(col)), (col) := 50000]
+for (col in c("MahiPrice")) dt2[is.nan(get(col)), (col) := 200000]
 dt <- dt2 [,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,MetrPrice)]
 
 
@@ -503,7 +503,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -624,7 +624,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -745,7 +745,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -868,7 +868,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -990,7 +990,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -1112,7 +1112,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -1234,7 +1234,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -1356,7 +1356,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -1478,7 +1478,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -1600,7 +1600,7 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:3,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
 CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
@@ -1896,7 +1896,7 @@ CBNPoor3[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE)
 CBNPoor3[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor3[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor3[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor3[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(192:206)][] 
+CBNPoor3[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(191:206)][] 
 #utils::View(CBNPoor3)
 
 #Calculate Per_calories in clusters(=2100)
@@ -2830,25 +2830,25 @@ CBN[,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
 
 # Poverty Line for each cluster
 #cluster 1
-CBNPoorCluster<-CBN[cluster==1 & FoodExpenditure_Per_total<1.1*Food_Povertyline1_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9]
+CBNPoorCluster<-CBN[cluster==1 & FoodExpenditure_Per<1.1*Food_Povertyline1_9 & FoodExpenditure_Per>0.90*Food_Povertyline1_9]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse1<-1/Engel1
 Povertyline1_9<-Engel_Reverse1*Food_Povertyline1_9
 
 #cluster 2
-CBNPoorCluster<-CBN[cluster==2 & FoodExpenditure_Per_total<1.1*Food_Povertyline2_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline2_9]
+CBNPoorCluster<-CBN[cluster==2 & FoodExpenditure_Per<1.1*Food_Povertyline2_9 & FoodExpenditure_Per>0.90*Food_Povertyline2_9]
 Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse2<-1/Engel2
 Povertyline2_9<-Engel_Reverse2*Food_Povertyline2_9
 
 #cluster 3
-CBNPoorCluster<-CBN[cluster==3 & FoodExpenditure_Per_total<1.1*Food_Povertyline3_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline3_9]
+CBNPoorCluster<-CBN[cluster==3 & FoodExpenditure_Per<1.1*Food_Povertyline3_9 & FoodExpenditure_Per>0.90*Food_Povertyline3_9]
 Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse3<-1/Engel3
 Povertyline3_9<-Engel_Reverse3*Food_Povertyline3_9
 
 #cluster 4
-CBNPoorCluster<-CBN[cluster==4 & FoodExpenditure_Per_total<1.1*Food_Povertyline4_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline4_9]
+CBNPoorCluster<-CBN[cluster==4 & FoodExpenditure_Per<1.1*Food_Povertyline4_9 & FoodExpenditure_Per>0.90*Food_Povertyline4_9]
 Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_9<-Engel_Reverse4*Food_Povertyline4_9

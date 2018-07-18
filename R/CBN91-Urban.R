@@ -14,6 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(stringr)
 library(data.table)
+library(haven)
 
 #for(year in (Settings$startyear:Settings$endyear)){
 # cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -254,8 +255,8 @@ CBNMashhad<-CBN[ProvinceCode==9]
 CBNMashhad[,sum(Weight*Size),by=ShahrestanCode]
 CBNEsfahan<-CBN[ProvinceCode==10]
 CBNEsfahan[,sum(Weight*Size),by=ShahrestanCode]
-#CBNKaraj<-CBN[ProvinceCode==30]
-#CBNKaraj[,sum(Weight*Size),by=ShahrestanCode]
+CBNKaraj<-CBN[ProvinceCode==23]
+CBNKaraj[,sum(Weight*Size),by=ShahrestanCode]
 CBNKermanshah<-CBN[ProvinceCode==5]
 CBNKermanshah[,sum(Weight*Size),by=ShahrestanCode]
 
@@ -266,7 +267,7 @@ CBN<-CBN[ShahrestanCode==603,ProvinceCode:=as.numeric(ShahrestanCode)]
 CBN<-CBN[ShahrestanCode==707,ProvinceCode:=as.numeric(ShahrestanCode)]
 CBN<-CBN[ShahrestanCode==916,ProvinceCode:=as.numeric(ShahrestanCode)]
 CBN<-CBN[ShahrestanCode==1002,ProvinceCode:=as.numeric(ShahrestanCode)]
-CBN<-CBN[ShahrestanCode==3001,ProvinceCode:=as.numeric(ShahrestanCode)]
+CBN<-CBN[ShahrestanCode==2305,ProvinceCode:=as.numeric(ShahrestanCode)]
 CBN<-CBN[ShahrestanCode==2301,ProvinceCode:=as.numeric(ShahrestanCode)]
 CBN<-CBN[ShahrestanCode==502,ProvinceCode:=as.numeric(ShahrestanCode)]
 
@@ -379,6 +380,7 @@ cl$cluster
 dt2 <- dt2[,cluster:=data.table(cl$cluster)]
 dt2<-dt2[,.(ProvinceCode,cluster)]
 load(file="dt4Urban.rda")
+#dt2<-dt2[-c(31,39),]
 #plot(PRICE1, PRICE2,col=cl$cluster)
 #points(cl$centers, pch=20)
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)

@@ -2883,31 +2883,31 @@ CBN[,weighted.mean(ratio2,Weight),by=ProvinceCode][order(ProvinceCode)]
 
 # Poverty Line for each cluster
 #cluster 1
-CBNPoorCluster<-CBN[cluster==1 & FoodExpenditure_Per<1.1*Food_Povertyline1_9 & FoodExpenditure_Per>0.90*Food_Povertyline1_9]
+CBNPoorCluster<-CBN[cluster==1 & FoodExpenditure_Per_total<1.1*Food_Povertyline1_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline1_9]
 Engel1<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse1<-1/Engel1
 Povertyline1_9<-Engel_Reverse1*Food_Povertyline1_9
 
 #cluster 2
-CBNPoorCluster<-CBN[cluster==2 & FoodExpenditure_Per<1.1*Food_Povertyline2_9 & FoodExpenditure_Per>0.90*Food_Povertyline2_9]
+CBNPoorCluster<-CBN[cluster==2 & FoodExpenditure_Per_total<1.1*Food_Povertyline2_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline2_9]
 Engel2<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse2<-1/Engel2
 Povertyline2_9<-Engel_Reverse2*Food_Povertyline2_9
 
 #cluster 3
-CBNPoorCluster<-CBN[cluster==3 & FoodExpenditure_Per<1.1*Food_Povertyline3_9 & FoodExpenditure_Per>0.90*Food_Povertyline3_9]
+CBNPoorCluster<-CBN[cluster==3 & FoodExpenditure_Per_total<1.1*Food_Povertyline3_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline3_9]
 Engel3<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse3<-1/Engel3
 Povertyline3_9<-Engel_Reverse3*Food_Povertyline3_9
 
 #cluster 4
-CBNPoorCluster<-CBN[cluster==4 & FoodExpenditure_Per<1.1*Food_Povertyline4_9 & FoodExpenditure_Per>0.90*Food_Povertyline4_9]
+CBNPoorCluster<-CBN[cluster==4 & FoodExpenditure_Per_total<1.1*Food_Povertyline4_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline4_9]
 Engel4<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse4<-1/Engel4
 Povertyline4_9<-Engel_Reverse4*Food_Povertyline4_9
 
 #cluster 5
-CBNPoorCluster<-CBN[cluster==5 & FoodExpenditure_Per<1.1*Food_Povertyline5_9 & FoodExpenditure_Per>0.90*Food_Povertyline5_9]
+CBNPoorCluster<-CBN[cluster==5 & FoodExpenditure_Per_total<1.1*Food_Povertyline5_9 & FoodExpenditure_Per_total>0.90*Food_Povertyline5_9]
 Engel5<-weighted.mean(CBNPoorCluster$ratio1,CBNPoorCluster$Weight)
 Engel_Reverse5<-1/Engel5
 Povertyline5_9<-Engel_Reverse5*Food_Povertyline5_9
