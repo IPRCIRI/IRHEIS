@@ -1,0 +1,9 @@
+
+------------------- TRACEBACK -------------------------
+Module "Err  " Message   4: file ".\err.c   " line 1547
+Module "Script" Message  -1: file "..\avenue\script.c" line 151
+Module "Event" Message  -1: file ".\event.c " line 2594
+Module "Appl " Message  -1: file "..\appl\appl.c" line 1912
+Module "Err  " Message  -1: file ".\err.c   " line 2009
+-------------------------------------------------------
+FATAL ERROR     Failure during error recovery

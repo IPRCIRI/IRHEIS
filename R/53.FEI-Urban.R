@@ -27,7 +27,7 @@ MinCalories <- 2300
 MinCalories2 <- MinCalories^2
 
 
-load(file = paste0(Settings$HEISProcessedPath,"Y","92","MyDataUrban.rda"))
+load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataUrban.rda"))
 
 #Seperate big cities
 MyDataUrban[,sum(Weight*Size),by=ProvinceCode][order(V1)]
@@ -108,7 +108,7 @@ for(clus in 1:4){
   nam2 <- paste0("Urban1PovLine",clus)
   assign(nam2,nam3)
 }
-
+summary(model1)
 MyDataUrbanCluster<-MyDataUrban[cluster==1]
 MyDataUrbanCluster[,Poor:=ifelse(Total_Exp_Month_Per_nondurable < Urban1PovLine1,1,0)]
 MyDataUrbanCluster[,sum(HIndivNo),by=cluster][order(cluster)]
@@ -127,7 +127,7 @@ for(clus in 1:4){
   nam3<-exp(nam3)
   assign(nam2,nam3)
 }
-
+summary(model1)
 #Nonlog-d2
 for(clus in 1:4){  
   nam <- paste0("Urb",clus)
@@ -139,7 +139,7 @@ for(clus in 1:4){
   nam2 <- paste0("Urban1PovLine",clus)
   assign(nam2,nam3)
 }
-
+summary(model1)
 #log-d2
 for(clus in 1:4){  
   nam <- paste0("Urb",clus)

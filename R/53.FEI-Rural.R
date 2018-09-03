@@ -27,7 +27,7 @@ MinCalories <- 2100
 MinCalories2 <- MinCalories^2
 
 
-load(file = paste0(Settings$HEISProcessedPath,"Y","92","MyDataRural.rda"))
+load(file = paste0(Settings$HEISProcessedPath,"Y","95","MyDataRural.rda"))
 
 
 
@@ -76,7 +76,7 @@ for(clus in 1:5){
   nam2 <- paste0("Rural1PovLine",clus)
   assign(nam2,nam3)
 }
-
+summary(model1)
 #log-d
 for(clus in 1:5){  
   nam <- paste0("Rur",clus)

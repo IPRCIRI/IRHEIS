@@ -14,6 +14,8 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(stringr)
 library(data.table)
+library(sm)
+library(ggplot2)
 
 #for(year in (Settings$startyear:Settings$endyear)){
 # cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -321,7 +323,7 @@ CBN$Sibzamini_per_Calory<- CBN$Sibzaminigram *0.9/CBN$EqSizeCalory
 
 
 #Assume that deciles 1 and 2 are poor
-CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 1:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 
 #K-means weights
@@ -503,10 +505,10 @@ CBN[,Decile:=cut(cumweight,breaks = seq(0,tx,tx/10),labels = 1:10)]
 CBN[,Percentile:=cut(cumweight,breaks=seq(0,tx,tx/100),labels=1:100)]
 
 #Update Poors
-CBN[,Poor:=ifelse(Decile %in% 2:2,1,0)]
+CBN[,Poor:=ifelse(Decile %in% 1:2,1,0)]
 CBNPoor<-CBN[Poor==1]
 CBNPoor<-merge(CBNPoor,dt2,by=c("ProvinceCode"),all.x = TRUE)
-CBNPoor[,sum(HIndivNo),by=.(ProvinceCode)][order(ProvinceCode)]
+CBNPoor[,sum(Size*Weight),by=.(cluster)][order(cluster)]
 
 ###Iteration1-2
 #Calculate Per_calories in clusters
@@ -2886,8 +2888,8 @@ CBN[,sum(Size*Weight),by=.(cluster,Decile)][order(cluster,Decile)]
 CBNPoor[,sum(Size*Weight),by=cluster][order(cluster)]
 CBNPoor11[,sum(Size*Weight),by=cluster][order(cluster)]
 CBNPoor9[,sum(Size*Weight),by=cluster][order(cluster)]
-CBNPoor9[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
-CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster]
+CBNPoor9[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor9[,weighted.mean(Per_Daily_Calories,Weight,na.rm = TRUE),by=cluster][order(cluster)]
 CBN[,weighted.mean(Poor11,Weight)]
 CBN[,weighted.mean(Poor11,Weight),by=cluster][order(cluster)]
 CBN[,weighted.mean(Poor11,Weight),by=ProvinceCode][order(ProvinceCode)]
@@ -2896,7 +2898,54 @@ CBNPoor11[,sum(Weight),by=ProvinceCode][order(ProvinceCode)]
 CBN[,sum(Size*Weight),by=ProvinceCode][order(ProvinceCode)]
 CBN[,sum(Size*Weight)]
 
+##############################
+###Real Prices for report###
+##############################
+#sum of total food expenditures
+CBN[,FoodExpenditure_Per_total:=FoodExpenditure_Per]
+
+#Food expenditures (equal 2100 CCAL)
+CBN<-CBN[Per_Daily_Exp_Calories>0]
+CBN[,Bundle_Value:=FoodExpenditure_Per_total*2100/Per_Daily_Exp_Calories]
+CBN[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=cluster]
+
+T_Bundle_Value<-subset(CBN, ProvinceCode==2301, select=c(Bundle_Value,Home_Per_Metr,Weight))
+Tehran_Bundle_Value1<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
+Tehran_Bundle_Value2<-weighted.mean(T_Bundle_Value$Home_Per_Metr,T_Bundle_Value$Weight,na.rm = TRUE)
+CBN[,RealPriceIndex1:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value1,by=ProvinceCode]
+CBN[,RealPriceIndex2:=weighted.mean(Home_Per_Metr,Weight,na.rm = TRUE)/Tehran_Bundle_Value2,by=ProvinceCode]
+CBN[,weighted.mean(RealPriceIndex1,Weight),by=ProvinceCode]
+CBN[,weighted.mean(RealPriceIndex2,Weight),by=ProvinceCode]
+Indexes2_1<-CBN[,.(RealPriceIndex1,RealPriceIndex2,ProvinceCode,Weight)]
+Indexes2_1<-Indexes2_1[,RealPriceIndex:=(RealPriceIndex1+RealPriceIndex2)/2]
+Indexes_total<-Indexes2_1[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
+Indexes3_1<-Indexes_total[,.(ProvinceCode,RealPriceIndex1,RealPriceIndex2,RealPriceIndex)]
+Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
+
+CBN_Poor<-CBN[Poor11==1]
+T_Bundle_Value<-subset(CBN_Poor, ProvinceCode==2301, select=c(Bundle_Value,Home_Per_Metr,Weight))
+Tehran_Bundle_Value1<-weighted.mean(T_Bundle_Value$Bundle_Value,T_Bundle_Value$Weight,na.rm = TRUE)
+Tehran_Bundle_Value2<-weighted.mean(T_Bundle_Value$Home_Per_Metr,T_Bundle_Value$Weight,na.rm = TRUE)
+CBN_Poor[,RealPriceIndex1:=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/Tehran_Bundle_Value1,by=ProvinceCode]
+CBN_Poor[,RealPriceIndex2:=weighted.mean(Home_Per_Metr,Weight,na.rm = TRUE)/Tehran_Bundle_Value2,by=ProvinceCode]
+CBN_Poor[,weighted.mean(RealPriceIndex1,Weight),by=ProvinceCode]
+CBN_Poor[,weighted.mean(RealPriceIndex2,Weight),by=ProvinceCode]
+Indexes2_2<-CBN_Poor[,.(RealPriceIndex1,RealPriceIndex2,ProvinceCode,Weight,Poor11)]
+Indexes2_2<-Indexes2_2[,RealPriceIndex:=(RealPriceIndex1+RealPriceIndex2)/2]
+Indexes_finalpoor<-Indexes2_2[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
+Indexes3_2<-Indexes_finalpoor[,.(ProvinceCode,RealPriceIndex1,RealPriceIndex2,RealPriceIndex)]
+Indexes<-Indexes[,.(ProvinceCode,RealPriceIndex)]
+
+###Save Tables
+CBN_Urban<-CBN
+save(CBN_Urban, file = paste0(Settings$HEISProcessedPath,"CBN_Urban","95.rda"))
+
+CBNPoor_Urban<-CBNPoor11
+save(CBNPoor_Urban, file = paste0(Settings$HEISProcessedPath,"CBNPoor_Urban","95.rda"))
+
+
 endtime <- proc.time()
+
 
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
