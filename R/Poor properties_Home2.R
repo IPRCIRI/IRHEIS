@@ -56,28 +56,28 @@ CBN_NonPoor_Rural[,ProvinceCode2:=as.integer(str_sub(HHIDs,2,3))]
 
 ##### HouseOwn #####
 
-HouseOwn<-CBN95[,HouseOwn_Poors1:=weighted.mean(ifelse(HouseOwn==1,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+HouseOwn<-CBN_NonPoor95[,HouseOwn_Poors1:=weighted.mean(ifelse(HouseOwn==1,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
 HouseOwn<-HouseOwn[,.(HouseOwn_Poors1,ProvinceCode2,Weight)]
 HouseOwn1<-HouseOwn[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 HouseOwn1[,Weight:=NULL]
 
-HouseOwn<-CBN95[,HouseOwn_Poors2:=weighted.mean(ifelse(HouseOwn==2,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+HouseOwn<-CBN_NonPoor95[,HouseOwn_Poors2:=weighted.mean(ifelse(HouseOwn==2,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
 HouseOwn<-HouseOwn[,.(HouseOwn_Poors2,ProvinceCode2,Weight)]
 HouseOwn2<-HouseOwn[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
-HouseOwn<-CBN95[,HouseOwn_Poors3:=weighted.mean(ifelse(HouseOwn==3,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+HouseOwn<-CBN_NonPoor95[,HouseOwn_Poors3:=weighted.mean(ifelse(HouseOwn==3,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
 HouseOwn<-HouseOwn[,.(HouseOwn_Poors3,ProvinceCode2,Weight)]
 HouseOwn3<-HouseOwn[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
-HouseOwn<-CBN95[,HouseOwn_Poors4:=weighted.mean(ifelse(HouseOwn==4,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+HouseOwn<-CBN_NonPoor95[,HouseOwn_Poors4:=weighted.mean(ifelse(HouseOwn==4,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
 HouseOwn<-HouseOwn[,.(HouseOwn_Poors4,ProvinceCode2,Weight)]
 HouseOwn4<-HouseOwn[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
-HouseOwn<-CBN95[,HouseOwn_Poors5:=weighted.mean(ifelse(HouseOwn==5,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+HouseOwn<-CBN_NonPoor95[,HouseOwn_Poors5:=weighted.mean(ifelse(HouseOwn==5,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
 HouseOwn<-HouseOwn[,.(HouseOwn_Poors5,ProvinceCode2,Weight)]
 HouseOwn5<-HouseOwn[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
-HouseOwn<-CBN95[,HouseOwn_Poors6:=weighted.mean(ifelse(HouseOwn==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+HouseOwn<-CBN_NonPoor95[,HouseOwn_Poors6:=weighted.mean(ifelse(HouseOwn==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
 HouseOwn<-HouseOwn[,.(HouseOwn_Poors6,ProvinceCode2,Weight)]
 HouseOwn6<-HouseOwn[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -166,6 +166,193 @@ HouseOwn2<-merge(HouseOwn2,HouseOwn16,by =c("Poor11"),all.x=TRUE)
 HouseOwn2<-merge(HouseOwn2,HouseOwn17,by =c("Poor11"),all.x=TRUE)
 HouseOwn2<-merge(HouseOwn2,HouseOwn18,by =c("Poor11"),all.x=TRUE)
 write.xlsx(HouseOwn2, "D:/R/Poors_House2.xlsx",sheetName = "HouseOwn2",append = TRUE)
+
+##### skeleton #####
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors1:=weighted.mean(ifelse(skeleton==1,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors1,ProvinceCode2,Weight)]
+skeleton1<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+skeleton1[,Weight:=NULL]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors2:=weighted.mean(ifelse(skeleton==2,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors2,ProvinceCode2,Weight)]
+skeleton2<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors3:=weighted.mean(ifelse(skeleton==3,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors3,ProvinceCode2,Weight)]
+skeleton3<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors4:=weighted.mean(ifelse(skeleton==4,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors4,ProvinceCode2,Weight)]
+skeleton4<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors5:=weighted.mean(ifelse(skeleton==5,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors5,ProvinceCode2,Weight)]
+skeleton5<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors6:=weighted.mean(ifelse(skeleton==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors6,ProvinceCode2,Weight)]
+skeleton6<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors13:=weighted.mean(ifelse(skeleton==7,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors13,ProvinceCode2,Weight)]
+skeleton13<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors14:=weighted.mean(ifelse(skeleton==8,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors14,ProvinceCode2,Weight)]
+skeleton14<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors15:=weighted.mean(ifelse(skeleton==20,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors15,ProvinceCode2,Weight)]
+skeleton15<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_NonPoor95[,skeleton_Poors16:=weighted.mean(ifelse(skeleton==10,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors16,ProvinceCode2,Weight)]
+skeleton16<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+
+skeleton<-CBN_Poor95[,skeleton_Poors7:=weighted.mean(ifelse(skeleton==1,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors7,ProvinceCode2,Weight)]
+skeleton7<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+skeleton7[,Weight:=NULL]
+
+skeleton<-CBN_Poor95[,skeleton_Poors8:=weighted.mean(ifelse(skeleton==2,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors8,ProvinceCode2,Weight)]
+skeleton8<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors9:=weighted.mean(ifelse(skeleton==3,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors9,ProvinceCode2,Weight)]
+skeleton9<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors10:=weighted.mean(ifelse(skeleton==4,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors10,ProvinceCode2,Weight)]
+skeleton10<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors11:=weighted.mean(ifelse(skeleton==5,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors11,ProvinceCode2,Weight)]
+skeleton11<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors12:=weighted.mean(ifelse(skeleton==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors12,ProvinceCode2,Weight)]
+skeleton12<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors17:=weighted.mean(ifelse(skeleton==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors17,ProvinceCode2,Weight)]
+skeleton17<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors18:=weighted.mean(ifelse(skeleton==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors18,ProvinceCode2,Weight)]
+skeleton18<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors19:=weighted.mean(ifelse(skeleton==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors19,ProvinceCode2,Weight)]
+skeleton19<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton<-CBN_Poor95[,skeleton_Poors20:=weighted.mean(ifelse(skeleton==6,1,0),Weight),by=ProvinceCode2][order(ProvinceCode2)]
+skeleton<-skeleton[,.(skeleton_Poors20,ProvinceCode2,Weight)]
+skeleton20<-skeleton[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
+
+skeleton1<-merge(skeleton1,skeleton2,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton3,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton4,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton5,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton6,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton13,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton14,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton15,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton16,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton7,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1<-merge(skeleton1,skeleton8,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton9,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton10,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton11,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton12,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton17,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton18,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton19,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+skeleton1<-merge(skeleton1,skeleton20,by =c("ProvinceCode2"),all.x=TRUE)
+skeleton1[,Weight:=NULL]
+write.xlsx(skeleton1, "D:/R/Poors_House2.xlsx",sheetName = "skeleton1",append = TRUE)
+
+
+skeleton13<-CBN95[,skeleton1:=weighted.mean(ifelse(skeleton==1,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton13<-skeleton13[,.(skeleton1,Poor11,Weight)]
+skeleton13<-skeleton13[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton13[,Weight:=NULL]
+
+skeleton14<-CBN95[,skeleton2:=weighted.mean(ifelse(skeleton==2,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton14<-skeleton14[,.(skeleton2,Poor11,Weight)]
+skeleton14<-skeleton14[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton14[,Weight:=NULL]
+
+skeleton15<-CBN95[,skeleton3:=weighted.mean(ifelse(skeleton==3,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton15<-skeleton15[,.(skeleton3,Poor11,Weight)]
+skeleton15<-skeleton15[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton15[,Weight:=NULL]
+
+skeleton16<-CBN95[,skeleton4:=weighted.mean(ifelse(skeleton==4,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton16<-skeleton16[,.(skeleton4,Poor11,Weight)]
+skeleton16<-skeleton16[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton16[,Weight:=NULL]
+
+skeleton17<-CBN95[,skeleton5:=weighted.mean(ifelse(skeleton==5,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton17<-skeleton17[,.(skeleton5,Poor11,Weight)]
+skeleton17<-skeleton17[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton17[,Weight:=NULL]
+
+skeleton18<-CBN95[,skeleton6:=weighted.mean(ifelse(skeleton==6,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton18<-skeleton18[,.(skeleton6,Poor11,Weight)]
+skeleton18<-skeleton18[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton18[,Weight:=NULL]
+
+skeleton19<-CBN95[,skeleton7:=weighted.mean(ifelse(skeleton==7,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton19<-skeleton19[,.(skeleton7,Poor11,Weight)]
+skeleton19<-skeleton19[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton19[,Weight:=NULL]
+
+skeleton20<-CBN95[,skeleton8:=weighted.mean(ifelse(skeleton==8,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton20<-skeleton20[,.(skeleton8,Poor11,Weight)]
+skeleton20<-skeleton20[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton20[,Weight:=NULL]
+
+skeleton21<-CBN95[,skeleton10:=weighted.mean(ifelse(skeleton==10,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton21<-skeleton21[,.(skeleton10,Poor11,Weight)]
+skeleton21<-skeleton21[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton21[,Weight:=NULL]
+
+skeleton22<-CBN95[,skeleton20:=weighted.mean(ifelse(skeleton==20,1,0),Weight),by=Poor11][order(Poor11)]
+skeleton22<-skeleton22[,.(skeleton20,Poor11,Weight)]
+skeleton22<-skeleton22[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)]
+skeleton22[,Weight:=NULL]
+
+skeleton2<-merge(skeleton13,skeleton14,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton15,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton16,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton17,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton18,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton19,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton20,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton21,by =c("Poor11"),all.x=TRUE)
+skeleton2<-merge(skeleton2,skeleton22,by =c("Poor11"),all.x=TRUE)
+write.xlsx(skeleton2, "D:/R/Poors_House2.xlsx",sheetName = "skeleton2",append = TRUE)
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

@@ -56,7 +56,7 @@ CBN_NonPoor_Rural[,ProvinceCode2:=as.integer(str_sub(HHIDs,2,3))]
 
 
 ##### Hoese Conditions #####
-Area_Per<-CBN95[,Area_Per1:=weighted.mean(Area/Dimension,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Area_Per<-CBN_NonPoor95[,Area_Per1:=weighted.mean(Area/Dimension,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Area_Per<-Area_Per[,.(Area_Per1,ProvinceCode2,Weight)]
 Area_Per1<-Area_Per[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 Area_Per1[,Weight:=NULL]
@@ -75,7 +75,7 @@ Area_Per<-Area_Per[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor11)
 Area_Per[,Weight:=NULL]
 write.xlsx(Area_Per, "D:/R/Poors_home.xlsx",sheetName = "Area_Per2",append = TRUE)
 
-Rooms_Per<-CBN95[,Rooms_Per1:=weighted.mean(Rooms/Dimension,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Rooms_Per<-CBN_NonPoor95[,Rooms_Per1:=weighted.mean(Rooms/Dimension,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Rooms_Per<-Rooms_Per[,.(Rooms_Per1,ProvinceCode2,Weight)]
 Rooms_Per1<-Rooms_Per[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 Rooms_Per1[,Weight:=NULL]
@@ -94,7 +94,7 @@ Rooms_Per<-Rooms_Per[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Poor1
 Rooms_Per[,Weight:=NULL]
 write.xlsx(Rooms_Per, "D:/R/Poors_home.xlsx",sheetName = "Rooms_Per2",append = TRUE)
 
-MetrPrice<-CBN95[,MetrPrice1:=weighted.mean(MetrPrice,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+MetrPrice<-CBN_NonPoor95[,MetrPrice1:=weighted.mean(MetrPrice,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 MetrPrice<-MetrPrice[,.(MetrPrice1,ProvinceCode2,Weight)]
 MetrPrice1<-MetrPrice[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 MetrPrice1[,Weight:=NULL]
@@ -114,12 +114,12 @@ MetrPrice[,Weight:=NULL]
 write.xlsx(MetrPrice, "D:/R/Poors_home.xlsx",sheetName = "MetrPrice2",append = TRUE)
 
 ##### Electricity #####
-Electricity<-CBN_Poor95[,Electricity_Poors:=weighted.mean(Electricity,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Electricity<-CBN_NonPoor95[,Electricity_Poors:=weighted.mean(Electricity,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Electricity<-Electricity[,.(Electricity_Poors,ProvinceCode2,Weight)]
 Electricity1<-Electricity[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 Electricity1[,Weight:=NULL]
 
-Electricity<-CBN95[,Electricity:=weighted.mean(Electricity,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Electricity<-CBN_Poor95[,Electricity:=weighted.mean(Electricity,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Electricity<-Electricity[,.(Electricity,ProvinceCode2,Weight)]
 Electricity2<-Electricity[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -134,12 +134,12 @@ Electricity3[,Weight:=NULL]
 write.xlsx(Electricity3, "D:/R/Poors_home.xlsx",sheetName = "Electricity2",append = TRUE)
 
 ##### PipedWater #####
-PipedWater<-CBN_Poor95[,PipedWater_Poors:=weighted.mean(PipedWater,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+PipedWater<-CBN_NonPoor95[,PipedWater_Poors:=weighted.mean(PipedWater,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 PipedWater<-PipedWater[,.(PipedWater_Poors,ProvinceCode2,Weight)]
 PipedWater1<-PipedWater[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 PipedWater1[,Weight:=NULL]
 
-PipedWater<-CBN95[,PipedWater:=weighted.mean(PipedWater,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+PipedWater<-CBN_Poor95[,PipedWater:=weighted.mean(PipedWater,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 PipedWater<-PipedWater[,.(PipedWater,ProvinceCode2,Weight)]
 PipedWater2<-PipedWater[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -155,12 +155,12 @@ write.xlsx(PipedWater3, "D:/R/Poors_home.xlsx",sheetName = "PipedWater2",append 
 
 
 ##### PipedGas #####
-PipedGas<-CBN_Poor95[,PipedGas_Poors:=weighted.mean(PipedGas,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+PipedGas<-CBN_NonPoor95[,PipedGas_Poors:=weighted.mean(PipedGas,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 PipedGas<-PipedGas[,.(PipedGas_Poors,ProvinceCode2,Weight)]
 PipedGas1<-PipedGas[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 PipedGas1[,Weight:=NULL]
 
-PipedGas<-CBN95[,PipedGas:=weighted.mean(PipedGas,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+PipedGas<-CBN_Poor95[,PipedGas:=weighted.mean(PipedGas,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 PipedGas<-PipedGas[,.(PipedGas,ProvinceCode2,Weight)]
 PipedGas2<-PipedGas[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -175,12 +175,12 @@ PipedGas3[,Weight:=NULL]
 write.xlsx(PipedGas3, "D:/R/Poors_home.xlsx",sheetName = "PipedGas2",append = TRUE)
 
 ##### Telephone #####
-Telephone<-CBN_Poor95[,Telephone_Poors:=weighted.mean(Telephone,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Telephone<-CBN_NonPoor95[,Telephone_Poors:=weighted.mean(Telephone,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Telephone<-Telephone[,.(Telephone_Poors,ProvinceCode2,Weight)]
 Telephone1<-Telephone[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 Telephone1[,Weight:=NULL]
 
-Telephone<-CBN95[,Telephone:=weighted.mean(Telephone,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Telephone<-CBN_Poor95[,Telephone:=weighted.mean(Telephone,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Telephone<-Telephone[,.(Telephone,ProvinceCode2,Weight)]
 Telephone2<-Telephone[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -195,12 +195,12 @@ Telephone3[,Weight:=NULL]
 write.xlsx(Telephone3, "D:/R/Poors_home.xlsx",sheetName = "Telephone2",append = TRUE)
 
 ##### Internet #####
-Internet<-CBN_Poor95[,Internet_Poors:=weighted.mean(Internet,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Internet<-CBN_NonPoor95[,Internet_Poors:=weighted.mean(Internet,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Internet<-Internet[,.(Internet_Poors,ProvinceCode2,Weight)]
 Internet1<-Internet[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 Internet1[,Weight:=NULL]
 
-Internet<-CBN95[,Internet:=weighted.mean(Internet,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Internet<-CBN_Poor95[,Internet:=weighted.mean(Internet,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Internet<-Internet[,.(Internet,ProvinceCode2,Weight)]
 Internet2<-Internet[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -215,12 +215,12 @@ Internet3[,Weight:=NULL]
 write.xlsx(Internet3, "D:/R/Poors_home.xlsx",sheetName = "Internet2",append = TRUE)
 
 ##### Car #####
-Car<-CBN_Poor95[,Car_Poors:=weighted.mean(Car,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Car<-CBN_NonPoor95[,Car_Poors:=weighted.mean(Car,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Car<-Car[,.(Car_Poors,ProvinceCode2,Weight)]
 Car1<-Car[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 Car1[,Weight:=NULL]
 
-Car<-CBN95[,Car:=weighted.mean(Car,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Car<-CBN_Poor95[,Car:=weighted.mean(Car,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Car<-Car[,.(Car,ProvinceCode2,Weight)]
 Car2<-Car[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -235,12 +235,12 @@ Car3[,Weight:=NULL]
 write.xlsx(Car3, "D:/R/Poors_home.xlsx",sheetName = "Car2",append = TRUE)
 
 ##### PC #####
-PC<-CBN_Poor95[,PC_Poors:=weighted.mean(PC,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+PC<-CBN_NonPoor95[,PC_Poors:=weighted.mean(PC,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 PC<-PC[,.(PC_Poors,ProvinceCode2,Weight)]
 PC1<-PC[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 PC1[,Weight:=NULL]
 
-PC<-CBN95[,PC:=weighted.mean(PC,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+PC<-CBN_Poor95[,PC:=weighted.mean(PC,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 PC<-PC[,.(PC,ProvinceCode2,Weight)]
 PC2<-PC[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
@@ -255,12 +255,12 @@ PC3[,Weight:=NULL]
 write.xlsx(PC3, "D:/R/Poors_home.xlsx",sheetName = "PC2",append = TRUE)
 
 ##### Cell #####
-Cell<-CBN_Poor95[,Cell_Poors:=weighted.mean(Cell,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Cell<-CBN_NonPoor95[,Cell_Poors:=weighted.mean(Cell,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Cell<-Cell[,.(Cell_Poors,ProvinceCode2,Weight)]
 Cell1<-Cell[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 Cell1[,Weight:=NULL]
 
-Cell<-CBN95[,Cell:=weighted.mean(Cell,Weight),by=ProvinceCode2][order(ProvinceCode2)]
+Cell<-CBN_Poor95[,Cell:=weighted.mean(Cell,Weight),by=ProvinceCode2][order(ProvinceCode2)]
 Cell<-Cell[,.(Cell,ProvinceCode2,Weight)]
 Cell2<-Cell[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode2)]
 
