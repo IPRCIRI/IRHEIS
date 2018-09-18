@@ -165,8 +165,24 @@ for (col in c("Resturant_Exp")) CBN[is.na(get(col)), (col) := 0]
 CBN<-CBN[Size!=0]
 CBN<-CBN[Region=="Urban"]
 CBN<-CBN[FoodExpenditure!=0]
-
-
+CBN$FoodExpenditure<-CBN$FoodExpenditure*1.110
+CBN$Cigar_Exp<-CBN$Cigar_Exp*1.1015
+CBN$Cloth_Exp<-CBN$Cloth_Exp*1.104
+CBN$Amusement_Exp<-CBN$Amusement_Exp*1.1148
+CBN$Communication_Exp<-CBN$Communication_Exp*1.1049
+CBN$EducExpenditure<-CBN$EducExpenditure*1.108
+CBN$Energy_Exp<-CBN$Energy_Exp*1.1072
+CBN$Furniture_Exp<-CBN$Furniture_Exp*1.1118
+CBN$Hotel_Exp<-CBN$Hotel_Exp*1.1112
+CBN$Behdasht_Exp<-CBN$Behdasht_Exp*1.110
+CBN$Transportation_Exp<-CBN$Transportation_Exp*1.1059
+CBN$Other_Exp<-CBN$Other_Exp*1.1033
+CBN$ServiceExp<-CBN$ServiceExp*1.1072
+CBN$Investment_Exp<-CBN$Investment_Exp*1.108
+CBN$Medical_Exp<-CBN$Medical_Exp*1.110
+CBN$Durable_Exp<-CBN$Durable_Exp*1.108
+ 
+  
 #Calculate Per_Total Expenditures Monthly
 CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(65:77,82:83)][] 
 CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=65:77][] 
