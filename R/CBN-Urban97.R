@@ -165,6 +165,22 @@ for (col in c("Resturant_Exp")) CBN[is.na(get(col)), (col) := 0]
 CBN<-CBN[Size!=0]
 CBN<-CBN[Region=="Urban"]
 CBN<-CBN[FoodExpenditure!=0]
+CBN$FoodExpenditure<-CBN$FoodExpenditure*1.1348
+CBN$Cigar_Exp<-CBN$Cigar_Exp*1.1314
+CBN$Cloth_Exp<-CBN$Cloth_Exp*1.1136
+CBN$Amusement_Exp<-CBN$Amusement_Exp*1.1265
+CBN$Communication_Exp<-CBN$Communication_Exp*1.1156
+CBN$EducExpenditure<-CBN$EducExpenditure*1.1226
+CBN$Energy_Exp<-CBN$Energy_Exp*1.1156
+CBN$Furniture_Exp<-CBN$Furniture_Exp*1.1141
+CBN$Hotel_Exp<-CBN$Hotel_Exp*1.1203
+CBN$Behdasht_Exp<-CBN$Behdasht_Exp*1.1187
+CBN$Transportation_Exp<-CBN$Transportation_Exp*1.1223
+CBN$Other_Exp<-CBN$Other_Exp*1.1206
+CBN$ServiceExp<-CBN$ServiceExp*1.1156
+CBN$Investment_Exp<-CBN$Investment_Exp*1.1226
+CBN$Medical_Exp<-CBN$Medical_Exp*1.1187
+CBN$Durable_Exp<-CBN$Durable_Exp*1.1226
 
 
 #Calculate Per_Total Expenditures Monthly
