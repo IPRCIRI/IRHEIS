@@ -36,7 +36,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   D <- merge(D, IncomeTable)
   D <- D[!is.na(Weight)]
   
-  X <- D[,.(X=sum(GotLoan*Weight)/sum(Weight)*100),by=WorkClass]
+  X <- D[,.(X=sum(GotLoan*Weight)/sum(Weight)*100),by=.(WorkClass,ProvinceCode)]
   X[,Year:=year]
   bigX <- rbind(bigX,X)
   
@@ -45,7 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
  probit_model <- svyglm(GotLoan ~  Region + HSex + HAge + I(HAge^2)
                       + HEmployed + HMarritalState + Size + HLiterate + WorkClass + NetIncome
                       , design=svDataL, family=binomial(link="probit"))
-# print(summary(probit_model))
+ print(summary(probit_model))
  mgf <- svycontrast(probit_model, quote(
     (exp(`(Intercept)` + WorkClassPub) / (exp(`(Intercept)` + WorkClassPub) + 1)) - 
       (exp(`(Intercept)`) / (exp(`(Intercept)`) + 1))))
