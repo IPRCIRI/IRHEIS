@@ -407,7 +407,7 @@ CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(185:200)][] 
-#utils::View(CBNPoor)
+
 
 
 #Calculate Per_calories in clusters(=2100)
@@ -2897,6 +2897,8 @@ CBNPoor11[,sum(Size*Weight),by=ProvinceCode][order(ProvinceCode)]
 CBNPoor11[,sum(Weight),by=ProvinceCode][order(ProvinceCode)]
 CBN[,sum(Size*Weight),by=ProvinceCode][order(ProvinceCode)]
 CBN[,sum(Size*Weight)]
+CBNPoor11[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster][order(cluster)]
+CBNPoor11[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster][order(cluster)]
 
 ##############################
 ###Real Prices for report###
@@ -2942,6 +2944,79 @@ save(CBN_Urban, file = paste0(Settings$HEISProcessedPath,"CBN_Urban","95.rda"))
 
 CBNPoor_Urban<-CBNPoor11
 save(CBNPoor_Urban, file = paste0(Settings$HEISProcessedPath,"CBNPoor_Urban","95.rda"))
+
+
+#utils::View(CBN)
+for (col in c("GhandPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("HoboobatPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("RoghanPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("BerenjPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("NanPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("GooshtPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("MorghPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("MahiPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("ShirPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("MastPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("PanirPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("TokhmemorghPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("MivePrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("SabziPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("MakarooniPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+for (col in c("SibzaminiPrice")) CBNPoor11[is.na(get(col)), (col) := 0]
+
+CBNPoor11<-CBNPoor11[,x:=GhandPrice*Ghandgram+HoboobatPrice*Hoboobatgram+RoghanPrice*Roghangram+BerenjPrice*Berenjgram+NanPrice*Nangram+GooshtPrice*Gooshtgram+MorghPrice*Morghgram+MahiPrice*Mahigram+ShirPrice*Shirgram+MastPrice*Mastgram+PanirPrice*Panirgram+TokhmemorghPrice*Tokhmemorghgram+MivePrice*Mivegram+SabziPrice*Sabzigram+MakarooniPrice*Makaroonigram+SibzaminiPrice*Sibzaminigram]
+CBNPoor11[,weighted.mean((GhandPrice*Ghandgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((HoboobatPrice*Hoboobatgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((RoghanPrice*Roghangram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((BerenjPrice*Berenjgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((NanPrice*Nangram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((GooshtPrice*Gooshtgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((MorghPrice*Morghgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((MahiPrice*Mahigram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((ShirPrice*Shirgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((MastPrice*Mastgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((PanirPrice*Panirgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((TokhmemorghPrice*Tokhmemorghgram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((MivePrice*Mivegram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((SabziPrice*Sabzigram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((MakarooniPrice*Makaroonigram)/x,Weight),cluster==4]
+CBNPoor11[,weighted.mean((SibzaminiPrice*Sibzaminigram)/x,Weight),cluster==4]
+
+
+for (col in c("GhandPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("HoboobatPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("RoghanPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("BerenjPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("NanPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("GooshtPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("MorghPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("MahiPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("ShirPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("MastPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("PanirPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("TokhmemorghPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("MivePrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("SabziPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("MakarooniPrice")) CBN[is.na(get(col)), (col) := 0]
+for (col in c("SibzaminiPrice")) CBN[is.na(get(col)), (col) := 0]
+
+CBN<-CBN[,x:=GhandPrice*Ghandgram+HoboobatPrice*Hoboobatgram+RoghanPrice*Roghangram+BerenjPrice*Berenjgram+NanPrice*Nangram+GooshtPrice*Gooshtgram+MorghPrice*Morghgram+MahiPrice*Mahigram+ShirPrice*Shirgram+MastPrice*Mastgram+PanirPrice*Panirgram+TokhmemorghPrice*Tokhmemorghgram+MivePrice*Mivegram+SabziPrice*Sabzigram+MakarooniPrice*Makaroonigram+SibzaminiPrice*Sibzaminigram]
+CBN[,weighted.mean((GhandPrice*Ghandgram)/x,Weight)*103.5]
+CBN[,weighted.mean((HoboobatPrice*Hoboobatgram)/x,Weight)*117]
+CBN[,weighted.mean((RoghanPrice*Roghangram)/x,Weight)*111.5]
+CBN[,weighted.mean((BerenjPrice*Berenjgram)/x,Weight)*114.3]
+CBN[,weighted.mean((NanPrice*Nangram)/x,Weight)*110.8]
+CBN[,weighted.mean((GooshtPrice*Gooshtgram)/x,Weight)*123.5]
+CBN[,weighted.mean((MorghPrice*Morghgram)/x,Weight)*114.1]
+CBN[,weighted.mean((MahiPrice*Mahigram)/x,Weight)*107.6]
+CBN[,weighted.mean((ShirPrice*Shirgram)/x,Weight)*103.4]
+CBN[,weighted.mean((MastPrice*Mastgram)/x,Weight)*106.1]
+CBN[,weighted.mean((PanirPrice*Panirgram)/x,Weight)*106.8]
+CBN[,weighted.mean((TokhmemorghPrice*Tokhmemorghgram)/x,Weight)*125.9]
+CBN[,weighted.mean((MivePrice*Mivegram)/x,Weight)*97.1]
+CBN[,weighted.mean((SabziPrice*Sabzigram)/x,Weight)*109.9]
+CBN[,weighted.mean((MakarooniPrice*Makaroonigram)/x,Weight)*101.9]
+CBN[,weighted.mean((SibzaminiPrice*Sibzaminigram)/x,Weight)*119.7]
 
 
 endtime <- proc.time()
