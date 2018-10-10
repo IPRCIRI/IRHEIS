@@ -163,6 +163,23 @@ for (col in c("Resturant_Exp")) CBN[is.na(get(col)), (col) := 0]
 CBN<-CBN[Size!=0]
 CBN<-CBN[Region=="Rural"]
 CBN<-CBN[FoodExpenditure!=0]
+CBN$FoodExpenditure<-CBN$FoodExpenditure*	1.511
+CBN$Cigar_Exp<-CBN$Cigar_Exp*	2.073
+CBN$Cloth_Exp<-CBN$Cloth_Exp*	1.259
+CBN$Amusement_Exp<-CBN$Amusement_Exp*	1.633
+CBN$Communication_Exp<-CBN$Communication_Exp*	1.348
+CBN$EducExpenditure<-CBN$EducExpenditure*	1.121
+CBN$Energy_Exp<-CBN$Energy_Exp*	1.187
+CBN$Furniture_Exp<-CBN$Furniture_Exp*	1.475
+CBN$Hotel_Exp<-CBN$Hotel_Exp*	1.301
+CBN$Behdasht_Exp<-CBN$Behdasht_Exp*	1.252
+CBN$Transportation_Exp<-CBN$Transportation_Exp*	1.454
+CBN$Other_Exp<-CBN$Other_Exp*	1.326
+CBN$ServiceExp<-CBN$ServiceExp*	1.187
+CBN$Investment_Exp<-CBN$Investment_Exp*	1.342
+CBN$Medical_Exp<-CBN$Medical_Exp*	1.252
+CBN$Durable_Exp<-CBN$Durable_Exp*	1.342
+
 
 
 #Calculate Per_Total Expenditures Monthly
@@ -2960,8 +2977,6 @@ CBNPoor11[,sum(Size*Weight),by=ProvinceCode][order(ProvinceCode)]
 CBNPoor11[,sum(Weight),by=ProvinceCode][order(ProvinceCode)]
 CBN[,sum(Size*Weight),by=ProvinceCode][order(ProvinceCode)]
 CBN[,sum(Size*Weight)]
-CBNPoor11[,weighted.mean(FoodExpenditure_Per_total,Weight,na.rm = TRUE),by=cluster][order(cluster)]
-CBNPoor11[,weighted.mean(Per_Daily_Exp_Calories,Weight,na.rm = TRUE),by=cluster][order(cluster)]
 
 ##############################
 ###Real Prices for report###
