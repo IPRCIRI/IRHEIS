@@ -14,6 +14,9 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(stringr)
 library(data.table)
+library(foreign)
+library(haven)
+load(file = "data9697.rda")
 
 #for(year in (Settings$startyear:Settings$endyear)){
 # cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -163,23 +166,83 @@ for (col in c("Resturant_Exp")) CBN[is.na(get(col)), (col) := 0]
 CBN<-CBN[Size!=0]
 CBN<-CBN[Region=="Rural"]
 CBN<-CBN[FoodExpenditure!=0]
-CBN$FoodExpenditure<-CBN$FoodExpenditure*	1.511
-CBN$Cigar_Exp<-CBN$Cigar_Exp*	2.073
-CBN$Cloth_Exp<-CBN$Cloth_Exp*	1.259
-CBN$Amusement_Exp<-CBN$Amusement_Exp*	1.633
-CBN$Communication_Exp<-CBN$Communication_Exp*	1.348
-CBN$EducExpenditure<-CBN$EducExpenditure*	1.121
-CBN$Energy_Exp<-CBN$Energy_Exp*	1.187
-CBN$Furniture_Exp<-CBN$Furniture_Exp*	1.475
-CBN$Hotel_Exp<-CBN$Hotel_Exp*	1.301
-CBN$Behdasht_Exp<-CBN$Behdasht_Exp*	1.252
-CBN$Transportation_Exp<-CBN$Transportation_Exp*	1.454
-CBN$Other_Exp<-CBN$Other_Exp*	1.326
-CBN$ServiceExp<-CBN$ServiceExp*	1.187
-CBN$Investment_Exp<-CBN$Investment_Exp*	1.342
-CBN$Medical_Exp<-CBN$Medical_Exp*	1.252
-CBN$Durable_Exp<-CBN$Durable_Exp*	1.342
 
+CBN<-merge(CBN,data9697,by =c("ProvinceCode"),all.x=TRUE)
+
+CBN$FoodExpenditure<-CBN$FoodExpenditure*CBN$summer971food_index/100
+CBN$Cigar_Exp<-CBN$Cigar_Exp*CBN$summer971cigar_index/100
+CBN$Cloth_Exp<-CBN$Cloth_Exp*CBN$summer971cloth_index/100
+CBN$Amusement_Exp<-CBN$Amusement_Exp*CBN$summer971amusement_index/100
+CBN$Communication_Exp<-CBN$Communication_Exp*CBN$summer971communication_index/100
+CBN$EducExpenditure<-CBN$EducExpenditure*CBN$summer971education_index/100
+CBN$Energy_Exp<-CBN$Energy_Exp*CBN$summer971house_energy_index/100
+CBN$Furniture_Exp<-CBN$Furniture_Exp*CBN$summer971furniture_index/100
+CBN$Hotel_Exp<-CBN$Hotel_Exp*CBN$summer971hotel_index/100
+CBN$Behdasht_Exp<-CBN$Behdasht_Exp*CBN$summer971behdasht_index/100
+CBN$Transportation_Exp<-CBN$Transportation_Exp*CBN$summer971transportation_index/100
+CBN$Other_Exp<-CBN$Other_Exp*CBN$summer971other_index/100
+CBN$ServiceExp<-CBN$ServiceExp*CBN$summer971house_energy_index/100
+CBN$Investment_Exp<-CBN$Investment_Exp*CBN$summer97/100
+CBN$Medical_Exp<-CBN$Medical_Exp*CBN$summer971behdasht_index/100
+CBN$Durable_Exp<-CBN$Durable_Exp*CBN$summer97/100
+
+CBN[	,shahrivar971furniture_index	:=NULL]
+CBN[	,shahrivar971communication_index	:=NULL]
+CBN[	,shahrivar971behdasht_index	:=NULL]
+CBN[	,shahrivar971education_index	:=NULL]
+CBN[	,shahrivar971amusement_index	:=NULL]
+CBN[	,shahrivar971transportation_index	:=NULL]
+CBN[	,shahrivar971food_index	:=NULL]
+CBN[	,shahrivar971cigar_index	:=NULL]
+CBN[	,shahrivar971hotel_index	:=NULL]
+CBN[	,shahrivar971total_index	:=NULL]
+CBN[	,shahrivar971house_energy_index	:=NULL]
+CBN[	,shahrivar971cloth_index	:=NULL]
+CBN[	,shahrivar971other_index	:=NULL]
+CBN[	,spring971furniture_index	:=NULL]
+CBN[	,spring971communication_index	:=NULL]
+CBN[	,spring971behdasht_index	:=NULL]
+CBN[	,spring971education_index	:=NULL]
+CBN[	,spring971amusement_index	:=NULL]
+CBN[	,spring971transportation_index	:=NULL]
+CBN[	,spring971food_index	:=NULL]
+CBN[	,spring971cigar_index	:=NULL]
+CBN[	,spring971hotel_index	:=NULL]
+CBN[	,spring971total_index	:=NULL]
+CBN[	,spring971house_energy_index	:=NULL]
+CBN[	,spring971cloth_index	:=NULL]
+CBN[	,spring971other_index	:=NULL]
+CBN[	,summer971furniture_index	:=NULL]
+CBN[	,summer971communication_index	:=NULL]
+CBN[	,summer971behdasht_index	:=NULL]
+CBN[	,summer971education_index	:=NULL]
+CBN[	,summer971amusement_index	:=NULL]
+CBN[	,summer971transportation_index	:=NULL]
+CBN[	,summer971food_index	:=NULL]
+CBN[	,summer971cigar_index	:=NULL]
+CBN[	,summer971hotel_index	:=NULL]
+CBN[	,summer971total_index	:=NULL]
+CBN[	,summer971house_energy_index	:=NULL]
+CBN[	,summer971cloth_index	:=NULL]
+CBN[	,summer971other_index	:=NULL]
+CBN[	,total961furniture_index	:=NULL]
+CBN[	,total961communication_index	:=NULL]
+CBN[	,total961behdasht_index	:=NULL]
+CBN[	,total961education_index	:=NULL]
+CBN[	,total961amusement_index	:=NULL]
+CBN[	,total961transportation_index	:=NULL]
+CBN[	,total961food_index	:=NULL]
+CBN[	,total961cigar_index	:=NULL]
+CBN[	,total961hotel_index	:=NULL]
+CBN[	,total961total_index	:=NULL]
+CBN[	,total961house_energy_index	:=NULL]
+CBN[	,total961cloth_index	:=NULL]
+CBN[	,total961other_index	:=NULL]
+
+CBN[	,spring97	:=NULL]
+CBN[	,summer97	:=NULL]
+CBN[	,total96	:=NULL]
+CBN[	,shahrivar97	:=NULL]
 
 
 #Calculate Per_Total Expenditures Monthly
@@ -339,51 +402,7 @@ dt3 <- dt3[,.(Ghand_W,Hoboobat_W,Roghan_W,Berenj_W,Nan_W,Goosht_W,Morgh_W,Mahi_W
 
 
 
-#K-means algorithm for clustering by prices
-test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,MetrPrice,ProvinceCode,Weight)]
-#test<-CBNPoor[,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,MetrPrice,Ghand_W,Hoboobat_W,Roghan_W,Berenj_W,Nan_W,Goosht_W,Morgh_W,Mahi_W,Shir_W,Mast_W,Panir_W,Tokhmemorgh_W,Mive_W,Sabzi_W,Makarooni_W,Sibzamini_W,Home_W,Region,ProvinceCode,Weight)]
-dt2 <- test[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
-dt2<- dt2[order(ProvinceCode)]
-for (col in c("MahiPrice")) dt2[is.nan(get(col)), (col) := 200000]
-dt <- dt2 [,.(GhandPrice,HoboobatPrice,RoghanPrice,BerenjPrice,NanPrice,GooshtPrice,MorghPrice,MahiPrice,ShirPrice,MastPrice,PanirPrice,TokhmemorghPrice,MivePrice,SabziPrice,MakarooniPrice,SibzaminiPrice,MetrPrice)]
 
-
-pca <- princomp(dt, cor=T)
-PRICE <- pca$scores
-PRICE1 <- -1*PRICE[,1] 
-PRICE2 <- -1*PRICE[,2] 
-PRICE3 <- -1*PRICE[,3] 
-PRICE4 <- -1*PRICE[,4] 
-PRICE5 <- -1*PRICE[,5]
-PRICE6 <- -1*PRICE[,6] 
-PRICE7 <- -1*PRICE[,7] 
-PRICE8 <- -1*PRICE[,8] 
-PRICE9 <- -1*PRICE[,9] 
-PRICE10 <- -1*PRICE[,10] 
-PRICE11 <- -1*PRICE[,11] 
-PRICE12 <- -1*PRICE[,12] 
-PRICE13 <- -1*PRICE[,13]
-PRICE14 <- -1*PRICE[,14] 
-PRICE15 <- -1*PRICE[,15] 
-PRICE16 <- -1*PRICE[,16] 
-PRICE17 <- -1*PRICE[,17] 
-
-# Deciding how many clusters
-wss <- (nrow(dt)-1)*sum(apply(dt,2,var))
-for (i in 2:30) wss[i] <- sum(kmeans(dt, centers=i)$withinss)
-plot(1:30, wss, type="b", xlab="Number of Clusters",
-     ylab="Within groups sum of squares")
-
-#Weighted clustering
-
-dt3.m <- dt3[,lapply(.SD, mean)]			# Weights for each vector
-dtW <- dt * sqrt(dt3.m[rep(1,nrow(dt))])	# Weighted observations
-kmeans(dtW,4)						# Simple K-means
-
-cl <- kmeans(dtW,4)
-cl$cluster
-dt2 <- dt2[,cluster:=data.table(cl$cluster)]
-dt2<-dt2[,.(ProvinceCode,cluster)]
 load(file="dt5Rural.rda")
 #plot(PRICE1, PRICE2,col=cl$cluster)
 #points(cl$centers, pch=20)
