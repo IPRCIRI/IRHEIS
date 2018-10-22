@@ -16,7 +16,10 @@ library(stringr)
 library(data.table)
 library(sm)
 library(ggplot2)
+library(foreign)
+library(haven)
 
+load(file = "data9697.rda")
 #for(year in (Settings$startyear:Settings$endyear)){
 # cat(paste0("\n------------------------------\nYear:",year,"\n"))
 
@@ -165,22 +168,85 @@ for (col in c("Resturant_Exp")) CBN[is.na(get(col)), (col) := 0]
 CBN<-CBN[Size!=0]
 CBN<-CBN[Region=="Urban"]
 CBN<-CBN[FoodExpenditure!=0]
-CBN$FoodExpenditure<-CBN$FoodExpenditure*	1.511
-CBN$Cigar_Exp<-CBN$Cigar_Exp*	2.073
-CBN$Cloth_Exp<-CBN$Cloth_Exp*	1.259
-CBN$Amusement_Exp<-CBN$Amusement_Exp*	1.633
-CBN$Communication_Exp<-CBN$Communication_Exp*	1.348
-CBN$EducExpenditure<-CBN$EducExpenditure*	1.121
-CBN$Energy_Exp<-CBN$Energy_Exp*	1.187
-CBN$Furniture_Exp<-CBN$Furniture_Exp*	1.475
-CBN$Hotel_Exp<-CBN$Hotel_Exp*	1.301
-CBN$Behdasht_Exp<-CBN$Behdasht_Exp*	1.252
-CBN$Transportation_Exp<-CBN$Transportation_Exp*	1.454
-CBN$Other_Exp<-CBN$Other_Exp*	1.326
-CBN$ServiceExp<-CBN$ServiceExp*	1.187
-CBN$Investment_Exp<-CBN$Investment_Exp*	1.342
-CBN$Medical_Exp<-CBN$Medical_Exp*	1.252
-CBN$Durable_Exp<-CBN$Durable_Exp*	1.342
+
+
+
+CBN<-merge(CBN,data9697,by =c("ProvinceCode"),all.x=TRUE)
+
+CBN$FoodExpenditure<-CBN$FoodExpenditure*CBN$summer971food_index/100
+CBN$Cigar_Exp<-CBN$Cigar_Exp*CBN$summer971cigar_index/100
+CBN$Cloth_Exp<-CBN$Cloth_Exp*CBN$summer971cloth_index/100
+CBN$Amusement_Exp<-CBN$Amusement_Exp*CBN$summer971amusement_index/100
+CBN$Communication_Exp<-CBN$Communication_Exp*CBN$summer971communication_index/100
+CBN$EducExpenditure<-CBN$EducExpenditure*CBN$summer971education_index/100
+CBN$Energy_Exp<-CBN$Energy_Exp*CBN$summer971house_energy_index/100
+CBN$Furniture_Exp<-CBN$Furniture_Exp*CBN$summer971furniture_index/100
+CBN$Hotel_Exp<-CBN$Hotel_Exp*CBN$summer971hotel_index/100
+CBN$Behdasht_Exp<-CBN$Behdasht_Exp*CBN$summer971behdasht_index/100
+CBN$Transportation_Exp<-CBN$Transportation_Exp*CBN$summer971transportation_index/100
+CBN$Other_Exp<-CBN$Other_Exp*CBN$summer971other_index/100
+CBN$ServiceExp<-CBN$ServiceExp*CBN$summer971house_energy_index/100
+CBN$Investment_Exp<-CBN$Investment_Exp*CBN$summer97/100
+CBN$Medical_Exp<-CBN$Medical_Exp*CBN$summer971behdasht_index/100
+CBN$Durable_Exp<-CBN$Durable_Exp*CBN$summer97/100
+
+CBN[	,shahrivar971furniture_index	:=NULL]
+CBN[	,shahrivar971communication_index	:=NULL]
+CBN[	,shahrivar971behdasht_index	:=NULL]
+CBN[	,shahrivar971education_index	:=NULL]
+CBN[	,shahrivar971amusement_index	:=NULL]
+CBN[	,shahrivar971transportation_index	:=NULL]
+CBN[	,shahrivar971food_index	:=NULL]
+CBN[	,shahrivar971cigar_index	:=NULL]
+CBN[	,shahrivar971hotel_index	:=NULL]
+CBN[	,shahrivar971total_index	:=NULL]
+CBN[	,shahrivar971house_energy_index	:=NULL]
+CBN[	,shahrivar971cloth_index	:=NULL]
+CBN[	,shahrivar971other_index	:=NULL]
+CBN[	,spring971furniture_index	:=NULL]
+CBN[	,spring971communication_index	:=NULL]
+CBN[	,spring971behdasht_index	:=NULL]
+CBN[	,spring971education_index	:=NULL]
+CBN[	,spring971amusement_index	:=NULL]
+CBN[	,spring971transportation_index	:=NULL]
+CBN[	,spring971food_index	:=NULL]
+CBN[	,spring971cigar_index	:=NULL]
+CBN[	,spring971hotel_index	:=NULL]
+CBN[	,spring971total_index	:=NULL]
+CBN[	,spring971house_energy_index	:=NULL]
+CBN[	,spring971cloth_index	:=NULL]
+CBN[	,spring971other_index	:=NULL]
+CBN[	,summer971furniture_index	:=NULL]
+CBN[	,summer971communication_index	:=NULL]
+CBN[	,summer971behdasht_index	:=NULL]
+CBN[	,summer971education_index	:=NULL]
+CBN[	,summer971amusement_index	:=NULL]
+CBN[	,summer971transportation_index	:=NULL]
+CBN[	,summer971food_index	:=NULL]
+CBN[	,summer971cigar_index	:=NULL]
+CBN[	,summer971hotel_index	:=NULL]
+CBN[	,summer971total_index	:=NULL]
+CBN[	,summer971house_energy_index	:=NULL]
+CBN[	,summer971cloth_index	:=NULL]
+CBN[	,summer971other_index	:=NULL]
+CBN[	,total961furniture_index	:=NULL]
+CBN[	,total961communication_index	:=NULL]
+CBN[	,total961behdasht_index	:=NULL]
+CBN[	,total961education_index	:=NULL]
+CBN[	,total961amusement_index	:=NULL]
+CBN[	,total961transportation_index	:=NULL]
+CBN[	,total961food_index	:=NULL]
+CBN[	,total961cigar_index	:=NULL]
+CBN[	,total961hotel_index	:=NULL]
+CBN[	,total961total_index	:=NULL]
+CBN[	,total961house_energy_index	:=NULL]
+CBN[	,total961cloth_index	:=NULL]
+CBN[	,total961other_index	:=NULL]
+
+CBN[	,spring97	:=NULL]
+CBN[	,summer97	:=NULL]
+CBN[	,total96	:=NULL]
+CBN[	,shahrivar97	:=NULL]
 
 
 
