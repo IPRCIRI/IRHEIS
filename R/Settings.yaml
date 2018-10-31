@@ -6,8 +6,8 @@ HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
 HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
-startyear: 84.0
-endyear: 89.0
+startyear: 63.0
+endyear: 95.0
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
 MetaDataFilePath: ../Data/MetaData.xlsx
