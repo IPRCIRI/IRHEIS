@@ -61,8 +61,16 @@ for(year in (Settings$startyear:Settings$endyear))
   }
   HHBase <- HHBase[!is.na(HHID)]
   HHBase[,ProvinceCode:=as.integer(str_sub(HHIDs,2,3))]
+  HHBase[,CountyCode:=as.integer(str_sub(HHIDs,2,5))]
+  
   HHBase[,Year:=year]
-  HHBase <- HHBase[,list(HHID,Region,Year,Quarter,Month,ProvinceCode)]
+  HHBase <- HHBase[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode)]
+  
+  HHBase[,NewArea:=ProvinceCode]
+  HHBase[Region=="Urban" & 
+           CountyCode %in% c(2301,303,603,707,
+                             916,1002,3001,502),
+         NewArea:=CountyCode]
   
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 

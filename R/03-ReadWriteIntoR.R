@@ -38,7 +38,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     Tables[[tbl]] <- D
   }
   names(Tables) <- toupper(names(Tables))
-  Tables[[paste0("RU",year,"Weights")]] <- AllWeights[(Year==year),]
+#  Tables[[paste0("RU",year,"Weights")]] <- AllWeights[(Year==year),]
   close(cns)
   save(Tables,file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
 }
