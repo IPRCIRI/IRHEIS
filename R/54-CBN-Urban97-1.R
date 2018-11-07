@@ -18,6 +18,8 @@ library(sm)
 library(ggplot2)
 library(foreign)
 library(haven)
+#data9697 <- read_dta("D:/9697.dta")
+#save(data9697,file = "data9697.rda")
 load(file = "data9697.rda")
 #for(year in (Settings$startyear:Settings$endyear)){
 # cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -170,22 +172,22 @@ CBN<-CBN[FoodExpenditure!=0]
 
 CBN<-merge(CBN,data9697,by =c("ProvinceCode"),all.x=TRUE)
 
-CBN$FoodExpenditure<-CBN$FoodExpenditure*CBN$spring971food_index/100
-CBN$Cigar_Exp<-CBN$Cigar_Exp*CBN$spring971cigar_index/100
-CBN$Cloth_Exp<-CBN$Cloth_Exp*CBN$spring971cloth_index/100
-CBN$Amusement_Exp<-CBN$Amusement_Exp*CBN$spring971amusement_index/100
-CBN$Communication_Exp<-CBN$Communication_Exp*CBN$spring971communication_index/100
-CBN$EducExpenditure<-CBN$EducExpenditure*CBN$spring971education_index/100
-CBN$Energy_Exp<-CBN$Energy_Exp*CBN$spring971house_energy_index/100
-CBN$Furniture_Exp<-CBN$Furniture_Exp*CBN$spring971furniture_index/100
-CBN$Hotel_Exp<-CBN$Hotel_Exp*CBN$spring971hotel_index/100
-CBN$Behdasht_Exp<-CBN$Behdasht_Exp*CBN$spring971behdasht_index/100
-CBN$Transportation_Exp<-CBN$Transportation_Exp*CBN$spring971transportation_index/100
-CBN$Other_Exp<-CBN$Other_Exp*CBN$spring971other_index/100
-CBN$ServiceExp<-CBN$ServiceExp*CBN$spring971house_energy_index/100
-CBN$Investment_Exp<-CBN$Investment_Exp*CBN$spring97/100
-CBN$Medical_Exp<-CBN$Medical_Exp*CBN$spring971behdasht_index/100
-CBN$Durable_Exp<-CBN$Durable_Exp*CBN$spring97/100
+CBN$FoodExpenditure<-CBN$FoodExpenditure*CBN$spring971food_index/CBN$spring971food_index
+CBN$Cigar_Exp<-CBN$Cigar_Exp*CBN$spring971cigar_index/CBN$spring971cigar_index
+CBN$Cloth_Exp<-CBN$Cloth_Exp*CBN$spring971cloth_index/CBN$spring971cloth_index
+CBN$Amusement_Exp<-CBN$Amusement_Exp*CBN$spring971amusement_index/CBN$spring971amusement_index
+CBN$Communication_Exp<-CBN$Communication_Exp*CBN$spring971communication_index/CBN$spring971communication_index
+CBN$EducExpenditure<-CBN$EducExpenditure*CBN$spring971education_index/CBN$spring971education_index
+CBN$Energy_Exp<-CBN$Energy_Exp*CBN$spring971house_energy_index/CBN$spring971house_energy_index
+CBN$Furniture_Exp<-CBN$Furniture_Exp*CBN$spring971furniture_index/CBN$spring971furniture_index
+CBN$Hotel_Exp<-CBN$Hotel_Exp*CBN$spring971hotel_index/CBN$spring971hotel_index
+CBN$Behdasht_Exp<-CBN$Behdasht_Exp*CBN$spring971behdasht_index/CBN$spring971behdasht_index
+CBN$Transportation_Exp<-CBN$Transportation_Exp*CBN$spring971transportation_index/CBN$spring971transportation_index
+CBN$Other_Exp<-CBN$Other_Exp*CBN$spring971other_index/CBN$spring971other_index
+CBN$ServiceExp<-CBN$ServiceExp*CBN$spring971house_energy_index/CBN$spring971house_energy_index
+CBN$Investment_Exp<-CBN$Investment_Exp*CBN$spring97/CBN$spring97
+CBN$Medical_Exp<-CBN$Medical_Exp*CBN$spring971behdasht_index/CBN$spring971behdasht_index
+CBN$Durable_Exp<-CBN$Durable_Exp*CBN$spring97/CBN$spring97
 
 CBN[	,shahrivar971furniture_index	:=NULL]
 CBN[	,shahrivar971communication_index	:=NULL]
@@ -239,7 +241,35 @@ CBN[	,total961total_index	:=NULL]
 CBN[	,total961house_energy_index	:=NULL]
 CBN[	,total961cloth_index	:=NULL]
 CBN[	,total961other_index	:=NULL]
+CBN[	,spring951furniture_index	:=NULL]
+CBN[	,spring951communication_index	:=NULL]
+CBN[	,spring951behdasht_index	:=NULL]
+CBN[	,spring951education_index	:=NULL]
+CBN[	,spring951amusement_index	:=NULL]
+CBN[	,spring951transportation_index	:=NULL]
+CBN[	,spring951food_index	:=NULL]
+CBN[	,spring951cigar_index	:=NULL]
+CBN[	,spring951hotel_index	:=NULL]
+CBN[	,spring951total_index	:=NULL]
+CBN[	,spring951house_energy_index	:=NULL]
+CBN[	,spring951cloth_index	:=NULL]
+CBN[	,spring951other_index	:=NULL]
+CBN[	,summer951furniture_index	:=NULL]
+CBN[	,summer951communication_index	:=NULL]
+CBN[	,summer951behdasht_index	:=NULL]
+CBN[	,summer951education_index	:=NULL]
+CBN[	,summer951amusement_index	:=NULL]
+CBN[	,summer951transportation_index	:=NULL]
+CBN[	,summer951food_index	:=NULL]
+CBN[	,summer951cigar_index	:=NULL]
+CBN[	,summer951hotel_index	:=NULL]
+CBN[	,summer951total_index	:=NULL]
+CBN[	,summer951house_energy_index	:=NULL]
+CBN[	,summer951cloth_index	:=NULL]
+CBN[	,summer951other_index	:=NULL]
 
+CBN[	,spring95	:=NULL]
+CBN[	,summer95	:=NULL]
 CBN[	,spring97	:=NULL]
 CBN[	,summer97	:=NULL]
 CBN[	,total96	:=NULL]
