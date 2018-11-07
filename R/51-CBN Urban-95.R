@@ -1,6 +1,6 @@
 #CBN Method-Urban.R
 # 
-# Copyright © 2018:Arin Shahbazian
+# Copyright Â© 2018:Arin Shahbazian
 # Licence: GPL-3
 # 
 rm(list=ls())
@@ -19,9 +19,36 @@ library(ggplot2)
 
 #for(year in (Settings$startyear:Settings$endyear)){
 # cat(paste0("\n------------------------------\nYear:",year,"\n"))
-year <- 95
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-load()
+
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","HHBase.rda"))
+HHBase[,IndivNo:=NULL]
+HHBase[,Relationship:=NULL]
+HHBase[,Sex:=NULL]
+HHBase[,Age:=NULL]
+HHBase[,Literate:=NULL]
+HHBase[,Student:=NULL]
+HHBase[,EduCode:=NULL]
+HHBase[,EduYears:=NULL]
+HHBase[,EduLevel:=NULL]
+HHBase[,EduLevel0:=NULL]
+HHBase[,ActivityState:=NULL]
+HHBase[,MarritalState:=NULL]
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Ghand_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Hoboobat_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Roghan_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Berenj_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Nan_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Goosht_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Morgh_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Mahi_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Shir_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Mast_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Panir_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Tokhmemorgh_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Mive_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Sabzi_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Makarooni_Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y","95","Sibzamini_Data.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y","95","Weights.rda"))
 
 Ghand_Data<-Ghand_Data[,.(HHID,Ghandgram,GhandPrice)]

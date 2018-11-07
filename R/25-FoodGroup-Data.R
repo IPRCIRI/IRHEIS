@@ -13,14 +13,14 @@ library(data.table)
 library(stringr)
 library(readxl)
 
-cat("\n\n================  =====================================\n")
-TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_FoodGroups))
-year <- 95
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_FoodGroups))
+
 load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 BigFoodPrice <- HHBase[,.N,by=.(Region,NewArea)]
-for(i in 1:nrow(TFoodGroups))
-  {
+for(i in 1:nrow(TFoodGroups)){
   cat(paste0(TFoodGroups[i,FoodType],", "))
   
   ThisFoodTypeTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=TFoodGroups[i,SheetName]))
@@ -36,20 +36,35 @@ for(i in 1:nrow(TFoodGroups))
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos",
+  if(year %in% 75:82){
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos",
                                  "Price","Expenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   
   TF[,Kilos:=as.numeric(Kilos)]
-  TF[,Grams:=as.numeric(Grams)]
   TF[,Price:=as.numeric(str_replace_all(Price,"[\r\n]",""))]
   TF[,Expenditure:=as.numeric(Expenditure)]
   
-  TF[is.na(Grams),Grams:=0]
+
   TF[is.na(Kilos),Kilos:=0]
-  TF[,FGrams:=(Kilos*1000+Grams)/30]
-  
+  TF[,FGrams:=(Kilos*1000)/30]
+  }
+  if(year %in% 83:95){
+    pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos",
+                                   "Price","Expenditure"))
+    TF <- TF[,pcols,with=FALSE]
+    TF <- TF[Code %in% ft$StartCode:ft$EndCode]
+    
+    TF[,Kilos:=as.numeric(Kilos)]
+    TF[,Grams:=as.numeric(Grams)]
+    TF[,Price:=as.numeric(str_replace_all(Price,"[\r\n]",""))]
+    TF[,Expenditure:=as.numeric(Expenditure)]
+    
+    TF[is.na(Grams),Grams:=0]
+    TF[is.na(Kilos),Kilos:=0]
+    TF[,FGrams:=(Kilos*1000+Grams)/30]
+  }
   TF[is.na(Price) & !is.na(Expenditure) & !is.na(FGrams), Price:=Expenditure/FGrams]
   TF[is.na(FGrams) & !is.na(Expenditure) & !is.na(Price), FGrams:=Expenditure/Price]
   TF[is.na(Expenditure) & !is.na(FGrams) & !is.na(Price), Expenditure:=Price*FGrams]
@@ -81,6 +96,7 @@ for(i in which(w)){
 # s <- n[w]
 # BigFoodPrice[,TSh:=Reduce(`+`, .SD),.SDcols=s]
 save(BigFoodPrice,file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
+}
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat((endtime-starttime)[3])

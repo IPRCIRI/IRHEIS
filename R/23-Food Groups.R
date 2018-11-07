@@ -36,23 +36,42 @@ for(year in (Settings$startyear:Settings$endyear)){
       if(length(x)>0)
         setnames(TF,n,names(ft)[x])
     }
-    pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
+    if(year %in% 63:82){
+    pcols <- intersect(names(TF),c("HHID","Code","Kilos"))
     TF <- TF[,pcols,with=FALSE]
     TF <- TF[Code %in% ft$StartCode:ft$EndCode]
     
     TF[,Kilos:=as.numeric(Kilos)]
-    TF[,Grams:=as.numeric(Grams)]
-    
-    
+
     TF[,Code:=NULL]
     TF[is.na(TF)] <- 0
-    TF[,FGrams:=(Kilos*1000+Grams)/30]
+    TF[,FGrams:=(Kilos*1000)/30]
     FData <- TF[,lapply(.SD,sum),by=HHID]
     FData[, FoodType:=TFoodGroups[i,FoodType]]
     FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
     
     BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,FoodType,FoodKCalories)])
     save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+    }
+    if(year %in% 83:95){
+      pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
+      TF <- TF[,pcols,with=FALSE]
+      TF <- TF[Code %in% ft$StartCode:ft$EndCode]
+      
+      TF[,Kilos:=as.numeric(Kilos)]
+      TF[,Grams:=as.numeric(Grams)]
+      
+      
+      TF[,Code:=NULL]
+      TF[is.na(TF)] <- 0
+      TF[,FGrams:=(Kilos*1000+Grams)/30]
+      FData <- TF[,lapply(.SD,sum),by=HHID]
+      FData[, FoodType:=TFoodGroups[i,FoodType]]
+      FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
+      
+      BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,FoodType,FoodKCalories)])
+      save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+    }
     }
 }
 cat("\n\n==============Finish==============\nIt took ")
