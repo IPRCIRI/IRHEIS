@@ -36,7 +36,7 @@ for(i in 1:nrow(TFoodGroups)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  if(year %in% 75:82){
+  if(year %in% 76:82){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos",
                                  "Price","Expenditure"))
   TF <- TF[,pcols,with=FALSE]
