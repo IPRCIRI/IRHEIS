@@ -1,7 +1,7 @@
 # 03-ReadWriteIntoR
 # Read and Save All Tables into R Format
 #
-# Copyright Â© 2015: Majid Einian
+# Copyright © 2015: Majid Einian
 # Licence: GPL-3
 # 
 rm(list=ls())
@@ -42,7 +42,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   close(cns)
   save(Tables,file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
 }
-touppe
+
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
