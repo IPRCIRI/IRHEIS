@@ -16,6 +16,7 @@ library(stringr)
 library(data.table)
 library(sm)
 library(ggplot2)
+library(spatstat)
 
 for(year in (Settings$startyear:Settings$endyear)){
  cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -28,30 +29,18 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHWeights[,Year:=NULL]
   
   #load Expenditures
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Cigars.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Cloths.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Amusements.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Communications.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Education.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Energy.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Furnitures.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Hotels.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Medicals.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Behdashts.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Transportations.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Others.rda"))
-  if(year %in% 78:95){
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Investments.rda"))
+  for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
+             "Durables", "Education", "Energy", "Furnitures","Hotels",
+             "House", "Medicals","Behdashts","Transportations","Others",
+             "Resturants")){
+    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
   }
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Resturants.rda"))
+  
   
   #load Calories
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   FData[,Region:=NULL]
-  for (col in c("FoodKCalories")) FData[is.na(get(col)), (col) := 0]
+  #for (col in c("FoodKCalories")) FData[is.na(get(col)), (col) := 0]
   FData <- FData[FoodKCalories>0]
   
   #merge groups
@@ -59,72 +48,61 @@ for(year in (Settings$startyear:Settings$endyear)){
   CBN<-merge(CBN,FData ,by =c("HHID"),all=TRUE)
   CBN<-merge(CBN,HHWeights ,by =c("HHID"),all=TRUE)
   CBN<-merge(CBN,FoodData,by =c("HHID"),all=TRUE)
-  for (col in c("FoodExpenditure")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,CigarData,by =c("HHID"),all=TRUE)
-  for (col in c("Cigar_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,ClothData,by =c("HHID"),all=TRUE)
-  for (col in c("Cloth_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,AmusementData,by =c("HHID"),all=TRUE)
-  for (col in c("Amusement_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,CommunicationData,by =c("HHID"),all=TRUE)
-  for (col in c("Communication_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,EducData,by =c("HHID"),all=TRUE)
-  for (col in c("EducExpenditure")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,EnergyData,by =c("HHID"),all=TRUE)
-  for (col in c("Energy_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,FurnitureData,by =c("HHID"),all=TRUE)
-  for (col in c("Furniture_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,HotelData,by =c("HHID"),all=TRUE)
-  for (col in c("Hotel_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,BehdashtData,by =c("HHID"),all=TRUE)
-  for (col in c("Behdasht_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,TransportationData,by =c("HHID"),all=TRUE)
-  for (col in c("Transportation_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,OtherData,by =c("HHID"),all=TRUE)
-  for (col in c("Other_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,HouseData,by =c("HHID"),all=TRUE)
-  for (col in c("ServiceExp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,MedicalData,by =c("HHID"),all=TRUE)
-  for (col in c("Medical_Exp")) CBN[is.na(get(col)), (col) := 0]
   CBN<-merge(CBN,DurableData,by =c("HHID"),all=TRUE)
-  for (col in c("Durable_Exp")) CBN[is.na(get(col)), (col) := 0]
- if(year %in% 78:95){
-    CBN<-merge(CBN,InvestmentData,by =c("HHID"),all=TRUE)
-    for (col in c("Investment_Exp")) CBN[is.na(get(col)), (col) := 0]
-  }
   CBN<-merge(CBN,ResturantData,by =c("HHID"),all=TRUE)
-  for (col in c("Resturant_Exp")) CBN[is.na(get(col)), (col) := 0]
+ for (col in c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
+               "Communication_Exp", "EducExpenditure", "Energy_Exp", 
+               "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", "Transportation_Exp",
+               "Other_Exp", "ServiceExp", "Medical_Exp", "Durable_Exp", 
+               "Resturant_Exp")) 
+   CBN[is.na(get(col)), (col) := 0]
+  
   
   #Calculate Monthly Total Expenditures 
-  if(year %in% 76:77){
-    CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(36:48,52:53)][] 
-    CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=36:48][] 
-  }
-  if(year %in% 78:95){
-    CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(36:48,52:54)][] 
-    CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=36:48][] 
-  }
+  nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
+                                "Amusement_Exp", "Communication_Exp", "EducExpenditure",
+                                "Energy_Exp", "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", 
+                                "Transportation_Exp", "Other_Exp", "ServiceExp")
+  w <- c(nw, "Medical_Exp", "Durable_Exp")
   
-  CBN[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
-  CBN[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month/EqSizeRevOECD]
+  CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
+  CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
 
-  CBN<-CBN[Size!=0 & FoodExpenditure!=0]
-  CBN[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
+  CBN[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
+  CBN[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
+
+  CBN<-merge(CBN,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
+  CBN<-CBN[Size!=0 & FoodExpenditure!=0 & !is.na(FoodKCalories)]
+  #CBN[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
   #Calculate Per Values
-  CBN[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
+  CBN[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
   CBN[,FoodExpenditure_Per :=FoodExpenditure/EqSizeCalory]
   CBN[,FoodKCalories_Per:=FoodKCalories/EqSizeCalory]
   
   #Calculate per_Calory from resturants
   CBN[,Calory_Price:=(FoodExpenditure_Per/FoodKCalories_Per)]
-  CBN[,Calory_Price_Area:=weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=NewArea]
-  CBN[,ResturantKCalories:=(0.7*Resturant_Exp)/Calory_Price_Area]
+#  CBN[,Calory_Price_Area:=weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=NewArea]
+  CBN[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=NewArea]
+  CBN[,ResturantKCalories:=(Settings$OutFoodKCXShare*Resturant_Exp)/Calory_Price_Area]
   for (col in c("ResturantKCalories")) CBN[is.na(get(col)), (col) := 0]
   CBN[,TFoodKCalories:=FoodKCalories+ResturantKCalories]
-  CBN[,TFoodExpenditure:=FoodExpenditure+(0.7*Resturant_Exp)]
-  #CBN[,weighted.mean(TFoodKCalories,Weight,na.rm = TRUE),by=NewArea]
-  #CBN[,weighted.mean(FoodKCalories,Weight,na.rm = TRUE),by=NewArea]
+  CBN[,TFoodExpenditure:=FoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
+  # CBN[,weighted.mean(TFoodKCalories,Weight,na.rm = TRUE),by=NewArea]
+  # CBN[,weighted.mean(FoodKCalories,Weight,na.rm = TRUE),by=NewArea]
   
   CBN[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
   CBN[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
@@ -149,7 +127,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
    
   #Food expenditures (equal 2100 KCAL)
-  CBNPoor[,Bundle_Value:=TFoodExpenditure_Per*2100/TFoodKCalories_Per]
+  CBNPoor[,Bundle_Value:=TFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
   CBNPoor[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE),by=NewArea]
  
   #Real Prices
