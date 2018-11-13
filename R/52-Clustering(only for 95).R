@@ -90,8 +90,14 @@ library(ggplot2)
   #load(file="dt5Rural.rda")
   
   dt2total<-rbind(dt2Urban,dt2Rural)
+  
+  for(year in (Settings$startyear:Settings$endyear)){
+    cat(paste0("\n------------------------------\nYear:",year,"\n"))
+    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   MD<-merge(MD,dt2total,by=c("NewArea","Region"),all=TRUE)
-
+  save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
+  }
+  
   endtime <- proc.time()
   cat("\n\n============================\nIt took ")
   cat((endtime-starttime)["elapsed"])
