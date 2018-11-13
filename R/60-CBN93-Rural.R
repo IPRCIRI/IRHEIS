@@ -1,4 +1,4 @@
-#CBN Method-Rural.R
+﻿#CBN Method-Rural.R
 # 
 # Copyright © 2018:Arin Shahbazian
 # Licence: GPL-3

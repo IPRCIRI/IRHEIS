@@ -1,7 +1,7 @@
-# 21-HHFoods.R
+﻿# 21-HHFoods.R
 # Builds the Food expenditures data.table for households
 #
-# Copyright � 2017: Arin Shahbazian
+# Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())

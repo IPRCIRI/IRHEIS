@@ -1,4 +1,4 @@
-# 35-Rent.R
+﻿# 35-Rent.R
 # Builds the RentIncome data.table for households
 #
 # Copyright © 2017: Arin Shahbazian

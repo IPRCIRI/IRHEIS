@@ -1,4 +1,4 @@
-# 02-ExtractAccessFiles.R
+﻿# 02-ExtractAccessFiles.R
 # downloads the RAR (and zip) files that are not present in the folder 
 # specified in Settings file
 #

@@ -1,6 +1,6 @@
-#52-Clustering(only for 95).R
+﻿#52-Clustering(only for 95).R
 # 
-# Copyright © 2018:Majid Einian- Arin Shahbazian
+# Copyright © 2018: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
