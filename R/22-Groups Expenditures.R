@@ -1,7 +1,7 @@
-# 22-Groups Expenditures.R
+﻿# 22-Groups Expenditures.R
 # Builds the Groups Expenditures data.table for households
 #
-# Copyright � 2017: Arin Shahbazian
+# Copyright © 2017: Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())

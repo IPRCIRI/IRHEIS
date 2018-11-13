@@ -1,4 +1,4 @@
-# 42-Insurance
+﻿# 42-Insurance
 # Note: for now only health insurance, TODO: add other insurance types
 #
 # Copyright © 2017: Majid Einian

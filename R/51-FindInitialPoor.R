@@ -1,6 +1,6 @@
-#51-FindInitialPoor.R
+﻿#51-FindInitialPoor.R
 # 
-# Copyright © 2018:Majid Einian- Arin Shahbazian
+# Copyright © 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())

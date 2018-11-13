@@ -1,4 +1,4 @@
-# 32-PrvWage.R
+﻿# 32-PrvWage.R
 # Builds the PubWageData data.table for wage income data of 
 # households working in private sector.
 #

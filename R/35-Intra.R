@@ -1,4 +1,4 @@
-# 35-Intra.R
+﻿# 35-Intra.R
 # Builds the IntraIncome data.table for households
 #
 # Copyright © 2017: Arin Shahbazian

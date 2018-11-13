@@ -1,4 +1,4 @@
-# 31-PubWage.R
+﻿# 31-PubWage.R
 # Builds the PubWageData data.table for wage income data of 
 # households working in public sector.
 #

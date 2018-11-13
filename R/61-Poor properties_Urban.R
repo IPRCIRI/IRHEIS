@@ -1,4 +1,4 @@
-#Poors properties.R
+﻿#Poors properties.R
 # 
 # Copyright © 2018:Arin Shahbazian
 # Licence: GPL-3

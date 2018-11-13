@@ -1,7 +1,7 @@
-# 03-ReadWriteIntoR
+﻿# 03-ReadWriteIntoR
 # Read and Save All Tables into R Format
 #
-# Copyright � 2015: Majid Einian
+# Copyright © 2015: Majid Einian
 # Licence: GPL-3
 # 
 rm(list=ls())

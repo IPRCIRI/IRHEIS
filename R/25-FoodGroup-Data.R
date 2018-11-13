@@ -1,4 +1,4 @@
-# 25-FoodGroup-Data.R
+﻿# 25-FoodGroup-Data.R
 # Builds the food group price-weight data.table for households
 #
 # Copyright © 2018: Arin Shahbazian

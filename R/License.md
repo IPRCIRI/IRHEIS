@@ -1,4 +1,4 @@
-R Scripts to work with "Household Expenditures and Income Surveys" in Rural
+﻿R Scripts to work with "Household Expenditures and Income Surveys" in Rural
 and Urban areas of Iran.
 
 Copyright (c) 2010-2015 Majid Einian <einian85@gmail.com>
