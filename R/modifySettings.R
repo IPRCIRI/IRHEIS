@@ -1,4 +1,4 @@
-﻿library(yaml)
+library(yaml)
 OS <- ifelse(version$os=="linux-gnu","Linux","Windows")
 if(OS=="Linux"){
   HEISPath         = "/media/majid/Document/HEIS/"
