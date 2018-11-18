@@ -29,7 +29,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight*Size)])
   #MD[,weighted.mean(FinalPoor,Weight*Size),by=.(Region,NewArea)][order(V1)]
-}
+  MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster")]
+  }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

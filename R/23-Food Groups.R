@@ -1,4 +1,4 @@
-﻿# 23-Food Groups.R
+# 23-Food Groups.R
 # Builds the Food Groups data.table for households
 #
 # Copyright © 2018: Arin Shahbazian
