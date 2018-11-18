@@ -42,8 +42,16 @@ library(ggplot2)
   dt2[,Weight:=NULL]
   dtUrban<-dt2[Region=="Urban"]
   dtRural<-dt2[Region=="Rural"]
-  dt2Urban<-copy(dtUrban)
-  dt2Rural<-copy(dtRural)
+  dt2Urban<-dtUrban[,.(P_Berenj, P_Ghand, P_Goosht,P_Hoboobat,
+                       P_Mahi, P_Makarooni,P_Mast, P_Mive,  
+                       P_Morgh, P_Nan,P_Panir, P_Roghan, 
+                       P_Sabzi, P_Shir, P_Sibzamini, P_Tokhmemorgh,
+                       MetrPrice,NewArea,Region)]
+  dt2Rural<-dtRural[,.(P_Berenj, P_Ghand, P_Goosht,P_Hoboobat,
+                       P_Mahi, P_Makarooni,P_Mast, P_Mive,  
+                       P_Morgh, P_Nan,P_Panir, P_Roghan, 
+                       P_Sabzi, P_Shir, P_Sibzamini, P_Tokhmemorgh,
+                       MetrPrice,NewArea,Region)]
   dtUrban[,NewArea:=NULL]
   dtRural[,NewArea:=NULL]
   dtUrban[,Region:=NULL]
@@ -70,7 +78,7 @@ library(ggplot2)
   cl <- kmeans(dtW,4)
   dt2Urban <- dt2Urban[,cluster:=data.table(cl$cluster)]
   dt2Urban<-dt2Urban[,.(NewArea,Region,cluster)]
-  #load(file="dt4Urban.rda")
+
 
   # Rural areas
   dt1.m <- dt1[,lapply(.SD, mean)]			# Weights for each vector
@@ -79,14 +87,17 @@ library(ggplot2)
   cl <- kmeans(dtW,5)
   dt2Rural <- dt2Rural[,cluster:=data.table(cl$cluster)]
   dt2Rural<-dt2Rural[,.(NewArea,Region,cluster)]
-  #load(file="dt5Rural.rda")
+  
+  #load(file="dtpastUrban.rda")
+  #load(file="dtpastRural.rda")
+  #dt2total<-rbind(dtpastUrban,dtpastRural)
   
   dt2total<-rbind(dt2Urban,dt2Rural)
   
   for(year in (Settings$startyear:Settings$endyear)){
     cat(paste0("\n------------------------------\nYear:",year,"\n"))
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  MD<-merge(MD,dt2total,by=c("NewArea","Region"),all.x=TRUE)
+  MD<-merge(MD,dt2total,by=c("NewArea","Region"),all=TRUE)
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   }
   

@@ -1,4 +1,4 @@
-﻿#50-Merge Data for CBN Method.R
+#50-Merge Data for CBN Method.R
 # 
 # Copyright © 2018: Majid Einian & Arin Shahbazian
 # Licence: GPL-3

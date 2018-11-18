@@ -35,7 +35,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               by=.(cluster,Region)]
     MD <- merge(MD,MDP,by=c("Region","cluster"))
 #    print(MDP)
-    #x<-MD[,.(cluster,Region,FPLine,InitialPoor)]
+    x<-MD[,.(cluster,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
