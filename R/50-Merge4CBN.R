@@ -24,7 +24,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #load Demos+FoodPrices+Weights
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
+  #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"HHWeights",year,".rda"))
   HHWeights[,Year:=NULL]
   
@@ -84,7 +84,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
   MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
   
-  MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
+  #MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
   MD<-MD[Size!=0 & FoodExpenditure!=0 & !is.na(FoodKCalories)]
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
@@ -96,7 +96,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Calculate per_Calory from resturants
   MD[,Calory_Price:=(FoodExpenditure_Per/FoodKCalories_Per)]
   #  MD[,Calory_Price_Area:=weighted.mean(Calory_Price,Weight,na.rm = TRUE),by=NewArea]
-  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=NewArea]
+  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
   MD[,ResturantKCalories:=(Settings$OutFoodKCXShare*Resturant_Exp)/Calory_Price_Area]
   for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
   MD[,TFoodKCalories:=FoodKCalories+ResturantKCalories]

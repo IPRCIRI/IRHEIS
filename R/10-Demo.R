@@ -1,4 +1,4 @@
-﻿# 10-Demo.R
+# 10-Demo.R
 # Builds the demographics information data.table for households
 #
 # Copyright © 2016: Majid Einian

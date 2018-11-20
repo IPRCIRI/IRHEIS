@@ -1,4 +1,4 @@
-﻿# 04-HHBase.R
+# 04-HHBase.R
 # Builds the base data.table for households
 #
 # Copyright © 2016: Majid Einian
