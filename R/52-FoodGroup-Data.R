@@ -12,6 +12,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(data.table)
 library(stringr)
 library(readxl)
+library(imputeTS)
 
  for(year in (Settings$startyear:Settings$endyear)){
 
@@ -87,7 +88,7 @@ library(readxl)
     setnames(TF1,"P",paste0("P_",TFoodGroups[i,FoodType]))
     setnames(TF1,"X",paste0("X_",TFoodGroups[i,FoodType]))
     
-    BigFoodPrice <- merge(BigFoodPrice,TF1)
+    BigFoodPrice <- merge(BigFoodPrice,TF1,all.x = TRUE)
   }
   n <- names(BigFoodPrice)
   w <- n%like% "X_"
@@ -101,6 +102,10 @@ library(readxl)
   # w <- n%like% "ShX_"
   # s <- n[w]
   # BigFoodPrice[,TSh:=Reduce(`+`, .SD),.SDcols=s]
+  
+  BigFoodPrice[] <- lapply(BigFoodPrice, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x))
+  
+
   save(BigFoodPrice,file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
 }
 endtime <- proc.time()

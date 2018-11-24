@@ -50,7 +50,7 @@ MDS_Homemade: HomemadeTables
 MDS_Intra: IntraTables
 MDS_SubsidyWage: SubsidyTable
 MDS_Rough_Weights: RegionWeights
-OutFoodKCXShare: 0.7
+OutFoodKCXShare: 0.9
 KCaloryNeed_Adult: 2100.0
 KCaloryNeed_Child: 1800.0
 InitialPoorPercentile:

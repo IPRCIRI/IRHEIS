@@ -16,7 +16,9 @@ library(ggplot2)
 
   cat(paste0("\n------------------------------\nYear:",Settings$baseyear,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",Settings$baseyear,"InitialPoor.rda"))
- 
+  load(file=paste0(Settings$HEISProcessedPath,"Y",Settings$baseyear,"BigFoodPrice.rda"))
+  #BigFoodPrice[,ifelse(Region==1,Region=="Urban",Region=="Rural")]
+  MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all=TRUE)
   
   #K-means weights
   FW <- MD[,.(X_Berenj, X_Ghand, X_Goosht,X_Hoboobat,
