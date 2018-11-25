@@ -19,9 +19,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
+  HHBase <- merge(HHBase,HHI[,.(HHID,Size)],by="HHID")
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
   FData <- BigFData[,.(FoodKCalories=sum(FoodKCalories)),by=HHID]
-  FData <- merge(HHBase[,.(HHID,Region,Dimension)],
+  FData <- merge(HHBase[,.(HHID,Region,Size)],
                  FData,by = "HHID",all.x = TRUE)
   
   FData <- FData[FoodKCalories<100000] # arbitrary removal of outliers
