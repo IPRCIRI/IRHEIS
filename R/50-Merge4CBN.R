@@ -14,7 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(stringr)
 library(data.table)
-library(sm)
+#library(sm)
 library(ggplot2)
 library(spatstat)
 
@@ -25,7 +25,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"HHWeights",year,".rda"))
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
   HHWeights[,Year:=NULL]
   
   #load Expenditures
@@ -45,6 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #merge groups
   MD<-merge(HHBase,HHI ,by =c("HHID"),all=TRUE)
+  FData[,Size:=NULL]
   MD<-merge(MD,FData ,by =c("HHID"),all=TRUE)
   MD<-merge(MD,HHWeights ,by =c("HHID"),all=TRUE)
   MD<-merge(MD,FoodData,by =c("HHID"),all=TRUE)

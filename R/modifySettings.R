@@ -28,6 +28,7 @@ Settings <- list(HEISPath          =HEISPath,
                  # RawDataWebAddress ="http://www.amar.org.ir/Portals/0/amarmozuii/hazinedaramad/",
                  RawDataWebAddress ="https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/",
                  MetaDataFilePath  = "../Data/MetaData.xlsx",
+                 GeoInfoFilePath   = "../Data/GeoInfo.Shahrestan.xlsx",
                  MDS_CFN           = "CompressedFileNames",              # MetaData Sheet: Compressed File Names
                  MDS_P1Cols        = "P1Cols",                           # MetaData Sheet: Columns of P1 Table
                  MDS_EC_A          = "EduCodes-A",
