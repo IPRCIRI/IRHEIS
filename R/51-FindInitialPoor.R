@@ -21,10 +21,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   
-  SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,TFoodKCalories_Per,
+  #SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,TFoodKCalories_Per,
+  #             Weight,MetrPrice)]
+  
+  #SMD[,Bundle_Value:=TFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
+  
+  SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,FoodExpenditure_Per,FoodKCalories_Per,
                Weight,MetrPrice)]
   
-  SMD[,Bundle_Value:=TFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
+  SMD[,Bundle_Value:=FoodExpenditure_Per*Settings$KCaloryNeed_Adult/FoodKCalories_Per]
+  
   #Real Prices
   T_Bundle_Value <- SMD[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
   TBV1 <- T_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
@@ -78,6 +84,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
+  
+  #Calculate per_Calory from resturants
+  MD[,Calory_Price:=(FoodExpenditure_Per/FoodKCalories_Per)]
+  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
+  MD[,ResturantKCalories:=ifelse(Decile %in% 1:2,(Settings$OutFoodKCXShare12*Resturant_Exp)/Calory_Price_Area,
+                                 ifelse(Decile %in% 3:6,(Settings$OutFoodKCXShare3456*Resturant_Exp)/Calory_Price_Area,
+                                 (Settings$OutFoodKCXShare78910*Resturant_Exp)/Calory_Price_Area))]
+  for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
+  MD[,TFoodKCalories:=FoodKCalories+ResturantKCalories]
+  MD[,TFoodExpenditure:=FoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
+  MD[,TFoodExpenditure:=FoodExpenditure+ifelse(Decile %in% 1:2,(Settings$OutFoodKCXShare12*Resturant_Exp),
+                                 ifelse(Decile %in% 3:6,(Settings$OutFoodKCXShare3456*Resturant_Exp),
+                                        (Settings$OutFoodKCXShare78910*Resturant_Exp)))]
+  
+  MD[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
+  MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
 
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 }
