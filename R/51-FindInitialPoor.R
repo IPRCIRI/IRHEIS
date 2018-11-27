@@ -11,9 +11,9 @@ cat("\n\n================ Prepare Data =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
-library(readxl)
+#library(readxl)
 library(data.table)
-library(ggplot2)
+#library(ggplot2)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -30,6 +30,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                Weight,MetrPrice)]
   
   SMD[,Bundle_Value:=FoodExpenditure_Per*Settings$KCaloryNeed_Adult/FoodKCalories_Per]
+  
+  SMD <- SMD[Bundle_Value<=5000000 | FoodKCalories_Per>=300]
   
   #Real Prices
   T_Bundle_Value <- SMD[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
