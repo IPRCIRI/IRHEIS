@@ -95,15 +95,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,FoodKCalories_Per:=FoodKCalories/EqSizeCalory]
   
   #Calculate per_Calory from resturants
-  #MD[,Calory_Price:=(FoodExpenditure_Per/FoodKCalories_Per)]
-  #MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
-  #MD[,ResturantKCalories:=(Settings$OutFoodKCXShare*Resturant_Exp)/Calory_Price_Area]
-  #for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
-  #MD[,TFoodKCalories:=FoodKCalories+ResturantKCalories]
-  #MD[,TFoodExpenditure:=FoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
+  MD[,Calory_Price:=(FoodExpenditure_Per/FoodKCalories_Per)]
+  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
+  MD[,ResturantKCalories:=(Settings$OutFoodKCXShare*Resturant_Exp)/Calory_Price_Area]
+  for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
+  MD[,TFoodKCalories:=FoodKCalories+ResturantKCalories]
+  MD[,TFoodExpenditure:=FoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
   
-  #MD[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
-  #MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
+  MD[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
+  MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   

@@ -90,11 +90,11 @@ library(ggplot2)
   dt2Rural <- dt2Rural[,cluster:=data.table(cl$cluster)]
   dt2Rural<-dt2Rural[,.(NewArea,Region,cluster)]
   
-  #load(file="dtpastUrban.rda")
-  #load(file="dtpastRural.rda")
-  #dt2total<-rbind(dtpastUrban,dtpastRural)
+  load(file="dtpastUrban.rda")
+  load(file="dtpastRural.rda")
+  dt2total<-rbind(dtpastUrban,dtpastRural)
   
-  dt2total<-rbind(dt2Urban,dt2Rural)
+  #dt2total<-rbind(dt2Urban,dt2Rural)
   
   for(year in (Settings$startyear:Settings$endyear)){
     cat(paste0("\n------------------------------\nYear:",year,"\n"))
