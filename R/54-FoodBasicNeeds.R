@@ -44,8 +44,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,FinalFoodPoor:=OldPoor]
   MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,
               Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
-              FoodExpenditure_Per,FPLine,Weight)]
+              FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+  
+  MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster,Percentile,FinalFoodPoor)]
+  UrbanFinalfood<-MDFinalfood[Region=="Urban"]
+  RuralFinalfood<-MDFinalfood[Region=="Rural"]
+  save(UrbanFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"UrbanFinalfood.rda"))
+  save(RuralFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"RuralFinalfood.rda"))
+  
 }
 
 endtime <- proc.time()

@@ -64,20 +64,20 @@ library(ggplot2)
   wss <- (nrow(dtUrban)-1)*sum(apply(dtUrban,2,var))
   for (i in 2:30) wss[i] <- sum(kmeans(dtUrban, centers=i)$withinss)
   plot(1:30, wss, type="b", xlab="Number of Clusters",
-       ylab="Within groups sum of squares")
+       ylab="Urban's within groups sum of squares")
   
   # Rural areas
   wss <- (nrow(dtRural)-1)*sum(apply(dtRural,2,var))
   for (i in 2:30) wss[i] <- sum(kmeans(dtRural, centers=i)$withinss)
   plot(1:30, wss, type="b", xlab="Number of Clusters",
-       ylab="Within groups sum of squares")
+       ylab="Rural's within groups sum of squares")
   
   #Weighted clustering
   # Urban areas
   dt1.m <- dt1[,lapply(.SD, mean)]			# Weights for each vector
   dtW <- dtUrban * sqrt(dt1.m[rep(1,nrow(dtUrban))])	# Weighted observations
-  kmeans(dtW,4)						# Simple K-means
-  cl <- kmeans(dtW,4)
+  kmeans(dtW,3)						# Simple K-means
+  cl <- kmeans(dtW,3)
   dt2Urban <- dt2Urban[,cluster:=data.table(cl$cluster)]
   dt2Urban<-dt2Urban[,.(NewArea,Region,cluster)]
 
@@ -85,8 +85,8 @@ library(ggplot2)
   # Rural areas
   dt1.m <- dt1[,lapply(.SD, mean)]			# Weights for each vector
   dtW <- dtRural * sqrt(dt1.m[rep(1,nrow(dtRural))])	# Weighted observations
-  kmeans(dtW,5)						# Simple K-means
-  cl <- kmeans(dtW,5)
+  kmeans(dtW,3)						# Simple K-means
+  cl <- kmeans(dtW,3)
   dt2Rural <- dt2Rural[,cluster:=data.table(cl$cluster)]
   dt2Rural<-dt2Rural[,.(NewArea,Region,cluster)]
   
