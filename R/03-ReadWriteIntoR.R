@@ -1,4 +1,4 @@
-﻿# 03-ReadWriteIntoR
+# 03-ReadWriteIntoR
 # Read and Save All Tables into R Format
 #
 # Copyright © 2015: Majid Einian

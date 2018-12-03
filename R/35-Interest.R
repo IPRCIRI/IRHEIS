@@ -1,4 +1,4 @@
-﻿# 35-Interest.R
+# 35-Interest.R
 # Builds the InterestIncome data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
