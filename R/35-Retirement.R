@@ -1,4 +1,4 @@
-﻿# 35-Retirement.R
+# 35-Retirement.R
 # Builds the RetirementIncome data.table for households
 #
 # Copyright © 2017: Arin Shahbazian

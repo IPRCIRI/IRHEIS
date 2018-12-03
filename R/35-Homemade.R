@@ -1,4 +1,4 @@
-﻿# 35-Homemade.R
+# 35-Homemade.R
 # Builds the HomemadeIncome data.table for households
 #
 # Copyright © 2017: Arin Shahbazian

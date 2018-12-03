@@ -1,4 +1,4 @@
-﻿# 38-Total_Income.R
+# 38-Total_Income.R
 # 
 # Copyright © 2017:Arin Shahbazian
 # Licence: GPL-3

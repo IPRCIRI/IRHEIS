@@ -1,4 +1,4 @@
-﻿# 34-AggrInc.R
+# 34-AggrInc.R
 #Builds the Agricultral Wages data.table for households
 #
 # Copyright © 2017: Arin Shahbazian

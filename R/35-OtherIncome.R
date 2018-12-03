@@ -1,4 +1,4 @@
-﻿# 35-OtherIncome.R
+# 35-OtherIncome.R
 # Builds the OtherIncome data.table for households
 #
 # Copyright © 2018: Arin Shahbazian, Majid Einian

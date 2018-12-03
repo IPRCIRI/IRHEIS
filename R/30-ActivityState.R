@@ -1,4 +1,4 @@
-﻿# 30-ActivityState.R
+# 30-ActivityState.R
 # Builds the Wages data.table for households
 #
 # Copyright © 2018: Majid Einian
