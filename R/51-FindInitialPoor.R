@@ -27,7 +27,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Bundle_Value:=TFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
   
   #SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,FoodExpenditure_Per,FoodKCalories_Per,
-      #         Weight,MetrPrice)]
+            #   Weight,MetrPrice)]
   
   #SMD[,Bundle_Value:=FoodExpenditure_Per*Settings$KCaloryNeed_Adult/FoodKCalories_Per]
   
@@ -50,6 +50,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Calculate deciles by weights
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
+  
+  FirstSMD<-SMD[,.(HHID,Region,NewArea,Percentile,Decile)]
+  FirstSMD<-FirstSMD[,Realfirstpoor:=ifelse(Decile %in% 1:2,1,0)]
+  save(FirstSMD, file=paste0(Settings$HEISProcessedPath,"Y",year,"FirstSMD.rda"))
   
   SMD[,NewPoor:=1]
   SMD[,ThisIterationPoor:=0]
@@ -91,14 +95,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD[,Calory_Price:=(FoodExpenditure_Per/FoodKCalories_Per)]
   #MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
   #MD[,ResturantKCalories:=ifelse(Decile %in% 1:2,(Settings$OutFoodKCXShare12*Resturant_Exp)/Calory_Price_Area,
-                   #              ifelse(Decile %in% 3:6,(Settings$OutFoodKCXShare3456*Resturant_Exp)/Calory_Price_Area,
-                   #             (Settings$OutFoodKCXShare78910*Resturant_Exp)/Calory_Price_Area))]
+                      #           ifelse(Decile %in% 3:6,(Settings$OutFoodKCXShare3456*Resturant_Exp)/Calory_Price_Area,
+                     #           (Settings$OutFoodKCXShare78910*Resturant_Exp)/Calory_Price_Area))]
   #for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
   #MD[,TFoodKCalories:=FoodKCalories+ResturantKCalories]
   #MD[,TFoodExpenditure:=FoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
   #MD[,TFoodExpenditure:=FoodExpenditure+ifelse(Decile %in% 1:2,(Settings$OutFoodKCXShare12*Resturant_Exp),
-                        #         ifelse(Decile %in% 3:6,(Settings$OutFoodKCXShare3456*Resturant_Exp),
-                       #               (Settings$OutFoodKCXShare78910*Resturant_Exp)))]
+                #                 ifelse(Decile %in% 3:6,(Settings$OutFoodKCXShare3456*Resturant_Exp),
+                #                      (Settings$OutFoodKCXShare78910*Resturant_Exp)))]
   
   #MD[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
   #MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]

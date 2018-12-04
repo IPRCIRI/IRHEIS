@@ -314,6 +314,10 @@ CBN$Sibzamini_per_Calory<- CBN$Sibzaminigram *0.9/CBN$EqSizeCalory
 CBN[,Poor:=ifelse(Decile %in% 1:4,1,0)]
 CBNPoor<-CBN[Poor==1]
 
+OldfirstRural<-CBN[,.(HHID,Percentile,Poor)]
+save(OldfirstRural, file=paste0(Settings$HEISProcessedPath,"Y",year,"OldfirstRural.rda"))
+
+
 #K-means weights
 PriceWeights<-CBN[,.(HHID,Ghand_W,Hoboobat_W,Roghan_W,Berenj_W,Nan_W,Goosht_W,Morgh_W,Mahi_W,Shir_W,Mast_W,Panir_W,Tokhmemorgh_W,Mive_W,Sabzi_W,Makarooni_W,Sibzamini_W,Home_W,ProvinceCode,Weight)]
 dt3 <- PriceWeights[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(ProvinceCode)]
@@ -2966,6 +2970,11 @@ save(RuralunderEngel, file=paste0(Settings$HEISProcessedPath,"Y",year,"Ruralunde
 RuralaboveEngel<-rbind(RuralaboveEngel1,RuralaboveEngel2,RuralaboveEngel3,RuralaboveEngel4,RuralaboveEngel5)
 save(RuralaboveEngel, file=paste0(Settings$HEISProcessedPath,"Y",year,"RuralaboveEngel.rda"))
 
+Povertyline1_9<-4323140
+Povertyline2_9<-2338640
+Povertyline3_9<-2194200
+Povertyline4_9<-2763930
+Povertyline5_9<-2012640
 
 #Indicate final poors
 CBN<-CBN[,Total_Exp_Month_Per2:=Total_Exp_Month_Per_nondurable*RealPriceIndex]
@@ -3097,6 +3106,9 @@ save(CBNRural, file=paste0(Settings$HEISProcessedPath,"Y",year,"CBNRural.rda"))
 
 OldFoodRural<-CBN[,.(HHID,Percentile,Poor9)]
 save(OldFoodRural, file=paste0(Settings$HEISProcessedPath,"Y",year,"OldFoodRural.rda"))
+
+OldFinalPoorRural<-CBN[,.(HHID,Percentile,Poor11)]
+save(OldFinalPoorRural, file=paste0(Settings$HEISProcessedPath,"Y",year,"OldFinalPoorRural.rda"))
 
 endtime <- proc.time()
 
