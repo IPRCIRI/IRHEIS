@@ -24,7 +24,10 @@ for(year in (Settings$startyear:Settings$endyear))
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-
+  
+  if(year >86 & year < 92 ){ 
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"ShCode.rda"))
+  }
   
   if(year < 87){           # RxxData & UxxData tables are provided Since 1387
     RData <- Tables[[paste0("R",year,"P2")]][,1,with=FALSE]
@@ -59,9 +62,21 @@ for(year in (Settings$startyear:Settings$endyear))
     HHBase[,Quarter:=(Month-1)%/%3+1]
     HHBase[,HHIDs:=as.character(HHID)]
   }
+  
+  if(year >86 & year < 92 ){ 
+ HHBase<-merge(HHBase,ShCode,by="HHID",all.x = TRUE)
+    }
+  
   HHBase <- HHBase[!is.na(HHID)]
   HHBase[,ProvinceCode:=as.integer(str_sub(HHIDs,2,3))]
+  
+  if(year <87 | year > 91 ){
   HHBase[,CountyCode:=as.integer(str_sub(HHIDs,2,5))]
+  }
+  
+  if(year >86 & year < 92 ){ 
+    HHBase[,CountyCode:=as.integer(SHCode)]
+  }
   
   HHBase[,Year:=year]
   HHBase <- HHBase[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode)]
