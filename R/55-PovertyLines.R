@@ -77,7 +77,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD[,weighted.mean(FinalPoor,Weight*Size),by=.(Region,NewArea)][order(V1)]
   MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster")]
 }
-NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,FinalPoor)]
+#NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,FinalPoor)]
+NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,Weight,HAge,HSex,
+                    ProvinceCode,Size,HLiterate,HEduLevel0,Area,
+                    Rooms,MetrPrice, HActivityState,FinalPoor)]
+                   
 save(NewFinalPoor,file=paste0(Settings$HEISProcessedPath,"Y","95","NewFinalPoor.rda"))
 
 endtime <- proc.time()
