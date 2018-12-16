@@ -166,8 +166,8 @@ CBN<-CBN[FoodExpenditure!=0]
 
 
 #Calculate Per_Total Expenditures Monthly
-CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(67:79,84:85)][] 
-CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=67:79][] 
+CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(66:78,82:84)][] 
+CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=66:78][] 
 
 CBN$Total_Exp_Month_Per<-CBN$Total_Exp_Month/CBN$EqSizeRevOECD
 CBN$Total_Exp_Month_Per_nondurable<-CBN$Total_Exp_Month_nondurable/CBN$EqSizeRevOECD
@@ -278,7 +278,7 @@ CBN$Sibzamini_Calory<- CBN$Sibzaminigram *0.9
 #utils::View(CBN)
 
 #CalculatePer_calories
-CBN[, Daily_Exp_Calories := Reduce(`+`, .SD), .SDcols=150:165][] 
+CBN[, Daily_Exp_Calories := Reduce(`+`, .SD), .SDcols=149:164][] 
 CBN[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
 CBN[,Per_Daily_Exp_Calories:=Daily_Exp_Calories/EqSizeCalory]
 CBN <- CBN[Per_Daily_Exp_Calories<100000] # arbitrary removal of outliers
@@ -408,7 +408,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -445,7 +445,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -531,7 +531,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -568,7 +568,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -652,7 +652,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -689,7 +689,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -774,7 +774,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -811,7 +811,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -896,7 +896,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -933,7 +933,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -1018,7 +1018,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -1055,7 +1055,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -1140,7 +1140,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -1177,7 +1177,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -1262,7 +1262,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -1299,7 +1299,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -1384,7 +1384,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -1421,7 +1421,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
@@ -1506,7 +1506,7 @@ CBNPoor[,Daily_Mive_cluster:=weighted.mean(Mive_per_Calory,Weight,na.rm = TRUE),
 CBNPoor[,Daily_Sabzi_cluster:=weighted.mean(Sabzi_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Makarooni_cluster:=weighted.mean(Makarooni_per_Calory,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,Daily_Sibzamini_cluster:=weighted.mean(Sibzamini_per_Calory,Weight,na.rm = TRUE),by=cluster]
-CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(187:202)][] 
+CBNPoor[, Daily_Calories_cluster2 := Reduce(`+`, .SD), .SDcols=c(186:201)][] 
 #utils::View(CBNPoor)
 
 
@@ -1543,7 +1543,7 @@ CBNPoor[,Daily2_Makarooni:=(Daily_Makarooni_cluster*2100)/(Daily_Calories_cluste
 for (col in c("Daily2_Makarooni")) CBNPoor[is.na(get(col)), (col) := 0]
 CBNPoor[,Daily2_Sibzamini:=(Daily_Sibzamini_cluster*2100)/(Daily_Calories_cluster2)]
 for (col in c("Daily2_Sibzamini")) CBNPoor[is.na(get(col)), (col) := 0]
-CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(204:219)][] 
+CBNPoor[, Daily_Calories3 := Reduce(`+`, .SD), .SDcols=c(203:218)][] 
 
 CBNPoor[,FoodExpenditure_Per_cluster:=weighted.mean(FoodExpenditure_Per,Weight,na.rm = TRUE),by=cluster]
 CBNPoor[,weighted.mean(FoodExpenditure_Per_cluster,Weight,na.rm = TRUE),by=cluster]
