@@ -2904,10 +2904,10 @@ save(UrbanunderEngel, file=paste0(Settings$HEISProcessedPath,"Y",year,"Urbanunde
 UrbanaboveEngel<-rbind(UrbanaboveEngel1,UrbanaboveEngel2,UrbanaboveEngel3,UrbanaboveEngel4)
 save(UrbanaboveEngel, file=paste0(Settings$HEISProcessedPath,"Y",year,"UrbanaboveEngel.rda"))
 
-#Povertyline1_9<-4107570
-#Povertyline2_9<-3642510
-#Povertyline3_9<-5055730
-#Povertyline4_9<-7689100
+Povertyline1_9<-4107570
+Povertyline2_9<-3642510
+Povertyline3_9<-5055730
+Povertyline4_9<-7689100
 
 
 #Indicate final poors

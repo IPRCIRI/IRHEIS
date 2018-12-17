@@ -19,8 +19,7 @@ library(stringr)
 # BigD <- data.table(HHID=NA,Region=NA,Year=NA,Quarter=NA,Month=NA,ProvinceCode=NA)[0]
 
 
-for(year in (Settings$startyear:Settings$endyear))
-{
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
@@ -86,6 +85,33 @@ for(year in (Settings$startyear:Settings$endyear))
            CountyCode %in% c(2301,303,603,707,
                              916,1002,3001,502),
          NewArea:=CountyCode]
+  
+  #Tehran-Alborz
+  if(year >81 & year < 92 ){ 
+    HHBase[ Region=="Urban" & CountyCode %in% c(2305),
+    NewArea:=3001] 
+              }
+  
+  if(year >81 & year < 92 ){ 
+    HHBase[CountyCode %in% c(2308,2315,2309),
+           NewArea:=30]
+              }
+  
+  #Khorasan
+  if(year >81 & year < 87 ){ 
+    HHBase[Region=="Urban" & CountyCode %in% c(916),
+           NewArea:=916]
+                           }
+  
+  if(year >81 & year < 87 ){ 
+    HHBase[CountyCode %in% c(901,902,909,924,925),
+           NewArea:=28]
+                           }
+  
+  if(year >81 & year < 87 ){ 
+      HHBase[CountyCode %in% c(903,911,912,921),
+             NewArea:=29]
+                           }
   
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 
