@@ -70,10 +70,13 @@ for(year in (Settings$startyear:Settings$endyear)){
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster)]
   EngleD[,PovertyLine:=FPLine/Engel]
-  MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine)],by=c("Region","cluster"))
+  MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine,Engel)],by=c("Region","cluster"))
+  #MD<-MD[Region=="Rural"]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
-      MD[,weighted.mean(PovertyLine,Weight*Size)])
+      MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
+      MD[,weighted.mean(Engel,Weight*Size)],"\t",
+      MD[,weighted.mean(FPLine,Weight*Size)])
   #MD[,weighted.mean(FinalPoor,Weight*Size),by=.(Region,NewArea)][order(V1)]
   MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster")]
 }

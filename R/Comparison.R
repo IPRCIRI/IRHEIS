@@ -79,10 +79,10 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"OldFinalPoorRural.rda"))
 OldFinalPoor<-rbind(OldFinalPoorUrban,OldFinalPoorRural)
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"NewFinalPoor.rda"))
-NewFinalPoorUrban<-NewFinalPoor[Region=="Urban" & NewArea==2301]
+NewFinalPoorUrban<-NewFinalPoor[Region=="Urban"]
 NewFinalPoorRural<-NewFinalPoor[Region=="Rural"]
 
-FinalPoor<-merge(NewFinalPoorUrban,OldFinalPoorUrban,by="HHID",all.x=TRUE)
+FinalPoor<-merge(NewFinalPoor,OldFinalPoor,by="HHID",all.x=TRUE)
 FinalPoor<-FinalPoor[,matrixplace:=ifelse(Poor11==0 & FinalPoor==0,1,
                                    ifelse(Poor11==0 & FinalPoor==1,2,
                                    ifelse(Poor11==1 & FinalPoor==0,3,4)))]
