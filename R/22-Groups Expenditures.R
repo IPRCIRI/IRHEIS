@@ -67,7 +67,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TM),c("HHID","Code","Behdasht_Exp"))
   TM <- TM[,pcols,with=FALSE]
   #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:95){
+  if(year %in% 84:96){
     TM[,Behdasht_Exp:=as.numeric(Behdasht_Exp)]
   }
   TM <- TM[Code %in% mt$StartCode:mt$EndCode]
@@ -200,7 +200,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TC),c("HHID","Code","Durable_Exp"))
   TC <- TC[,pcols,with=FALSE]
   
-  if(year %in% 84:95){
+  if(year %in% 84:96){
     TC[,Durable_Exp:=as.numeric(Durable_Exp)]
   }
   TC$Durable_Exp<-TC$Durable_Exp/12
@@ -408,7 +408,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
   TM <- TM[,pcols,with=FALSE]
   #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:95){
+  if(year %in% 84:96){
     TM[,Medical_Exp:=as.numeric(Medical_Exp)]
   }
   TM <- TM[Code %in% mt$StartCode:mt$EndCode]
