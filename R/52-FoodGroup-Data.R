@@ -57,7 +57,7 @@ library(imputeTS)
       TF[is.na(Kilos),Kilos:=0]
       TF[,FGrams:=(Kilos*1000)/30]
     }
-    if(year %in% 83:95){
+    if(year >=83){
       pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos",
                                      "Price","Expenditure"))
       TF <- TF[,pcols,with=FALSE]
