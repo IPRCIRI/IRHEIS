@@ -16,7 +16,7 @@ library(data.table)
 library(survey)
 
 
-bigX <- data.table(WorkClass=NA_character_,X=NA_real_,Year=NA_integer_)[0]
+bigX <- data.table(WorkClass=NA_character_,ProvinceCode=NA_integer_,X=NA_real_,Year=NA_integer_)[0]
 
 for(year in (Settings$startyear:Settings$endyear)){
 #  cat(paste0("\n------------------------------\nYear:",year,"\n"))

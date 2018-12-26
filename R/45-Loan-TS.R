@@ -1,4 +1,4 @@
-﻿# 45-Loan-TS
+# 45-Loan-TS
 # 
 #
 # Copyright © 2017: Majid Einian
@@ -16,7 +16,6 @@ library(readxl)
 library(data.table)
 library(XLConnect)
 
-load(Settings$weightsFile)
 RegionWeights <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Rough_Weights))
 
 BigD <- data.table(Region = character(0), HHID = numeric(0), Year = integer(0), 
@@ -34,10 +33,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Loans.rda"))
-
+  load(file = paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  
   D <- merge(HHBase,LoansData,by="HHID", all.x = TRUE)
   
-  W <- AllWeights[Year==year]
+  W <- HHWeights
   W[,Year:=NULL]
   W_Rough <- RegionWeights[Year==year]
   W_Rough <- W_Rough[,list(Region,Weight)]
