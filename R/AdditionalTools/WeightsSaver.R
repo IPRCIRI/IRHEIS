@@ -11,6 +11,7 @@ library(stringr)
 library(tcltk)
 library(zonator)
 library(XLConnect)
+library(readxl)
 flist <- tk_choose.files()
 starttime <- proc.time()
 
