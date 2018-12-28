@@ -1,4 +1,4 @@
-﻿# 00-BuildDirectoryStructure
+# 00-BuildDirectoryStructure
 #
 # Copyright © 2015: Majid Einian
 # Licence: GPL-3

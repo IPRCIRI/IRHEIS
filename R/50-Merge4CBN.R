@@ -29,13 +29,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHWeights<- as.data.table(HHWeights)
   HHWeights[,Year:=NULL]
   
+  
+  
   #load Expenditures
+  
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
-             "Durables", "Education", "Energy", "Furnitures","Hotels",
-             "House", "Medicals","Behdashts","Transportations","Others",
-             "Resturants")){
-    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
-  }
+            "Durables", "Education", "Energy", "Furnitures","Hotels",
+            "House", "Medicals","Behdashts","Transportations","Others",
+           "Resturants")){
+   load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
+   }
   
   
   #load Calories
