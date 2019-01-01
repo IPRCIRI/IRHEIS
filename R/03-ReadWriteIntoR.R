@@ -18,7 +18,7 @@ library(RODBC)
 library(foreign)
 library(data.table)
 
-load(Settings$weightsFile)
+#load(Settings$weightsFile)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))

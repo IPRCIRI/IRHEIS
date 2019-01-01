@@ -1,4 +1,4 @@
-﻿# 00-DownloaCompressedFiles.R
+# 00-DownloaCompressedFiles.R
 # downloads the RAR files that are not present in the folder 
 # specified in Settings file
 #

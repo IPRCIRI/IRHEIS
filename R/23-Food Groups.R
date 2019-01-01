@@ -53,7 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,FoodType,FoodKCalories)])
     save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
-    if(year %in% 83:95){
+    if(year %in% 83:96){
       pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
       TF <- TF[,pcols,with=FALSE]
       TF <- TF[Code %in% ft$StartCode:ft$EndCode]

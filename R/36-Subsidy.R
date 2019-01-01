@@ -1,4 +1,4 @@
-﻿# 36-Subsidy.R
+# 36-Subsidy.R
 # Builds the SubsidyIncome data.table for households
 #
 # Copyright © 2017: Arin Shahbazian

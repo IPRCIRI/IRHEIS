@@ -19,12 +19,14 @@ library(stringr)
 # BigD <- data.table(HHID=NA,Region=NA,Year=NA,Quarter=NA,Month=NA,ProvinceCode=NA)[0]
 
 
-for(year in (Settings$startyear:Settings$endyear))
-{
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-
+  
+  if(year >86 & year < 92 ){ 
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"ShCode.rda"))
+  }
   
   if(year < 87){           # RxxData & UxxData tables are provided Since 1387
     RData <- Tables[[paste0("R",year,"P2")]][,1,with=FALSE]
@@ -59,9 +61,21 @@ for(year in (Settings$startyear:Settings$endyear))
     HHBase[,Quarter:=(Month-1)%/%3+1]
     HHBase[,HHIDs:=as.character(HHID)]
   }
+  
+  if(year >86 & year < 92 ){ 
+ HHBase<-merge(HHBase,ShCode,by="HHID",all.x = TRUE)
+    }
+  
   HHBase <- HHBase[!is.na(HHID)]
   HHBase[,ProvinceCode:=as.integer(str_sub(HHIDs,2,3))]
+  
+  if(year <87 | year > 91 ){
   HHBase[,CountyCode:=as.integer(str_sub(HHIDs,2,5))]
+  }
+  
+  if(year >86 & year < 92 ){ 
+    HHBase[,CountyCode:=as.integer(SHCode)]
+  }
   
   HHBase[,Year:=year]
   HHBase <- HHBase[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode)]
@@ -71,6 +85,33 @@ for(year in (Settings$startyear:Settings$endyear))
            CountyCode %in% c(2301,303,603,707,
                              916,1002,3001,502),
          NewArea:=CountyCode]
+  
+  #Tehran-Alborz
+  if(year >81 & year < 92 ){ 
+    HHBase[ Region=="Urban" & CountyCode %in% c(2305),
+    NewArea:=3001] 
+              }
+  
+  if(year >81 & year < 92 ){ 
+    HHBase[CountyCode %in% c(2308,2315,2309),
+           NewArea:=30]
+              }
+  
+  #Khorasan
+  if(year >81 & year < 87 ){ 
+    HHBase[Region=="Urban" & CountyCode %in% c(916),
+           NewArea:=916]
+                           }
+  
+  if(year >81 & year < 87 ){ 
+    HHBase[CountyCode %in% c(901,902,909,924,925),
+           NewArea:=28]
+                           }
+  
+  if(year >81 & year < 87 ){ 
+      HHBase[CountyCode %in% c(903,911,912,921),
+             NewArea:=29]
+                           }
   
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 

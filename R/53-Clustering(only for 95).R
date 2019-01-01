@@ -99,7 +99,7 @@ library(ggplot2)
   for(year in (Settings$startyear:Settings$endyear)){
     cat(paste0("\n------------------------------\nYear:",year,"\n"))
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  MD<-merge(MD,dt2total,by=c("NewArea","Region"),all=TRUE)
+  MD<-merge(MD,dt2total,by=c("NewArea","Region"),all.x=TRUE)
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   }
   
