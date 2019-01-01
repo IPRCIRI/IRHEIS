@@ -10,4 +10,4 @@ D80Link.accdb provides linked tables to 1380 data with abnormal table names.
 
 GeoInfo.Shahrestan.xlsx file provides information on administrative areas of Iran in levels of Shahrestan (County).
 
-MetaData.xlsx provides all metadata information related to teh surveys.
+MetaData.xlsx provides all metadata information related to the surveys.
