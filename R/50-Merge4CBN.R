@@ -26,15 +26,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
   load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  HHWeights<- as.data.table(HHWeights)
   HHWeights[,Year:=NULL]
   
+  
+  
   #load Expenditures
+  
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
-             "Durables", "Education", "Energy", "Furnitures","Hotels",
-             "House", "Medicals","Behdashts","Transportations","Others",
-             "Resturants")){
-    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
-  }
+            "Durables", "Education", "Energy", "Furnitures","Hotels",
+            "House", "Medicals","Behdashts","Transportations","Others",
+           "Resturants")){
+   load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
+   }
   
   
   #load Calories
@@ -64,6 +68,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,DurableData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ResturantData,by =c("HHID"),all=TRUE)
+  #MD<-merge(MD,InvestmentData,by =c("HHID"),all=TRUE)
   for (col in c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
                 "Communication_Exp", "EducExpenditure", "Energy_Exp", 
                 "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", "Transportation_Exp",

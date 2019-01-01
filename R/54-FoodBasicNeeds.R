@@ -42,9 +42,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
 
   MD[,FinalFoodPoor:=OldPoor]
-  MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,
+  #MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,
+            #  Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
+            #  FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor)]
+  MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,HAge,HSex,
+              HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
               Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
-              FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor)]
+              FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
+              TFoodExpenditure,Total_Exp_Month_nondurable,Total_Exp_Month,
+              Total_Exp_Month_Per)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster,Percentile,FinalFoodPoor)]
