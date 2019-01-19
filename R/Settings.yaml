@@ -6,7 +6,7 @@ HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
 HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
-startyear: 77.0
+startyear: 96.0
 endyear: 96.0
 baseyear: 95.0
 OS: Windows
@@ -22,6 +22,8 @@ MDS_Food: FoodTables
 MDS_Sheep: SheepTables
 MDS_Cow: CowTables
 MDS_Morgh: MorghTables
+MDS_Berenj: BerenjTables
+MDS_Roghan: RoghanTables
 MDS_FoodGroups: FoodGroupTables
 MDS_Cigar: CigarTables
 MDS_Cloth: ClothTables
