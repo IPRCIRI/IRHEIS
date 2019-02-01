@@ -19,6 +19,11 @@ MDS_EC_A: EduCodes-A
 MDS_EC_B: EduCodes-B
 MDS_EC_C: EduCodes-C
 MDS_Food: FoodTables
+MDS_Sheep: SheepTables
+MDS_Cow: CowTables
+MDS_Morgh: MorghTables
+MDS_Berenj: BerenjTables
+MDS_Roghan: RoghanTables
 MDS_FoodGroups: FoodGroupTables
 MDS_Cigar: CigarTables
 MDS_Cloth: ClothTables
