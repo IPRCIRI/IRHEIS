@@ -22,7 +22,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   
   SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,TFoodKCalories_Per,
-               Weight,MetrPrice)]
+               Weight,MetrPrice,Dimension,EqSizeRevOECD)]
   
   SMD[,Bundle_Value:=TFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
   
@@ -85,6 +85,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
     SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
     SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
+    save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
+    
     
     cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
   }

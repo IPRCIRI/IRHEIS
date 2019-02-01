@@ -1,4 +1,4 @@
-# 54-PovertyLines.R
+# 55-PovertyLines.R
 # 
 # Copyright © 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -79,13 +79,16 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(FPLine,Weight*Size)])
   #MD[,weighted.mean(FinalPoor,Weight*Size),by=.(Region,NewArea)][order(V1)]
   MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster")]
+  save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }
 #NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,FinalPoor)]
 NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,Weight,HAge,HSex,
                     ProvinceCode,Size,HLiterate,HEduLevel0,Area,
                     Rooms,MetrPrice, HActivityState,FinalPoor)]
                    
-save(NewFinalPoor,file=paste0(Settings$HEISProcessedPath,"Y","95","NewFinalPoor.rda"))
+save(NewFinalPoor,file=paste0(Settings$HEISProcessedPath,"Y",year,"NewFinalPoor.rda"))
+Final<-NewFinalPoor[,.(HHID,Region,Weight,FinalPoor)]
+save(Final,file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda"))
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
