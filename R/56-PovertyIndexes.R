@@ -20,21 +20,25 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
-  #HCR
+  #Head-Count Ratio Index
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
 }
 
- #Shedate faghr
- MD[FinalPoor==1,Index:=1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine,Weight))]
- #cat(MD[FinalPoor==1,weighted.mean(Index,Weight)])
+
+ #Poverty gap index
+ MD[FinalPoor==1,Index:=1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine,
+                                         Weight)),by=.(Region,cluster)]
+ MD[FinalPoor==1,weighted.mean(Index,Weight),by=.(Region,cluster)]
  
- #Foster Index
- MD[FinalPoor==1,Index2:=(1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine,Weight)))^2]
- MD[FinalPoor==1,Index2:=weighted.mean(Index2,Weight)]
- #cat(MD[FinalPoor==1,weighted.mean(Index,Weight)])
+ 
+ #Poverty depth index (Foster-Greer-Thorbecke)
+ MD[FinalPoor==1,Index2:=(1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine
+                                           ,Weight)))^2,by=.(Region,cluster)]
+ MD[FinalPoor==1,weighted.mean(Index2,Weight),by=.(Region,cluster)]
+ 
  
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
