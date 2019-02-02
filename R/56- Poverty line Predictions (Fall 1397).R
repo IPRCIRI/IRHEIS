@@ -1,6 +1,6 @@
 #56- Poverty line Predictions (Fall 1397)
 # 
-# Copyright Â© 2019: Majid Einian & Arin Shahbazian
+# Copyright Â 2019: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -37,7 +37,6 @@ for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
            "Resturants")){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
 }
-
 
 #load Calories
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
@@ -107,10 +106,7 @@ MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
 
 MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
 MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
-
-#MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
 MD<-MD[Size!=0 & FoodExpenditure!=0 & !is.na(FoodKCalories)]
-#MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
 
 #Calculate Per Values
 MD[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
@@ -155,7 +151,6 @@ SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
 
 FirstSMD<-SMD[,.(HHID,Region,NewArea,Percentile,Decile)]
 FirstSMD<-FirstSMD[,Realfirstpoor:=ifelse(Decile %in% 1:2,1,0)]
-save(FirstSMD, file=paste0(Settings$HEISProcessedPath,"Y",year,"FirstSMD.rda"))
 
 SMD[,NewPoor:=1]
 SMD[,ThisIterationPoor:=0]
@@ -187,8 +182,7 @@ while(sum(SMD[,(ThisIterationPoor-NewPoor)^2])>=30 & i <=50){
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
   SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
-  save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
-  
+
   
   cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
 }
@@ -196,6 +190,7 @@ MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile)],by="HHID")
 setnames(MD,"NewPoor","InitialPoor")
 
 MD[,weighted.mean(InitialPoor,Weight), by=.(NewArea,Region)]
+save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
 load(file="dtpastUrban.rda")
 load(file="dtpastRural.rda")
@@ -204,10 +199,7 @@ dt2total<-rbind(dtpastUrban,dtpastRural)
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 MD<-merge(MD,dt2total,by=c("NewArea","Region"),all.x=TRUE)
 
-# load data --------------------------------------
-
 #Determine Food (Equal 2100 KCal) Bundle
-#MDPoors<-MD[InitialPoor==1]
 MD[,NewPoor:=InitialPoor]
 MD[,OldPoor:=1]
 
