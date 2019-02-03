@@ -196,6 +196,10 @@ load(file="dtpastUrban.rda")
 load(file="dtpastRural.rda")
 dt2total<-rbind(dtpastUrban,dtpastRural)
 
+#load(file="dt2Urban.rda")
+#load(file="dt2Rural.rda")
+#dt2total<-rbind(dt2Urban,dt2Rural)
+
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 MD<-merge(MD,dt2total,by=c("NewArea","Region"),all.x=TRUE)
 
