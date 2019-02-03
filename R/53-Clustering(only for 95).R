@@ -80,7 +80,7 @@ library(ggplot2)
   cl <- kmeans(dtW,3)
   dt2Urban <- dt2Urban[,cluster:=data.table(cl$cluster)]
   dt2Urban<-dt2Urban[,.(NewArea,Region,cluster)]
-
+  save(dt2Urban,file ="dt2Urban.rda")
 
   # Rural areas
   dt1.m <- dt1[,lapply(.SD, mean)]			# Weights for each vector
@@ -89,6 +89,7 @@ library(ggplot2)
   cl <- kmeans(dtW,3)
   dt2Rural <- dt2Rural[,cluster:=data.table(cl$cluster)]
   dt2Rural<-dt2Rural[,.(NewArea,Region,cluster)]
+  save(dt2Rural,file ="dt2Rural.rda")
   
   load(file="dtpastUrban.rda")
   load(file="dtpastRural.rda")
