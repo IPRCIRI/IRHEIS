@@ -142,7 +142,7 @@ for(year in years){
   
   
   P[,Size:=1]
-  P[,NKids:=ifelse(Age<=17,1,0)]
+  P[,NKids:=ifelse(Age<18,1,0)]
   
   P[,NInfants:=ifelse(Age<=2,1,0)]
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
@@ -161,7 +161,8 @@ for(year in years){
 #  PSum <- PSum[TotalIncome>0]
   
   HHI <- merge(B,PSum,by="HHID")
-  HHI[,EqSizeRevOECD := 1 + (Size-NKids-1)*0.5 + NKids*0.3]
+  HHI[,EqSizeRevOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
+                               1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
   HHI <- HHI[!is.na(HLiterate)]
 
   rm(P,B,PSum)
