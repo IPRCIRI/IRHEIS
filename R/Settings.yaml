@@ -6,7 +6,7 @@ HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
 HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
-startyear: 96.0
+startyear: 77.0
 endyear: 96.0
 baseyear: 95.0
 OS: Windows
