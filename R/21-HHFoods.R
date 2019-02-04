@@ -45,8 +45,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TF[is.na(TF)] <- 0
   FoodData <- TF[,lapply(.SD,sum),by=HHID]
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
-  FoodData<-merge(FoodData,Final)
+  #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
+  #FoodData<-merge(FoodData,Final)
   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
