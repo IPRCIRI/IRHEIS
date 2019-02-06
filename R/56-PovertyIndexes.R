@@ -28,7 +28,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 }
 
 
- #Poverty gap index
+ #Intesnsity of Poverty (Poverty gap index)
  MD[FinalPoor==1,Index:=1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine,
                                          Weight)),by=.(Region,cluster)]
  MD[FinalPoor==1,weighted.mean(Index,Weight),by=.(Region,cluster)]
