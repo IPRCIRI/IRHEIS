@@ -38,7 +38,7 @@ plot(Seas,col="lightblue", border="lightblue")                      # plot seas
 plot(Lakes[c(15,25),],add=TRUE,col="lightblue", border="lightblue") # plot just Urmia and Qom lakes
 
 #Urban Areas
-mapUrban <- rworldmap::mapPolys(MapData, add = TRUE, nameColumnToPlot = "EngleUrban",
+mapUrban <- rworldmap::mapPolys(MapData, add = TRUE, nameColumnToPlot = "EngleUrban3",
                                  colourPalette = "heat",
                                  mapTitle = paste0("Engle Rate in Urban Areas"),
                                  addLegend = FALSE)             # Plot data
@@ -51,7 +51,7 @@ do.call( addMapLegend, c( mapUrban
 
 
 #Rural Areas
-mapRural <- rworldmap::mapPolys(MapData2, add = FALSE, nameColumnToPlot = "EngleRural",
+mapRural <- rworldmap::mapPolys(MapData2, add = FALSE, nameColumnToPlot = "EngleRural3",
                                  colourPalette = "heat",
                                  mapTitle = paste0("Engle Rate in Rural Areas"),
                                  addLegend = FALSE)             # Plot data

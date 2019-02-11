@@ -77,8 +77,8 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
-  #MD[,weighted.mean(FinalPoor,Weight*Size),by=.(Region,NewArea)][order(V1)]
-  MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster")]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea")][order(Region,NewArea)]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }
 #NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,FinalPoor)]
