@@ -20,8 +20,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
  
     #All People   
-    EngleP <- MD[,.(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                   FPLine=mean(FPLine)),by=.(Region,NewArea)]
+    #EngleP <- MD[,.(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+     #              FPLine=mean(FPLine)),by=.(Region,NewArea)]
     
     #First and Second Deciles
     #EngleP <- MD[Decile %in% 1:2,
@@ -29,9 +29,9 @@ for(year in (Settings$startyear:Settings$endyear)){
      #              FPLine=mean(FPLine)),by=.(Region,NewArea)]
    
   #people's who are near FPLine
-   # EngleP <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
-   #              .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-   #                FPLine=mean(FPLine)),by=.(Region,NewArea)]
+    EngleP <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
+                 .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+                   FPLine=mean(FPLine)),by=.(Region,NewArea)]
     
      }
 

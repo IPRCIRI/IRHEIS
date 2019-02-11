@@ -95,7 +95,7 @@ library(ggplot2)
   load(file="dtpastRural.rda")
   dt2total<-rbind(dtpastUrban,dtpastRural)
   
-  #dt2total<-rbind(dt2Urban,dt2Rural)
+  dt2total<-rbind(dt2Urban,dt2Rural)
   
   for(year in (Settings$startyear:Settings$endyear)){
     cat(paste0("\n------------------------------\nYear:",year,"\n"))
