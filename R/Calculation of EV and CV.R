@@ -1,4 +1,4 @@
-# Foods essential groups information
+# Calculation of EV and CV
 # 
 #
 # Copyright © 2017: Arin Shahbazian
@@ -36,7 +36,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","MorghExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","MorghPrice","MorghExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
@@ -78,7 +78,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","CowExpenditure"))
+
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","CowPrice","CowExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
@@ -120,7 +121,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","SheepExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","SheepPrice","SheepExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
@@ -139,7 +140,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   SheepData <- TF[,lapply(.SD,sum),by=HHID]
   save(SheepData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Sheeps.rda"))
 }
-
 ################################################
 ################  Berenj  ########################
 ################################################
@@ -162,7 +162,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","BerenjExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","BerenjPrice","BerenjExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
@@ -181,7 +181,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   BerenjData <- TF[,lapply(.SD,sum),by=HHID]
   save(BerenjData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Berenjs.rda"))
 }
-
 ################################################
 ################  Roghan  ########################
 ################################################
@@ -204,9 +203,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","RoghanExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","RoghanPrice","RoghanExpenditure"))
   TF <- TF[,pcols,with=FALSE]
-  TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
+  TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
     TF[,RoghanExpenditure:=as.numeric(RoghanExpenditure)]
   }
@@ -223,7 +222,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   RoghanData <- TF[,lapply(.SD,sum),by=HHID]
   save(RoghanData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Roghans.rda"))
 }
-
 ################################################
 ################  Tokhmemorgh  ########################
 ################################################
@@ -246,7 +244,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","TokhmemorghExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","TokhmemorghPrice","TokhmemorghExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
   if(year %in% 84:96){
@@ -267,224 +265,16 @@ for(year in (Settings$startyear:Settings$endyear)){
 }
 
 ################################################
-################  Nokhod  ########################
-################################################
-cat("\n\n================ Nokhod =====================================\n")
-
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Nokhod))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- FoodTables[Year==year]
-  tab <- ft$Table
-  if(is.na(tab))
-    next
-  UTF <- Tables[[paste0("U",year,tab)]]
-  RTF <- Tables[[paste0("R",year,tab)]]
-  TF <- rbind(UTF,RTF)
-  for(n in names(TF)){
-    x <- which(ft==n)
-    if(length(x)>0)
-      setnames(TF,n,names(ft)[x])
-  }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","NokhodExpenditure"))
-  TF <- TF[,pcols,with=FALSE]
-  TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
-    TF[,NokhodExpenditure:=as.numeric(NokhodExpenditure)]
-  }
-  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
-  TF[,Kilos:=as.numeric(Kilos)]
-  TF[,Grams:=as.numeric(Grams)]
-  TF[is.na(TF)] <- 0
-  TF[,NokhodKG:=Kilos+(Grams*0.001)]
-  
-  TF[,Code:=NULL]
-  TF[,Kilos:=NULL]
-  TF[,Grams:=NULL]
-  TF[is.na(TF)] <- 0
-  NokhodData <- TF[,lapply(.SD,sum),by=HHID]
-  save(NokhodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Nokhods.rda"))
-}
-
-################################################
-################  Lapeh  ########################
-################################################
-cat("\n\n================ Lapeh =====================================\n")
-
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Lapeh))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- FoodTables[Year==year]
-  tab <- ft$Table
-  if(is.na(tab))
-    next
-  UTF <- Tables[[paste0("U",year,tab)]]
-  RTF <- Tables[[paste0("R",year,tab)]]
-  TF <- rbind(UTF,RTF)
-  for(n in names(TF)){
-    x <- which(ft==n)
-    if(length(x)>0)
-      setnames(TF,n,names(ft)[x])
-  }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","LapehExpenditure"))
-  TF <- TF[,pcols,with=FALSE]
-  TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
-    TF[,LapehExpenditure:=as.numeric(LapehExpenditure)]
-  }
-  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
-  TF[,Kilos:=as.numeric(Kilos)]
-  TF[,Grams:=as.numeric(Grams)]
-  TF[is.na(TF)] <- 0
-  TF[,LapehKG:=Kilos+(Grams*0.001)]
-  
-  TF[,Code:=NULL]
-  TF[,Kilos:=NULL]
-  TF[,Grams:=NULL]
-  TF[is.na(TF)] <- 0
-  LapehData <- TF[,lapply(.SD,sum),by=HHID]
-  save(LapehData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Lapehs.rda"))
-}
-
-################################################
-################  Loobia_Chiti  ########################
-################################################
-cat("\n\n================ Loobia_Chiti =====================================\n")
-
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Loobia_Chiti))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- FoodTables[Year==year]
-  tab <- ft$Table
-  if(is.na(tab))
-    next
-  UTF <- Tables[[paste0("U",year,tab)]]
-  RTF <- Tables[[paste0("R",year,tab)]]
-  TF <- rbind(UTF,RTF)
-  for(n in names(TF)){
-    x <- which(ft==n)
-    if(length(x)>0)
-      setnames(TF,n,names(ft)[x])
-  }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","Loobia_ChitiExpenditure"))
-  TF <- TF[,pcols,with=FALSE]
-  TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
-    TF[,Loobia_ChitiExpenditure:=as.numeric(Loobia_ChitiExpenditure)]
-  }
-  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
-  TF[,Kilos:=as.numeric(Kilos)]
-  TF[,Grams:=as.numeric(Grams)]
-  TF[is.na(TF)] <- 0
-  TF[,Loobia_ChitiKG:=Kilos+(Grams*0.001)]
-  
-  TF[,Code:=NULL]
-  TF[,Kilos:=NULL]
-  TF[,Grams:=NULL]
-  TF[is.na(TF)] <- 0
-  Loobia_ChitiData <- TF[,lapply(.SD,sum),by=HHID]
-  save(Loobia_ChitiData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Loobia_Chitis.rda"))
-}
-
-################################################
-################  Loobia_Ghermez  ########################
-################################################
-cat("\n\n================ Loobia_Ghermez =====================================\n")
-
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Loobia_Ghermez))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- FoodTables[Year==year]
-  tab <- ft$Table
-  if(is.na(tab))
-    next
-  UTF <- Tables[[paste0("U",year,tab)]]
-  RTF <- Tables[[paste0("R",year,tab)]]
-  TF <- rbind(UTF,RTF)
-  for(n in names(TF)){
-    x <- which(ft==n)
-    if(length(x)>0)
-      setnames(TF,n,names(ft)[x])
-  }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","Loobia_GhermezExpenditure"))
-  TF <- TF[,pcols,with=FALSE]
-  TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
-    TF[,Loobia_GhermezExpenditure:=as.numeric(Loobia_GhermezExpenditure)]
-  }
-  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
-  TF[,Kilos:=as.numeric(Kilos)]
-  TF[,Grams:=as.numeric(Grams)]
-  TF[is.na(TF)] <- 0
-  TF[,Loobia_GhermezKG:=Kilos+(Grams*0.001)]
-  
-  TF[,Code:=NULL]
-  TF[,Kilos:=NULL]
-  TF[,Grams:=NULL]
-  TF[is.na(TF)] <- 0
-  Loobia_GhermezData <- TF[,lapply(.SD,sum),by=HHID]
-  save(Loobia_GhermezData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Loobia_Ghermezs.rda"))
-}
-
-################################################
-################  Adas  ########################
-################################################
-cat("\n\n================ Adas =====================================\n")
-
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Adas))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ft <- FoodTables[Year==year]
-  tab <- ft$Table
-  if(is.na(tab))
-    next
-  UTF <- Tables[[paste0("U",year,tab)]]
-  RTF <- Tables[[paste0("R",year,tab)]]
-  TF <- rbind(UTF,RTF)
-  for(n in names(TF)){
-    x <- which(ft==n)
-    if(length(x)>0)
-      setnames(TF,n,names(ft)[x])
-  }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","AdasExpenditure"))
-  TF <- TF[,pcols,with=FALSE]
-  TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
-    TF[,AdasExpenditure:=as.numeric(AdasExpenditure)]
-  }
-  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
-  TF[,Kilos:=as.numeric(Kilos)]
-  TF[,Grams:=as.numeric(Grams)]
-  TF[is.na(TF)] <- 0
-  TF[,AdasKG:=Kilos+(Grams*0.001)]
-  
-  TF[,Code:=NULL]
-  TF[,Kilos:=NULL]
-  TF[,Grams:=NULL]
-  TF[is.na(TF)] <- 0
-  AdasData <- TF[,lapply(.SD,sum),by=HHID]
-  save(AdasData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Adass.rda"))
-}
-
-################################################
 #######  Load Additional Information  #############
 ################################################
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 HHBase<-HHBase[,.(HHID,Region,ProvinceCode)]
 
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
-SMD<-SMD[,.(HHID,Decile,Weight,Dimension,EqSizeRevOECD,Total_Exp_Month_Per_nondurable)]
-
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+SMD<-MD[,.(HHID,Decile,Weight,Size,EqSizeRevOECD,
+           Total_Exp_Month,Total_Exp_Month_Per,
+           Total_Exp_Month_nondurable,Total_Exp_Month_Per_nondurable)]
+           
 ################################################
 #######  Merge Information  #############
 ################################################
@@ -496,25 +286,39 @@ Total<-merge(Total,CowData,all = TRUE)
 Total<-merge(Total,BerenjData,all = TRUE)
 Total<-merge(Total,RoghanData,all = TRUE)
 Total<-merge(Total,TokhmemorghData,all = TRUE)
-Total<-merge(Total,NokhodData,all = TRUE)
-Total<-merge(Total,LapehData,all = TRUE)
-Total<-merge(Total,Loobia_ChitiData,all = TRUE)
-Total<-merge(Total,Loobia_GhermezData,all = TRUE)
-Total<-merge(Total,AdasData,all = TRUE)
 
 for (col in c("MorghExpenditure","MorghKG",
               "SheepExpenditure","SheepKG",
               "CowExpenditure","CowKG",
               "BerenjExpenditure","BerenjKG",
               "RoghanExpenditure","RoghanKG",
-              "NokhodExpenditure","NokhodKG",
-              "LapehExpenditure","LapehKG",
-              "Loobia_ChitiExpenditure","Loobia_ChitiKG",
-              "Loobia_GhermezExpenditure","Loobia_GhermezKG",
-              "AdasExpenditure","AdasKG",
               "TokhmemorghExpenditure","TokhmemorghKG")) Total[is.na(get(col)), (col) := 0]
+#"MorghPrice","SheepPrice","CowPrice",
+#"BerenjPrice","RoghanPrice","TokhmemorghPrice"
 
 Total<-Total[Decile %in% 1:10]
+
+#Price Indexes
+Berenj_Esfand96<-147.7
+Berenj_Azar97<-200
+Morgh_Esfand96<-113.2
+Morgh_Azar97<-200
+Cow_Esfand96<-122.8
+Cow_Azar97<-200
+Sheep_Esfand96<-130.5
+Sheep_Azar97<-200
+Roghan_Esfand96<-111.1
+Roghan_Azar97<-200
+Tokhmemorgh_Esfand96<-191.4
+Tokhmemorgh_Azar97<-200
+
+#New Prices (Prices Doubled)
+Total[,BerenjNewPrice:=BerenjPrice*(3-(Berenj_Azar97/Berenj_Esfand96))]
+Total[,MorghNewPrice:=MorghPrice*(3-(Morgh_Azar97/Morgh_Esfand96))]
+Total[,CowNewPrice:=CowPrice*(3-(Cow_Azar97/Cow_Esfand96))]
+Total[,SheepNewPrice:=SheepPrice*(3-(Sheep_Azar97/Sheep_Esfand96))]
+Total[,RoghanNewPrice:=RoghanPrice*(3-(Roghan_Azar97/Roghan_Esfand96))]
+Total[,TokhmemorghNewPrice:=TokhmemorghPrice*(3-(Tokhmemorgh_Azar97/Tokhmemorgh_Esfand96))]
 
 ################################################
 ############  Results  #############
@@ -556,10 +360,10 @@ Total[,weighted.mean(BerenjKG,Weight),by=.(Decile)][order(Decile)]
 Total[,weighted.mean(BerenjExpenditure,Weight),by=.(Decile,Region)][order(Region,Decile)]
 Total[,weighted.mean(BerenjKG,Weight),by=.(Decile,Region)][order(Region,Decile)]
 
-#Dimension
-Total[,weighted.mean(Dimension,Weight),by=.(Decile)][order(Decile)]
+#Size
+Total[,weighted.mean(Size,Weight),by=.(Decile)][order(Decile)]
 
-Total[,weighted.mean(Dimension,Weight),by=.(Decile,Region)][order(Region,Decile)]
+Total[,weighted.mean(Size,Weight),by=.(Decile,Region)][order(Region,Decile)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
