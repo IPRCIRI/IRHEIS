@@ -6,8 +6,8 @@ HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
 HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
-startyear: 95.0
-endyear: 95.0
+startyear: 96.0
+endyear: 96.0
 baseyear: 95.0
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_96_Info/
@@ -24,6 +24,12 @@ MDS_Cow: CowTables
 MDS_Morgh: MorghTables
 MDS_Berenj: BerenjTables
 MDS_Roghan: RoghanTables
+MDS_Tokhmemorgh: TokhmemorghTables
+MDS_Nokhod: NokhodTables
+MDS_Lapeh: LapehTables
+MDS_Loobia_Chiti: Loobia_ChitiTables
+MDS_Loobia_Ghermez: Loobia_GhermezTables
+MDS_Adas: AdasTables
 MDS_FoodGroups: FoodGroupTables
 MDS_Cigar: CigarTables
 MDS_Cloth: ClothTables
