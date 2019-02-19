@@ -318,12 +318,19 @@ Tokhmemorgh_Elastisity<- -0.81
 
 ############New Prices###########
 #Initial Prices
-Total[,BerenjP1:=BerenjPrice*Berenj_Azar97/Bt]
-Total[,MorghP1:=MorghPrice*Morgh_Azar97/Mt]
-Total[,CowP1:=CowPrice*Cow_Azar97/Ct]
-Total[,SheepP1:=SheepPrice*Sheep_Azar97/St]
-Total[,RoghanP1:=RoghanPrice*Roghan_Azar97/Rt]
-Total[,TokhmemorghP1:=TokhmemorghPrice*Tokhmemorgh_Azar97/Tt]
+#Total[,BerenjP1:=BerenjPrice*Berenj_Azar97/Bt]
+#Total[,MorghP1:=MorghPrice*Morgh_Azar97/Mt]
+#Total[,CowP1:=CowPrice*Cow_Azar97/Ct]
+#Total[,SheepP1:=SheepPrice*Sheep_Azar97/St]
+#Total[,RoghanP1:=RoghanPrice*Roghan_Azar97/Rt]
+#Total[,TokhmemorghP1:=TokhmemorghPrice*Tokhmemorgh_Azar97/Tt]
+
+Total[,BerenjP1:=BerenjPrice]
+Total[,MorghP1:=MorghPrice]
+Total[,CowP1:=CowPrice]
+Total[,SheepP1:=SheepPrice]
+Total[,RoghanP1:=RoghanPrice]
+Total[,TokhmemorghP1:=TokhmemorghPrice]
 
 #Second Prices
 Total[,BerenjP2:=BerenjPrice*2]

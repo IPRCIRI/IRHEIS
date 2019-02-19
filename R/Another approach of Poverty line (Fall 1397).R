@@ -1,4 +1,4 @@
-#56- Poverty line Predictions (Fall 1397)
+# Another approach of Poverty line (Fall 1397)
 # 
 # Copyright Â 2019: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -77,22 +77,23 @@ for (col in c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp",
 load(file="PriceIndex9697.rda")
 MD<-merge(MD,PriceIndex9697,by =c("ProvinceCode"),all.x=TRUE)
 
-MD$FoodExpenditure<-MD$FoodExpenditure*MD$Azar971food_index/MD$total961food_index
-MD$Cigar_Exp<-MD$Cigar_Exp*MD$Azar971cigar_index/MD$total961cigar_index
-MD$Cloth_Exp<-MD$Cloth_Exp*MD$Azar971cloth_index/MD$total961cloth_index
-MD$Amusement_Exp<-MD$Amusement_Exp*MD$Azar971amusement_index/MD$total961amusement_index
-MD$Communication_Exp<-MD$Communication_Exp*MD$Azar971communication_index/MD$total961communication_index
-MD$EducExpenditure<-MD$EducExpenditure*MD$Azar971education_index/MD$total961education_index
-MD$Energy_Exp<-MD$Energy_Exp*MD$Azar971house_energy_index/MD$total961house_energy_index
-MD$Furniture_Exp<-MD$Furniture_Exp*MD$Azar971furniture_index/MD$total961furniture_index
-MD$Hotel_Exp<-MD$Hotel_Exp*MD$Azar971hotel_index/MD$total961hotel_index
-MD$Behdasht_Exp<-MD$Behdasht_Exp*MD$Azar971behdasht_index/MD$total961behdasht_index
-MD$Transportation_Exp<-MD$Transportation_Exp*MD$Azar971transportation_index/MD$total961transportation_index
-MD$Other_Exp<-MD$Other_Exp*MD$Azar971other_index/MD$total961other_index
-MD$ServiceExp<-MD$ServiceExp*MD$Azar971house_energy_index/MD$total961house_energy_index
-MD$Medical_Exp<-MD$Medical_Exp*MD$Azar971behdasht_index/MD$total961behdasht_index
-MD$Durable_Exp<-MD$Durable_Exp*MD$azar97/MD$total96
-MD$Resturant_Exp<-MD$Resturant_Exp*MD$Azar971hotel_index/MD$total961hotel_index
+MD$FoodExpenditure<-MD$FoodExpenditure*1.2
+MD$Cigar_Exp<-MD$Cigar_Exp*1.2
+MD$Cloth_Exp<-MD$Cloth_Exp*1.2
+MD$Amusement_Exp<-MD$Amusement_Exp*1.2
+MD$Communication_Exp<-MD$Communication_Exp*1.2
+MD$EducExpenditure<-MD$EducExpenditure*1.2
+MD$Energy_Exp<-MD$Energy_Exp*1.2
+MD$Furniture_Exp<-MD$Furniture_Exp*1.2
+MD$Hotel_Exp<-MD$Hotel_Exp*1.2
+MD$Behdasht_Exp<-MD$Behdasht_Exp*1.2
+MD$Transportation_Exp<-MD$Transportation_Exp*1.2
+MD$Other_Exp<-MD$Other_Exp*1.2
+MD$ServiceExp<-MD$ServiceExp*1.2
+MD$Medical_Exp<-MD$Medical_Exp*1.2
+MD$Durable_Exp<-MD$Durable_Exp*1.2
+MD$Resturant_Exp<-MD$Resturant_Exp*1.2
+
 
 #Calculate Monthly Total Expenditures 
 nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
@@ -182,7 +183,7 @@ while(sum(SMD[,(ThisIterationPoor-NewPoor)^2])>=30 & i <=50){
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
   SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
-
+  
   
   cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
 }
@@ -231,19 +232,19 @@ MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,HAge,HSex,
             TFoodExpenditure,Total_Exp_Month_nondurable,Total_Exp_Month,
             Total_Exp_Month_Per)]
 
-EngleD <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
-             .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-               FPLine=mean(FPLine)),by=.(Region,cluster)]
-EngleD[,PovertyLine:=FPLine/Engel]
-MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine,Engel)],by=c("Region","cluster"))
+load(file="Compare.rda")
+MD <- merge(MD,Compare,by=c("Region","cluster"))
 #MD<-MD[Region=="Rural"]
 MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
 cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
     MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
-    MD[,weighted.mean(Engel,Weight*Size)],"\t",
     MD[,weighted.mean(FPLine,Weight*Size)])
 #MD[,weighted.mean(FinalPoor,Weight*Size),by=.(Region,NewArea)][order(V1)]
+MD[,weighted.mean(FinalPoor,Weight)]
+MD[,weighted.mean(FinalPoor,Weight),by=c("Region")]
 MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster")]
+#Compare<-EngleD[,.(Region,cluster,PovertyLine)]
+#MD<-merge(MD,Compare,by=c("Region","cluster"))
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
