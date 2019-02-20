@@ -86,6 +86,51 @@ for(year in (Settings$startyear:Settings$endyear)){
                              916,1002,3001,502,2202),
          NewArea:=CountyCode]
   
+  HHBase[,NewArea2:=as.factor(NewArea)]
+  
+  HHBase[NewArea==0,NewArea2:="Markazi"]
+  HHBase[NewArea==1,NewArea2:="Gilan"]
+  HHBase[NewArea==2,NewArea2:="Mazandaran"]
+  HHBase[NewArea==3,NewArea2:="Az_Sharghi"]
+  HHBase[NewArea==4,NewArea2:="Az_Gharbi"]
+  HHBase[NewArea==5,NewArea2:="Kermanshah"]
+  HHBase[NewArea==6,NewArea2:="Khoozestan"]
+  HHBase[NewArea==7,NewArea2:="Fars"]
+  HHBase[NewArea==8,NewArea2:="Kerman"]
+  HHBase[NewArea==9,NewArea2:="Khorasan_Razavi"]
+  HHBase[NewArea==10,NewArea2:="Esfahan"]
+  HHBase[NewArea==11,NewArea2:="Sistan"]
+  HHBase[NewArea==12,NewArea2:="Kordestan"]
+  HHBase[NewArea==13,NewArea2:="Hamedan"]
+  HHBase[NewArea==14,NewArea2:="Chaharmahal"]
+  HHBase[NewArea==15,NewArea2:="Lorestan"]
+  HHBase[NewArea==16,NewArea2:="Ilam"]
+  HHBase[NewArea==17,NewArea2:="Kohkilooye"]
+  HHBase[NewArea==18,NewArea2:="Booshehr"]
+  HHBase[NewArea==19,NewArea2:="Zanjan"]
+  HHBase[NewArea==20,NewArea2:="Semnan"]
+  HHBase[NewArea==21,NewArea2:="Yazd"]
+  HHBase[NewArea==22,NewArea2:="Hormozgan"]
+  HHBase[NewArea==23,NewArea2:="Tehran"]
+  HHBase[NewArea==24,NewArea2:="Argebil"]
+  HHBase[NewArea==25,NewArea2:="Ghom"]
+  HHBase[NewArea==26,NewArea2:="Ghazvin"]
+  HHBase[NewArea==27,NewArea2:="Golestan"]
+  HHBase[NewArea==28,NewArea2:="Khorasan_Shomali"]
+  HHBase[NewArea==29,NewArea2:="Khorasan_Jonoobi"]
+  HHBase[NewArea==30,NewArea2:="Alborz"]
+  HHBase[NewArea==2301,NewArea2:="Sh_Tehran"]
+  HHBase[NewArea==303,NewArea2:="Sh_Tabriz"]
+  HHBase[NewArea==603,NewArea2:="Sh_Ahvaz"]
+  HHBase[NewArea==707,NewArea2:="Sh_Shiraz"]
+  HHBase[NewArea==916,NewArea2:="Sh_Mashhad"]
+  HHBase[NewArea==1002,NewArea2:="Sh_Esfahan"]
+  HHBase[NewArea==3001,NewArea2:="Sh_Karaj"]
+  HHBase[NewArea==502,NewArea2:="Sh_Kermanshah"]
+  HHBase[NewArea==2202,NewArea2:="Sh_Bandarabas"]
+  
+  
+  
   #Tehran-Alborz
   if(year >76 & year < 92 ){ 
     HHBase[ Region=="Urban" & CountyCode %in% c(2305),

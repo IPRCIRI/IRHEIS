@@ -1,6 +1,6 @@
 # Engle Calculations for Provinces.R
 # 
-# Copyright © 2018:Majid Einian & Arin Shahbazian
+# Copyright B) 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -10,15 +10,22 @@ cat("\n\n================ Prepare Data =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
+library(sm)
 library(readxl)
 library(data.table)
 library(ggplot2)
+
+#par(mar=c(5,4,4,3))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
  
+    MDUrban<-MD[Region=="Urban"]
+    MDRural<-MD[Region=="Rural"]
+    
+    MD<-MD[,Engel:=TFoodExpenditure/Total_Exp_Month]
     #All People   
     #EngleP <- MD[,.(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
      #              FPLine=mean(FPLine)),by=.(Region,NewArea)]
@@ -33,8 +40,12 @@ for(year in (Settings$startyear:Settings$endyear)){
                  .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                    FPLine=mean(FPLine)),by=.(Region,NewArea)]
     
-     }
+}
 
+sm.density.compare(MD$Engel,group = MD$cluster)
+#legend("topleft",legend = c("aaa","ss","dd","ff","gg"))
+       
+       
   endtime <- proc.time()
   cat("\n\n============================\nIt took ")
   cat((endtime-starttime)["elapsed"])

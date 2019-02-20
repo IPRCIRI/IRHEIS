@@ -66,7 +66,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleNewAboveRural<-rbind(EngleNewAboveRural1,EngleNewAboveRural2,EngleNewAboveRural3,EngleNewAboveRural4,EngleNewAboveRural5)
   save(EngleNewAboveRural,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleNewAboveRural.rda"))
   
-  EngleD <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
+  EngleD <- MD[ TFoodExpenditure_Per>0.9*FPLine & TFoodExpenditure_Per<1.1*FPLine,
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster)]
   EngleD[,PovertyLine:=FPLine/Engel]

@@ -25,21 +25,22 @@ library(ggplot2)
            X_Mahi, X_Makarooni,X_Mast, X_Mive,  
           X_Morgh, X_Nan,X_Panir, X_Roghan, 
           X_Sabzi, X_Shir, X_Sibzamini, X_Tokhmemorgh,
-          ServiceExp,Region,NewArea,Weight)]
+          ServiceExp,Region,NewArea,NewArea2,Weight)]
   
   FP <- MD[,.(P_Berenj, P_Ghand, P_Goosht,P_Hoboobat,
               P_Mahi, P_Makarooni,P_Mast, P_Mive,  
               P_Morgh, P_Nan,P_Panir, P_Roghan, 
               P_Sabzi, P_Shir, P_Sibzamini, P_Tokhmemorgh,
-              MetrPrice,Region,NewArea,Weight)]
+              MetrPrice,Region,NewArea,NewArea2,Weight)]
  
-  dt1 <- FW[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Region,NewArea)]
+  dt1 <- FW[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Region,NewArea,NewArea2)]
   dt1<- dt1[order(Region,NewArea)]
   dt1[,NewArea:=NULL]
+  dt1[,NewArea2:=NULL]
   dt1[,Weight:=NULL]
   dt1[,Region:=NULL]
 
-  dt2 <- FP[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Region,NewArea)]
+  dt2 <- FP[,lapply(.SD,weighted.mean,w=Weight,na.rm = TRUE),by=.(Region,NewArea,NewArea2)]
   dt2<- dt2[order(Region,NewArea)]
   dt2[,Weight:=NULL]
   dtUrban<-dt2[Region=="Urban"]
@@ -48,14 +49,16 @@ library(ggplot2)
                        P_Mahi, P_Makarooni,P_Mast, P_Mive,  
                        P_Morgh, P_Nan,P_Panir, P_Roghan, 
                        P_Sabzi, P_Shir, P_Sibzamini, P_Tokhmemorgh,
-                       MetrPrice,NewArea,Region)]
+                       MetrPrice,NewArea,NewArea2,Region)]
   dt2Rural<-dtRural[,.(P_Berenj, P_Ghand, P_Goosht,P_Hoboobat,
                        P_Mahi, P_Makarooni,P_Mast, P_Mive,  
                        P_Morgh, P_Nan,P_Panir, P_Roghan, 
                        P_Sabzi, P_Shir, P_Sibzamini, P_Tokhmemorgh,
-                       MetrPrice,NewArea,Region)]
+                       MetrPrice,NewArea,NewArea2,Region)]
   dtUrban[,NewArea:=NULL]
   dtRural[,NewArea:=NULL]
+  dtUrban[,NewArea2:=NULL]
+  dtRural[,NewArea2:=NULL]
   dtUrban[,Region:=NULL]
   dtRural[,Region:=NULL]
 
@@ -79,7 +82,7 @@ library(ggplot2)
   kmeans(dtW,3)						# Simple K-means
   cl <- kmeans(dtW,3)
   dt2Urban <- dt2Urban[,cluster:=data.table(cl$cluster)]
-  dt2Urban<-dt2Urban[,.(NewArea,Region,cluster)]
+  dt2Urban<-dt2Urban[,.(NewArea,NewArea2,Region,cluster)]
   save(dt2Urban,file ="dt2Urban.rda")
 
   # Rural areas
@@ -88,11 +91,12 @@ library(ggplot2)
   kmeans(dtW,3)						# Simple K-means
   cl <- kmeans(dtW,3)
   dt2Rural <- dt2Rural[,cluster:=data.table(cl$cluster)]
-  dt2Rural<-dt2Rural[,.(NewArea,Region,cluster)]
+  dt2Rural<-dt2Rural[,.(NewArea,NewArea2,Region,cluster)]
   save(dt2Rural,file ="dt2Rural.rda")
   
   load(file="dtpastUrban.rda")
   load(file="dtpastRural.rda")
+  
   dt2total<-rbind(dtpastUrban,dtpastRural)
   
   dt2total<-rbind(dt2Urban,dt2Rural)
@@ -100,7 +104,7 @@ library(ggplot2)
   for(year in (Settings$startyear:Settings$endyear)){
     cat(paste0("\n------------------------------\nYear:",year,"\n"))
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  MD<-merge(MD,dt2total,by=c("NewArea","Region"),all.x=TRUE)
+  MD<-merge(MD,dt2total,by=c("NewArea","NewArea2","Region"),all.x=TRUE)
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   }
   
