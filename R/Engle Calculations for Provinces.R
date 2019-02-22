@@ -16,33 +16,51 @@ library(data.table)
 library(ggplot2)
 
 #par(mar=c(5,4,4,3))
-
-for(year in (Settings$startyear:Settings$endyear)){
+year<-96
+#for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
- 
-    MDUrban<-MD[Region=="Urban"]
-    MDRural<-MD[Region=="Rural"]
-    
     MD<-MD[,Engel:=TFoodExpenditure/Total_Exp_Month]
-    #All People   
-    #EngleP <- MD[,.(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-     #              FPLine=mean(FPLine)),by=.(Region,NewArea)]
+    
+    MDUrban<-MD[Region=="Urban" & Decile %in% 8:9]
+    MDRural<-MD[Region=="Rural" & Decile %in% 8:9]
+    
+
+    #8th and 9th Deciles   
+ #   EnglePR <- MDRural[Decile %in% 8:9,
+ #                      .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+  #                       FPLine=mean(FPLine),cluster),by=.(Region,NewArea)]
+    
+   # EnglePU <- MDUrban[Decile %in% 8:9,
+   #                    .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+    #                     FPLine=mean(FPLine),cluster),by=.(Region,NewArea)]
     
     #First and Second Deciles
-    #EngleP <- MD[Decile %in% 1:2,
-    #            .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-     #              FPLine=mean(FPLine)),by=.(Region,NewArea)]
-   
-  #people's who are near FPLine
-    EngleP <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
-                 .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                   FPLine=mean(FPLine)),by=.(Region,NewArea)]
+    #EnglePR <- MDRural[Decile %in% 1:2,
+     #                  .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+     #                    FPLine=mean(FPLine),cluster)]
     
-}
+   # EnglePU <- MDUrban[Decile %in% 1:2,
+    #                   .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+     #                    FPLine=mean(FPLine),cluster)]
+    
+     
+   #people's who are near FPLine
+   # EnglePR <- MDRural[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
+   #              .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+   #               FPLine=mean(FPLine),cluster),by=.(Region,NewArea)]
+    
+   # EnglePU <- MDUrban[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
+   #                    .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+   #                     FPLine=mean(FPLine),cluster),by=.(Region,NewArea)]
+#}
+#geom_density(data = MD$Engel,show.legend = TRUE,
+#inherit.aes = TRUE,inherit.aes = TRUE)
 
-sm.density.compare(MD$Engel,group = MD$cluster)
+sm.density.compare(MDUrban$Engel,group = MDUrban$cluster)
+
+sm.density.compare(MDRural$Engel,group = MDRural$cluster)
 #legend("topleft",legend = c("aaa","ss","dd","ff","gg"))
        
        

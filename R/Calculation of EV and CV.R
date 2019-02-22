@@ -509,6 +509,8 @@ Total[,weighted.mean(TokhmemorghKG,Weight)]
 Total[,weighted.mean(TokhmemorghKG,Weight),by=.(Region)][order(Region)]
 Total[,weighted.mean(TokhmemorghKG,Weight),by=.(Decile)][order(Decile)]
 
+x<-Total[,.(Total_Exp_Month_Per_nondurable,Decile)]
+
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)

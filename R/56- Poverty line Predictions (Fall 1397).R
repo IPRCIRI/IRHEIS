@@ -77,22 +77,22 @@ for (col in c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp",
 load(file="PriceIndex9697.rda")
 MD<-merge(MD,PriceIndex9697,by =c("ProvinceCode"),all.x=TRUE)
 
-MD$FoodExpenditure<-MD$FoodExpenditure*MD$Azar971food_index/MD$total961food_index
-MD$Cigar_Exp<-MD$Cigar_Exp*MD$Azar971cigar_index/MD$total961cigar_index
-MD$Cloth_Exp<-MD$Cloth_Exp*MD$Azar971cloth_index/MD$total961cloth_index
-MD$Amusement_Exp<-MD$Amusement_Exp*MD$Azar971amusement_index/MD$total961amusement_index
-MD$Communication_Exp<-MD$Communication_Exp*MD$Azar971communication_index/MD$total961communication_index
-MD$EducExpenditure<-MD$EducExpenditure*MD$Azar971education_index/MD$total961education_index
-MD$Energy_Exp<-MD$Energy_Exp*MD$Azar971house_energy_index/MD$total961house_energy_index
-MD$Furniture_Exp<-MD$Furniture_Exp*MD$Azar971furniture_index/MD$total961furniture_index
-MD$Hotel_Exp<-MD$Hotel_Exp*MD$Azar971hotel_index/MD$total961hotel_index
-MD$Behdasht_Exp<-MD$Behdasht_Exp*MD$Azar971behdasht_index/MD$total961behdasht_index
-MD$Transportation_Exp<-MD$Transportation_Exp*MD$Azar971transportation_index/MD$total961transportation_index
-MD$Other_Exp<-MD$Other_Exp*MD$Azar971other_index/MD$total961other_index
-MD$ServiceExp<-MD$ServiceExp*MD$Azar971house_energy_index/MD$total961house_energy_index
-MD$Medical_Exp<-MD$Medical_Exp*MD$Azar971behdasht_index/MD$total961behdasht_index
+MD$FoodExpenditure<-MD$FoodExpenditure*MD$spring971food_index/MD$total961food_index
+MD$Cigar_Exp<-MD$Cigar_Exp*MD$spring971cigar_index/MD$total961cigar_index
+MD$Cloth_Exp<-MD$Cloth_Exp*MD$spring971cloth_index/MD$total961cloth_index
+MD$Amusement_Exp<-MD$Amusement_Exp*MD$spring971amusement_index/MD$total961amusement_index
+MD$Communication_Exp<-MD$Communication_Exp*MD$spring971communication_index/MD$total961communication_index
+MD$EducExpenditure<-MD$EducExpenditure*MD$spring971education_index/MD$total961education_index
+MD$Energy_Exp<-MD$Energy_Exp*MD$spring971house_energy_index/MD$total961house_energy_index
+MD$Furniture_Exp<-MD$Furniture_Exp*MD$spring971furniture_index/MD$total961furniture_index
+MD$Hotel_Exp<-MD$Hotel_Exp*MD$spring971hotel_index/MD$total961hotel_index
+MD$Behdasht_Exp<-MD$Behdasht_Exp*MD$spring971behdasht_index/MD$total961behdasht_index
+MD$Transportation_Exp<-MD$Transportation_Exp*MD$spring971transportation_index/MD$total961transportation_index
+MD$Other_Exp<-MD$Other_Exp*MD$spring971other_index/MD$total961other_index
+MD$ServiceExp<-MD$ServiceExp*MD$spring971house_energy_index/MD$total961house_energy_index
+MD$Medical_Exp<-MD$Medical_Exp*MD$spring971behdasht_index/MD$total961behdasht_index
 MD$Durable_Exp<-MD$Durable_Exp*MD$azar97/MD$total96
-MD$Resturant_Exp<-MD$Resturant_Exp*MD$Azar971hotel_index/MD$total961hotel_index
+MD$Resturant_Exp<-MD$Resturant_Exp*MD$spring971hotel_index/MD$total961hotel_index
 
 #Calculate Monthly Total Expenditures 
 nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
@@ -236,7 +236,7 @@ EngleD <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
                FPLine=mean(FPLine)),by=.(Region,cluster)]
 EngleD[,PovertyLine:=FPLine/Engel]
 MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine,Engel)],by=c("Region","cluster"))
-#MD<-MD[Region=="Rural"]
+MD<-MD[Region=="Urban" & NewArea==2301]
 MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
 cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
     MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
