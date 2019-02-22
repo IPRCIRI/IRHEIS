@@ -94,10 +94,10 @@ library(ggplot2)
   dt2Rural<-dt2Rural[,.(NewArea,NewArea2,Region,cluster)]
   save(dt2Rural,file ="dt2Rural.rda")
   
-  load(file="dtpastUrban.rda")
-  load(file="dtpastRural.rda")
+  #load(file="dtpastUrban.rda")
+  #load(file="dtpastRural.rda")
   
-  dt2total<-rbind(dtpastUrban,dtpastRural)
+  #dt2total<-rbind(dtpastUrban,dtpastRural)
   
   dt2total<-rbind(dt2Urban,dt2Rural)
   
