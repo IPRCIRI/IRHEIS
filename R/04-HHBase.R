@@ -112,7 +112,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[NewArea==21,NewArea2:="Yazd"]
   HHBase[NewArea==22,NewArea2:="Hormozgan"]
   HHBase[NewArea==23,NewArea2:="Tehran"]
-  HHBase[NewArea==24,NewArea2:="Argebil"]
+  HHBase[NewArea==24,NewArea2:="Ardebil"]
   HHBase[NewArea==25,NewArea2:="Ghom"]
   HHBase[NewArea==26,NewArea2:="Ghazvin"]
   HHBase[NewArea==27,NewArea2:="Golestan"]
