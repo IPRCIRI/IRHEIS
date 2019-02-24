@@ -69,6 +69,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleD <- MD[ TFoodExpenditure_Per>0.9*FPLine & TFoodExpenditure_Per<1.1*FPLine,
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster)]
+  EngleP <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
+                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+                  FPLine=mean(FPLine)),by=.(Region,NewArea2)]
   EngleD[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine,Engel)],by=c("Region","cluster"))
   MD<-MD[Region=="Urban" & NewArea==2301]
@@ -81,6 +84,24 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,weighted.mean(FinalPoor,Weight),by=c("Region")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }
+
+x<-EngleP[Region=="Rural",.(Engel,NewArea2)]
+x$NewArea <- factor(x$NewArea, levels = x$NewArea[order(x$Engel)])
+ggplot(x, aes(x = x$NewArea, y = x$Engel)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+y<-EngleP[Region=="Urban",.(Engel,NewArea2)]
+y$NewArea <- factor(y$NewArea, levels = y$NewArea[order(y$Engel)])
+ggplot(y, aes(x = y$NewArea, y = y$Engel)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+x2<-EngleP[Region=="Rural",.(FPLine,NewArea2)]
+x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$FPLine)])
+ggplot(x2, aes(x = x2$NewArea, y = x2$FPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+y2<-EngleP[Region=="Urban",.(FPLine,NewArea2)]
+y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$FPLine)])
+ggplot(y2, aes(x = y2$NewArea, y = y2$FPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
 #NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,FinalPoor)]
 NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,Weight,HAge,HSex,
                     ProvinceCode,Size,HLiterate,HEduLevel0,Area,
