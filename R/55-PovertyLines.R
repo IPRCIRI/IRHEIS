@@ -72,7 +72,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleP <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
                 .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                   FPLine=mean(FPLine)),by=.(Region,NewArea2)]
+  save(EngleP,file = "EngleP.rda")
   EngleD[,PovertyLine:=FPLine/Engel]
+  EngleP[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine,Engel)],by=c("Region","cluster"))
   MD<-MD[Region=="Urban" & NewArea==2301]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
@@ -101,6 +103,14 @@ ggplot(x2, aes(x = x2$NewArea, y = x2$FPLine)) + theme_bw() + geom_bar(stat = "i
 y2<-EngleP[Region=="Urban",.(FPLine,NewArea2)]
 y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$FPLine)])
 ggplot(y2, aes(x = y2$NewArea, y = y2$FPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+x3<-EngleP[Region=="Rural",.(PovertyLine,NewArea2)]
+x3$NewArea <- factor(x3$NewArea, levels = x3$NewArea[order(x3$PovertyLine)])
+ggplot(x3, aes(x = x3$NewArea, y = x3$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+y3<-EngleP[Region=="Urban",.(PovertyLine,NewArea2)]
+y3$NewArea <- factor(y3$NewArea, levels = y3$NewArea[order(y3$PovertyLine)])
+ggplot(y3, aes(x = y3$NewArea, y = y3$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 #NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,FinalPoor)]
 NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,Weight,HAge,HSex,
