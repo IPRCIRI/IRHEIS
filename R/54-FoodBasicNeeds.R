@@ -32,8 +32,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[,FPLine:=NULL]    
     MDP <- MD[ThisIterationPoor==1,
               .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
-              by=.(cluster,Region)]
-    MD <- merge(MD,MDP,by=c("Region","cluster"))
+              by=.(NewArea,Region)]
+    MD <- merge(MD,MDP,by=c("Region","NewArea"))
 #    print(MDP)
     x<-MD[,.(cluster,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
