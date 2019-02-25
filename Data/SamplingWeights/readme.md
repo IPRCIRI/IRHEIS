@@ -1,5 +1,5 @@
 # SamplingWeights
-provides sampling weights of all households in samples from 1376 onward. Weights data are extracted from "Summary" files provided by SCI. Sampling weights for years before 1376 are not provided by SCI, a rough estimated can be based on rural and urban population of each province or rural and urban population of the country (these files do not include such estimates).
+provides sampling weights of all households in samples from 1376 onward. Weights data are extracted from "Summary" files provided by SCI. Sampling weights for years before 1376 are not provided by SCI, a rough estimate can be based on rural and urban population of each province or rural and urban population of the country (these files do not include such estimates).
 
 
 https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights76.rda
