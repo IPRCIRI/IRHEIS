@@ -69,7 +69,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleD <- MD[ TFoodExpenditure_Per>0.9*FPLine & TFoodExpenditure_Per<1.1*FPLine,
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster)]
-  EngleP <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
+  EngleP <- MD[ ,
                 .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                   FPLine=mean(FPLine)),by=.(Region,NewArea2)]
   save(EngleP,file = "EngleP.rda")
