@@ -10,7 +10,7 @@ startyear: 95.0
 endyear: 95.0
 baseyear: 95.0
 OS: Windows
-RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_96_Info/
+RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
 MetaDataFilePath: ../Data/MetaData.xlsx
 GeoInfoFilePath: ../Data/GeoInfo.Shahrestan.xlsx
 MDS_CFN: CompressedFileNames

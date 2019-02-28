@@ -32,10 +32,10 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[,FPLine:=NULL]    
     MDP <- MD[ThisIterationPoor==1,
               .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
-              by=.(NewArea,Region)]
-    MD <- merge(MD,MDP,by=c("Region","NewArea"))
+              by=.(cluster2,Region)]
+    MD <- merge(MD,MDP,by=c("Region","cluster2"))
 #    print(MDP)
-    x<-MD[,.(cluster,Region,FPLine,InitialPoor)]
+    x<-MD[,.(cluster2,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
@@ -45,7 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,
             #  Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
             #  FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor)]
-  MD <- MD[,.(HHID,Region,NewArea,NewArea2,cluster,ProvinceCode,Size,HAge,HSex,
+  MD <- MD[,.(HHID,Region,NewArea,NewArea2,cluster2,ProvinceCode,Size,HAge,HSex,
               HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
               Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
               FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
@@ -53,7 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per,EqSizeRevOECD,EqSizeCalory,Decile)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster,Percentile,FinalFoodPoor)]
+  MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster2,Percentile,FinalFoodPoor)]
   UrbanFinalfood<-MDFinalfood[Region=="Urban"]
   RuralFinalfood<-MDFinalfood[Region=="Rural"]
   save(UrbanFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"UrbanFinalfood.rda"))
