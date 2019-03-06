@@ -66,14 +66,14 @@ b<-MD[Region=="Urban" & NewArea==2301,.(Engel)]
 t.test(a$Engel,b$Engel, var.equal=401, paired=FALSE)
 
 #####Rasht
-a<-MD[Region=="Urban" & NewArea==1,.(Engel)]
-b<-MD[Region=="Urban" & NewArea==105,.(Engel)]
-t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
+#a<-MD[Region=="Urban" & NewArea==1,.(Engel)]
+#b<-MD[Region=="Urban" & NewArea==105,.(Engel)]
+#t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
 
 #####Zahedan
-a<-MD[Region=="Urban" & NewArea==11,.(Engel)]
-b<-MD[Region=="Urban" & NewArea==1105,.(Engel)]
-t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
+#a<-MD[Region=="Urban" & NewArea==11,.(Engel)]
+#b<-MD[Region=="Urban" & NewArea==1105,.(Engel)]
+#t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
 
 #####Kerman
 a<-MD[Region=="Urban" & NewArea==8,.(Engel)]
@@ -164,14 +164,14 @@ b<-MDH[Region=="Urban" & NewArea==2301,.(Engel)]
 t.test(a$Engel,b$Engel, var.equal=401, paired=FALSE)
 
 #####Rasht
-a<-MDH[Region=="Urban" & NewArea==1,.(Engel)]
-b<-MDH[Region=="Urban" & NewArea==105,.(Engel)]
-t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
+#a<-MDH[Region=="Urban" & NewArea==1,.(Engel)]
+#b<-MDH[Region=="Urban" & NewArea==105,.(Engel)]
+#t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
 
 #####Zahedan
-a<-MDH[Region=="Urban" & NewArea==11,.(Engel)]
-b<-MDH[Region=="Urban" & NewArea==1105,.(Engel)]
-t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
+#a<-MDH[Region=="Urban" & NewArea==11,.(Engel)]
+#b<-MDH[Region=="Urban" & NewArea==1105,.(Engel)]
+#t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
 
 #####Kerman
 a<-MDH[Region=="Urban" & NewArea==8,.(Engel)]

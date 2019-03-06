@@ -20,69 +20,69 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  EngleNewUrban1 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & cluster==1]
-  EngleNewUrban2 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & cluster==2]
-  EngleNewUrban3 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & cluster==3]
-  EngleNewUrban4 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & cluster==4]
+  EngleNewUrban1 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & NewArea==1]
+  EngleNewUrban2 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & NewArea==2]
+  EngleNewUrban3 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & NewArea==3]
+  EngleNewUrban4 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Urban" & NewArea==4]
   EngleNewUrban<-rbind(EngleNewUrban1,EngleNewUrban2,EngleNewUrban3,EngleNewUrban4)
   save(EngleNewUrban,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleNewUrban.rda"))
   
   
-  EngleNewRural1 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & cluster==1]
-  EngleNewRural2 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & cluster==2]
-  EngleNewRural3 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & cluster==3]
-  EngleNewRural4 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & cluster==4]
-  EngleNewRural5 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & cluster==5]
+  EngleNewRural1 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & NewArea==1]
+  EngleNewRural2 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & NewArea==2]
+  EngleNewRural3 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & NewArea==3]
+  EngleNewRural4 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & NewArea==4]
+  EngleNewRural5 <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine & Region=="Rural" & NewArea==5]
   EngleNewRural<-rbind(EngleNewRural1,EngleNewRural2,EngleNewRural3,EngleNewRural4,EngleNewRural5)
   save(EngleNewRural,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleNewRural.rda"))
   
-  EngleNewUnderUrban1 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & cluster==1]
-  EngleNewUnderUrban2 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & cluster==2]
-  EngleNewUnderUrban3 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & cluster==3]
-  EngleNewUnderUrban4 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & cluster==4]
+  EngleNewUnderUrban1 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & NewArea==1]
+  EngleNewUnderUrban2 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & NewArea==2]
+  EngleNewUnderUrban3 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & NewArea==3]
+  EngleNewUnderUrban4 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Urban" & NewArea==4]
   EngleNewUnderUrban<-rbind(EngleNewUnderUrban1,EngleNewUnderUrban2,EngleNewUnderUrban3,EngleNewUnderUrban4)
   save(EngleNewUnderUrban,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleNewUnderUrban.rda"))
   
-  EngleNewUnderRural1 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & cluster==1]
-  EngleNewUnderRural2 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & cluster==2]
-  EngleNewUnderRural3 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & cluster==3]
-  EngleNewUnderRural4 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & cluster==4]
-  EngleNewUnderRural5 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & cluster==5]
+  EngleNewUnderRural1 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & NewArea==1]
+  EngleNewUnderRural2 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & NewArea==2]
+  EngleNewUnderRural3 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & NewArea==3]
+  EngleNewUnderRural4 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & NewArea==4]
+  EngleNewUnderRural5 <- MD[TFoodExpenditure_Per<0.9*FPLine & Region=="Rural" & NewArea==5]
   EngleNewUnderRural<-rbind(EngleNewUnderRural1,EngleNewUnderRural2,EngleNewUnderRural3,EngleNewUnderRural4,EngleNewUnderRural5)
   save(EngleNewUnderRural,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleNewUnderRural.rda"))
   
-  EngleNewAboveUrban1 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & cluster==1]
-  EngleNewAboveUrban2 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & cluster==2]
-  EngleNewAboveUrban3 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & cluster==3]
-  EngleNewAboveUrban4 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & cluster==4]
+  EngleNewAboveUrban1 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & NewArea==1]
+  EngleNewAboveUrban2 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & NewArea==2]
+  EngleNewAboveUrban3 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & NewArea==3]
+  EngleNewAboveUrban4 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Urban" & NewArea==4]
   EngleNewAboveUrban<-rbind(EngleNewAboveUrban1,EngleNewAboveUrban2,EngleNewAboveUrban3,EngleNewAboveUrban4)
   save(EngleNewAboveUrban,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleNewAboveUrban.rda"))
   
-  EngleNewAboveRural1 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & cluster==1]
-  EngleNewAboveRural2 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & cluster==2]
-  EngleNewAboveRural3 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & cluster==3]
-  EngleNewAboveRural4 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & cluster==4]
-  EngleNewAboveRural5 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & cluster==5]
+  EngleNewAboveRural1 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & NewArea==1]
+  EngleNewAboveRural2 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & NewArea==2]
+  EngleNewAboveRural3 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & NewArea==3]
+  EngleNewAboveRural4 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & NewArea==4]
+  EngleNewAboveRural5 <- MD[TFoodExpenditure_Per>1.1*FPLine  & Region=="Rural" & NewArea==5]
   EngleNewAboveRural<-rbind(EngleNewAboveRural1,EngleNewAboveRural2,EngleNewAboveRural3,EngleNewAboveRural4,EngleNewAboveRural5)
   save(EngleNewAboveRural,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleNewAboveRural.rda"))
   
   EngleD <- MD[ TFoodExpenditure_Per>0.9*FPLine & TFoodExpenditure_Per<1.1*FPLine,
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,cluster)]
+                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
   EngleP <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
                 .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                   FPLine=mean(FPLine)),by=.(Region,NewArea2)]
   save(EngleP,file = "EngleP.rda")
   EngleD[,PovertyLine:=FPLine/Engel]
   EngleP[,PovertyLine:=FPLine/Engel]
-  MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine,Engel)],by=c("Region","cluster"))
+  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   #MD<-MD[Region=="Urban" & NewArea==2301]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea")][order(Region,NewArea)]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
   MD[,weighted.mean(FinalPoor,Weight),by=c("Region")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }
@@ -112,8 +112,8 @@ y3<-EngleP[Region=="Urban",.(PovertyLine,NewArea2)]
 y3$NewArea <- factor(y3$NewArea, levels = y3$NewArea[order(y3$PovertyLine)])
 ggplot(y3, aes(x = y3$NewArea, y = y3$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
-#NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,FinalPoor)]
-NewFinalPoor<-MD[,.(HHID,Region,NewArea,cluster,Weight,HAge,HSex,
+#NewFinalPoor<-MD[,.(HHID,Region,NewArea,NewArea,FinalPoor)]
+NewFinalPoor<-MD[,.(HHID,Region,NewArea,NewArea,Weight,HAge,HSex,
                     ProvinceCode,Size,HLiterate,HEduLevel0,Area,
                     Rooms,MetrPrice, HActivityState,FinalPoor)]
                    

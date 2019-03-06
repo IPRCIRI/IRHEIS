@@ -26,30 +26,33 @@ dt2Rural<-MD[Region=="Rural",.(NewArea,NewArea2,Region,HHID)]
 #####Urban#####
 dt2Urban<-dt2Urban[NewArea2=="Sh_Tehran",cluster2:=1]
 dt2Urban<-dt2Urban[NewArea2=="Sh_Shiraz" | NewArea2=="Sh_Esfahan" |
-              NewArea2=="Sh_Bandarabas" | NewArea2=="Sh_Mashhad" |
-              NewArea2=="Ghom" | NewArea2=="Gilan" | NewArea2=="Sh_Ahvaz" |
-              NewArea2=="Sh_Karaj" | NewArea2=="Sh_Tabriz" |
-              NewArea2=="Mazandaran" | NewArea2=="Tehran" ,
+              NewArea2=="Sh_Bandarabas" | NewArea2=="Gilan" |
+              NewArea2=="Sh_Karaj" | NewArea2=="Sh_Arak" |
+              NewArea2=="Mazandaran"  ,
               cluster2:=2]
-dt2Urban<-dt2Urban[NewArea2=="Esfahan" | NewArea2=="Golestan" |
-              NewArea2=="Sh_Kermanshah" | NewArea2=="Kermanshah" |
-              NewArea2=="Az_Sharghi" | NewArea2=="Az_Gharbi" |
-              NewArea2=="Hamedan" | NewArea2=="Semnan" |
-              NewArea2=="Alborz" | NewArea2=="Markazi" |
-              NewArea2=="Yazd" | NewArea2=="Zanjan" |
-              NewArea2=="Kerman" | NewArea2=="Az_Gharbi" |
-              NewArea2=="Ghazvin" | NewArea2=="Booshehr" |
-              NewArea2=="Fars" | NewArea2=="Khorasan_Shomali" |
-              NewArea2=="Lorestan" ,
+dt2Urban<-dt2Urban[NewArea2=="Ghom" | NewArea2=="Alborz" |
+              NewArea2=="Sh_Kermanshah" | NewArea2=="Hamedan" |
+              NewArea2=="Az_Sharghi" | NewArea2=="Sh_Tabriz" |
+              NewArea2=="Tehran" | NewArea2=="Semnan" |
+              NewArea2=="Sh_Urmia" | NewArea2=="Sh_Mashhad" |
+              NewArea2=="Esfahan" | NewArea2=="Fars" |
+              NewArea2=="Sh_Kerman" | NewArea2=="Ghazvin" ,
               cluster2:=3]
-dt2Urban<-dt2Urban[NewArea2=="Ardebil" | NewArea2=="Lorestan" |
-               NewArea2=="Ilam" | NewArea2=="Kordestan" |
-               NewArea2=="Chaharmahal" | NewArea2=="Khoozestan" |
-               NewArea2=="Khorasan_Jonoobi" | 
-               NewArea2=="Hormozgan" | NewArea2=="Kohkilooye" |
-               NewArea2=="Khorasan_Razavi",
+dt2Urban<-dt2Urban[NewArea2=="Zanjan" | NewArea2=="Golestan" |
+               NewArea2=="Kermanshah" | NewArea2=="Markazi" |
+               NewArea2=="Yazd" | NewArea2=="Kordestan" |
+               NewArea2=="Chaharmahal" | 
+               NewArea2=="Ardebil" | NewArea2=="Booshehr" |
+               NewArea2=="Sh_Ahvaz" | NewArea2=="Kerman" |
+               NewArea2=="Lorestan" | NewArea2=="Az_Gharbi" |
+                 NewArea2=="Khorasan_Shomali",
                cluster2:=4]
-dt2Urban<-dt2Urban[NewArea2=="Sistan",cluster2:=5]
+dt2Urban<-dt2Urban[NewArea2=="Khoozestan" |NewArea2=="Ilam" |
+                     NewArea2=="Khorasan_Jonoobi" | 
+                     NewArea2=="Hormozgan" | NewArea2=="Kohkilooye" |
+                     NewArea2=="Khorasan_Razavi",
+                   cluster2:=5]
+dt2Urban<-dt2Urban[NewArea2=="Sistan",cluster2:=6]
 
 #####Rural#####
 dt2Rural<-dt2Rural[NewArea2=="Tehran" | NewArea2=="Alborz",
