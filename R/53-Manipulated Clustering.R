@@ -50,7 +50,7 @@ dt2Urban<-dt2Urban[NewArea2=="Zanjan" | NewArea2=="Golestan" |
 dt2Urban<-dt2Urban[NewArea2=="Khoozestan" |NewArea2=="Ilam" |
                      NewArea2=="Khorasan_Jonoobi" | 
                      NewArea2=="Hormozgan" | NewArea2=="Kohkilooye" |
-                     NewArea2=="Khorasan_Razavi",
+                     NewArea2=="Khorasan_Razavi" | NewArea2=="Sh_Zahedan",
                    cluster2:=5]
 dt2Urban<-dt2Urban[NewArea2=="Sistan",cluster2:=6]
 

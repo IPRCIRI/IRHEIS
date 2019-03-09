@@ -84,8 +84,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[Region=="Urban" & 
            CountyCode %in% c(2301,303,603,707,
                              916,1002,3001,502,2202,
-                             401,808,1),
-                            # 1304,2105,105,1105
+                             401,808,1,1105),
+                            # 1304,2105,105
          NewArea:=CountyCode]
   
   HHBase[,NewArea2:=as.factor(NewArea)]
@@ -132,7 +132,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[NewArea==2202,NewArea2:="Sh_Bandarabas"]
   HHBase[NewArea==401,NewArea2:="Sh_Urmia"]
   #HHBase[NewArea==105,NewArea2:="Sh_Rasht"]
-  #HHBase[NewArea==1105,NewArea2:="Sh_Zahedan"]
+  HHBase[NewArea==1105,NewArea2:="Sh_Zahedan"]
   HHBase[NewArea==808,NewArea2:="Sh_Kerman"]
   #HHBase[NewArea==1304,NewArea2:="Sh_Hamedan"]
   #HHBase[NewArea==2105,NewArea2:="Sh_Yazd"]
