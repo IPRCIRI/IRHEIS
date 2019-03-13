@@ -6,12 +6,12 @@ HEISProcessedPath: D:/HEIS/DataProcessed/
 HEISResultsPath: D:/HEIS/DataResults/
 HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
-startyear: 90.0
+startyear: 96.0
 endyear: 96.0
 baseyear: 95.0
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
-MetaDataFilePath: ../Data/MetaData.xlsx
+MetaDataFilePath: ../Data/MetaData2.xlsx
 GeoInfoFilePath: ../Data/GeoInfo.Shahrestan.xlsx
 MDS_CFN: CompressedFileNames
 MDS_P1Cols: P1Cols
@@ -22,7 +22,8 @@ MDS_Food: FoodTables
 MDS_Sheep: SheepTables
 MDS_Cow: CowTables
 MDS_Morgh: MorghTables
-MDS_Berenj: BerenjTables
+MDS_BerenjI: BerenjITables
+MDS_BerenjF: BerenjFTables
 MDS_Roghan: RoghanTables
 MDS_Tokhmemorgh: TokhmemorghTables
 MDS_Nokhod: NokhodTables
