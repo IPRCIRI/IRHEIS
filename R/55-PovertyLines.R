@@ -37,14 +37,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleD[,PovertyLine:=FPLine/Engel]
   EngleP[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
-
-  #MD<-MD[Region=="Urban" & NewArea==2301]
+  EngleD[,P4:=PovertyLine*2.7]
+  #MD<-MD[Region=="Rural"]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")][order(Region,cluster3)]
   MD[,weighted.mean(FinalPoor,Weight),by=c("Region")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }

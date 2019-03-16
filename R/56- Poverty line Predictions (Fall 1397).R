@@ -77,26 +77,26 @@ for (col in c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp",
 load(file="PriceIndex9697.rda")
 MD<-merge(MD,PriceIndex9697,by =c("ProvinceCode"),all.x=TRUE)
 
-MD$FoodExpenditure<-MD$FoodExpenditure*MD$spring971food_index/MD$total961food_index
-MD$Cigar_Exp<-MD$Cigar_Exp*MD$spring971cigar_index/MD$total961cigar_index
-MD$Cloth_Exp<-MD$Cloth_Exp*MD$spring971cloth_index/MD$total961cloth_index
-MD$Amusement_Exp<-MD$Amusement_Exp*MD$spring971amusement_index/MD$total961amusement_index
-MD$Communication_Exp<-MD$Communication_Exp*MD$spring971communication_index/MD$total961communication_index
-MD$EducExpenditure<-MD$EducExpenditure*MD$spring971education_index/MD$total961education_index
-MD$Energy_Exp<-MD$Energy_Exp*MD$spring971house_energy_index/MD$total961house_energy_index
-MD$Furniture_Exp<-MD$Furniture_Exp*MD$spring971furniture_index/MD$total961furniture_index
-MD$Hotel_Exp<-MD$Hotel_Exp*MD$spring971hotel_index/MD$total961hotel_index
-MD$Behdasht_Exp<-MD$Behdasht_Exp*MD$spring971behdasht_index/MD$total961behdasht_index
-MD$Transportation_Exp<-MD$Transportation_Exp*MD$spring971transportation_index/MD$total961transportation_index
-MD$Other_Exp<-MD$Other_Exp*MD$spring971other_index/MD$total961other_index
-MD$ServiceExp<-MD$ServiceExp*MD$spring971house_energy_index/MD$total961house_energy_index
-MD$Medical_Exp<-MD$Medical_Exp*MD$spring971behdasht_index/MD$total961behdasht_index
+MD$FoodExpenditure<-MD$FoodExpenditure*MD$fall971food_index/MD$total961food_index
+MD$Cigar_Exp<-MD$Cigar_Exp*MD$fall971cigar_index/MD$total961cigar_index
+MD$Cloth_Exp<-MD$Cloth_Exp*MD$fall971cloth_index/MD$total961cloth_index
+MD$Amusement_Exp<-MD$Amusement_Exp*MD$fall971amusement_index/MD$total961amusement_index
+MD$Communication_Exp<-MD$Communication_Exp*MD$fall971communication_index/MD$total961communication_index
+#MD$EducExpenditure<-MD$EducExpenditure*MD$fall971education_index/MD$total961education_index
+MD$Energy_Exp<-MD$Energy_Exp*MD$fall971house_energy_index/MD$total961house_energy_index
+MD$Furniture_Exp<-MD$Furniture_Exp*MD$fall971furniture_index/MD$total961furniture_index
+MD$Hotel_Exp<-MD$Hotel_Exp*MD$fall971hotel_index/MD$total961hotel_index
+MD$Behdasht_Exp<-MD$Behdasht_Exp*MD$fall971behdasht_index/MD$total961behdasht_index
+MD$Transportation_Exp<-MD$Transportation_Exp*MD$fall971transportation_index/MD$total961transportation_index
+MD$Other_Exp<-MD$Other_Exp*MD$fall971other_index/MD$total961other_index
+MD$ServiceExp<-MD$ServiceExp*MD$fall971house_energy_index/MD$total961house_energy_index
+MD$Medical_Exp<-MD$Medical_Exp*MD$fall971behdasht_index/MD$total961behdasht_index
 MD$Durable_Exp<-MD$Durable_Exp*MD$azar97/MD$total96
-MD$Resturant_Exp<-MD$Resturant_Exp*MD$spring971hotel_index/MD$total961hotel_index
+MD$Resturant_Exp<-MD$Resturant_Exp*MD$fall971hotel_index/MD$total961hotel_index
 
 #Calculate Monthly Total Expenditures 
 nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
-        "Amusement_Exp", "Communication_Exp", "EducExpenditure",
+        "Amusement_Exp", "Communication_Exp",
         "Energy_Exp", "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", 
         "Transportation_Exp", "Other_Exp", "ServiceExp")
 w <- c(nw, "Medical_Exp", "Durable_Exp")
@@ -192,16 +192,14 @@ setnames(MD,"NewPoor","InitialPoor")
 MD[,weighted.mean(InitialPoor,Weight), by=.(NewArea,Region)]
 save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
-load(file="dtpastUrban.rda")
-load(file="dtpastRural.rda")
-dt2total<-rbind(dtpastUrban,dtpastRural)
-
-#load(file="dt2Urban.rda")
-#load(file="dt2Rural.rda")
-#dt2total<-rbind(dt2Urban,dt2Rural)
+load(file="dt2Urban.rda")
+load(file="dt2Rural.rda")
+dt2total<-rbind(dt2Urban,dt2Rural)
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-MD<-merge(MD,dt2total,by=c("NewArea","Region"),all.x=TRUE)
+dt2total <- dt2total[,lapply(.SD,sum),by=.(Region, NewArea,NewArea2,cluster3)]
+dt2total[,HHID:=NULL]
+MD<-merge(MD,dt2total,by=c("NewArea","Region","NewArea2"),all.x=TRUE)
 
 #Determine Food (Equal 2100 KCal) Bundle
 MD[,NewPoor:=InitialPoor]
@@ -214,17 +212,17 @@ while(MD[(NewPoor-OldPoor)!=0,.N]>5  & i <=15){
   MD[,FPLine:=NULL]    
   MDP <- MD[ThisIterationPoor==1,
             .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
-            by=.(cluster,Region)]
-  MD <- merge(MD,MDP,by=c("Region","cluster"))
+            by=.(cluster3,Region)]
+  MD <- merge(MD,MDP,by=c("Region","cluster3"))
   #    print(MDP)
-  x<-MD[,.(cluster,Region,FPLine,InitialPoor)]
+  x<-MD[,.(cluster3,Region,FPLine,InitialPoor)]
   MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
   print(table(MD[,.(ThisIterationPoor,NewPoor)]))
   MD[,OldPoor:=ThisIterationPoor]
 }
 
 MD[,FinalFoodPoor:=OldPoor]
-MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,HAge,HSex,
+MD <- MD[,.(HHID,Region,NewArea,cluster3,ProvinceCode,Size,HAge,HSex,
             HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
             Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
             FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
@@ -233,17 +231,17 @@ MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,HAge,HSex,
 
 EngleD <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
              .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-               FPLine=mean(FPLine)),by=.(Region,cluster)]
+               FPLine=mean(FPLine)),by=.(Region,cluster3)]
 EngleD[,PovertyLine:=FPLine/Engel]
-MD <- merge(MD,EngleD[,.(cluster,Region,PovertyLine,Engel)],by=c("Region","cluster"))
-MD<-MD[Region=="Urban" & NewArea==2301]
+MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
+MD<-MD[Region=="Rural" ]
 MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
 cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
     MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
     MD[,weighted.mean(Engel,Weight*Size)],"\t",
     MD[,weighted.mean(FPLine,Weight*Size)])
 #MD[,weighted.mean(FinalPoor,Weight*Size),by=.(Region,NewArea)][order(V1)]
-MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster")]
+MD[,weighted.mean(FinalPoor,Weight),by=c("Region","cluster3")]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

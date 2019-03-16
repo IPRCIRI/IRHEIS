@@ -201,9 +201,37 @@ a<-MDH[Region=="Rural" & NewArea==30,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=30 & cluster3==1,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
+a<-MDH[Region=="Rural" & NewArea==23,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=23 & cluster3==1,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
 #####Cluster 2
+a<-MDH[Region=="Rural" & NewArea==1,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=1 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
 a<-MDH[Region=="Rural" & NewArea==2,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=2 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==10,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=10 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==21,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=21 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==17,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=17 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==18,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=18 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==22,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=22 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
 #####Cluster 3

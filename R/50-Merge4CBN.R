@@ -79,7 +79,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #Calculate Monthly Total Expenditures 
   nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
-          "Amusement_Exp", "Communication_Exp", "EducExpenditure",
+          "Amusement_Exp", "Communication_Exp", 
           "Energy_Exp", "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", 
           "Transportation_Exp", "Other_Exp", "ServiceExp")
   w <- c(nw, "Medical_Exp", "Durable_Exp")
