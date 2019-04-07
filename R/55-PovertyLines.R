@@ -38,7 +38,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleP[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   EngleD[,P4:=PovertyLine*2.7]
-  #MD<-MD[Region=="Rural"]
+  MD<-MD[Region=="Urban"]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
