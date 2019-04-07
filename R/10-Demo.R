@@ -28,13 +28,12 @@ years <- Settings$startyear:Settings$endyear
 
 for(year in years){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
-
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
-  if(year<=87){
+  if(year<=84){
     EduCodeT <- EduCodesA
-  }else if(year %in% 88:92){
+  }else if(year %in% 85:92){
     EduCodeT <- EduCodesB
   }else{
     EduCodeT <- EduCodesC
@@ -175,7 +174,15 @@ for(year in years){
   P1<-P1[Relationship== 'Head']
   HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-}
+  #load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  #HHWeights<- as.data.table(HHWeights)
+  #HHWeights[,Year:=NULL]
+  #HHBase<-merge(HHBase,HHWeights)
+  #HHBase<-HHBase[Region=="Urban"]
+  #cat(paste0("--",year))
+  #cat(paste0(",",HHBase[,mean(Dimension,na.rm = TRUE)],"\n"))
+  #cat(paste0(",",HHBase[,weighted.mean(Dimension,Weight,na.rm = TRUE)],"\n"))
+    }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

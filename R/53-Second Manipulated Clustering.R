@@ -8,6 +8,7 @@ rm(list=ls())
 starttime <- proc.time()
 cat("\n\n================ Prepare Data =====================================\n")
 library(yaml)
+library(dplyr)
 Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
@@ -85,14 +86,14 @@ save(dt2Rural,file ="dt2Rural.rda")
 dt2total<-rbind(dt2Urban,dt2Rural)
 
 
-dt2total[,Region:=NULL]
-dt2total[,NewArea:=NULL]
+dt2total[,HHID:=NULL]
 dt2total[,NewArea2:=NULL]
+dt2total<-distinct(dt2total)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  MD<-merge(MD,dt2total,by=c("HHID"))
+  MD<-merge(MD,dt2total,by=c("NewArea","Region"))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 }
 
