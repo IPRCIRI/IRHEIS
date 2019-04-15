@@ -36,10 +36,18 @@ for(year in years){
     P2 <- cbind(P2c,P2nc)[,nP2,with=FALSE]
   }
   
-  a <- unlist(P2Cols[P2Cols$Year==year,])
-  ind <- which(!is.na(a))[-1]
-  setnames(P2,names(a[ind]))
+  if(year==96){
+    a <- unlist(P2Cols[P2Cols$Year==year,])
+    ind <- which(!is.na(a))[2:46]
+    setnames(P2,names(a[ind]))
+    
+  }else if(year %in% 89:95){
+    a <- unlist(P2Cols[P2Cols$Year==year,])
+    ind <- which(!is.na(a))[-1]
+    setnames(P2,names(a[ind]))
+  }
   
+
   f <- function(x){as.numeric(str_trim(x))}
   P2 <- P2[, lapply(.SD, f)] 
   HHHouseProperties<-P2
