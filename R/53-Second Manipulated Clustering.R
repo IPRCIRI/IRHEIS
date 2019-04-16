@@ -58,42 +58,42 @@ dt2Urban<-dt2Urban[NewArea2=="Sistan"
                    ,cluster3:=7]
 save(dt2Urban,file ="dt2Urban.rda")
 #####Rural#####
-dt2Rural<-dt2Rural[NewArea2=="Tehran" | NewArea2=="Alborz",
+dt2Rural<-dt2Rural[ NewArea2=="Tehran" | NewArea2=="Alborz",
                    cluster3:=1]
-dt2Rural<-dt2Rural[NewArea2=="Esfahan" | NewArea2=="Yazd" |
-                     NewArea2=="Kohkilooye" | NewArea2=="Booshehr" |
-                     NewArea2=="Hormozgan" |
-                     NewArea2=="Mazandaran" | NewArea2=="Gilan" ,
+dt2Rural<-dt2Rural[NewArea2=="Esfahan" | NewArea2=="Mazandaran" ,
                    cluster3:=2]
-dt2Rural<-dt2Rural[NewArea2=="Az_Sharghi" | NewArea2=="Ghom" |
+dt2Rural<-dt2Rural[ NewArea2=="Yazd" |
+                     NewArea2=="Kohkilooye" | NewArea2=="Booshehr" |
+                       NewArea2=="Gilan" ,
+                   cluster3:=3]
+dt2Rural<-dt2Rural[ NewArea2=="Hormozgan" | NewArea2=="Az_Sharghi" | NewArea2=="Ghom" |
                      NewArea2=="Fars" | NewArea2=="Ghazvin"|
                      NewArea2=="Zanjan" | NewArea2=="Chaharmahal"|
                      NewArea2=="Ardebil" | NewArea2=="Semnan"|
                      NewArea2=="Markazi" | NewArea2=="Kordestan"|
                      NewArea2=="Khoozestan",
-                   cluster3:=3]
+                   cluster3:=4]
 dt2Rural<-dt2Rural[NewArea2=="Khorasan_Razavi" | NewArea2=="Kermanshah" |
                      NewArea2=="Kerman" | NewArea2=="Golestan" |
                      NewArea2=="Hamedan" ,
-                   cluster3:=4]
+                   cluster3:=5]
 dt2Rural<-dt2Rural[NewArea2=="Khorasan_Jonoobi" | NewArea2=="Lorestan" |
                      NewArea2=="Khorasan_Shomali" | NewArea2=="Az_Gharbi" |
                      NewArea2=="Ilam" ,
-                   cluster3:=5]
-dt2Rural<-dt2Rural[NewArea2=="Sistan",cluster3:=6]
+                   cluster3:=6]
+dt2Rural<-dt2Rural[NewArea2=="Sistan",cluster3:=7]
 save(dt2Rural,file ="dt2Rural.rda")
 #####Merge#####
 dt2total<-rbind(dt2Urban,dt2Rural)
 
 
 dt2total[,HHID:=NULL]
-dt2total[,NewArea2:=NULL]
 dt2total<-distinct(dt2total)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  MD<-merge(MD,dt2total,by=c("NewArea","Region"))
+  MD<-merge(MD,dt2total,by=c("NewArea","NewArea2","Region"))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 }
 
