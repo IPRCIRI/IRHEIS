@@ -197,6 +197,58 @@ for(year in years){
   P2[,ego := factor(ego, levels=0:1,
                        labels=c("False","True"))]
   
+  if(year %in% 89:95){
+    P2[,party_month := factor(party_month, levels=0:1,
+                            labels=c("False","True"))]
+    
+    P2[,party_year := factor(party_year, levels=0:2,
+                            labels=c("False","none","True"))]
+    
+    P2[,ceremony_month := factor(ceremony_month, levels=0:1,
+                            labels=c("False","True"))]
+    
+    P2[,ceremony_year := factor(ceremony_year, levels=0:2,
+                            labels=c("False","none","True"))]
+    
+    P2[,homerepaire_month := factor(homerepaire_month, levels=0:1,
+                            labels=c("False","True"))]
+    
+    P2[,homerepaire_year := factor(homerepaire_year, levels=0:2,
+                            labels=c("False","none","True"))]
+    
+    P2[,prtrip_month := factor(prtrip_month, levels=0:1,
+                            labels=c("False","True"))]
+    
+    P2[,prtrip_year := factor(prtrip_year, levels=0:2,
+                            labels=c("False","none","True"))]
+    
+    P2[,frtrip_month := factor(frtrip_month, levels=0:1,
+                            labels=c("False","True"))]
+    
+    P2[,frtrip_year := factor(frtrip_year, levels=0:2,
+                            labels=c("False","none","True"))]
+    
+    P2[,bastari_month := factor(bastari_month, levels=0:1,
+                            labels=c("False","True"))]
+    
+    P2[,bastari_year := factor(bastari_year, levels=0:2,
+                            labels=c("False","none","True"))]
+    
+    P2[,operation_month := factor(operation_month, levels=0:1,
+                            labels=c("False","True"))]
+    
+    if(year %in% 91:95){
+    P2[,operation_year := factor(operation_year, levels=0:2,
+                            labels=c("False","none","True"))]
+    }
+    
+    P2[,other_year := factor(other_year, levels=0:1,
+                            labels=c("False","True"))]
+    
+    P2[,noceremony := factor(noceremony, levels=0:1,
+                            labels=c("False","True"))]
+  }
+  
   HHHouseProperties<-P2
   save(HHHouseProperties, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   

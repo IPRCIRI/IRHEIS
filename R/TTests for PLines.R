@@ -33,22 +33,25 @@ a<-MDH[Region=="Urban" & NewArea==3001,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Urban" & NewArea!=3001 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
-a<-MDH[Region=="Urban" & NewArea==30,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Urban" & NewArea!=30 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
 a<-MDH[Region=="Urban" & NewArea==2202,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Urban" & NewArea!=2202 & cluster3==2,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+#####Cluster 8
+a<-MDH[Region=="Urban" & NewArea==30,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Urban" & NewArea!=30 & cluster3==8,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Urban" & NewArea2=="Gilan",.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Urban" & NewArea2!="Gilan" & cluster3==8,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
 
 #####Cluster 3
 a<-MDH[Region=="Urban" & NewArea==23,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Urban" & NewArea!=23 & cluster3==3,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
-a<-MDH[Region=="Urban" & NewArea2=="Gilan",.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Urban" & NewArea2!="Gilan" & cluster3==3,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
 a<-MDH[Region=="Urban" & NewArea2=="Sh_Arak",.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Urban" & NewArea2!="Sh_Arak" & cluster3==3,.(PersonalPLine,cluster3,NewArea2)]
@@ -111,11 +114,12 @@ a<-MDH[Region=="Urban" & NewArea==13,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Urban" & NewArea!=13 & cluster3==3,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
-#####Cluster 4
 a<-MDH[Region=="Urban" & NewArea==20,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Urban" & NewArea!=20 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Urban" & NewArea!=20 & cluster3==3,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
+
+#####Cluster 4
 a<-MDH[Region=="Urban" & NewArea==3,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Urban" & NewArea!=3 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
@@ -237,46 +241,12 @@ a<-MDH[Region=="Rural" & NewArea==22,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=22 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
-
-#####Cluster 4
-a<-MDH[Region=="Rural" & NewArea==0,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=0 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
 a<-MDH[Region=="Rural" & NewArea==3,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=3 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
-a<-MDH[Region=="Rural" & NewArea==6,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=6 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
 a<-MDH[Region=="Rural" & NewArea==7,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=7 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
-a<-MDH[Region=="Rural" & NewArea==12,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=12 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
-a<-MDH[Region=="Rural" & NewArea==14,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=14 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
-a<-MDH[Region=="Rural" & NewArea==19,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=19 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
-a<-MDH[Region=="Rural" & NewArea==20,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=20 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
-a<-MDH[Region=="Rural" & NewArea==22,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=22 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
-
-a<-MDH[Region=="Rural" & NewArea==24,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=24 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
 a<-MDH[Region=="Rural" & NewArea==25,.(PersonalPLine,cluster3,NewArea2)]
@@ -287,7 +257,43 @@ a<-MDH[Region=="Rural" & NewArea==26,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=26 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
+a<-MDH[Region=="Rural" & NewArea==20,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=20 & cluster3==4,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+#####Cluster 8
+a<-MDH[Region=="Rural" & NewArea==0,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=0 & cluster3==8,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==19,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=19 & cluster3==8,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==13,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=13 & cluster3==8,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+
 #####Cluster 5
+
+a<-MDH[Region=="Rural" & NewArea==6,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=6 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==12,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=12 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+a<-MDH[Region=="Rural" & NewArea==14,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=14 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
+
+a<-MDH[Region=="Rural" & NewArea==24,.(PersonalPLine,cluster3,NewArea2)]
+b<-MDH[Region=="Rural" & NewArea!=24 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
+t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
+
 a<-MDH[Region=="Rural" & NewArea==5,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=5 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
@@ -300,9 +306,6 @@ a<-MDH[Region=="Rural" & NewArea==9,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=9 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
-a<-MDH[Region=="Rural" & NewArea==13,.(PersonalPLine,cluster3,NewArea2)]
-b<-MDH[Region=="Rural" & NewArea!=13 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
-t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
 a<-MDH[Region=="Rural" & NewArea==27,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=27 & cluster3==5,.(PersonalPLine,cluster3,NewArea2)]
