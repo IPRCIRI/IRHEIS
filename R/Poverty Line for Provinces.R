@@ -42,10 +42,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   MD[,FinalFoodPoor:=OldPoor]
-  #MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,
+  #MD <- MD[,.(HHID,Region,NewArea,cluster3,ProvinceCode,Size,
   #  Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
   #  FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor)]
-  MD <- MD[,.(HHID,Region,NewArea,cluster,ProvinceCode,Size,HAge,HSex,
+  MD <- MD[,.(HHID,Region,NewArea,cluster3,ProvinceCode,Size,HAge,HSex,
               HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
               Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
               FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
@@ -53,7 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per,EqSizeRevOECD,EqSizeCalory,Decile)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster,Percentile,FinalFoodPoor)]
+  MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster3,Percentile,FinalFoodPoor)]
 }
 
 for(year in (Settings$startyear:Settings$endyear)){
@@ -76,7 +76,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(FPLine,Weight*Size)])
  
    MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea")][order(Region,NewArea)]
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster")]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }
 

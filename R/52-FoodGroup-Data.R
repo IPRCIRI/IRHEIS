@@ -79,7 +79,7 @@ library(imputeTS)
     load(paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
     
     TF <- merge(TF[,.(HHID,Code,Price,Expenditure,FGrams)],
-                HHBase[,.(HHID,Region,NewArea)], by="HHID")
+                HHBase[,.(HHID,Region,NewArea,NewArea2)], by="HHID")
     TF <- merge(TF, HHWeights[,.(HHID,Weight)])
     TF1 <- TF[,.(P=sum(Expenditure*Weight,na.rm = TRUE)/sum(FGrams*Weight,na.rm = TRUE),
                  X=sum(Expenditure*Weight,na.rm = TRUE)/sum(Weight,na.rm = TRUE)),

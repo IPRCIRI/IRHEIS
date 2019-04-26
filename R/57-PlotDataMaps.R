@@ -37,7 +37,7 @@ MapData <- rworldmap::joinData2Map(Poverty,                       # Joining the 
 plot(Seas,col="lightblue", border="lightblue")                      # plot seas
 plot(Lakes[c(15,25),],add=TRUE,col="lightblue", border="lightblue") # plot just Urmia and Qom lakes
 
-mapParams <- rworldmap::mapPolys(MapData, add = TRUE, nameColumnToPlot = "HCR",
+mapParams <- rworldmap::mapPolys(MapData, add = TRUE, nameColumnToPlot = "HCR95",
                                      colourPalette = "heat",
                                      mapTitle = paste0("Poverty Rate"),
                                      addLegend = FALSE)             # Plot data
