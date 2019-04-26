@@ -54,11 +54,11 @@ for(year in (Settings$startyear:Settings$endyear)){
     }
   }
   pcols <- intersect(names(OtherIncomeData),
-                     c("HHID","Code","Retirement","Rent",
+                     c("Code","Retirement","Rent",
                        "Interest","Aid","HomeProduction","Intra"))
   OtherIncomeData <- OtherIncomeData[,lapply(.SD, sum, na.rm=TRUE),
                                      by=HHID,.SDcols=pcols]
-  OtherIncomeData <- OtherIncomeData[,lapply(.SD, repna), .SDcols=pcols]
+  OtherIncomeData <- OtherIncomeData[,lapply(.SD, repna), by=HHID, .SDcols=pcols]
   OtherIncomeData[, OtherIncome := Reduce(`+`, .SD), .SDcols=pcols]
   save(OtherIncomeData, 
        file = paste0(Settings$HEISProcessedPath,"Y",year,"OtherIncome.rda"))
