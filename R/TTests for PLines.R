@@ -17,6 +17,7 @@ library(ggplot2)
 year<-95
 load("MD4test.rda")
 
+MDH <- TD[ TFoodExpenditure_Per>0.9*FPLine & TFoodExpenditure_Per<1.1*FPLine]
 
 ##############################################
 PPH <- MDH[ ,.(.N,PPLine=weighted.mean(PersonalPLine,Weight),
