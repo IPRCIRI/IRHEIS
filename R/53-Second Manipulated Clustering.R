@@ -27,7 +27,7 @@ dt2Rural<-MD[Region=="Rural",.(NewArea,NewArea2,Region,HHID)]
 #####Urban#####
 dt2Urban<-dt2Urban[NewArea2=="Sh_Tehran",cluster3:=1]
 dt2Urban<-dt2Urban[NewArea2=="Sh_Shiraz" | NewArea2=="Sh_Esfahan" |
-                     NewArea2=="Sh_Bandarabas" | NewArea2=="Alborz" |
+                     NewArea2=="Sh_Bandarabas" |
                      NewArea2=="Sh_Karaj" ,
                    cluster3:=2]
 dt2Urban<-dt2Urban[NewArea2=="Gilan" | NewArea2=="Alborz",
