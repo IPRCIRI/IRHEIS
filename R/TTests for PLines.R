@@ -17,7 +17,18 @@ library(ggplot2)
 year<-95
 load("MD4test.rda")
 
-MDH <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine]
+
+##############################################
+PPH <- MDH[ ,.(.N,PPLine=weighted.mean(PersonalPLine,Weight),
+               FPLine=mean(FPLine)),by=.(Region,NewArea2)]
+
+x2<-PPH[Region=="Rural",.(PPLine,NewArea2)]
+x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PPLine)])
+ggplot(x2, aes(x = x2$NewArea, y = x2$PPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+y2<-PPH[Region=="Urban",.(PPLine,NewArea2)]
+y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PPLine)])
+ggplot(y2, aes(x = y2$NewArea, y = y2$PPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 ###############Urban###############
 #####Cluster 2
@@ -333,17 +344,6 @@ a<-MDH[Region=="Rural" & NewArea==29,.(PersonalPLine,cluster3,NewArea2)]
 b<-MDH[Region=="Rural" & NewArea!=29 & cluster3==6,.(PersonalPLine,cluster3,NewArea2)]
 t.test(a$PersonalPLine,b$PersonalPLine, var.equal=TRUE, paired=FALSE)
 
-##############################################
-PPH <- MDH[ ,.(.N,PPLine=weighted.mean(PersonalPLine,Weight),
-                  FPLine=mean(FPLine)),by=.(Region,NewArea2)]
-
-x2<-PPH[Region=="Rural",.(PPLine,NewArea2)]
-x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PPLine)])
-ggplot(x2, aes(x = x2$NewArea, y = x2$PPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
-
-y2<-PPH[Region=="Urban",.(PPLine,NewArea2)]
-y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PPLine)])
-ggplot(y2, aes(x = y2$NewArea, y = y2$PPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
 

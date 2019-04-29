@@ -30,15 +30,12 @@ for(year in (Settings$startyear:Settings$endyear)){
                   FPLine=mean(FPLine)),by=.(Region,NewArea2)]
  
   MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
-  MD<-MD[,PersonalPLine:=FPLine/EngelPersonal]
-  save(MD,file = "MD4test.rda")
   
   save(EngleP,file = "EngleP.rda")
   EngleD[,PovertyLine:=FPLine/Engel]
   EngleP[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   EngleD[,P4:=PovertyLine*2.7]
-  MD<-MD[Region=="Urban" & NewArea==2301]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",

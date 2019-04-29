@@ -45,7 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD <- MD[,.(HHID,Region,NewArea,cluster3,ProvinceCode,Size,
   #  Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
   #  FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor)]
-  MD <- MD[,.(HHID,Region,NewArea,cluster3,ProvinceCode,Size,HAge,HSex,
+  MD <- MD[,.(HHID,Region,NewArea,NewArea2,cluster3,ProvinceCode,Size,HAge,HSex,
               HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
               Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
               FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
@@ -53,7 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per,EqSizeRevOECD,EqSizeCalory,Decile)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster3,Percentile,FinalFoodPoor)]
+  MDFinalfood<-MD[,.(HHID,Region,NewArea,NewArea2,cluster3,Percentile,FinalFoodPoor)]
 }
 
 for(year in (Settings$startyear:Settings$endyear)){
@@ -62,12 +62,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  
-  EngleD <- MD[TFoodExpenditure_Per<1.1*FPLine & TFoodExpenditure_Per>0.9*FPLine,
+
+  EngleD <- MD[TFoodExpenditure_Per<1.2*FPLine & TFoodExpenditure_Per>0.8*FPLine,
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,NewArea)]
+                 FPLine=mean(FPLine)),by=.(Region,NewArea2)]
   EngleD[,PovertyLine:=FPLine/Engel]
-  MD <- merge(MD,EngleD[,.(NewArea,Region,PovertyLine,Engel)],by=c("Region","NewArea"))
+  
+  MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
+  TD<-MD[,PersonalPLine:=FPLine/EngelPersonal]
+  save(TD,file = "MD4test.rda")
+  
+  MD <- merge(MD,EngleD[,.(NewArea2,Region,PovertyLine,Engel)],by=c("Region","NewArea2"))
   #MD<-MD[Region=="Urban" & NewArea==2301]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
@@ -75,10 +80,18 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
  
-   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea")][order(Region,NewArea)]
+   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }
+
+x2<-EngleD[Region=="Rural",.(PovertyLine,NewArea2)]
+x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLine)])
+ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+y2<-EngleD[Region=="Urban",.(PovertyLine,NewArea2)]
+y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PovertyLine)])
+ggplot(y2, aes(x = y2$NewArea, y = y2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
 endtime <- proc.time()
