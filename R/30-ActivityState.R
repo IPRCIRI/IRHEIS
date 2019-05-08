@@ -44,6 +44,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   TAct <- TAct[,pcols,with=FALSE]
   TAct <- TAct[!is.na(ActivityState)]
   save(TAct, file = paste0(Settings$HEISProcessedPath,"Y",year,"ActivityState.rda"))
+  TAct2<-TAct[ActivityState==1]
+  TAct2<-TAct2[,kar:=1]
+  TAct2 <- TAct2[,lapply(.SD,sum),by=HHID]
+  TAct2[,ActivityState:=NULL]
+  TAct2[,IndivNo:=NULL]
+  save(TAct2, file = paste0(Settings$HEISProcessedPath,"Y",year,"ActivityState2.rda"))
 
+  
 }
   
