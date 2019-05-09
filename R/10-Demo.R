@@ -31,9 +31,9 @@ for(year in years){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
-  if(year<=87){
+  if(year<=84){
     EduCodeT <- EduCodesA
-  }else if(year %in% 88:92){
+  }else if(year %in% 85:92){
     EduCodeT <- EduCodesB
   }else{
     EduCodeT <- EduCodesC
