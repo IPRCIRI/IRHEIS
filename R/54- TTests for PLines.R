@@ -1,4 +1,4 @@
-# T-Test for PLines in Clusters.R
+# 57-T-Test for PLines in Clusters.R
 # 
 # Copyright © 2019: Arin Shahbazian
 # Licence: GPL-3
@@ -13,23 +13,26 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(ggplot2)
+library(spatstat)
 
-year<-95
-load("MD4test.rda")
+year<-93
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MD4test.rda"))
 
-MDH <- TD[ TFoodExpenditure_Per>0.9*FPLine & TFoodExpenditure_Per<1.1*FPLine]
+MDH <- TD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine]
 
 ##############################################
 PPH <- MDH[ ,.(.N,PPLine=weighted.mean(PersonalPLine,Weight),
-               FPLine=mean(FPLine)),by=.(Region,NewArea2)]
+               FPLine=mean(FPLine),EngelPersonal=mean(EngelPersonal)),by=.(Region,NewArea2)]
 
-x2<-PPH[Region=="Rural",.(PPLine,NewArea2)]
-x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PPLine)])
-ggplot(x2, aes(x = x2$NewArea, y = x2$PPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 y2<-PPH[Region=="Urban",.(PPLine,NewArea2)]
 y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PPLine)])
 ggplot(y2, aes(x = y2$NewArea, y = y2$PPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+x2<-PPH[Region=="Rural",.(PPLine,NewArea2)]
+x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PPLine)])
+ggplot(x2, aes(x = x2$NewArea, y = x2$PPLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 ###############Urban###############
 #####Cluster 2

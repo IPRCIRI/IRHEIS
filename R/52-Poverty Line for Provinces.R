@@ -1,6 +1,6 @@
-#Poverty Line for Provinces
+#56-Poverty Line for Provinces
 # 
-# Copyright © 2018:Majid Einian & Arin Shahbazian
+# Copyright © 2019:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -13,15 +13,15 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(ggplot2)
+library(spatstat)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   # load data --------------------------------------
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
   #Determine Food (Equal 2100 KCal) Bundle
-  #MDPoors<-MD[InitialPoor==1]
   MD[,NewPoor:=InitialPoor]
   MD[,OldPoor:=1]
   
@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
               by=.(NewArea,Region)]
     MD <- merge(MD,MDP,by=c("Region","NewArea"))
-    #    print(MDP)
+
     x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
@@ -42,18 +42,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   MD[,FinalFoodPoor:=OldPoor]
-  #MD <- MD[,.(HHID,Region,NewArea,cluster3,ProvinceCode,Size,
-  #  Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
-  #  FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor)]
-  MD <- MD[,.(HHID,Region,NewArea,NewArea2,cluster3,ProvinceCode,Size,HAge,HSex,
-              HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
-              Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
-              FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
-              TFoodExpenditure,Total_Exp_Month_nondurable,Total_Exp_Month,
-              Total_Exp_Month_Per,EqSizeRevOECD,EqSizeCalory,Decile)]
+
+
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  MDFinalfood<-MD[,.(HHID,Region,NewArea,NewArea2,cluster3,Percentile,FinalFoodPoor)]
+  MDFinalfood<-MD[,.(HHID,Region,NewArea,NewArea2,Percentile,FinalFoodPoor)]
 }
 
 for(year in (Settings$startyear:Settings$endyear)){
@@ -70,7 +63,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
   TD<-MD[,PersonalPLine:=FPLine/EngelPersonal]
-  save(TD,file = "MD4test.rda")
+  save(TD,file = paste0(Settings$HEISProcessedPath,"Y",year,"MD4test.rda"))
   
   MD <- merge(MD,EngleD[,.(NewArea2,Region,PovertyLine,Engel)],by=c("Region","NewArea2"))
   #MD<-MD[Region=="Urban" & NewArea==2301]
@@ -81,18 +74,18 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(FPLine,Weight*Size)])
  
    MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")]
+  #MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 }
-
-x2<-EngleD[Region=="Rural",.(PovertyLine,NewArea2)]
-x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLine)])
-ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 y2<-EngleD[Region=="Urban",.(PovertyLine,NewArea2)]
 y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PovertyLine)])
 ggplot(y2, aes(x = y2$NewArea, y = y2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
+
+x2<-EngleD[Region=="Rural",.(PovertyLine,NewArea2)]
+x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLine)])
+ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

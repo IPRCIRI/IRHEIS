@@ -30,9 +30,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                   FPLine=mean(FPLine)),by=.(Region,NewArea2)]
  
   MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
-  #TD<-MD[,PersonalPLine:=Bundle_Value/EngelPersonal]
-  #save(TD,file = "MD4test.rda")
-  
+
   save(EngleP,file = "EngleP.rda")
   EngleD[,PovertyLine:=FPLine/Engel]
   EngleP[,PovertyLine:=FPLine/Engel]
