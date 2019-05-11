@@ -47,6 +47,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
   #FoodData<-merge(FoodData,Final)
+  cat(FoodData[,mean(FoodExpenditure)])
   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

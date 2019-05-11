@@ -31,7 +31,7 @@ dt2Urban<-dt2Urban[NewArea2=="Sh_Shiraz" | NewArea2=="Sh_Esfahan" |
                      NewArea2=="Sh_Karaj" ,
                    cluster3:=2]
 dt2Urban<-dt2Urban[NewArea2=="Gilan" | NewArea2=="Alborz",
-                   cluster3:=8]
+                   cluster3:=3]
 dt2Urban<-dt2Urban[NewArea2=="Mazandaran"  | 
                       NewArea2=="Sh_Ahvaz" | NewArea2=="Tehran"|
                      NewArea2=="Kohkilooye"  |
@@ -42,23 +42,22 @@ dt2Urban<-dt2Urban[NewArea2=="Mazandaran"  |
                      NewArea2=="Hormozgan" | NewArea2=="Markazi" |
                      NewArea2=="Semnan" | NewArea2=="Hamedan"  |
                      NewArea2=="Esfahan" ,
-                   cluster3:=3]
+                   cluster3:=4]
 dt2Urban<-dt2Urban[NewArea2=="Az_Sharghi" |  
                      NewArea2=="Kerman" | NewArea2=="Zanjan" |
                      NewArea2=="Booshehr" | NewArea2=="Kordestan" |
                      NewArea2=="Ardebil" | NewArea2=="Chaharmahal" |
                      NewArea2=="Khorasan_Razavi",
-                   cluster3:=4]
+                   cluster3:=5]
 dt2Urban<-dt2Urban[NewArea2=="Khoozestan" |NewArea2=="Ilam" |
                      NewArea2=="Khorasan_Jonoobi" | NewArea2=="Az_Gharbi" |
                      NewArea2=="Kermanshah" | NewArea2=="Lorestan" |
                      NewArea2=="Sh_Kermanshah" | NewArea2=="Sh_Urmia" ,
-                   cluster3:=5]
-dt2Urban<-dt2Urban[NewArea2=="Khorasan_Shomali" | NewArea2=="Golestan"
-                   | NewArea2=="Sh_Zahedan",
                    cluster3:=6]
-dt2Urban<-dt2Urban[NewArea2=="Sistan"
-                   ,cluster3:=7]
+dt2Urban<-dt2Urban[NewArea2=="Khorasan_Shomali" | NewArea2=="Golestan",
+                  cluster3:=7]
+dt2Urban<-dt2Urban[NewArea2=="Sistan" | NewArea2=="Sh_Zahedan",
+                   cluster3:=8]
 save(dt2Urban,file ="dt2Urban.rda")
 #####Rural#####
 dt2Rural<-dt2Rural[ NewArea2=="Tehran" | NewArea2=="Alborz",
@@ -75,19 +74,19 @@ dt2Rural<-dt2Rural[ NewArea2=="Hormozgan" | NewArea2=="Az_Sharghi" |
                    cluster3:=4]
 dt2Rural<-dt2Rural[  NewArea2=="Zanjan" | NewArea2=="Markazi" |
                        NewArea2=="Hamedan",
-                    cluster3:=8]
+                    cluster3:=5]
 dt2Rural<-dt2Rural[NewArea2=="Khorasan_Razavi" | NewArea2=="Kermanshah" |
                      NewArea2=="Kerman" | NewArea2=="Golestan" |
                      NewArea2=="Chaharmahal"|
                      NewArea2=="Ardebil" | 
                       NewArea2=="Kordestan"|
                      NewArea2=="Khoozestan",
-                   cluster3:=5]
+                   cluster3:=6]
 dt2Rural<-dt2Rural[NewArea2=="Khorasan_Jonoobi" | NewArea2=="Lorestan" |
                      NewArea2=="Khorasan_Shomali" | NewArea2=="Az_Gharbi" |
                      NewArea2=="Ilam" ,
-                   cluster3:=6]
-dt2Rural<-dt2Rural[NewArea2=="Sistan",cluster3:=7]
+                   cluster3:=7]
+dt2Rural<-dt2Rural[NewArea2=="Sistan",cluster3:=8]
 save(dt2Rural,file ="dt2Rural.rda")
 #####Merge#####
 dt2total<-rbind(dt2Urban,dt2Rural)

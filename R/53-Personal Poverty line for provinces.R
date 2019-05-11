@@ -6,7 +6,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ T-Tests =====================================\n")
+cat("\n\n================ Personal Pline =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -15,7 +15,9 @@ library(data.table)
 library(ggplot2)
 library(spatstat)
 
-year<-93
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\nYear:",year,"\t"))
+  
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MD4test.rda"))
 
 MDH <- TD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine]
@@ -23,7 +25,7 @@ MDH <- TD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine]
 
 PPH <- MDH[ ,.(.N,PPLine=weighted.mean(PersonalPLine,Weight),
                FPLine=mean(FPLine),EngelPersonal=mean(EngelPersonal)),by=.(Region,NewArea2)]
-
+}
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
