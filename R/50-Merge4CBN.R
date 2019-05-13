@@ -112,7 +112,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)])
-  cat(MD[Region=="Urban",weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size),by=.(ProvinceCode)])
+ MD[Region=="Urban",weighted.mean(Total_Exp_Month_Per,Weight*Size),by=.(ProvinceCode)]
   }
 
 endtime <- proc.time()
