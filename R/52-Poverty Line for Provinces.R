@@ -31,7 +31,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[,ThisIterationPoor:=NewPoor]
     MD[,FPLine:=NULL]    
     MDP <- MD[ThisIterationPoor==1,
-              .(FPLine=weighted.median(Bundle_Value,Weight,na.rm = TRUE)),
+              .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
               by=.(NewArea,Region)]
     MD <- merge(MD,MDP,by=c("Region","NewArea"))
 
@@ -57,7 +57,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 
   EngleD <- MD[TFoodExpenditure_Per<1.2*FPLine & TFoodExpenditure_Per>0.8*FPLine,
-               .(.N,Engel=weighted.median(TFoodExpenditure/Total_Exp_Month,Weight),
+               .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,NewArea2)]
   EngleD[,PovertyLine:=FPLine/Engel]
   
@@ -72,6 +72,8 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(PovertyLine,Weight* Size)],"\t",
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
+  
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
  
    MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
   #MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")]
