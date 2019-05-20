@@ -41,6 +41,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    }
   
   
+  
   #load Calories
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   FData[,Region:=NULL]
@@ -113,7 +114,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)])
  MD[Region=="Urban",weighted.mean(Total_Exp_Month_Per,Weight*Size),by=.(ProvinceCode)]
-  }
+}
+
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
