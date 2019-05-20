@@ -25,7 +25,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
   if(year >86 & year < 92 ){ 
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"ShCode.rda"))
+  load(file=paste0(Settings$HEISCountyCodePath,"Y",year,Settings$HEISCountyCodeFileName,".rda"))
   }
   
   if(year < 87){           # RxxData & UxxData tables are provided Since 1387

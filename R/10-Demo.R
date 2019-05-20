@@ -170,30 +170,12 @@ for(year in years){
   
   rm(HHI)
   
-  P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
-  P1<-P1[Relationship== 'Head']
-  HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
-  save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-  #load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
-  #HHWeights<- as.data.table(HHWeights)
-  #HHWeights[,Year:=NULL]
-  #HHBase<-merge(HHBase,HHWeights)
-  #HHBase<-HHBase[Region=="Urban"]
-  #cat(paste0("--",year))
-  #cat(paste0(",",HHBase[,mean(Dimension,na.rm = TRUE)],"\n"))
-  #cat(paste0(",",HHBase[,weighted.mean(Dimension,Weight,na.rm = TRUE)],"\n"))
-    }
+  # P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
+  # P1<-P1[Relationship== 'Head']
+  # HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
+  # save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+}
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
-
-
-# for(year in  (Settings$startyear:Settings$endyear)){
-# #cat("\n=======================\n",year,":\n")
-# load(paste0("D:/HEIS/DataProcessed/Y",year,"HHI.rda"))
-# load(paste0("D:/HEIS/DataProcessed/Y",year,"HHBase.rda"))
-# H <- merge(HHBase,HHI,by="HHID")
-# print(transpose(H[,list(A=sum(Size)),by="Region"]))
-# 
-# }
