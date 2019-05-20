@@ -23,7 +23,7 @@ P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
 
 years <- Settings$startyear:Settings$endyear
 
-for(year in years){
+for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P2Cols
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
