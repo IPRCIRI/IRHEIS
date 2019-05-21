@@ -39,7 +39,7 @@ for(year in (Settings$startyear:Settings$endyear)){
            "Resturants")){
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
    }
-  
+ # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Added_Food.rda")) 
   
   
   #load Calories
@@ -54,6 +54,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,FData ,by =c("HHID"),all=TRUE)
   MD<-merge(MD,HHWeights ,by =c("HHID"),all=TRUE)
   MD<-merge(MD,FoodData,by =c("HHID"),all=TRUE)
+ # MD<-merge(MD,Added_Food,by =c("HHID"),all=TRUE)
   MD<-merge(MD,CigarData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ClothData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,AmusementData,by =c("HHID"),all=TRUE)
@@ -76,7 +77,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                 "Other_Exp", "ServiceExp", "Medical_Exp", "Durable_Exp", 
                 "Resturant_Exp")) 
     MD[is.na(get(col)), (col) := 0]
-  
+#  MD<-MD[,Yaraneh:=416000*Size]
   
   #Calculate Monthly Total Expenditures 
   nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
@@ -84,13 +85,22 @@ for(year in (Settings$startyear:Settings$endyear)){
           "Energy_Exp", "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", 
           "Transportation_Exp", "Other_Exp", "ServiceExp")
   w <- c(nw, "Medical_Exp", "Durable_Exp")
+ # pw <- c(nw, "Added_Food_Exp_Month")
+  #Lw <- c(pw,  "Medical_Exp", "Durable_Exp")
   
   MD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
   MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
   
+ # MD[, Total_Exp_Month := Total_Exp_Month + Yaraneh]
+ # MD[, Total_Exp_Month_nondurable := Total_Exp_Month_nondurable + Yaraneh]
+  
+ # MD[, Total_Exp_Month := Total_Exp_Month*1.2]
+ # MD[, Total_Exp_Month_nondurable := Total_Exp_Month_nondurable*1.2]
+  
   MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
   MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
-  
+
+ 
   #MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
   MD<-MD[Size!=0 & FoodExpenditure!=0 & !is.na(FoodKCalories)]
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
@@ -110,6 +120,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
   MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
+  
+  ##############################################################
+  #####for CV EV report  
+ # MD[, Total_Exp_Month2 := Reduce(`+`, .SD), .SDcols=Lw]
+ # MD[, Total_Exp_Month_nondurable2 := Reduce(`+`, .SD), .SDcols=pw]
+  
+ # MD[,Total_Exp_Month_Per2:=Total_Exp_Month2/EqSizeRevOECD]
+ # MD[,Total_Exp_Month_Per_nondurable2:=Total_Exp_Month_nondurable2/EqSizeRevOECD]
+ 
+#  MD[,FoodExpenditure_Per2 :=(FoodExpenditure+Added_Food_Exp_Month)/EqSizeCalory]
+#  MD[,TFoodExpenditure2:=FoodExpenditure+Added_Food_Exp_Month+(Settings$OutFoodKCXShare*Resturant_Exp)]
+ # MD[,TFoodExpenditure_Per2 :=TFoodExpenditure2/EqSizeCalory]
+   ##############################################################
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)])
