@@ -39,8 +39,8 @@ for(year in (Settings$startyear:Settings$endyear)){
            "Resturants")){
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
    }
- # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Added_Food.rda")) 
   
+ # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Added_Food.rda")) 
   
   #load Calories
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
