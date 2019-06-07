@@ -3,7 +3,7 @@ OS <- ifelse(version$os=="linux-gnu","Linux","Windows")
 if(OS=="Linux"){
   HEISPath         = "/media/majid/Document/HEIS/"
 }else{
- HEISPath           = "D:/HEIS/"
+ HEISPath           = "C:/HEIS/"
 }
 HEISCompressedPath = paste0(HEISPath,"DataCompressed/")
 HEISAccessPath     = paste0(HEISPath,"DataAccess/")
@@ -23,7 +23,7 @@ Settings <- list(HEISPath          =HEISPath,
                  HEISWeightFileName="HHWeights",
                  HEISCountyCodePath="../Data/CountyCodes8791/",
                  HEISCountyCodeFileName="ShCode",
-                 startyear=63,
+                 startyear=90,
                  endyear=96,
                  baseyear=95,
                  OS=OS,

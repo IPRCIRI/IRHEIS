@@ -1,14 +1,14 @@
-HEISPath: D:/HEIS/
-HEISCompressedPath: D:/HEIS/DataCompressed/
-HEISAccessPath: D:/HEIS/DataAccess/
-HEISRawPath: D:/HEIS/DataRaw/
-HEISProcessedPath: D:/HEIS/DataProcessed/
-HEISResultsPath: D:/HEIS/DataResults/
+HEISPath: C:/HEIS/
+HEISCompressedPath: C:/HEIS/DataCompressed/
+HEISAccessPath: C:/HEIS/DataAccess/
+HEISRawPath: C:/HEIS/DataRaw/
+HEISProcessedPath: C:/HEIS/DataProcessed/
+HEISResultsPath: C:/HEIS/DataResults/
 HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 63.0
+startyear: 90.0
 endyear: 96.0
 baseyear: 95.0
 OS: Windows
@@ -106,5 +106,5 @@ SectorsNames:
 - BussP
 - Agri
 D80LinkSource: ../Data/D80Link.accdb
-D80LinkDest: D:/HEIS/DataAccess/D80Link.accdb
+D80LinkDest: C:/HEIS/DataAccess/D80Link.accdb
 

@@ -88,25 +88,43 @@ for(year in (Settings$startyear:Settings$endyear)){
   x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLine)])
   ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
   
+  if (year==90) {
+    EngleD90<-EngleD[,PovertyLine9096:=PovertyLine*1.305*1.347*1.156*1.119*1.09*1.096]
+    save(EngleD90,file="EngleD90.rda")
+  }
+  
+  if (year==91) {
+    EngleD91<-EngleD[,PovertyLine9196:=PovertyLine*1.347*1.156*1.119*1.09*1.096]
+    save(EngleD91,file="EngleD91.rda")
+  }
+  
+  if (year==92) {
+    EngleD92<-EngleD[,PovertyLine9296:=PovertyLine*1.156*1.119*1.09*1.096]
+    save(EngleD92,file="EngleD92.rda")
+  }
+  
   if (year==93) {
-  EngleD93<-EngleD[,PovertyLine9396:=PovertyLine*1.119*1.09*1.096]
-  save(EngleD93,file="EngleD93.rda")
+    EngleD93<-EngleD[,PovertyLine9396:=PovertyLine*1.119*1.09*1.096]
+    save(EngleD93,file="EngleD93.rda")
   }
   
   if (year==94) {
-  EngleD94<-EngleD[,PovertyLine9496:=PovertyLine*1.09*1.096]
-  save(EngleD94,file="EngleD94.rda")
+    EngleD94<-EngleD[,PovertyLine9496:=PovertyLine*1.09*1.096]
+    save(EngleD94,file="EngleD94.rda")
   }
   
   if (year==95) {
-  EngleD95<-EngleD[,PovertyLine9596:=PovertyLine*1.096]
-  save(EngleD95,file="EngleD95.rda")
+    EngleD95<-EngleD[,PovertyLine9596:=PovertyLine*1.096]
+    save(EngleD95,file="EngleD95.rda")
   }
   
   if (year==96) {
     load(file="EngleD95.rda" )
     load(file="EngleD94.rda" )
     load(file="EngleD93.rda" )
+    load(file="EngleD92.rda" )
+    load(file="EngleD91.rda" )
+    load(file="EngleD90.rda" )
     EngleD96<-EngleD[,PovertyLine9696:=PovertyLine]
     save(EngleD96,file="EngleD96.rda")
     EngleD96[,N:=NULL]
@@ -128,13 +146,31 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD[,Engel:=NULL]
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
+    EngleD<-merge(EngleD,EngleD92,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,N:=NULL]
+    EngleD[,Engel:=NULL]
+    EngleD[,FPLine:=NULL]
+    EngleD[,PovertyLine:=NULL]
+    EngleD<-merge(EngleD,EngleD91,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,N:=NULL]
+    EngleD[,Engel:=NULL]
+    EngleD[,FPLine:=NULL]
+    EngleD[,PovertyLine:=NULL]
+    EngleD<-merge(EngleD,EngleD90,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,N:=NULL]
+    EngleD[,Engel:=NULL]
+    EngleD[,FPLine:=NULL]
+    EngleD[,PovertyLine:=NULL]
     EngleD[is.na(EngleD)] <- 0
     w <- c( "PovertyLine9696", "PovertyLine9596",
-            "PovertyLine9496", "PovertyLine9396")
-
+            "PovertyLine9496", "PovertyLine9396",
+            "PovertyLine9296", "PovertyLine9196",
+            "PovertyLine9096")
+    
     EngleD[, PovertyLineSum := Reduce(`+`, .SD), .SDcols=w]
     EngleD[, PovertyLineMean :=ifelse(NewArea2=="Chaharmahal" & Region=="Rural",
-                                      PovertyLineSum/3,PovertyLineSum/4)]
+                              PovertyLineSum/6,PovertyLineSum/7)]
+    
     
     y2<-EngleD[Region=="Urban",.(PovertyLineMean,NewArea2)]
     y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PovertyLineMean)])
