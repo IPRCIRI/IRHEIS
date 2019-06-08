@@ -23,7 +23,7 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MD4test.rda"))
 MDH <- TD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine]
 
 
-PPH <- MDH[ ,.(.N,PPLine=weighted.median(PersonalPLine,Weight),
+PPH <- MDH[ ,.(.N,PPLine=weighted.mean(PersonalPLine,Weight),
                FPLine=mean(FPLine),EngelPersonal=mean(EngelPersonal)),by=.(Region,NewArea2)]
 
 if (year==90) {
@@ -106,8 +106,11 @@ if (year==96) {
           "PPLine9096")
   
   PPH[, PPLineSum := Reduce(`+`, .SD), .SDcols=w]
-  PPH[, PPLineMean :=ifelse(NewArea2=="Chaharmahal" & Region=="Rural",
-                                    PPLineSum/6,PPLineSum/7)]
+  PPH[, PPLineMean :=ifelse((NewArea2=="Chaharmahal" & Region=="Rural") |
+                       (NewArea2=="Khorasan_Jonoobi" & Region=="Rural"),
+                       PPLineSum/6,ifelse(NewArea2=="Khorasan_Jonoobi" & Region=="Urban",
+                                          PPLineSum/5,PPLineSum/7))]
+  
   
   y2<-PPH[Region=="Urban",.(PPLineMean,NewArea2)]
   y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PPLineMean)])

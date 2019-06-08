@@ -168,8 +168,10 @@ for(year in (Settings$startyear:Settings$endyear)){
             "PovertyLine9096")
     
     EngleD[, PovertyLineSum := Reduce(`+`, .SD), .SDcols=w]
-    EngleD[, PovertyLineMean :=ifelse(NewArea2=="Chaharmahal" & Region=="Rural",
-                              PovertyLineSum/6,PovertyLineSum/7)]
+    EngleD[, PovertyLineMean :=ifelse((NewArea2=="Chaharmahal" & Region=="Rural") |
+                                      (NewArea2=="Khorasan_Jonoobi" & Region=="Rural"),
+                              PovertyLineSum/6,ifelse(NewArea2=="Khorasan_Jonoobi" & Region=="Urban",
+                                                       PovertyLineSum/5,PovertyLineSum/7))]
     
     
     y2<-EngleD[Region=="Urban",.(PovertyLineMean,NewArea2)]
