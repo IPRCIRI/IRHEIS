@@ -24,7 +24,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD <- MD[,.(HHID,Region,NewArea,NewArea2,Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
               # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
               TFoodKCalories_Per,
-               Weight,MetrPrice,Dimension,EqSizeRevOECD)]
+               Weight,MetrPrice,Size,EqSizeRevOECD)]
   
   SMD[,Bundle_Value:=TFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
   

@@ -14,7 +14,6 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(stringr)
 library(data.table)
-#library(sm)
 library(ggplot2)
 library(spatstat)
 
