@@ -3,7 +3,7 @@ OS <- ifelse(version$os=="linux-gnu","Linux","Windows")
 if(OS=="Linux"){
   HEISPath         = "/media/majid/Document/HEIS/"
 }else{
- HEISPath           = "D:/HEIS/"
+ HEISPath           = "C:/HEIS/"
 }
 HEISCompressedPath = paste0(HEISPath,"DataCompressed/")
 HEISAccessPath     = paste0(HEISPath,"DataAccess/")
@@ -21,13 +21,15 @@ Settings <- list(HEISPath          =HEISPath,
                  HEISResultsPath   =HEISResultsPath,
                  HEISWeightsPath   ="../Data/SamplingWeights/",
                  HEISWeightFileName="HHWeights",
-                 startyear=96,
+                 HEISCountyCodePath="../Data/CountyCodes8791/",
+                 HEISCountyCodeFileName="ShCode",
+                 startyear=90,
                  endyear=96,
                  baseyear=95,
                  OS=OS,
                  # RawDataWebAddress ="http://www.amar.org.ir/Portals/0/amarmozuii/hazinedaramad/",
                  RawDataWebAddress ="https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/",
-                 MetaDataFilePath  = "../Data/MetaData.xlsx",
+                 MetaDataFilePath  = "../Data/MetaData2.xlsx",
                  GeoInfoFilePath   = "../Data/GeoInfo.Shahrestan.xlsx",
                  MDS_CFN           = "CompressedFileNames",              # MetaData Sheet: Compressed File Names
                  MDS_P1Cols        = "P1Cols",                           # MetaData Sheet: Columns of P1 Table
