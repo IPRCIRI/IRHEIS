@@ -43,7 +43,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   AmusementData <- TC[,lapply(.SD,sum),by=HHID]
   save(AmusementData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Amusements.rda"))
-}
+  cat(AmusementData[,mean(Amusement_Exp)])
+  }
 
 cat("\n\n================ HHBehdasht =====================================\n")
 
@@ -75,7 +76,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TM[is.na(TM)] <- 0
   BehdashtData <- TM[,lapply(.SD,sum),by=HHID]
   save(BehdashtData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Behdashts.rda"))
-}
+  cat(BehdashtData[,mean(Behdasht_Exp)])
+  }
 
 cat("\n\n================ HHCigar =====================================\n")
 
@@ -110,7 +112,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   CigarData <- TC[,lapply(.SD,sum),by=HHID]
   save(CigarData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Cigars.rda"))
-}
+  cat(CigarData[,mean(Cigar_Exp)])
+  }
 
 
 cat("\n\n================ HHCloth =====================================\n")
@@ -142,7 +145,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   ClothData <- TC[,lapply(.SD,sum),by=HHID]
   save(ClothData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Cloths.rda"))
-}
+  cat(ClothData[,mean(Cloth_Exp)])
+  }
 
 cat("\n\n================ HHCommunication =====================================\n")
 
@@ -176,7 +180,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   CommunicationData <- TC[,lapply(.SD,sum),by=HHID]
   save(CommunicationData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Communications.rda"))
-}
+  cat(CommunicationData[,mean(Communication_Exp)])
+  }
 
 cat("\n\n================ HHDurable =====================================\n")
 DurableTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Durable))
@@ -208,7 +213,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   DurableData <- TC[,lapply(.SD,sum),by=HHID]
   save(DurableData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
-}
+  cat(DurableData[,mean(Durable_Exp)])
+  }
 
 cat("\n\n================ HHEducationnExp =====================================\n")
 
@@ -244,7 +250,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TE[is.na(TE)] <- 0
   EducData <- TE[,lapply(.SD,sum),by=HHID]
   save(EducData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Education.rda"))
-}
+  cat(EducData[,mean(EducExpenditure)])
+  }
 
 cat("\n\n================ Energy =====================================\n")
 
@@ -280,7 +287,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   EnergyData <- TE[,lapply(.SD,sum),by=HHID]
    save(EnergyData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Energy.rda"))
-}
+   cat(EnergyData[,mean(Energy_Exp)])
+   }
 
 cat("\n\n================ HHFurniture =====================================\n")
 
@@ -311,7 +319,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   FurnitureData <- TC[,lapply(.SD,sum),by=HHID]
   save(FurnitureData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Furnitures.rda"))
-}
+  cat(FurnitureData[,mean(Furniture_Exp)])
+  }
 
 cat("\n\n================ HHHotel =====================================\n")
 
@@ -346,13 +355,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   HotelData <- TC[,lapply(.SD,sum),by=HHID]
   HotelData[,Code:=NULL]
   save(HotelData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Hotels.rda"))
-  
+  cat(paste0(HotelData[,mean(Hotel_Exp)],"\n"))
+
+  if(year %in% 77:82){
   TC<-TC[Code %in% 111111:111146]
+  }
+  if(year %in% 83:94){
+    TC<-TC[Code %in% 111111:111146]
+  }
   ResturantData <- TC[,lapply(.SD,sum),by=HHID]
   ResturantData[,Code:=NULL]
   names(ResturantData)[2]<-paste("Resturant_Exp")
   save(ResturantData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Resturants.rda"))
-}
+  cat(ResturantData[,mean(Resturant_Exp)])
+  }
 
 cat("\n\n================ HHInvestment =====================================\n")
 
@@ -384,7 +400,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   InvestmentData <- TC[,lapply(.SD,sum),by=HHID]
   save(InvestmentData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Investments.rda"))
-}
+  cat(InvestmentData[,mean(Investment_Exp)])
+  }
 
 cat("\n\n================ HHMedical =====================================\n")
 
@@ -416,7 +433,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TM[is.na(TM)] <- 0
   MedicalData <- TM[,lapply(.SD,sum),by=HHID]
   save(MedicalData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Medicals.rda"))
-}
+  cat(MedicalData[,mean(Medical_Exp)])
+  }
 
 cat("\n\n================ HHOther =====================================\n")
 
@@ -450,7 +468,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   OtherData <- TC[,lapply(.SD,sum),by=HHID]
   save(OtherData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Others.rda"))
-}
+  cat(OtherData[,mean(Other_Exp)])
+  }
 
 cat("\n\n================ HHTransportation =====================================\n")
 
@@ -484,7 +503,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   TransportationData <- TC[,lapply(.SD,sum),by=HHID]
   save(TransportationData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Transportations.rda"))
-}
+  cat(TransportationData[,mean(Transportation_Exp)])
+  }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

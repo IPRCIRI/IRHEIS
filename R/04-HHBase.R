@@ -25,7 +25,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
   if(year >86 & year < 92 ){ 
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"ShCode.rda"))
+  load(file=paste0(Settings$HEISCountyCodePath,"Y",year,Settings$HEISCountyCodeFileName,".rda"))
   }
   
   if(year < 87){           # RxxData & UxxData tables are provided Since 1387
@@ -88,6 +88,46 @@ for(year in (Settings$startyear:Settings$endyear)){
                             # 1304,2105,105
          NewArea:=CountyCode]
   
+  #Tehran-Alborz
+  if(year >76 & year < 92 ){ 
+    HHBase[ Region=="Urban" & CountyCode %in% c(2305),
+            NewArea:=3001] 
+  }
+  
+  if(year >76 & year < 92 ){ 
+    HHBase[CountyCode %in% c(2308,2315,2309),
+           NewArea:=30]
+  }
+  
+  #Khorasan
+  if(year >76 & year < 87 ){ 
+    HHBase[Region=="Urban" & CountyCode %in% c(916),
+           NewArea:=916]
+  }
+  
+  if(year >76 & year < 87 ){ 
+    HHBase[CountyCode %in% c(901,902,909,924,925),
+           NewArea:=28]
+  }
+  
+  if(year >76 & year < 87 ){ 
+    HHBase[CountyCode %in% c(903,911,912,921),
+           NewArea:=29]
+  }
+  
+  #Ghazvin
+  if(year >76 & year < 82 ){ 
+    HHBase[CountyCode %in% c(2311),
+           NewArea:=26]
+  }
+  
+  #Golestan
+  if(year >76 & year < 82 ){ 
+    HHBase[CountyCode %in% c(212,203,209,211,213,217),
+           NewArea:=27]
+  }
+  
+  
   HHBase[,NewArea2:=as.factor(NewArea)]
   
   HHBase[NewArea==0,NewArea2:="Markazi"]
@@ -139,44 +179,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[NewArea==1 & CountyCode==1 ,NewArea2:="Sh_Arak"]
 
   
-  #Tehran-Alborz
-  if(year >76 & year < 92 ){ 
-    HHBase[ Region=="Urban" & CountyCode %in% c(2305),
-    NewArea:=3001] 
-              }
-  
-  if(year >76 & year < 92 ){ 
-    HHBase[CountyCode %in% c(2308,2315,2309),
-           NewArea:=30]
-              }
-  
-  #Khorasan
-  if(year >76 & year < 87 ){ 
-    HHBase[Region=="Urban" & CountyCode %in% c(916),
-           NewArea:=916]
-                           }
-  
-  if(year >76 & year < 87 ){ 
-    HHBase[CountyCode %in% c(901,902,909,924,925),
-           NewArea:=28]
-                           }
-  
-  if(year >76 & year < 87 ){ 
-      HHBase[CountyCode %in% c(903,911,912,921),
-             NewArea:=29]
-  }
-  
-  #Ghazvin
-  if(year >76 & year < 82 ){ 
-    HHBase[CountyCode %in% c(2311),
-           NewArea:=26]
-  }
-  
-  #Golestan
-  if(year >76 & year < 82 ){ 
-    HHBase[CountyCode %in% c(212,203,209,211,213,217),
-           NewArea:=27]
-  }
   
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 

@@ -145,7 +145,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 ################################################
 cat("\n\n================ Berenj =====================================\n")
 
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Berenj))
+FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_BerenjF))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -162,11 +162,11 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","BerenjPrice","BerenjExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","BerenjPrice","BerenjFExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
-    TF[,BerenjExpenditure:=as.numeric(BerenjExpenditure)]
+    TF[,BerenjFExpenditure:=as.numeric(BerenjFExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
@@ -290,7 +290,7 @@ Total<-merge(Total,TokhmemorghData,all = TRUE)
 for (col in c("MorghExpenditure","MorghKG",
               "SheepExpenditure","SheepKG",
               "CowExpenditure","CowKG",
-              "BerenjExpenditure","BerenjKG",
+              "BerenjFExpenditure","BerenjKG",
               "RoghanExpenditure","RoghanKG",
               "TokhmemorghExpenditure","TokhmemorghKG")) Total[is.na(get(col)), (col) := 0]
 #"MorghPrice","SheepPrice","CowPrice",
@@ -351,13 +351,13 @@ Total[,TokhmemorghP3:=TokhmemorghPrice*3]
 ############  CV and EV  #############
 ################################################
 
-Total<-Total[,GExpenditures:=BerenjExpenditure+CowExpenditure+
+Total<-Total[,GExpenditures:=BerenjFExpenditure+CowExpenditure+
                SheepExpenditure+MorghExpenditure+
                RoghanExpenditure+TokhmemorghExpenditure]
 GExpenditures<-Total[,weighted.mean(GExpenditures,Weight)]
 
 
-Total<-Total[,BerenjShare:=BerenjExpenditure/GExpenditures]
+Total<-Total[,BerenjShare:=BerenjFExpenditure/GExpenditures]
 Total<-Total[,CowShare:=CowExpenditure/GExpenditures]
 Total<-Total[,SheepShare:=SheepExpenditure/GExpenditures]
 Total<-Total[,MorghShare:=MorghExpenditure/GExpenditures]
@@ -412,7 +412,7 @@ Total[,weighted.mean(CV3/GExpenditures,Weight,na.rm = TRUE),by=.(Decile)][order(
 ################################################
 ############  Other  #############
 ################################################
-BerenjShare<-Total[,weighted.mean(BerenjExpenditure,
+BerenjShare<-Total[,weighted.mean(BerenjFExpenditure,
                                   Weight)/weighted.mean(GExpenditures,Weight)]
 
 CowShare<-Total[,weighted.mean(CowExpenditure,

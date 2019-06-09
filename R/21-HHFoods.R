@@ -20,12 +20,12 @@ FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS
 
 
 
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-    load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-    ft <- FoodTables[Year==year]
+for (year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:", year, "\n"))
+    load(file = paste0(Settings$HEISRawPath, "Y", year, "Raw.rda"))
+    ft <- FoodTables[Year == year]
   tab <- ft$Table
-  if(is.na(tab))
+  if (is.na(tab))
     next
     UTF <- Tables[[paste0("U",year,tab)]]
   RTF <- Tables[[paste0("R",year,tab)]]
@@ -47,6 +47,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
   #FoodData<-merge(FoodData,Final)
+  cat(FoodData[,mean(FoodExpenditure)])
   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
