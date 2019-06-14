@@ -21,20 +21,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
  
-#  EngleD <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
-#               .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-#                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
-  
-  load(file="EngleX.rda")
-  
   EngleD <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
-                .(.N,FPLine=mean(FPLine)),by=.(Region,cluster3)]
+               .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+                FPLine=mean(FPLine)),by=.(Region,cluster3)]
   
-  EngleD<-merge(EngleD,EngleX,by=c("Region","cluster3"))
+ # load(file="EngleX.rda")
+  
+#  EngleD <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
+ #               .(.N,FPLine=mean(FPLine)),by=.(Region,cluster3)]
+  
+ # EngleD<-merge(EngleD,EngleX,by=c("Region","cluster3"))
   EngleD[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   
-  #MD<-MD[Region=="Rural"]
+  MD<-MD[Region=="Rural"]
   
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
