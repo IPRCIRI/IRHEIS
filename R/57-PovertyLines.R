@@ -25,6 +25,16 @@ for(year in (Settings$startyear:Settings$endyear)){
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
   
+  #En3es acc6rd5ng to N
+ # EngleS <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
+   #            .(.N), by=.(Region,cluster3)] 
+#  EngleS<-EngleS[,S:=ifelse(N>400,N,0)]
+#  MD<-merge(MD, EngleS)
+ # EngleD <- MD[S==0 & TFoodExpenditure_Per>0.7*FPLine & TFoodExpenditure_Per<1.3*FPLine,
+  #              .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+ #                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
+ # EngleS <- MD[S==0 & TFoodExpenditure_Per>0.7*FPLine & TFoodExpenditure_Per<1.3*FPLine,
+  #              .(.N), by=.(Region,cluster3)] 
  # load(file="EngleX.rda")
   
 #  EngleD <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,

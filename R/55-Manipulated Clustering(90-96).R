@@ -40,14 +40,14 @@ dt2Urban<-dt2Urban[NewArea2=="Mazandaran"  |
                      NewArea2=="Yazd" | NewArea2=="Sh_Tabriz" |
                       NewArea2=="Ghom" |
                      NewArea2=="Sh_Kerman" | NewArea2=="Sh_Arak" |
-                     NewArea2=="Sh_Kermanshah" | NewArea2=="Chaharmahal" |
+                     NewArea2=="Chaharmahal" |
                        NewArea2=="Zanjan" | NewArea2=="Hamedan" |
                        NewArea2=="Sh_Mashhad" |  NewArea2=="Sh_Urmia" |
                        NewArea2=="Sh_Ahvaz" |   NewArea2=="Hormozgan"|
                        NewArea2=="Booshehr" |
                        NewArea2=="Semnan" | NewArea2=="Fars",
                    cluster3:=4]
-dt2Urban<-dt2Urban[NewArea2=="Az_Sharghi" |
+dt2Urban<-dt2Urban[ NewArea2=="Sh_Kermanshah" | NewArea2== "Az_Sharghi" |
                      NewArea2=="Kerman" | 
                      NewArea2=="Ardebil" |
                      NewArea2=="Ilam" | NewArea2=="Lorestan",

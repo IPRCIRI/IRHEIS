@@ -23,6 +23,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Determine Food (Equal 2100 KCal) Bundle
   #MDPoors<-MD[InitialPoor==1]
   MD[,NewPoor:=InitialPoor]
+  #MD[,NewPoor:=ifelse(Decile %in% c(1,2,3,4),1,0)]
   MD[,OldPoor:=1]
 
   i <- 0
