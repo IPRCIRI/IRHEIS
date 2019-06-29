@@ -119,7 +119,33 @@ for(year in (Settings$startyear:Settings$endyear)){
   MDR<-MD2[Region=="Rural"]
   save(MDU,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor2.rda"))
   save(MDR,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor3.rda"))
-    }
+}
+
+MD[,Benzin_Exp:=as.numeric(Benzin_Exp)]
+MD2<-MD[,.(HHID,HIndivNo,Region,NewArea2,Decile,Percentile,Size,Weight,Total_Exp_Month_Per_nondurable,Benzin_Exp)]
+MD2<-MD2[,Add_Benzin_Exp:=Benzin_Exp-600000]
+MD2<-MD2[,Add_Benzin_Exp:=ifelse(Add_Benzin_Exp<0,0,Add_Benzin_Exp)]
+MD2<-MD2[,Extra_Benzin:=ifelse(Add_Benzin_Exp>0,1,0)]
+MD2<-MD2[,Benzin_Positive:=ifelse(Benzin_Exp>0,1,0)]
+
+MD2<-MD2[,Decile_Add:=weighted.mean(Add_Benzin_Exp,Weight)*sum(Weight),by=.(Decile)]
+MD2[,weighted.mean(Add_Benzin_Exp,Weight)*sum(Weight),by=.(Decile)][order(Decile)]
+
+MD2<-MD2[,Decile_Total:=weighted.mean(Benzin_Exp,Weight)*sum(Weight),by=.(Decile)]
+MD2[,weighted.mean(Benzin_Exp,Weight)*sum(Weight),by=.(Decile)][order(Decile)]
+
+MD2<-MD2[,Ratio:=Decile_Add/Decile_Total]
+MD2[,weighted.mean(Ratio,Weight),by=.(Decile)][order(Decile)]
+
+MD2<-MD2[,Ratio2:=weighted.mean(Extra_Benzin,Weight),by=.(Decile)]
+MD2[,weighted.mean(Extra_Benzin,Weight),by=.(Decile)][order(Decile)]
+
+MD2<-MD2[Benzin_Positive==1,Ratio3:=weighted.mean(Extra_Benzin/HIndivNo,Weight),by=.(Decile)]
+MD2[Benzin_Positive==1,weighted.mean(Extra_Benzin/HIndivNo,Weight),by=.(Decile)][order(Decile)]
+
+MD2<-MD2[,Ratio4:=weighted.mean(Benzin_Positive,Weight),by=.(Decile)]
+MD2[,weighted.mean(Benzin_Positive,Weight),by=.(Decile)][order(Decile)]
+
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat((endtime-starttime)["elapsed"])
