@@ -35,7 +35,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
             "Durables", "Education", "Energy", "Furnitures","Hotels",
             "House", "Medicals","Behdashts","Transportations","Others",
-           "Resturants")){
+           "Resturants","Benzins")){
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
    }
   
@@ -64,6 +64,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,HotelData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,BehdashtData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,TransportationData,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,BenzinData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,HouseData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
@@ -74,7 +75,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                 "Communication_Exp", "EducExpenditure", "Energy_Exp", 
                 "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", "Transportation_Exp",
                 "Other_Exp", "ServiceExp", "Medical_Exp", "Durable_Exp", 
-                "Resturant_Exp")) 
+                "Resturant_Exp","Benzin_Exp")) 
     MD[is.na(get(col)), (col) := 0]
 #  MD<-MD[,Yaraneh:=416000*Size]
   
