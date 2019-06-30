@@ -15,7 +15,39 @@ library(data.table)
 library(ggplot2)
 library(spatstat)
 
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  
+  # load data --------------------------------------
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+  
+  #Determine Food (Equal 2100 KCal) Bundle
+  MD[,NewPoor:=InitialPoor]
+  MD[,OldPoor:=1]
+  
+  i <- 0
+  while(MD[(NewPoor-OldPoor)!=0,.N]>5  & i <=15){
+    i <- i + 1
+    MD[,ThisIterationPoor:=NewPoor]
+    MD[,FPLine:=NULL]    
+    MDP <- MD[ThisIterationPoor==1,
+              .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
+              by=.(NewArea,Region)]
+    MD <- merge(MD,MDP,by=c("Region","NewArea"))
 
+    x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
+    MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
+    print(table(MD[,.(ThisIterationPoor,NewPoor)]))
+    MD[,OldPoor:=ThisIterationPoor]
+  }
+  
+  MD[,FinalFoodPoor:=OldPoor]
+
+
+  save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+  
+  MDFinalfood<-MD[,.(HHID,Region,NewArea,NewArea2,Percentile,FinalFoodPoor)]
+}
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
@@ -25,8 +57,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 
   EngleD <- MD[TFoodExpenditure_Per<1.2*FPLine & TFoodExpenditure_Per>0.8*FPLine,
-               .(.N,Engel=weighted.median(TFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=median(FPLine)),by=.(Region,NewArea2)]
+               .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+                 FPLine=mean(FPLine)),by=.(Region,NewArea2)]
   EngleD[,PovertyLine:=FPLine/Engel]
   
   MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
@@ -34,7 +66,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(TD,file = paste0(Settings$HEISProcessedPath,"Y",year,"MD4test.rda"))
   
   MD <- merge(MD,EngleD[,.(NewArea2,Region,PovertyLine,Engel)],by=c("Region","NewArea2"))
-  #MD<-MD[Region=="Rural"]
+  #MD<-MD[Region=="Urban" & NewArea==2301]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight* Size)],"\t",

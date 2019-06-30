@@ -33,8 +33,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Loans.rda"))
-  load(file = paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
   
+  if(year >=76)
+    load(file = paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  else
+    HHWeights <- data.table(Year=year)
   D <- merge(HHBase,LoansData,by="HHID", all.x = TRUE)
   
   W <- HHWeights
@@ -56,8 +59,8 @@ for(year in (Settings$startyear:Settings$endyear)){
 #  cat("\n",year,",",sum(D$ServiceFee*D$Weight, na.rm = TRUE))
 }
 
-BigD[is.na(ServiceFee),ServiceFee:=0]
-BigD[is.na(HServiceFee),HServiceFee:=0]
+BigD <- BigD[is.na(ServiceFee),ServiceFee:=0]
+BigD <- BigD[is.na(HServiceFee),HServiceFee:=0]
 BigD <- BigD[!is.na(Weight)]
 
 S.Q <- BigD[,.(SF=sum(ServiceFee*Weight, na.rm = TRUE),

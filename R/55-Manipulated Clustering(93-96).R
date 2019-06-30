@@ -17,8 +17,8 @@ library(ggplot2)
 
 cat(paste0("\n------------------------------\nYear:",Settings$baseyear,"\n"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",Settings$baseyear,"InitialPoor.rda"))
-#load(file=paste0(Settings$HEISProcessedPath,"Y",Settings$baseyear,"BigFoodPrice.rda"))
-#MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all=TRUE)
+load(file=paste0(Settings$HEISProcessedPath,"Y",Settings$baseyear,"BigFoodPrice.rda"))
+MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all=TRUE)
 
 #####Clustering#####
 dt2Urban<-MD[Region=="Urban",.(NewArea,NewArea2,Region,HHID)]
