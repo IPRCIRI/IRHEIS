@@ -1,4 +1,4 @@
-#56-FoodBasicNeeds.R
+#54-FoodBasicNeeds.R
 # 
 # Copyright © 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -37,7 +37,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD <- merge(MD,MDP,by=c("Region","cluster3"))
 #    print(MDP)
     x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
-    MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
+    MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
   }
@@ -46,9 +46,9 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   MD <- MD[,.(HHID,Region,NewArea,NewArea2,cluster3,ProvinceCode,Size,HAge,HSex,
               HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
-              Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
-              FoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
-              TFoodExpenditure,Total_Exp_Month_nondurable,Total_Exp_Month,
+              Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
+              OriginalFoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
+              TOriginalFoodExpenditure,Total_Exp_Month_nondurable,Total_Exp_Month,
               Total_Exp_Month_Per,
             #  TFoodExpenditure2,Total_Exp_Month_nondurable2,Total_Exp_Month2,
              # Total_Exp_Month_Per2,

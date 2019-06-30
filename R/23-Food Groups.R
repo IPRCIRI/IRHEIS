@@ -17,7 +17,7 @@ cat("\n\n================ FoodGroups =====================================\n")
 TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_FoodGroups))
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  BigFData <- data.table(HHID=NA_integer_,FGrams=NA_real_,
+  BigFData <- data.table(HHID=NA_integer_,FGrams=NA_real_,Expenditure=NA_real_,
                          FoodType=NA_character_,FoodKCalories=NA_real_)[0]
   for(i in 1:nrow(TFoodGroups)){
     cat(paste0(TFoodGroups[i,SheetName],", "))
@@ -37,7 +37,7 @@ for(year in (Settings$startyear:Settings$endyear)){
         setnames(TF,n,names(ft)[x])
     }
     if(year %in% 63:82){
-    pcols <- intersect(names(TF),c("HHID","Code","Kilos"))
+    pcols <- intersect(names(TF),c("HHID","Code","Kilos","Expenditure"))
     TF <- TF[,pcols,with=FALSE]
     TF <- TF[Code %in% ft$StartCode:ft$EndCode]
     
@@ -50,17 +50,17 @@ for(year in (Settings$startyear:Settings$endyear)){
     FData[, FoodType:=TFoodGroups[i,FoodType]]
     FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
     
-    BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,FoodType,FoodKCalories)])
+    BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories)])
     save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
     if(year %in% 83:96){
-      pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos"))
+      pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos","Expenditure"))
       TF <- TF[,pcols,with=FALSE]
       TF <- TF[Code %in% ft$StartCode:ft$EndCode]
       
       TF[,Kilos:=as.numeric(Kilos)]
       TF[,Grams:=as.numeric(Grams)]
-      
+      TF[,Expenditure:=as.numeric(Expenditure)]
       
       TF[,Code:=NULL]
       TF[is.na(TF)] <- 0
@@ -69,7 +69,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       FData[, FoodType:=TFoodGroups[i,FoodType]]
       FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
       
-      BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,FoodType,FoodKCalories)])
+      BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories)])
       save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
     }

@@ -71,7 +71,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,DurableData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ResturantData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,InvestmentData,by =c("HHID"),all=TRUE)
-  for (col in c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
+  for (col in c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
                 "Communication_Exp", "EducExpenditure", "Energy_Exp", 
                 "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", "Transportation_Exp",
                 "Other_Exp", "ServiceExp", "Medical_Exp", "Durable_Exp", 
@@ -80,7 +80,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 #  MD<-MD[,Yaraneh:=416000*Size]
   
   #Calculate Monthly Total Expenditures 
-  nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
+  nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
           "Amusement_Exp", "Communication_Exp", 
           "Energy_Exp", "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", 
           "Transportation_Exp", "Other_Exp", "ServiceExp")
@@ -102,23 +102,23 @@ for(year in (Settings$startyear:Settings$endyear)){
 
  
   #MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
-  MD<-MD[Size!=0 & FoodExpenditure!=0 & !is.na(FoodKCalories)]
+  MD<-MD[Size!=0 & OriginalFoodExpenditure!=0 & !is.na(FoodKCalories)]
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
   #Calculate Per Values
   MD[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
-  MD[,FoodExpenditure_Per :=FoodExpenditure/EqSizeCalory]
+  MD[,OriginalFoodExpenditure_Per :=OriginalFoodExpenditure/EqSizeCalory]
   MD[,FoodKCalories_Per:=FoodKCalories/EqSizeCalory]
   
   #Calculate per_Calory from resturants
-  MD[,Calory_Price:=(FoodExpenditure_Per/FoodKCalories_Per)]
+  MD[,Calory_Price:=(OriginalFoodExpenditure_Per/FoodKCalories_Per)]
   MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
   MD[,ResturantKCalories:=(Settings$OutFoodKCXShare*Resturant_Exp)/Calory_Price_Area]
   for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
   MD[,TFoodKCalories:=FoodKCalories+ResturantKCalories]
-  MD[,TFoodExpenditure:=FoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
+  MD[,TOriginalFoodExpenditure:=OriginalFoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
   
-  MD[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
+  MD[,TOriginalFoodExpenditure_Per :=TOriginalFoodExpenditure/EqSizeCalory]
   MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
   
   ##############################################################
