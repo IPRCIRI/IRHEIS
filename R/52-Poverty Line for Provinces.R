@@ -36,7 +36,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD <- merge(MD,MDP,by=c("Region","NewArea"))
 
     x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
-    MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
+    MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
   }
@@ -56,12 +56,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
 
-  EngleD <- MD[TFoodExpenditure_Per<1.2*FPLine & TFoodExpenditure_Per>0.8*FPLine,
-               .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
+  EngleD <- MD[TOriginalFoodExpenditure_Per<1.2*FPLine & TOriginalFoodExpenditure_Per>0.8*FPLine,
+               .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,NewArea2)]
   EngleD[,PovertyLine:=FPLine/Engel]
   
-  MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
+  MD[,EngelPersonal:=TOriginalFoodExpenditure/Total_Exp_Month]
   TD<-MD[,PersonalPLine:=FPLine/EngelPersonal]
   save(TD,file = paste0(Settings$HEISProcessedPath,"Y",year,"MD4test.rda"))
   

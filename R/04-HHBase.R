@@ -171,11 +171,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[NewArea==502,NewArea2:="Sh_Kermanshah"]
   HHBase[NewArea==2202,NewArea2:="Sh_Bandarabas"]
   HHBase[NewArea==401,NewArea2:="Sh_Urmia"]
-  #HHBase[NewArea==105,NewArea2:="Sh_Rasht"]
+  HHBase[NewArea==105,NewArea2:="Sh_Rasht"]
   HHBase[NewArea==1105,NewArea2:="Sh_Zahedan"]
   HHBase[NewArea==808,NewArea2:="Sh_Kerman"]
-  #HHBase[NewArea==1304,NewArea2:="Sh_Hamedan"]
-  #HHBase[NewArea==2105,NewArea2:="Sh_Yazd"]
+  HHBase[NewArea==1304,NewArea2:="Sh_Hamedan"]
+  HHBase[NewArea==2105,NewArea2:="Sh_Yazd"]
   HHBase[NewArea==1 & CountyCode==1 ,NewArea2:="Sh_Arak"]
 
   
