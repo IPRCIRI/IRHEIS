@@ -22,24 +22,24 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
  
-  EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
-               .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
+  EngleD <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
+               .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
   
-  MD2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine]
-  MD2 <- MD2[,PEngel:=TOriginalFoodExpenditure/Total_Exp_Month]
+  MD2 <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine]
+  MD2 <- MD2[,PEngel:=TFoodExpenditure/Total_Exp_Month]
   MD2U <- MD2[Region=="Urban"]
   MD2R <- MD2[Region=="Rural"]
 
   #En3es acc6rd5ng to N
- # EngleS <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
+ # EngleS <- MD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine,
    #            .(.N), by=.(Region,cluster3)] 
 #  EngleS<-EngleS[,S:=ifelse(N>400,N,0)]
 #  MD<-merge(MD, EngleS)
- # EngleD <- MD[S==0 & TOriginalFoodExpenditure_Per>0.7*FPLine & TOriginalFoodExpenditure_Per<1.3*FPLine,
-  #              .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
+ # EngleD <- MD[S==0 & TFoodExpenditure_Per>0.7*FPLine & TFoodExpenditure_Per<1.3*FPLine,
+  #              .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
  #                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
- # EngleS <- MD[S==0 & TOriginalFoodExpenditure_Per>0.7*FPLine & TOriginalFoodExpenditure_Per<1.3*FPLine,
+ # EngleS <- MD[S==0 & TFoodExpenditure_Per>0.7*FPLine & TFoodExpenditure_Per<1.3*FPLine,
   #              .(.N), by=.(Region,cluster3)] 
  # load(file="EngleX.rda")
 
@@ -50,7 +50,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   
 
-# MD<-MD[Region=="Rural" & cluster3==5]
+ #MD<-MD[Region=="Rural" & cluster3==5]
 
   
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
