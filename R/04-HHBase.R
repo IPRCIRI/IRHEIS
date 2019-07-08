@@ -84,8 +84,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[Region=="Urban" & 
            CountyCode %in% c(2301,303,603,707,
                              916,1002,3001,502,2202,
-                             401,808,1,1105),
-                            # 1304,2105,105
+                             401,808,1,1105,
+                             1304,2105,105),
          NewArea:=CountyCode]
   
   #Tehran-Alborz
