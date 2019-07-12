@@ -1,4 +1,4 @@
-#56-Poverty Line for Provinces
+#62-Poverty Line for Provinces
 # 
 # Copyright © 2019:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
               by=.(NewArea,Region)]
     MD <- merge(MD,MDP,by=c("Region","NewArea"))
-
+    
     x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TFoodExpenditure_Per < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
@@ -42,8 +42,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   MD[,FinalFoodPoor:=OldPoor]
-
-
+  
+  
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   MDFinalfood<-MD[,.(HHID,Region,NewArea,NewArea2,Percentile,FinalFoodPoor)]
@@ -55,10 +55,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-
-  EngleD <- MD[TFoodExpenditure_Per<1.2*FPLine & TFoodExpenditure_Per>0.8*FPLine,
+  
+  EngleD <- MD[TFoodExpenditure_Per<1.3*FPLine & TFoodExpenditure_Per>0.7*FPLine,
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,NewArea2)]
+                 FPLine=mean(FPLine),ProvinceCode=mean(ProvinceCode)),by=.(Region,NewArea2)]
   EngleD[,PovertyLine:=FPLine/Engel]
   
   MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
@@ -74,11 +74,11 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(FPLine,Weight*Size)])
   
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
- 
-   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
+  
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
   #MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
-
+  
   y2<-EngleD[Region=="Urban",.(PovertyLine,NewArea2)]
   y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PovertyLine)])
   ggplot(y2, aes(x = y2$NewArea, y = y2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
@@ -88,33 +88,73 @@ for(year in (Settings$startyear:Settings$endyear)){
   x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLine)])
   ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
   
+  
+  load(file="Inflation9096.rda")
+  EngleD<-merge(EngleD,Inflation9096,by="ProvinceCode")
+  
   if (year==90) {
-    EngleD90<-EngleD[,PovertyLine9096:=PovertyLine*1.305*1.347*1.156*1.119*1.09*1.096]
+    EngleD90<-EngleD[,PovertyLine9096:=PovertyLine*y9091*y9192*y9293*y9394*y9495*y9596]
+    EngleD90[,y9091:=NULL]
+    EngleD90[,y9192:=NULL]
+    EngleD90[,y9293:=NULL]
+    EngleD90[,y9394:=NULL]
+    EngleD90[,y9495:=NULL]
+    EngleD90[,y9596:=NULL]
     save(EngleD90,file="EngleD90.rda")
   }
   
   if (year==91) {
-    EngleD91<-EngleD[,PovertyLine9196:=PovertyLine*1.347*1.156*1.119*1.09*1.096]
+    EngleD91<-EngleD[,PovertyLine9196:=PovertyLine*y9192*y9293*y9394*y9495*y9596]
+    EngleD91[,y9091:=NULL]
+    EngleD91[,y9192:=NULL]
+    EngleD91[,y9293:=NULL]
+    EngleD91[,y9394:=NULL]
+    EngleD91[,y9495:=NULL]
+    EngleD91[,y9596:=NULL]
     save(EngleD91,file="EngleD91.rda")
   }
   
   if (year==92) {
-    EngleD92<-EngleD[,PovertyLine9296:=PovertyLine*1.156*1.119*1.09*1.096]
+    EngleD92<-EngleD[,PovertyLine9296:=PovertyLine*y9293*y9394*y9495*y9596]
+    EngleD92[,y9091:=NULL]
+    EngleD92[,y9192:=NULL]
+    EngleD92[,y9293:=NULL]
+    EngleD92[,y9394:=NULL]
+    EngleD92[,y9495:=NULL]
+    EngleD92[,y9596:=NULL]
     save(EngleD92,file="EngleD92.rda")
   }
   
   if (year==93) {
-    EngleD93<-EngleD[,PovertyLine9396:=PovertyLine*1.119*1.09*1.096]
+    EngleD93<-EngleD[,PovertyLine9396:=PovertyLine*y9394*y9495*y9596]
+    EngleD93[,y9091:=NULL]
+    EngleD93[,y9192:=NULL]
+    EngleD93[,y9293:=NULL]
+    EngleD93[,y9394:=NULL]
+    EngleD93[,y9495:=NULL]
+    EngleD93[,y9596:=NULL]
     save(EngleD93,file="EngleD93.rda")
   }
   
   if (year==94) {
-    EngleD94<-EngleD[,PovertyLine9496:=PovertyLine*1.09*1.096]
+    EngleD94<-EngleD[,PovertyLine9496:=PovertyLine*y9495*y9596]
+    EngleD94[,y9091:=NULL]
+    EngleD94[,y9192:=NULL]
+    EngleD94[,y9293:=NULL]
+    EngleD94[,y9394:=NULL]
+    EngleD94[,y9495:=NULL]
+    EngleD94[,y9596:=NULL]
     save(EngleD94,file="EngleD94.rda")
   }
   
   if (year==95) {
-    EngleD95<-EngleD[,PovertyLine9596:=PovertyLine*1.096]
+    EngleD95<-EngleD[,PovertyLine9596:=PovertyLine*y9596]
+    EngleD95[,y9091:=NULL]
+    EngleD95[,y9192:=NULL]
+    EngleD95[,y9293:=NULL]
+    EngleD95[,y9394:=NULL]
+    EngleD95[,y9495:=NULL]
+    EngleD95[,y9596:=NULL]
     save(EngleD95,file="EngleD95.rda")
   }
   
@@ -131,36 +171,83 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD96[,Engel:=NULL]
     EngleD96[,FPLine:=NULL]
     EngleD96[,PovertyLine:=NULL]
+    EngleD96[,ProvinceCode:=NULL]
     EngleD<-merge(EngleD96,EngleD95,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,y9091:=NULL]
+    EngleD[,y9192:=NULL]
+    EngleD[,y9293:=NULL]
+    EngleD[,y9394:=NULL]
+    EngleD[,y9495:=NULL]
+    EngleD[,y9596:=NULL]
     EngleD[,N:=NULL]
     EngleD[,Engel:=NULL]
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
+    EngleD[,ProvinceCode:=NULL]
     EngleD<-merge(EngleD,EngleD94,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,y9091:=NULL]
+    EngleD[,y9192:=NULL]
+    EngleD[,y9293:=NULL]
+    EngleD[,y9394:=NULL]
+    EngleD[,y9495:=NULL]
+    EngleD[,y9596:=NULL]
     EngleD[,N:=NULL]
     EngleD[,Engel:=NULL]
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
+    EngleD[,ProvinceCode:=NULL]
     EngleD<-merge(EngleD,EngleD93,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,y9091:=NULL]
+    EngleD[,y9192:=NULL]
+    EngleD[,y9293:=NULL]
+    EngleD[,y9394:=NULL]
+    EngleD[,y9495:=NULL]
+    EngleD[,y9596:=NULL]
     EngleD[,N:=NULL]
     EngleD[,Engel:=NULL]
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
+    EngleD[,ProvinceCode:=NULL]
     EngleD<-merge(EngleD,EngleD92,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,y9091:=NULL]
+    EngleD[,y9192:=NULL]
+    EngleD[,y9293:=NULL]
+    EngleD[,y9394:=NULL]
+    EngleD[,y9495:=NULL]
+    EngleD[,y9596:=NULL]
     EngleD[,N:=NULL]
     EngleD[,Engel:=NULL]
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
+    EngleD[,ProvinceCode:=NULL]
     EngleD<-merge(EngleD,EngleD91,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,y9091:=NULL]
+    EngleD[,y9192:=NULL]
+    EngleD[,y9293:=NULL]
+    EngleD[,y9394:=NULL]
+    EngleD[,y9495:=NULL]
+    EngleD[,y9596:=NULL]
     EngleD[,N:=NULL]
     EngleD[,Engel:=NULL]
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
+    EngleD[,ProvinceCode:=NULL]
     EngleD<-merge(EngleD,EngleD90,by=c("Region","NewArea2"),all=TRUE)
+    EngleD[,y9091.x:=NULL]
+    EngleD[,y9192.x:=NULL]
+    EngleD[,y9293.x:=NULL]
+    EngleD[,y9394.x:=NULL]
+    EngleD[,y9495.x:=NULL]
+    EngleD[,y9091.y:=NULL]
+    EngleD[,y9192.y:=NULL]
+    EngleD[,y9293.y:=NULL]
+    EngleD[,y9394.y:=NULL]
+    EngleD[,y9495.y:=NULL]
     EngleD[,N:=NULL]
     EngleD[,Engel:=NULL]
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
+    EngleD[,ProvinceCode:=NULL]
     EngleD[is.na(EngleD)] <- 0
     w <- c( "PovertyLine9696", "PovertyLine9596",
             "PovertyLine9496", "PovertyLine9396",
@@ -169,9 +256,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     EngleD[, PovertyLineSum := Reduce(`+`, .SD), .SDcols=w]
     EngleD[, PovertyLineMean :=ifelse((NewArea2=="Chaharmahal" & Region=="Rural") |
-                                      (NewArea2=="Khorasan_Jonoobi" & Region=="Rural"),
-                              PovertyLineSum/6,ifelse(NewArea2=="Khorasan_Jonoobi" & Region=="Urban",
-                                                       PovertyLineSum/5,PovertyLineSum/7))]
+                                        (NewArea2=="Khorasan_Jonoobi" & Region=="Rural"),
+                                      PovertyLineSum/6,ifelse(NewArea2=="Khorasan_Jonoobi" & Region=="Urban",
+                                                              PovertyLineSum/5,PovertyLineSum/7))]
     
     
     y2<-EngleD[Region=="Urban",.(PovertyLineMean,NewArea2)]
@@ -182,10 +269,10 @@ for(year in (Settings$startyear:Settings$endyear)){
     x2<-EngleD[Region=="Rural",.(PovertyLineMean,NewArea2)]
     x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLineMean)])
     ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLineMean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
-  
-    }
-  
+    
   }
+  
+}
 
 
 endtime <- proc.time()
