@@ -30,14 +30,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 
  #Intesnsity of Poverty (Poverty gap index)
  MD[FinalPoor==1,Index:=1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine,
-                                         Weight)),by=.(Region,cluster)]
- MD[FinalPoor==1,weighted.mean(Index,Weight),by=.(Region,cluster)]
+                                         Weight)),by=.(Region,cluster3)]
+ MD[FinalPoor==1,weighted.mean(Index,Weight),by=.(Region,cluster3)]
  
  
  #Poverty depth index (Foster-Greer-Thorbecke)
  MD[FinalPoor==1,Index2:=(1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine
-                                           ,Weight)))^2,by=.(Region,cluster)]
- MD[FinalPoor==1,weighted.mean(Index2,Weight),by=.(Region,cluster)]
+                                           ,Weight)))^2,by=.(Region,cluster3)]
+ MD[FinalPoor==1,weighted.mean(Index2,Weight),by=.(Region,cluster3)]
  
  
 endtime <- proc.time()

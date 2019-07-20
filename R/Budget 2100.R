@@ -30,7 +30,8 @@ for(year in (Settings$startyear:Settings$endyear)){
  
  Base3<-MD[PEngel>0.6 & FinalPoor==1]
 
- 
+ Base4<-MD[FinalPoor==0,.(.N,cluster3=mean(cluster3)),
+             by=.(ProvinceCode)]
 
              
  Base[FoodType=="Goosht" & FinalPoor==1 ,weighted.mean(FGrams_Per,Weight,na.rm = TRUE),by=.(ProvinceCode)]

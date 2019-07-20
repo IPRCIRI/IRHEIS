@@ -18,7 +18,8 @@ TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_Food
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   BigFData <- data.table(HHID=NA_integer_,FGrams=NA_real_,Expenditure=NA_real_,
-                         FoodType=NA_character_,FoodKCalories=NA_real_)[0]
+                         FoodType=NA_character_,FoodKCalories=NA_real_,
+                         FoodProtein=NA_real_)[0]
   for(i in 1:nrow(TFoodGroups)){
     cat(paste0(TFoodGroups[i,SheetName],", "))
     
@@ -68,8 +69,9 @@ for(year in (Settings$startyear:Settings$endyear)){
       FData <- TF[,lapply(.SD,sum),by=HHID]
       FData[, FoodType:=TFoodGroups[i,FoodType]]
       FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
+      FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams]
       
-      BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories)])
+      BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodProtein)])
       save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
     }
