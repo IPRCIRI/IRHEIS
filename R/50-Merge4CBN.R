@@ -46,8 +46,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #load Calories
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   FData[,Region:=NULL]
-  #for (col in c("FoodKCalories")) FData[is.na(get(col)), (col) := 0]
-  FData <- FData[FoodKCalories>0]
+  #for (col in c("FoodKCaloriesHH")) FData[is.na(get(col)), (col) := 0]
+  FData <- FData[FoodKCaloriesHH>0]
   
   #merge groups
   MD<-merge(HHBase,HHI ,by =c("HHID"),all=TRUE)
@@ -109,24 +109,25 @@ for(year in (Settings$startyear:Settings$endyear)){
 
  
   #MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
-  MD<-MD[Size!=0 & OriginalFoodExpenditure!=0 & !is.na(FoodKCalories)]
+  MD<-MD[Size!=0 & OriginalFoodExpenditure!=0 & !is.na(FoodKCaloriesHH)]
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
   #Calculate Per Values
   MD[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
   MD[,OriginalFoodExpenditure_Per :=OriginalFoodExpenditure/EqSizeCalory]
-  MD[,FoodKCalories_Per:=FoodKCalories/EqSizeCalory]
+  MD[,FoodKCaloriesHH_Per:=FoodKCaloriesHH/EqSizeCalory]
+  MD[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]
   
   #Calculate per_Calory from resturants
-  MD[,Calory_Price:=(OriginalFoodExpenditure_Per/FoodKCalories_Per)]
+  MD[,Calory_Price:=(OriginalFoodExpenditure_Per/FoodKCaloriesHH_Per)]
   MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
   MD[,ResturantKCalories:=(Settings$OutFoodKCXShare*Resturant_Exp)/Calory_Price_Area]
   for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
-  MD[,TFoodKCalories:=FoodKCalories+ResturantKCalories]
+  MD[,TFoodKCaloriesHH:=FoodKCaloriesHH+ResturantKCalories]
   MD[,TOriginalFoodExpenditure:=OriginalFoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
   
   MD[,TOriginalFoodExpenditure_Per :=TOriginalFoodExpenditure/EqSizeCalory]
-  MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
+  MD[,TFoodKCaloriesHH_Per:=TFoodKCaloriesHH/EqSizeCalory]
   
   ##############################################################
   #####for CV EV report  

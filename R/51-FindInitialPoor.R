@@ -23,17 +23,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD <- MD[,.(HHID,Region,NewArea,NewArea2,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
               # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-              TFoodKCalories_Per,
+              TFoodKCaloriesHH_Per,
                Weight,MetrPrice,Size,EqSizeRevOECD)]
   
-  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
+  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCaloriesHH_Per]
   
   #SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,FoodExpenditure_Per,FoodKCalories_Per,
             #   Weight,MetrPrice)]
   
   #SMD[,Bundle_Value:=FoodExpenditure_Per*Settings$KCaloryNeed_Adult/FoodKCalories_Per]
   
-  SMD <- SMD[Bundle_Value<=5000000 | TFoodKCalories_Per>=300]
+  SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300]
   
   #Real Prices
   T_Bundle_Value <- SMD[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]

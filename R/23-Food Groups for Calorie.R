@@ -50,13 +50,14 @@ for(year in (Settings$startyear:Settings$endyear)){
     FData <- TF[,lapply(.SD,sum),by=HHID]
     FData[, FoodType:=TFoodGroups[i,FoodType]]
     FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
+    FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams]
     
-    BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories)])
+    BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodProtein)])
     save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
     if(year %in% 83:96){
       pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos","Expenditure"))
-      TF <- TF[,pcols,with=FALSE]
+     # TF <- TF[,pcols,with=FALSE]
       TF <- TF[Code %in% ft$StartCode:ft$EndCode]
       
       TF[,Kilos:=as.numeric(Kilos)]
