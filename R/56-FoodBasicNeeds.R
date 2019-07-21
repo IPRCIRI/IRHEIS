@@ -48,7 +48,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,
               Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
               OriginalFoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
-              Total_Exp_Month_Per,TFoodKCalories_Per,TOriginalFoodExpenditure,Total_Exp_Month,
+              Total_Exp_Month_Per,TFoodKCaloriesHH_Per,TOriginalFoodExpenditure,Total_Exp_Month,
             #  TFoodExpenditure2,Total_Exp_Month_nondurable2,Total_Exp_Month2,
              # Total_Exp_Month_Per2,
               EqSizeRevOECD,EqSizeCalory,Decile,Bundle_Value)]
