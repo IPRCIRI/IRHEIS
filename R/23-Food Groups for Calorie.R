@@ -60,6 +60,7 @@ for(year in (Settings$startyear:Settings$endyear)){
      # TF <- TF[,pcols,with=FALSE]
       TF <- TF[Code %in% ft$StartCode:ft$EndCode]
       
+      TF[,Price:=as.numeric(Price)]
       TF[,Kilos:=as.numeric(Kilos)]
       TF[,Grams:=as.numeric(Grams)]
       TF[,Expenditure:=as.numeric(Expenditure)]

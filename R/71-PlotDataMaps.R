@@ -1,4 +1,4 @@
-﻿#Poverty Map
+#Poverty Map
 # 
 # Copyright © 2018:Majid Einian
 # Licence: GPL-3
