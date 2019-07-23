@@ -58,7 +58,8 @@ year<-96
  BaseXRural<-BaseX[Region==2]
  plot(FoodKCalories3~FoodProtein2,data=BaseXUrban)
  BaseXRural<-BaseXRural[FoodProtein2<700]
- plot(FoodKCalories3~FoodProtein2,data=BaseXRural)
+ 
+ smoothScatter(BaseXRural$FoodKCalories3~BaseXRural$FoodProtein2)
  
 #Base2<-Base[FinalPoor==0,.(.N,Average_Consumption=weighted.mean(FGrams_Per,Weight),
 # cluster3=mean(cluster3)),by=.(ProvinceCode,FoodType)]
