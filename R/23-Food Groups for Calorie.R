@@ -81,3 +81,6 @@ for(year in (Settings$startyear:Settings$endyear)){
 cat("\n\n==============Finish==============\nIt took ")
 endtime <- proc.time()
 cat((endtime-starttime)[3],"seconds.")
+
+
+
