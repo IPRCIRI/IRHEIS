@@ -47,19 +47,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #EngleD<-merge(EngleD,EngleX,by=c("Region","cluster3"))
   EngleD[,PovertyLine:=FPLine/Engel]
-  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
+  EngleD[,PovertyLine2:=4682368]
+  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   
 
- #MD<-MD[Region=="Urban"]
+# MD<-MD[Region=="Rural" & cluster3==5]
 
   
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
+  MD[,FinalPoor2:=ifelse(Total_Exp_Month_Per < PovertyLine2,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
       MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
+     # MD[,weighted.mean(PovertyLine2,Weight*Size)],"\t",
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
   
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
+  MD[,weighted.mean(FinalPoor2,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")][order(Region,cluster3)]
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region")]
   MD3<-MD[,.(HHID,FinalPoor,Weight)]
