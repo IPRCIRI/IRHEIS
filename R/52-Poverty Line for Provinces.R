@@ -251,16 +251,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD[is.na(EngleD)] <- 0
     w <- c( "PovertyLine9696", "PovertyLine9596",
             "PovertyLine9496", "PovertyLine9396",
-            "PovertyLine9296"
-            #"PovertyLine9196",
-            #"PovertyLine9096"
+            "PovertyLine9296",
+            "PovertyLine9196",
+            "PovertyLine9096"
             )
     
     EngleD[, PovertyLineSum := Reduce(`+`, .SD), .SDcols=w]
-    EngleD[, PovertyLineMean :=ifelse((NewArea2=="Chaharmahal" & Region=="Rural") |
-                                        (NewArea2=="Khorasan_Jonoobi" & Region=="Rural"),
-                                      PovertyLineSum/4,ifelse(NewArea2=="Khorasan_Jonoobi" & Region=="Urban",
-                                                              PovertyLineSum/4,PovertyLineSum/5))]
+    EngleD[, PovertyLineMean :=ifelse((NewArea2=="Khorasan_Jonoobi" & Region=="Urban") |
+                                        (NewArea2=="Alborz"),
+                                      PovertyLineSum/5,PovertyLineSum/7)]
     
     
     y2<-EngleD[Region=="Urban",.(PovertyLineMean,NewArea2)]
