@@ -1,7 +1,7 @@
-# Calculation of EV and CV
+# 91-Calculation of EV and CV- 2nd edition
 # 
 #
-# Copyright © 2017: Arin Shahbazian
+# Copyright © 2019: Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -57,11 +57,11 @@ for(year in (Settings$startyear:Settings$endyear)){
 }
 
 ################################################
-################  Cow  ########################
+################  Ghand  ########################
 ################################################
-cat("\n\n================ Cow =====================================\n")
+cat("\n\n================ Ghand =====================================\n")
 
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Cow))
+FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Ghand))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -78,33 +78,33 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","CowPrice","CowExpenditure"))
+  
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","GhandPrice","GhandExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
-    TF[,CowExpenditure:=as.numeric(CowExpenditure)]
+    TF[,GhandExpenditure:=as.numeric(GhandExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
   TF[is.na(TF)] <- 0
-  TF[,CowKG:=Kilos+(Grams*0.001)]
+  TF[,GhandKG:=Kilos+(Grams*0.001)]
   
   TF[,Code:=NULL]
   TF[,Kilos:=NULL]
   TF[,Grams:=NULL]
   TF[is.na(TF)] <- 0
-  CowData <- TF[,lapply(.SD,sum),by=HHID]
-  save(CowData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Cows.rda"))
+  GhandData <- TF[,lapply(.SD,sum),by=HHID]
+  save(GhandData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Ghands.rda"))
 }
 
 ################################################
-################  Sheep  ########################
+################  Shekar  ########################
 ################################################
-cat("\n\n================ Sheep =====================================\n")
+cat("\n\n================ Shekar =====================================\n")
 
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Sheep))
+FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Shekar))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -121,24 +121,24 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","SheepPrice","SheepExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","ShekarPrice","ShekarExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year %in% 84:96){
-    TF[,SheepExpenditure:=as.numeric(SheepExpenditure)]
+    TF[,ShekarExpenditure:=as.numeric(ShekarExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
   TF[is.na(TF)] <- 0
-  TF[,SheepKG:=Kilos+(Grams*0.001)]
+  TF[,ShekarKG:=Kilos+(Grams*0.001)]
   
   TF[,Code:=NULL]
   TF[,Kilos:=NULL]
   TF[,Grams:=NULL]
   TF[is.na(TF)] <- 0
-  SheepData <- TF[,lapply(.SD,sum),by=HHID]
-  save(SheepData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Sheeps.rda"))
+  ShekarData <- TF[,lapply(.SD,sum),by=HHID]
+  save(ShekarData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Shekars.rda"))
 }
 ################################################
 ################  Berenj  ########################
@@ -273,27 +273,27 @@ HHBase<-HHBase[,.(HHID,Region,ProvinceCode,Month)]
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
 SMD<-MD[,.(HHID,Decile,Weight,Size,EqSizeRevOECD,
            Total_Exp_Month,Total_Exp_Month_Per,TOriginalFoodExpenditure)]
-           #Total_Exp_Month_nondurable,Total_Exp_Month_Per_nondurable)]
-           
+#Total_Exp_Month_nondurable,Total_Exp_Month_Per_nondurable)]
+
 ################################################
 #######  Merge Information  #############
 ################################################
 
 Total<-merge(HHBase,SMD,all = TRUE)
 Total<-merge(Total,MorghData,all = TRUE)
-Total<-merge(Total,SheepData,all = TRUE)
-Total<-merge(Total,CowData,all = TRUE)
+Total<-merge(Total,ShekarData,all = TRUE)
+Total<-merge(Total,GhandData,all = TRUE)
 Total<-merge(Total,BerenjData,all = TRUE)
 Total<-merge(Total,RoghanData,all = TRUE)
 Total<-merge(Total,TokhmemorghData,all = TRUE)
 
 for (col in c("MorghExpenditure","MorghKG",
-              "SheepExpenditure","SheepKG",
-              "CowExpenditure","CowKG",
+              "ShekarExpenditure","ShekarKG",
+              "GhandExpenditure","GhandKG",
               "BerenjFExpenditure","BerenjKG",
               "RoghanExpenditure","RoghanKG",
               "TokhmemorghExpenditure","TokhmemorghKG")) Total[is.na(get(col)), (col) := 0]
-#"MorghPrice","SheepPrice","CowPrice",
+#"MorghPrice","ShekarPrice","GhandPrice",
 #"BerenjPrice","RoghanPrice","TokhmemorghPrice"
 
 Total<-Total[Decile %in% 1:10]
@@ -304,46 +304,40 @@ Total<-merge(Total,Index_Dataset,by=c("Month"),all.x=TRUE)
 
 Berenj_Azar97<-185.5
 Morgh_Azar97<-151.3
-Cow_Azar97<-188.5
-Sheep_Azar97<-182.1
+Ghand_Azar97<-188.5
+Shekar_Azar97<-182.1
 Roghan_Azar97<-159.9
 Tokhmemorgh_Azar97<-218.5
 
-Berenj_Elastisity<- -0.77
-Morgh_Elastisity<- -0.89
-Cow_Elastisity<- -0.89
-Sheep_Elastisity<- -0.89
-Roghan_Elastisity<- -0.81
-Tokhmemorgh_Elastisity<- -0.81
 
 ############New Prices###########
 #Initial Prices
 #Total[,BerenjP1:=BerenjPrice*Berenj_Azar97/Bt]
 #Total[,MorghP1:=MorghPrice*Morgh_Azar97/Mt]
-#Total[,CowP1:=CowPrice*Cow_Azar97/Ct]
-#Total[,SheepP1:=SheepPrice*Sheep_Azar97/St]
+#Total[,GhandP1:=GhandPrice*Ghand_Azar97/Ct]
+#Total[,ShekarP1:=ShekarPrice*Shekar_Azar97/St]
 #Total[,RoghanP1:=RoghanPrice*Roghan_Azar97/Rt]
 #Total[,TokhmemorghP1:=TokhmemorghPrice*Tokhmemorgh_Azar97/Tt]
 
 Total[,BerenjP1:=BerenjPrice]
 Total[,MorghP1:=MorghPrice]
-Total[,CowP1:=CowPrice]
-Total[,SheepP1:=SheepPrice]
+Total[,GhandP1:=GhandPrice]
+Total[,ShekarP1:=ShekarPrice]
 Total[,RoghanP1:=RoghanPrice]
 Total[,TokhmemorghP1:=TokhmemorghPrice]
 
 #Second Prices
 Total[,BerenjP2:=BerenjPrice*2]
 Total[,MorghP2:=MorghPrice*2]
-Total[,CowP2:=CowPrice*2]
-Total[,SheepP2:=SheepPrice*2]
+Total[,GhandP2:=GhandPrice*2]
+Total[,ShekarP2:=ShekarPrice*2]
 Total[,RoghanP2:=RoghanPrice*2]
 Total[,TokhmemorghP2:=TokhmemorghPrice*2]
 
 Total[,BerenjP3:=BerenjPrice*3]
 Total[,MorghP3:=MorghPrice*3]
-Total[,CowP3:=CowPrice*3]
-Total[,SheepP3:=SheepPrice*3]
+Total[,GhandP3:=GhandPrice*3]
+Total[,ShekarP3:=ShekarPrice*3]
 Total[,RoghanP3:=RoghanPrice*3]
 Total[,TokhmemorghP3:=TokhmemorghPrice*3]
 
@@ -351,33 +345,23 @@ Total[,TokhmemorghP3:=TokhmemorghPrice*3]
 ############  CV and EV  #############
 ################################################
 
-Total<-Total[,GExpenditures:=BerenjFExpenditure+CowExpenditure+
-               SheepExpenditure+MorghExpenditure+
+Total<-Total[,GExpenditures:=BerenjFExpenditure+GhandExpenditure+
+               ShekarExpenditure+MorghExpenditure+
                RoghanExpenditure+TokhmemorghExpenditure]
 GExpenditures<-Total[,weighted.mean(GExpenditures,Weight)]
 
 
 Total<-Total[,BerenjShare:=BerenjFExpenditure/GExpenditures]
-Total<-Total[,CowShare:=CowExpenditure/GExpenditures]
-Total<-Total[,SheepShare:=SheepExpenditure/GExpenditures]
+Total<-Total[,GhandShare:=GhandExpenditure/GExpenditures]
+Total<-Total[,ShekarShare:=ShekarExpenditure/GExpenditures]
 Total<-Total[,MorghShare:=MorghExpenditure/GExpenditures]
 Total<-Total[,RoghanShare:=RoghanExpenditure/GExpenditures]
 Total<-Total[,TokhmemorghShare:=TokhmemorghExpenditure/GExpenditures]
 
-Total<-Total[,EV2:=GExpenditures*(((CowP1/CowP2)^CowShare)*((SheepP1/SheepP2)^SheepShare)*
-                            ((BerenjP1/BerenjP2)^BerenjShare)*((RoghanP1/RoghanP2)^RoghanShare)*
-                            ((MorghP1/MorghP2)^MorghShare)*((TokhmemorghP1/TokhmemorghP2)^TokhmemorghShare)-1)]
-Total[,weighted.mean(EV2,Weight,na.rm = TRUE)]
-Total[,weighted.mean(EV2,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
-Total[,weighted.mean(EV2,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
-Total[,weighted.mean(EV2,Weight,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
-Total[,weighted.mean(EV2/TOriginalFoodExpenditure,Weight,na.rm = TRUE)]
-Total[,weighted.mean(EV2/TOriginalFoodExpenditure,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
-Total[,weighted.mean(EV2/TOriginalFoodExpenditure,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 
-Total<-Total[,CV2:=GExpenditures*(1-((CowP2/CowP1)^CowShare)*((SheepP2/SheepP1)^SheepShare)*
-                                   ((BerenjP2/BerenjP1)^BerenjShare)*((RoghanP2/RoghanP1)^RoghanShare)*
-                                   ((MorghP2/MorghP1)^MorghShare)*((TokhmemorghP2/TokhmemorghP1)^TokhmemorghShare))]
+Total<-Total[,CV2:=GExpenditures*(1-((GhandP2/GhandP1)^GhandShare)*((ShekarP2/ShekarP1)^ShekarShare)*
+                                    ((BerenjP2/BerenjP1)^BerenjShare)*((RoghanP2/RoghanP1)^RoghanShare)*
+                                    ((MorghP2/MorghP1)^MorghShare)*((TokhmemorghP2/TokhmemorghP1)^TokhmemorghShare))]
 Total[,weighted.mean(CV2,Weight,na.rm = TRUE)]
 Total[,weighted.mean(CV2,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(CV2,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
@@ -386,20 +370,10 @@ Total[,weighted.mean(CV2/GExpenditures,Weight,na.rm = TRUE)]
 Total[,weighted.mean(CV2/GExpenditures,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(CV2/GExpenditures,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 
-Total<-Total[,EV3:=GExpenditures*(((CowP1/CowP3)^CowShare)*((SheepP1/SheepP3)^SheepShare)*
-                                   ((BerenjP1/BerenjP3)^BerenjShare)*((RoghanP1/RoghanP3)^RoghanShare)*
-                                   ((MorghP1/MorghP3)^MorghShare)*((TokhmemorghP1/TokhmemorghP3)^TokhmemorghShare)-1)]
-Total[,weighted.mean(EV3,Weight,na.rm = TRUE)]
-Total[,weighted.mean(EV3,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
-Total[,weighted.mean(EV3,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
-Total[,weighted.mean(EV3,Weight,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
-Total[,weighted.mean(EV3/GExpenditures,Weight,na.rm = TRUE)]
-Total[,weighted.mean(EV3/GExpenditures,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
-Total[,weighted.mean(EV3/GExpenditures,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 
-Total<-Total[,CV3:=GExpenditures*(1-((CowP3/CowP1)^CowShare)*((SheepP3/SheepP1)^SheepShare)*
-                                   ((BerenjP3/BerenjP1)^BerenjShare)*((RoghanP3/RoghanP1)^RoghanShare)*
-                                   ((MorghP3/MorghP1)^MorghShare)*((TokhmemorghP3/TokhmemorghP1)^TokhmemorghShare))]
+Total<-Total[,CV3:=GExpenditures*(1-((GhandP3/GhandP1)^GhandShare)*((ShekarP3/ShekarP1)^ShekarShare)*
+                                    ((BerenjP3/BerenjP1)^BerenjShare)*((RoghanP3/RoghanP1)^RoghanShare)*
+                                    ((MorghP3/MorghP1)^MorghShare)*((TokhmemorghP3/TokhmemorghP1)^TokhmemorghShare))]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE)]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
@@ -415,10 +389,10 @@ Total[,weighted.mean(CV3/GExpenditures,Weight,na.rm = TRUE),by=.(Decile)][order(
 BerenjShare<-Total[,weighted.mean(BerenjFExpenditure,
                                   Weight)/weighted.mean(GExpenditures,Weight)]
 
-CowShare<-Total[,weighted.mean(CowExpenditure,
+GhandShare<-Total[,weighted.mean(GhandExpenditure,
                                Weight)/weighted.mean(GExpenditures,Weight)]
 
-SheepShare<-Total[,weighted.mean(SheepExpenditure,
+ShekarShare<-Total[,weighted.mean(ShekarExpenditure,
                                  Weight)/weighted.mean(GExpenditures,Weight)]
 
 MorghShare<-Total[,weighted.mean(MorghExpenditure,
@@ -436,16 +410,16 @@ BerenjAP2<-Total[,weighted.mean(BerenjP2,Weight,na.rm = TRUE)]
 BerenjAP3<-Total[,weighted.mean(BerenjP3,Weight,na.rm = TRUE)]
 BerenjAQ<-Total[,weighted.mean(BerenjKG,Weight)]
 
-CowAP1<-Total[,weighted.mean(CowP1,Weight,na.rm = TRUE)]
-CowAP2<-Total[,weighted.mean(CowP2,Weight,na.rm = TRUE)]
-CowAP3<-Total[,weighted.mean(CowP3,Weight,na.rm = TRUE)]
-CowAQ<-Total[,weighted.mean(CowKG,Weight)]
+GhandAP1<-Total[,weighted.mean(GhandP1,Weight,na.rm = TRUE)]
+GhandAP2<-Total[,weighted.mean(GhandP2,Weight,na.rm = TRUE)]
+GhandAP3<-Total[,weighted.mean(GhandP3,Weight,na.rm = TRUE)]
+GhandAQ<-Total[,weighted.mean(GhandKG,Weight)]
 
 
-SheepAP1<-Total[,weighted.mean(SheepP1,Weight,na.rm = TRUE)]
-SheepAP2<-Total[,weighted.mean(SheepP2,Weight,na.rm = TRUE)]
-SheepAP3<-Total[,weighted.mean(SheepP3,Weight,na.rm = TRUE)]
-SheepAQ<-Total[,weighted.mean(SheepKG,Weight)]
+ShekarAP1<-Total[,weighted.mean(ShekarP1,Weight,na.rm = TRUE)]
+ShekarAP2<-Total[,weighted.mean(ShekarP2,Weight,na.rm = TRUE)]
+ShekarAP3<-Total[,weighted.mean(ShekarP3,Weight,na.rm = TRUE)]
+ShekarAQ<-Total[,weighted.mean(ShekarKG,Weight)]
 
 MorghAP1<-Total[,weighted.mean(MorghP1,Weight,na.rm = TRUE)]
 MorghAP2<-Total[,weighted.mean(MorghP2,Weight,na.rm = TRUE)]
@@ -463,22 +437,33 @@ TokhmemorghAP3<-Total[,weighted.mean(TokhmemorghP3,Weight,na.rm = TRUE)]
 TokhmemorghAQ<-Total[,weighted.mean(TokhmemorghKG,Weight)]
 
 
-
-EV2<-GExpenditures*(((CowAP1/CowAP2)^CowShare)*((SheepAP1/SheepAP2)^SheepShare)*
-                      ((BerenjAP1/BerenjAP2)^BerenjShare)*((RoghanAP1/RoghanAP2)^RoghanShare)*
-                      ((MorghAP1/MorghAP2)^MorghShare)*((TokhmemorghAP1/TokhmemorghAP2)^TokhmemorghShare)-1)
-
-CV2<-GExpenditures*(1-((CowAP2/CowAP1)^CowShare)*((SheepAP2/SheepAP1)^SheepShare)*
-                      ((BerenjAP2/BerenjAP1)^BerenjShare)*((RoghanAP2/RoghanAP1)^RoghanShare)*
-                      ((MorghAP2/MorghAP1)^MorghShare)*((TokhmemorghAP2/TokhmemorghAP1)^TokhmemorghShare)-1)
-
-EV3<-GExpenditures*(((CowAP1/CowAP3)^CowShare)*((SheepAP1/SheepAP3)^SheepShare)*
-                      ((BerenjAP1/BerenjAP3)^BerenjShare)*((RoghanAP1/RoghanAP3)^RoghanShare)*
-                      ((MorghAP1/MorghAP3)^MorghShare)*((TokhmemorghAP1/TokhmemorghAP3)^TokhmemorghShare)-1)
-
-CV3<-GExpenditures*(1-((CowAP3/CowAP1)^CowShare)*((SheepAP3/SheepAP1)^SheepShare)*
+  GhandAP1<-41021
+  GhandAP2<-67828
+  GhandAP3<-105422
+  ShekarAP1<-32847
+  ShekarAP2<-58547
+  ShekarAP3<-84417
+  BerenjAP1<-71855
+  BerenjAP2<-85299
+  BerenjAP3<-184667
+  RoghanAP1<-53988
+  RoghanAP2<-78253
+  RoghanAP3<-138749
+  MorghAP1<-76896
+  MorghAP2<-148903
+  MorghAP3<-197623
+  TokhmemorghAP1<-90889
+  TokhmemorghAP2<-95418
+  TokhmemorghAP3<-233585
+  
+CV2<-GExpenditures*(1-((GhandAP3/GhandAP1)^GhandShare)*((ShekarAP3/ShekarAP1)^ShekarShare)*
                       ((BerenjAP3/BerenjAP1)^BerenjShare)*((RoghanAP3/RoghanAP1)^RoghanShare)*
                       ((MorghAP3/MorghAP1)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP1)^TokhmemorghShare)-1)
+
+
+CV3<-GExpenditures*(1-((GhandAP3/GhandAP2)^GhandShare)*((ShekarAP3/ShekarAP2)^ShekarShare)*
+                      ((BerenjAP3/BerenjAP2)^BerenjShare)*((RoghanAP3/RoghanAP2)^RoghanShare)*
+                      ((MorghAP3/MorghAP2)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP2)^TokhmemorghShare)-1)
 
 
 Total[,weighted.mean(Size,Weight)]
@@ -497,13 +482,13 @@ Total[,weighted.mean(MorghKG,Weight)]
 Total[,weighted.mean(MorghKG,Weight),by=.(Region)][order(Region)]
 Total[,weighted.mean(MorghKG,Weight),by=.(Decile)][order(Decile)]
 
-Total[,weighted.mean(CowKG,Weight)]
-Total[,weighted.mean(CowKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(CowKG,Weight),by=.(Decile)][order(Decile)]
+Total[,weighted.mean(GhandKG,Weight)]
+Total[,weighted.mean(GhandKG,Weight),by=.(Region)][order(Region)]
+Total[,weighted.mean(GhandKG,Weight),by=.(Decile)][order(Decile)]
 
-Total[,weighted.mean(SheepKG,Weight)]
-Total[,weighted.mean(SheepKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(SheepKG,Weight),by=.(Decile)][order(Decile)]
+Total[,weighted.mean(ShekarKG,Weight)]
+Total[,weighted.mean(ShekarKG,Weight),by=.(Region)][order(Region)]
+Total[,weighted.mean(ShekarKG,Weight),by=.(Decile)][order(Decile)]
 
 Total[,weighted.mean(TokhmemorghKG,Weight)]
 Total[,weighted.mean(TokhmemorghKG,Weight),by=.(Region)][order(Region)]
