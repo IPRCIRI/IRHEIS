@@ -405,38 +405,6 @@ TokhmemorghShare<-Total[,weighted.mean(TokhmemorghExpenditure,
                                        Weight)/weighted.mean(GExpenditures,Weight)]
 
 
-BerenjAP1<-Total[,weighted.mean(BerenjP1,Weight,na.rm = TRUE)]
-BerenjAP2<-Total[,weighted.mean(BerenjP2,Weight,na.rm = TRUE)]
-BerenjAP3<-Total[,weighted.mean(BerenjP3,Weight,na.rm = TRUE)]
-BerenjAQ<-Total[,weighted.mean(BerenjKG,Weight)]
-
-GhandAP1<-Total[,weighted.mean(GhandP1,Weight,na.rm = TRUE)]
-GhandAP2<-Total[,weighted.mean(GhandP2,Weight,na.rm = TRUE)]
-GhandAP3<-Total[,weighted.mean(GhandP3,Weight,na.rm = TRUE)]
-GhandAQ<-Total[,weighted.mean(GhandKG,Weight)]
-
-
-ShekarAP1<-Total[,weighted.mean(ShekarP1,Weight,na.rm = TRUE)]
-ShekarAP2<-Total[,weighted.mean(ShekarP2,Weight,na.rm = TRUE)]
-ShekarAP3<-Total[,weighted.mean(ShekarP3,Weight,na.rm = TRUE)]
-ShekarAQ<-Total[,weighted.mean(ShekarKG,Weight)]
-
-MorghAP1<-Total[,weighted.mean(MorghP1,Weight,na.rm = TRUE)]
-MorghAP2<-Total[,weighted.mean(MorghP2,Weight,na.rm = TRUE)]
-MorghAP3<-Total[,weighted.mean(MorghP3,Weight,na.rm = TRUE)]
-MorghAQ<-Total[,weighted.mean(MorghKG,Weight)]
-
-RoghanAP1<-Total[,weighted.mean(RoghanP1,Weight,na.rm = TRUE)]
-RoghanAP2<-Total[,weighted.mean(RoghanP2,Weight,na.rm = TRUE)]
-RoghanAP3<-Total[,weighted.mean(RoghanP3,Weight,na.rm = TRUE)]
-RoghanAQ<-Total[,weighted.mean(RoghanKG,Weight)]
-
-TokhmemorghAP1<-Total[,weighted.mean(TokhmemorghP1,Weight,na.rm = TRUE)]
-TokhmemorghAP2<-Total[,weighted.mean(TokhmemorghP2,Weight,na.rm = TRUE)]
-TokhmemorghAP3<-Total[,weighted.mean(TokhmemorghP3,Weight,na.rm = TRUE)]
-TokhmemorghAQ<-Total[,weighted.mean(TokhmemorghKG,Weight)]
-
-
   GhandAP1<-41021
   GhandAP2<-67828
   GhandAP3<-105422
@@ -458,19 +426,31 @@ TokhmemorghAQ<-Total[,weighted.mean(TokhmemorghKG,Weight)]
   
 CV2<-GExpenditures*(1-((GhandAP3/GhandAP1)^GhandShare)*((ShekarAP3/ShekarAP1)^ShekarShare)*
                       ((BerenjAP3/BerenjAP1)^BerenjShare)*((RoghanAP3/RoghanAP1)^RoghanShare)*
-                      ((MorghAP3/MorghAP1)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP1)^TokhmemorghShare)-1)
+                      ((MorghAP3/MorghAP1)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP1)^TokhmemorghShare))
 
 
 CV3<-GExpenditures*(1-((GhandAP3/GhandAP2)^GhandShare)*((ShekarAP3/ShekarAP2)^ShekarShare)*
                       ((BerenjAP3/BerenjAP2)^BerenjShare)*((RoghanAP3/RoghanAP2)^RoghanShare)*
-                      ((MorghAP3/MorghAP2)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP2)^TokhmemorghShare)-1)
+                      ((MorghAP3/MorghAP2)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP2)^TokhmemorghShare))
+
+Total<-Total[,CV2:=GExpenditures*(1-((GhandAP3/GhandAP1)^GhandShare)*((ShekarAP3/ShekarAP1)^ShekarShare)*
+                                    ((BerenjAP3/BerenjAP1)^BerenjShare)*((RoghanAP3/RoghanAP1)^RoghanShare)*
+                                    ((MorghAP3/MorghAP1)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP1)^TokhmemorghShare))]
+Total[,weighted.mean(CV2,Weight,na.rm = TRUE)]
+Total[,weighted.mean(CV2,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
+
+Total<-Total[,CV3:=GExpenditures*(1-((GhandAP3/GhandAP2)^GhandShare)*((ShekarAP3/ShekarAP2)^ShekarShare)*
+                                    ((BerenjAP3/BerenjAP2)^BerenjShare)*((RoghanAP3/RoghanAP2)^RoghanShare)*
+                                    ((MorghAP3/MorghAP2)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP2)^TokhmemorghShare))]
+Total[,weighted.mean(CV3,Weight,na.rm = TRUE)]
+Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 
 
 Total[,weighted.mean(Size,Weight)]
 Total[,weighted.mean(Size,Weight),by=.(Decile)][order(Decile)]
 Total[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
 
-Total[,weighted.mean(BerenjKG,Weight)]
+Total[,weighted.mean(TokhmemorghPrice,Weight,na.rm=TRUE)]
 Total[,weighted.mean(BerenjKG,Weight),by=.(Region)][order(Region)]
 Total[,weighted.mean(BerenjKG,Weight),by=.(Decile)][order(Decile)]
 
