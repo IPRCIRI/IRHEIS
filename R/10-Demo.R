@@ -22,7 +22,7 @@ P1Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P1Cols))
 EduCodesA <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_A))
 EduCodesB <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_B))
 EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
-
+EduCodesD <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_D))
 
 years <- Settings$startyear:Settings$endyear
 
@@ -35,8 +35,10 @@ for(year in years){
     EduCodeT <- EduCodesA
   }else if(year %in% 85:92){
     EduCodeT <- EduCodesB
-  }else{
+  }else if(year %in% 93:96){
     EduCodeT <- EduCodesC
+  }else{
+    EduCodeT <- EduCodesD
   }
 
   P1 <- rbind(Tables[[paste0("R",year,"P1")]],Tables[[paste0("U",year,"P1")]])
