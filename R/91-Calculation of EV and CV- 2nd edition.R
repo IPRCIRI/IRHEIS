@@ -334,12 +334,12 @@ Total[,ShekarP2:=ShekarPrice*2]
 Total[,RoghanP2:=RoghanPrice*2]
 Total[,TokhmemorghP2:=TokhmemorghPrice*2]
 
-Total[,BerenjP3:=BerenjPrice*3]
-Total[,MorghP3:=MorghPrice*3]
-Total[,GhandP3:=GhandPrice*3]
-Total[,ShekarP3:=ShekarPrice*3]
-Total[,RoghanP3:=RoghanPrice*3]
-Total[,TokhmemorghP3:=TokhmemorghPrice*3]
+Total[,BerenjP3:=BerenjPrice*2.7]
+Total[,MorghP3:=MorghPrice*2.7]
+Total[,GhandP3:=GhandPrice*2.7]
+Total[,ShekarP3:=ShekarPrice*2.7]
+Total[,RoghanP3:=RoghanPrice*2.7]
+Total[,TokhmemorghP3:=TokhmemorghPrice*2.7]
 
 ################################################
 ############  CV and EV  #############
@@ -404,75 +404,6 @@ RoghanShare<-Total[,weighted.mean(RoghanExpenditure,
 TokhmemorghShare<-Total[,weighted.mean(TokhmemorghExpenditure,
                                        Weight)/weighted.mean(GExpenditures,Weight)]
 
-
-  GhandAP1<-41021
-  GhandAP2<-67828
-  GhandAP3<-105422
-  ShekarAP1<-32847
-  ShekarAP2<-58547
-  ShekarAP3<-84417
-  BerenjAP1<-71855
-  BerenjAP2<-85299
-  BerenjAP3<-184667
-  RoghanAP1<-53988
-  RoghanAP2<-78253
-  RoghanAP3<-138749
-  MorghAP1<-76896
-  MorghAP2<-148903
-  MorghAP3<-197623
-  TokhmemorghAP1<-90889
-  TokhmemorghAP2<-95418
-  TokhmemorghAP3<-233585
-  
-CV2<-GExpenditures*(1-((GhandAP3/GhandAP1)^GhandShare)*((ShekarAP3/ShekarAP1)^ShekarShare)*
-                      ((BerenjAP3/BerenjAP1)^BerenjShare)*((RoghanAP3/RoghanAP1)^RoghanShare)*
-                      ((MorghAP3/MorghAP1)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP1)^TokhmemorghShare))
-
-
-CV3<-GExpenditures*(1-((GhandAP3/GhandAP2)^GhandShare)*((ShekarAP3/ShekarAP2)^ShekarShare)*
-                      ((BerenjAP3/BerenjAP2)^BerenjShare)*((RoghanAP3/RoghanAP2)^RoghanShare)*
-                      ((MorghAP3/MorghAP2)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP2)^TokhmemorghShare))
-
-Total<-Total[,CV2:=GExpenditures*(1-((GhandAP3/GhandAP1)^GhandShare)*((ShekarAP3/ShekarAP1)^ShekarShare)*
-                                    ((BerenjAP3/BerenjAP1)^BerenjShare)*((RoghanAP3/RoghanAP1)^RoghanShare)*
-                                    ((MorghAP3/MorghAP1)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP1)^TokhmemorghShare))]
-Total[,weighted.mean(CV2,Weight,na.rm = TRUE)]
-Total[,weighted.mean(CV2,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
-
-Total<-Total[,CV3:=GExpenditures*(1-((GhandAP3/GhandAP2)^GhandShare)*((ShekarAP3/ShekarAP2)^ShekarShare)*
-                                    ((BerenjAP3/BerenjAP2)^BerenjShare)*((RoghanAP3/RoghanAP2)^RoghanShare)*
-                                    ((MorghAP3/MorghAP2)^MorghShare)*((TokhmemorghAP3/TokhmemorghAP2)^TokhmemorghShare))]
-Total[,weighted.mean(CV3,Weight,na.rm = TRUE)]
-Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
-
-
-Total[,weighted.mean(Size,Weight)]
-Total[,weighted.mean(Size,Weight),by=.(Decile)][order(Decile)]
-Total[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
-
-Total[,weighted.mean(TokhmemorghPrice,Weight,na.rm=TRUE)]
-Total[,weighted.mean(BerenjKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(BerenjKG,Weight),by=.(Decile)][order(Decile)]
-
-Total[,weighted.mean(RoghanKG,Weight)]
-Total[,weighted.mean(RoghanKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(RoghanKG,Weight),by=.(Decile)][order(Decile)]
-
-Total[,weighted.mean(MorghKG,Weight)]
-Total[,weighted.mean(MorghKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(MorghKG,Weight),by=.(Decile)][order(Decile)]
-
-Total[,weighted.mean(GhandKG,Weight)]
-Total[,weighted.mean(GhandKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(GhandKG,Weight),by=.(Decile)][order(Decile)]
-
-Total[,weighted.mean(ShekarKG,Weight)]
-Total[,weighted.mean(ShekarKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(ShekarKG,Weight),by=.(Decile)][order(Decile)]
-
-Total[,weighted.mean(TokhmemorghKG,Weight)]
-Total[,weighted.mean(TokhmemorghKG,Weight),by=.(Region)][order(Region)]
-Total[,weighted.mean(TokhmemorghKG,Weight),by=.(Decile)][order(Decile)]
 
 #x<-Total[,.(Total_Exp_Month_Per_nondurable,Decile)]
 

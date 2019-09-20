@@ -151,10 +151,35 @@ for(year in years){
   P[,NHigh:= ifelse(EduLevel0=="High" & Student==TRUE,1,0)]
   P[,NPre:= ifelse(EduLevel0=="Pre" & Student==TRUE,1,0)]
   
+  #Age Groups
+  P[,NAge1B:=ifelse(Age==0 & Sex=="Male",1,0)]
+  P[,NAge1G:=ifelse(Age==0 & Sex=="Female",1,0)]
+  P[,NAge2B:=ifelse(Age==1 & Sex=="Male",1,0)]
+  P[,NAge2G:=ifelse(Age==1 & Sex=="Female",1,0)]
+  P[,NAge3B:=ifelse(Age==2 & Sex=="Male",1,0)]
+  P[,NAge3G:=ifelse(Age==2 & Sex=="Female",1,0)]
+  P[,NAge4B:=ifelse(Age==3 & Sex=="Male",1,0)]
+  P[,NAge4G:=ifelse(Age==3 & Sex=="Female",1,0)]
+  P[,NAge5B:=ifelse(Age==4 & Sex=="Male",1,0)]
+  P[,NAge5G:=ifelse(Age==4 & Sex=="Female",1,0)]
+  P[,NAge6B:=ifelse(Age<=9 & Age>4 & Sex=="Male",1,0)]
+  P[,NAge6G:=ifelse(Age<=9 & Age>4 & Sex=="Female",1,0)]
+  P[,NAge7B:=ifelse(Age<=14 & Age>9 & Sex=="Male",1,0)]
+  P[,NAge7G:=ifelse(Age<=14 & Age>9 & Sex=="Female",1,0)]
+  P[,NAge8B:=ifelse(Age<=19 & Age>14 & Sex=="Male",1,0)]
+  P[,NAge8G:=ifelse(Age<=19 & Age>14 & Sex=="Female",1,0)]
+  P[,NAge9B:=ifelse(Age<=59 & Age>19 & Sex=="Male",1,0)]
+  P[,NAge9G:=ifelse(Age<=59 & Age>19 & Sex=="Female",1,0)]
+  P[,NAge10B:=ifelse(Age>59 & Sex=="Male",1,0)]
+  P[,NAge10G:=ifelse(Age>59 & Sex=="Female",1,0)]
+
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
             .SDcols=c("Size","NKids","NInfants","NSmallKids","NElementary",
-                     "NMiddle","NHigh","NPre"),#,"TotalIncome"),
+                     "NMiddle","NHigh","NPre","NAge1B","NAge1G",
+                     "NAge2B","NAge2G","NAge3B","NAge3G","NAge4B","NAge4G",
+                     "NAge5B","NAge5G","NAge6B","NAge6G","NAge7B","NAge7G"
+                     ,"NAge8B","NAge8G","NAge9B","NAge9G","NAge10B","NAge10G"),#,"TotalIncome"),
             by="HHID"]
 
 #  PSum <- PSum[TotalIncome>0]
