@@ -299,50 +299,50 @@ for (col in c("MorghExpenditure","MorghKG",
 Total<-Total[Decile %in% 1:10]
 
 #Price Indexes
-load(file="Index_Dataset.rda")
-Total<-merge(Total,Index_Dataset,by=c("Month"),all.x=TRUE)
+load(file="Index_Dataset96.rda")
+Total<-merge(Total,Index_Dataset96,by=c("Region","Month"),all.x=TRUE)
 
-Berenj_Azar97<-185.5
-Morgh_Azar97<-151.3
-Ghand_Azar97<-188.5
-Shekar_Azar97<-182.1
-Roghan_Azar97<-159.9
-Tokhmemorgh_Azar97<-218.5
+Berenj_Esfand96<-114.4
+Morgh_Esfand96<-122.1
+Ghand_Esfand96<-108.4
+Shekar_Esfand96<-108.4
+Roghan_Esfand96<-113.7
+Tokhmemorgh_Esfand96<-120.9 
+
+Berenj_Esfand97<-145.6
+Morgh_Esfand97<-265.6
+Ghand_Esfand97<-170.3
+Shekar_Esfand97<-170.3
+Roghan_Esfand97<-168
+Tokhmemorgh_Esfand97<-175.3
+
+
 
 
 ############New Prices###########
-#Initial Prices
-#Total[,BerenjP1:=BerenjPrice*Berenj_Azar97/Bt]
-#Total[,MorghP1:=MorghPrice*Morgh_Azar97/Mt]
-#Total[,GhandP1:=GhandPrice*Ghand_Azar97/Ct]
-#Total[,ShekarP1:=ShekarPrice*Shekar_Azar97/St]
-#Total[,RoghanP1:=RoghanPrice*Roghan_Azar97/Rt]
-#Total[,TokhmemorghP1:=TokhmemorghPrice*Tokhmemorgh_Azar97/Tt]
+Total[,BerenjP0:=BerenjPrice*Berenj_Esfand96/BerenjIndex]
+Total[,MorghP0:=MorghPrice*Morgh_Esfand96/MorghIndex]
+Total[,GhandP0:=GhandPrice*Ghand_Esfand96/GhandIndex]
+Total[,ShekarP0:=ShekarPrice*Ghand_Esfand96/GhandIndex]
+Total[,RoghanP0:=RoghanPrice*Roghan_Esfand96/RoghanIndex]
+Total[,TokhmemorghP0:=TokhmemorghPrice*Tokhmemorgh_Esfand96/EggIndex]
 
-Total[,BerenjP1:=BerenjPrice]
-Total[,MorghP1:=MorghPrice]
-Total[,GhandP1:=GhandPrice]
-Total[,ShekarP1:=ShekarPrice]
-Total[,RoghanP1:=RoghanPrice]
-Total[,TokhmemorghP1:=TokhmemorghPrice]
+Total[,BerenjP1:=BerenjPrice*Berenj_Esfand97/BerenjIndex]
+Total[,MorghP1:=MorghPrice*Morgh_Esfand97/MorghIndex]
+Total[,GhandP1:=GhandPrice*Ghand_Esfand97/GhandIndex]
+Total[,ShekarP1:=ShekarPrice*Ghand_Esfand97/GhandIndex]
+Total[,RoghanP1:=RoghanPrice*Roghan_Esfand97/RoghanIndex]
+Total[,TokhmemorghP1:=TokhmemorghPrice*Tokhmemorgh_Esfand97/EggIndex]
 
-#Second Prices
-Total[,BerenjP2:=BerenjPrice*2]
-Total[,MorghP2:=MorghPrice*2]
-Total[,GhandP2:=GhandPrice*2]
-Total[,ShekarP2:=ShekarPrice*2]
-Total[,RoghanP2:=RoghanPrice*2]
-Total[,TokhmemorghP2:=TokhmemorghPrice*2]
-
-Total[,BerenjP3:=BerenjPrice*2.7]
-Total[,MorghP3:=MorghPrice*2.7]
-Total[,GhandP3:=GhandPrice*2.7]
-Total[,ShekarP3:=ShekarPrice*2.7]
-Total[,RoghanP3:=RoghanPrice*2.7]
-Total[,TokhmemorghP3:=TokhmemorghPrice*2.7]
+Total[,BerenjP2:=BerenjP0*2.57]
+Total[,MorghP2:=MorghP0*2.57]
+Total[,GhandP2:=GhandP0*2.57]
+Total[,ShekarP2:=ShekarP0*2.57]
+Total[,RoghanP2:=RoghanP0*2.57]
+Total[,TokhmemorghP2:=TokhmemorghP0*2.57]
 
 ################################################
-############  CV and EV  #############
+################  CV and EV  #################
 ################################################
 
 Total<-Total[,GExpenditures:=BerenjFExpenditure+GhandExpenditure+
@@ -371,9 +371,9 @@ Total[,weighted.mean(CV2/GExpenditures,Weight,na.rm = TRUE),by=.(Region)][order(
 Total[,weighted.mean(CV2/GExpenditures,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 
 
-Total<-Total[,CV3:=GExpenditures*(1-((GhandP3/GhandP1)^GhandShare)*((ShekarP3/ShekarP1)^ShekarShare)*
-                                    ((BerenjP3/BerenjP1)^BerenjShare)*((RoghanP3/RoghanP1)^RoghanShare)*
-                                    ((MorghP3/MorghP1)^MorghShare)*((TokhmemorghP3/TokhmemorghP1)^TokhmemorghShare))]
+Total<-Total[,CV3:=GExpenditures*(1-((GhandP2/GhandP0)^GhandShare)*((ShekarP2/ShekarP0)^ShekarShare)*
+                                    ((BerenjP2/BerenjP0)^BerenjShare)*((RoghanP2/RoghanP0)^RoghanShare)*
+                                    ((MorghP2/MorghP0)^MorghShare)*((TokhmemorghP2/TokhmemorghP0)^TokhmemorghShare))]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE)]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
