@@ -36,7 +36,7 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
     P2 <- cbind(P2c,P2nc)[,nP2,with=FALSE]
   }
   
-  if(year==96){
+  if(year==97){
     a <- unlist(P2Cols[P2Cols$Year==year,])
     ind <- which(!is.na(a))[2:46]
     setnames(P2,names(a[ind]))
@@ -150,7 +150,7 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   P2[,dishwasher := factor(dishwasher, levels=0:1,
                        labels=c("False","True"))]
   
-  if(year %in% 91:96){
+  if(year %in% 91:97){
   P2[,Microwave := factor(Microwave, levels=0:1,
                            labels=c("False","True"))]
   }
