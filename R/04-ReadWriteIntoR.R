@@ -25,13 +25,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   l <- dir(path=Settings$HEISAccessPath, pattern=glob2rx(paste0(year,".*")),ignore.case = TRUE)
   if(year==80)
-    cns<-odbcConnectAccess2007(Settings$D80LinkDest)
+  cns<-odbcConnectAccess2007(Settings$D80LinkDest)
   else
-    if(version$arch=="x86_64"){
-      cns<-odbcConnectAccess2007(paste0(Settings$HEISAccessPath, l))
-    }else{
-      cns<-odbcConnectAccess2007(paste0(Settings$HEISAccessPath, l))
-    }
+ cns<-odbcConnectAccess2007(paste0(Settings$HEISAccessPath, l))
+  
   tbls <- data.table(sqlTables(cns))[TABLE_TYPE %in% c("TABLE","SYNONYM"),]$TABLE_NAME
   print(tbls)
   Tables <- vector(mode = "list")#, length = length(tbls))
@@ -49,4 +46,4 @@ for(year in (Settings$startyear:Settings$endyear)){
 endtime <- proc.time()
 
 cat("\n\n============================\nIt took ")
-cat((endtime-starttime)[3],"seconds")
+cat(endtime-starttime)
