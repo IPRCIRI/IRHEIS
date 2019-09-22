@@ -39,12 +39,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","MorghPrice","MorghExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year %in% 84:97){
     TF[,MorghExpenditure:=as.numeric(MorghExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
+  TF[,MorghPrice:=as.numeric(MorghPrice)]
   TF[is.na(TF)] <- 0
   TF[,MorghKG:=Kilos+(Grams*0.001)]
   
@@ -82,12 +83,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","GhandPrice","GhandExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year %in% 84:97){
     TF[,GhandExpenditure:=as.numeric(GhandExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
+  TF[,GhandPrice:=as.numeric(GhandPrice)]
   TF[is.na(TF)] <- 0
   TF[,GhandKG:=Kilos+(Grams*0.001)]
   
@@ -124,12 +126,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","ShekarPrice","ShekarExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year %in% 84:97){
     TF[,ShekarExpenditure:=as.numeric(ShekarExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
+  TF[,ShekarPrice:=as.numeric(ShekarPrice)]
   TF[is.na(TF)] <- 0
   TF[,ShekarKG:=Kilos+(Grams*0.001)]
   
@@ -165,12 +168,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","BerenjPrice","BerenjFExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year %in% 84:97){
     TF[,BerenjFExpenditure:=as.numeric(BerenjFExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
+  TF[,BerenjPrice:=as.numeric(BerenjPrice)]
   TF[is.na(TF)] <- 0
   TF[,BerenjKG:=Kilos+(Grams*0.001)]
   
@@ -206,12 +210,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","RoghanPrice","RoghanExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year %in% 84:97){
     TF[,RoghanExpenditure:=as.numeric(RoghanExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
+  TF[,RoghanPrice:=as.numeric(RoghanPrice)]
   TF[is.na(TF)] <- 0
   TF[,RoghanKG:=Kilos+(Grams*0.001)]
   
@@ -247,12 +252,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","TokhmemorghPrice","TokhmemorghExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
+  if(year %in% 84:97){
     TF[,TokhmemorghExpenditure:=as.numeric(TokhmemorghExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,Grams:=as.numeric(Grams)]
+  TF[,TokhmemorghPrice:=as.numeric(TokhmemorghPrice)]
   TF[is.na(TF)] <- 0
   TF[,TokhmemorghKG:=Kilos+(Grams*0.001)]
   
@@ -299,8 +305,8 @@ for (col in c("MorghExpenditure","MorghKG",
 Total<-Total[Decile %in% 1:10]
 
 #Price Indexes
-load(file="Index_Dataset96.rda")
-Total<-merge(Total,Index_Dataset96,by=c("Region","Month"),all.x=TRUE)
+load(file="Index_Dataset97.rda")
+Total<-merge(Total,Index_Dataset97,by=c("Region","Month"),all.x=TRUE)
 
 Berenj_Esfand96<-114.4
 Morgh_Esfand96<-122.1
