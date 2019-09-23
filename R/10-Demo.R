@@ -174,6 +174,28 @@ for(year in years){
   P[,NAge9G:=ifelse(Age<=59 & Age>19 & Sex=="Female",1,0)]
   P[,NAge10B:=ifelse(Age>59 & Sex=="Male",1,0)]
   P[,NAge10G:=ifelse(Age>59 & Sex=="Female",1,0)]
+  
+  #Age Groups
+  P[,NAge1_A_B:=ifelse(Age==0 & Sex=="Male",1,0)]
+  P[,NAge1_A_G:=ifelse(Age==0 & Sex=="Female",1,0)]
+  P[,NAge2_A_B:=ifelse(Age==1 & Sex=="Male",1,0)]
+  P[,NAge2_A_G:=ifelse(Age==1 & Sex=="Female",1,0)]
+  P[,NAge3_A_B:=ifelse(Age==2 & Sex=="Male",1,0)]
+  P[,NAge3_A_G:=ifelse(Age==2 & Sex=="Female",1,0)]
+  P[,NAge4_A_B:=ifelse(Age==3 & Sex=="Male",1,0)]
+  P[,NAge4_A_G:=ifelse(Age==3 & Sex=="Female",1,0)]
+  P[,NAge5_A_B:=ifelse(Age==4 & Sex=="Male",1,0)]
+  P[,NAge5_A_G:=ifelse(Age==4 & Sex=="Female",1,0)]
+  P[,NAge6_A_B:=ifelse(Age<=1 & Age>4 & Sex=="Male",1,0)]
+  P[,NAge6_A_G:=ifelse(Age<=1 & Age>4 & Sex=="Female",1,0)]
+  P[,NAge7_A_B:=ifelse(Age<=17 & Age>1 & Sex=="Male",1,0)]
+  P[,NAge7_A_G:=ifelse(Age<=17 & Age>1 & Sex=="Female",1,0)]
+  P[,NAge8_A_B:=ifelse(Age<=29 & Age>18 & Sex=="Male",1,0)]
+  P[,NAge8_A_G:=ifelse(Age<=29 & Age>18 & Sex=="Female",1,0)]
+  P[,NAge9_A_B:=ifelse(Age<=60 & Age>29 & Sex=="Male",1,0)]
+  P[,NAge9_A_G:=ifelse(Age<=60 & Age>29 & Sex=="Female",1,0)]
+  P[,NAge10_A_B:=ifelse(Age>60 & Sex=="Male",1,0)]
+  P[,NAge10_A_G:=ifelse(Age>60 & Sex=="Female",1,0)]
 
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
@@ -181,7 +203,11 @@ for(year in years){
                      "NMiddle","NHigh","NPre","NAge1B","NAge1G",
                      "NAge2B","NAge2G","NAge3B","NAge3G","NAge4B","NAge4G",
                      "NAge5B","NAge5G","NAge6B","NAge6G","NAge7B","NAge7G"
-                     ,"NAge8B","NAge8G","NAge9B","NAge9G","NAge10B","NAge10G"),#,"TotalIncome"),
+                     ,"NAge8B","NAge8G","NAge9B","NAge9G","NAge10B","NAge10G",
+                     "NAge1_A_B","NAge1_A_G",
+                     "NAge2_A_B","NAge2_A_G","NAge3_A_B","NAge3_A_G","NAge4_A_B","NAge4_A_G",
+                     "NAge5_A_B","NAge5_A_G","NAge6_A_B","NAge6_A_G","NAge7_A_B","NAge7_A_G"
+                     ,"NAge8_A_B","NAge8_A_G","NAge9_A_B","NAge9_A_G","NAge10_A_B","NAge10_A_G"),#,"TotalIncome"),
             by="HHID"]
 
 #  PSum <- PSum[TotalIncome>0]
