@@ -51,7 +51,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   
 
- MD<-MD[Region=="Urban"]
+ #MD<-MD[Region=="Urban"]
 
   
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
