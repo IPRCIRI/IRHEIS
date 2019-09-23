@@ -99,6 +99,24 @@ KCaloryNeed_B9: 2460.0
 KCaloryNeed_G9: 1990.0
 KCaloryNeed_B10: 2010.0
 KCaloryNeed_G10: 1780.0
+KCaloryNeed_A_B1: 705.0
+KCaloryNeed_A_G1: 643.0
+KCaloryNeed_A_B2: 948.0
+KCaloryNeed_A_G2: 865.0
+KCaloryNeed_A_B3: 1120.0
+KCaloryNeed_A_G3: 1047.0
+KCaloryNeed_A_B4: 1360.0
+KCaloryNeed_A_G4: 1242.0
+KCaloryNeed_A_B5: 1927.0
+KCaloryNeed_A_G5: 1782.0
+KCaloryNeed_A_B6: 3036.0
+KCaloryNeed_A_G6: 2434.0
+KCaloryNeed_A_B7: 3029.0
+KCaloryNeed_A_G7: 2300.0
+KCaloryNeed_A_B8: 2900.0
+KCaloryNeed_A_G8: 2200.0
+KCaloryNeed_A_B9: 2350.0
+KCaloryNeed_A_G9: 2000.0
 InitialPoorPercentile:
 - 1
 - 2
