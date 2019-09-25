@@ -14,6 +14,139 @@ library(data.table)
 library(stringr)
 library(readxl)
 options(warn=-1)
+
+################################################
+################  Shir  ########################
+################################################
+cat("\n\n================ Shir =====================================\n")
+
+FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Shir))
+
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
+  ft <- FoodTables[Year==year]
+  tab <- ft$Table
+  if(is.na(tab))
+    next
+  UTF <- Tables[[paste0("U",year,tab)]]
+  RTF <- Tables[[paste0("R",year,tab)]]
+  TF <- rbind(UTF,RTF)
+  for(n in names(TF)){
+    x <- which(ft==n)
+    if(length(x)>0)
+      setnames(TF,n,names(ft)[x])
+  }
+  
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","ShirPrice","ShirExpenditure"))
+  TF <- TF[,pcols,with=FALSE]
+  TF <- TF[Code %in% ft$StartCode:ft$EndCode]
+  if(year %in% 84:96){
+    TF[,ShirExpenditure:=as.numeric(ShirExpenditure)]
+  }
+  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
+  TF[,Kilos:=as.numeric(Kilos)]
+  TF[,Grams:=as.numeric(Grams)]
+  TF[,ShirPrice:=as.numeric(ShirPrice)]
+  TF[is.na(TF)] <- 0
+  TF[,ShirKG:=Kilos+(Grams*0.001)]
+  
+  TF[,Code:=NULL]
+  TF[,Kilos:=NULL]
+  TF[,Grams:=NULL]
+  TF[is.na(TF)] <- 0
+  ShirData <- TF[,lapply(.SD,sum),by=HHID]
+  save(ShirData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Shirs.rda"))
+}
+
+################################################
+################  Mast  ########################
+################################################
+cat("\n\n================ Mast =====================================\n")
+
+FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Mast))
+
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
+  ft <- FoodTables[Year==year]
+  tab <- ft$Table
+  if(is.na(tab))
+    next
+  UTF <- Tables[[paste0("U",year,tab)]]
+  RTF <- Tables[[paste0("R",year,tab)]]
+  TF <- rbind(UTF,RTF)
+  for(n in names(TF)){
+    x <- which(ft==n)
+    if(length(x)>0)
+      setnames(TF,n,names(ft)[x])
+  }
+  
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","MastPrice","MastExpenditure"))
+  TF <- TF[,pcols,with=FALSE]
+  TF <- TF[Code %in% ft$StartCode:ft$EndCode]
+  if(year %in% 84:96){
+    TF[,MastExpenditure:=as.numeric(MastExpenditure)]
+  }
+  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
+  TF[,Kilos:=as.numeric(Kilos)]
+  TF[,Grams:=as.numeric(Grams)]
+  TF[,MastPrice:=as.numeric(MastPrice)]
+  TF[is.na(TF)] <- 0
+  TF[,MastKG:=Kilos+(Grams*0.001)]
+  
+  TF[,Code:=NULL]
+  TF[,Kilos:=NULL]
+  TF[,Grams:=NULL]
+  TF[is.na(TF)] <- 0
+  MastData <- TF[,lapply(.SD,sum),by=HHID]
+  save(MastData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Masts.rda"))
+}
+
+################################################
+################  Panir  ########################
+################################################
+cat("\n\n================ Panir =====================================\n")
+
+FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Panir))
+
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
+  ft <- FoodTables[Year==year]
+  tab <- ft$Table
+  if(is.na(tab))
+    next
+  UTF <- Tables[[paste0("U",year,tab)]]
+  RTF <- Tables[[paste0("R",year,tab)]]
+  TF <- rbind(UTF,RTF)
+  for(n in names(TF)){
+    x <- which(ft==n)
+    if(length(x)>0)
+      setnames(TF,n,names(ft)[x])
+  }
+  
+  pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","PanirPrice","PanirExpenditure"))
+  TF <- TF[,pcols,with=FALSE]
+  TF <- TF[Code %in% ft$StartCode:ft$EndCode]
+  if(year %in% 84:96){
+    TF[,PanirExpenditure:=as.numeric(PanirExpenditure)]
+  }
+  for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
+  TF[,Kilos:=as.numeric(Kilos)]
+  TF[,Grams:=as.numeric(Grams)]
+  TF[,PanirPrice:=as.numeric(PanirPrice)]
+  TF[is.na(TF)] <- 0
+  TF[,PanirKG:=Kilos+(Grams*0.001)]
+  
+  TF[,Code:=NULL]
+  TF[,Kilos:=NULL]
+  TF[,Grams:=NULL]
+  TF[is.na(TF)] <- 0
+  PanirData <- TF[,lapply(.SD,sum),by=HHID]
+  save(PanirData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Panirs.rda"))
+}
+
 ################################################
 ################  Cow  ########################
 ################################################
@@ -89,7 +222,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
   TF[,Kilos:=as.numeric(Kilos)]
   TF[,SheepPrice:=as.numeric(Grams)]
-  TF[,CowPrice:=as.numeric(SheepPrice)]
+  TF[,SheepPrice:=as.numeric(SheepPrice)]
   TF[is.na(TF)] <- 0
   TF[,SheepKG:=Kilos+(Grams*0.001)]
   
@@ -357,6 +490,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(TokhmemorghData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Tokhmemorghs.rda"))
 }
 
+cat("\n\n================ Merge =====================================\n")
 ################################################
 #######  Load Additional Information  #############
 ################################################
@@ -381,6 +515,9 @@ Total<-merge(Total,RoghanData,all = TRUE)
 Total<-merge(Total,TokhmemorghData,all = TRUE)
 Total<-merge(Total,CowData,all = TRUE)
 Total<-merge(Total,SheepData,all = TRUE)
+Total<-merge(Total,ShirData,all = TRUE)
+Total<-merge(Total,MastData,all = TRUE)
+Total<-merge(Total,PanirData,all = TRUE)
 
 for (col in c("MorghExpenditure","MorghKG",
               "ShekarExpenditure","ShekarKG",
@@ -389,9 +526,11 @@ for (col in c("MorghExpenditure","MorghKG",
               "RoghanExpenditure","RoghanKG",
               "TokhmemorghExpenditure","TokhmemorghKG",
               "CowExpenditure","CowKG",
+              "ShirExpenditure","ShirKG",
+              "MastExpenditure","MastKG",
+              "PanirExpenditure","PanirKG",
               "SheepExpenditure","SheepKG")) Total[is.na(get(col)), (col) := 0]
-#"MorghPrice","ShekarPrice","GhandPrice",
-#"BerenjPrice","RoghanPrice","TokhmemorghPrice"
+
 
 Total<-Total[Decile %in% 1:10]
 
@@ -405,6 +544,11 @@ Ghand_Esfand96<-108.4
 Shekar_Esfand96<-108.4
 Roghan_Esfand96<-113.7
 Tokhmemorgh_Esfand96<-120.9 
+Panir_Esfand96<-120.9 
+Shir_Esfand96<-120.9 
+Mast_Esfand96<-120.9 
+Cow_Esfand96<-122.1
+Sheep_Esfand96<-122.1
 
 Berenj_Esfand97<-145.6
 Morgh_Esfand97<-265.6
@@ -412,7 +556,11 @@ Ghand_Esfand97<-170.3
 Shekar_Esfand97<-170.3
 Roghan_Esfand97<-168
 Tokhmemorgh_Esfand97<-175.3
-
+Panir_Esfand97<-175.3
+Shir_Esfand97<-175.3
+Mast_Esfand97<-175.3
+Cow_Esfand97<-265.6 
+Sheep_Esfand97<-265.6
 
 
 
@@ -423,6 +571,11 @@ Total[,GhandP0:=GhandPrice*Ghand_Esfand96/GhandIndex]
 Total[,ShekarP0:=ShekarPrice*Ghand_Esfand96/GhandIndex]
 Total[,RoghanP0:=RoghanPrice*Roghan_Esfand96/RoghanIndex]
 Total[,TokhmemorghP0:=TokhmemorghPrice*Tokhmemorgh_Esfand96/EggIndex]
+Total[,SheepP0:=SheepPrice*Sheep_Esfand96/SheepIndex]
+Total[,CowP0:=CowPrice*Cow_Esfand96/CowIndex]
+Total[,ShirP0:=ShirPrice*Shir_Esfand96/ShirIndex]
+Total[,MastP0:=MastPrice*Mast_Esfand96/MastIndex]
+Total[,PanirP0:=PanirPrice*Panir_Esfand96/PanirIndex]
 
 Total[,BerenjP1:=BerenjPrice*Berenj_Esfand97/BerenjIndex]
 Total[,MorghP1:=MorghPrice*Morgh_Esfand97/MorghIndex]
@@ -430,6 +583,11 @@ Total[,GhandP1:=GhandPrice*Ghand_Esfand97/GhandIndex]
 Total[,ShekarP1:=ShekarPrice*Ghand_Esfand97/GhandIndex]
 Total[,RoghanP1:=RoghanPrice*Roghan_Esfand97/RoghanIndex]
 Total[,TokhmemorghP1:=TokhmemorghPrice*Tokhmemorgh_Esfand97/EggIndex]
+Total[,PanirP1:=PanirPrice*Panir_Esfand97/PanirIndex]
+Total[,MastP1:=MastPrice*Mast_Esfand97/MastIndex]
+Total[,ShirP1:=ShirPrice*Shir_Esfand97/ShirIndex]
+Total[,CowP1:=CowPrice*Cow_Esfand97/CowIndex]
+Total[,SheepP1:=SheepPrice*Sheep_Esfand97/SheepIndex]
 
 Total[,BerenjP2:=BerenjP0*2.57]
 Total[,MorghP2:=MorghP0*2.57]
@@ -437,6 +595,11 @@ Total[,GhandP2:=GhandP0*2.57]
 Total[,ShekarP2:=ShekarP0*2.57]
 Total[,RoghanP2:=RoghanP0*2.57]
 Total[,TokhmemorghP2:=TokhmemorghP0*2.57]
+Total[,SheepP2:=SheepP0*2.57]
+Total[,CowP2:=CowP0*2.57]
+Total[,ShirP2:=ShirP0*2.57]
+Total[,MastP2:=MastP0*2.57]
+Total[,PanirP2:=PanirP0*2.57]
 
 ################################################
 ################  CV and EV  #################
@@ -444,7 +607,10 @@ Total[,TokhmemorghP2:=TokhmemorghP0*2.57]
 
 Total<-Total[,GExpenditures:=BerenjFExpenditure+GhandExpenditure+
                ShekarExpenditure+MorghExpenditure+
-               RoghanExpenditure+TokhmemorghExpenditure]
+               RoghanExpenditure+TokhmemorghExpenditure+
+               ShirExpenditure+MastExpenditure+
+               CowExpenditure+PanirExpenditure+
+               SheepExpenditure]
 GExpenditures<-Total[,weighted.mean(GExpenditures,Weight)]
 
 
@@ -454,11 +620,20 @@ Total<-Total[,ShekarShare:=ShekarExpenditure/GExpenditures]
 Total<-Total[,MorghShare:=MorghExpenditure/GExpenditures]
 Total<-Total[,RoghanShare:=RoghanExpenditure/GExpenditures]
 Total<-Total[,TokhmemorghShare:=TokhmemorghExpenditure/GExpenditures]
+Total<-Total[,PanirShare:=PanirExpenditure/GExpenditures]
+Total<-Total[,ShirShare:=ShirExpenditure/GExpenditures]
+Total<-Total[,MastShare:=MastExpenditure/GExpenditures]
+Total<-Total[,CowShare:=CowExpenditure/GExpenditures]
+Total<-Total[,SheepShare:=SheepExpenditure/GExpenditures]
 
 
 Total<-Total[,CV2:=GExpenditures*(1-((GhandP2/GhandP1)^GhandShare)*((ShekarP2/ShekarP1)^ShekarShare)*
                                     ((BerenjP2/BerenjP1)^BerenjShare)*((RoghanP2/RoghanP1)^RoghanShare)*
-                                    ((MorghP2/MorghP1)^MorghShare)*((TokhmemorghP2/TokhmemorghP1)^TokhmemorghShare))]
+                                    ((MorghP2/MorghP1)^MorghShare)*((TokhmemorghP2/TokhmemorghP1)^TokhmemorghShare)*
+                                    ((SheepP2/SheepP1)^SheepShare)*((CowP2/CowP1)^CowShare)*
+                                    ((ShirP2/ShirP1)^ShirShare)*((MastP2/MastP1)^MastShare)*
+                                    ((PanirP2/PanirP1)^PanirShare))]
+
 Total[,weighted.mean(CV2,Weight,na.rm = TRUE)]
 Total[,weighted.mean(CV2,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(CV2,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
@@ -470,7 +645,11 @@ Total[,weighted.mean(CV2/GExpenditures,Weight,na.rm = TRUE),by=.(Decile)][order(
 
 Total<-Total[,CV3:=GExpenditures*(1-((GhandP2/GhandP0)^GhandShare)*((ShekarP2/ShekarP0)^ShekarShare)*
                                     ((BerenjP2/BerenjP0)^BerenjShare)*((RoghanP2/RoghanP0)^RoghanShare)*
-                                    ((MorghP2/MorghP0)^MorghShare)*((TokhmemorghP2/TokhmemorghP0)^TokhmemorghShare))]
+                                    ((MorghP2/MorghP0)^MorghShare)*((TokhmemorghP2/TokhmemorghP0)^TokhmemorghShare)*
+                                    ((SheepP2/SheepP0)^SheepShare)*((CowP2/CowP0)^CowShare)*
+                                    ((ShirP2/ShirP0)^ShirShare)*((MastP2/MastP0)^MastShare)*
+                                    ((PanirP2/PanirP0)^PanirShare))]
+
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE)]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(CV3,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
