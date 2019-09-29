@@ -196,7 +196,48 @@ for(year in years){
   P[,NAge9_A_G:=ifelse(Age<=60 & Age>29 & Sex=="Female",1,0)]
   P[,NAge10_A_B:=ifelse(Age>60 & Sex=="Male",1,0)]
   P[,NAge10_A_G:=ifelse(Age>60 & Sex=="Female",1,0)]
-
+  
+  P[,Calorie_Need1:=NAge1_A_B*Settings$KCaloryNeed_A_B1+
+      NAge2_A_B*Settings$KCaloryNeed_A_B2+
+      NAge3_A_B*Settings$KCaloryNeed_A_B3+
+      NAge4_A_B*Settings$KCaloryNeed_A_B4+
+      NAge5_A_B*Settings$KCaloryNeed_A_B5+
+      NAge6_A_B*Settings$KCaloryNeed_A_B6+
+      NAge7_A_B*Settings$KCaloryNeed_A_B7+
+      NAge8_A_B*Settings$KCaloryNeed_A_B8+
+      NAge9_A_B*Settings$KCaloryNeed_A_B9+
+      NAge10_A_B*Settings$KCaloryNeed_A_B10+
+      NAge1_A_G*Settings$KCaloryNeed_A_G1+
+      NAge2_A_G*Settings$KCaloryNeed_A_G2+
+      NAge3_A_G*Settings$KCaloryNeed_A_G3+
+      NAge4_A_G*Settings$KCaloryNeed_A_G4+
+      NAge5_A_G*Settings$KCaloryNeed_A_G5+
+      NAge6_A_G*Settings$KCaloryNeed_A_G6+
+      NAge7_A_G*Settings$KCaloryNeed_A_G7+
+      NAge8_A_G*Settings$KCaloryNeed_A_G8+
+      NAge9_A_G*Settings$KCaloryNeed_A_G9+
+      NAge10_A_G*Settings$KCaloryNeed_A_G10]
+  
+  P[,Calorie_Need2:=NAge1B*Settings$KCaloryNeed_B1+
+      NAge2B*Settings$KCaloryNeed_B2+
+      NAge3B*Settings$KCaloryNeed_B3+
+      NAge4B*Settings$KCaloryNeed_B4+
+      NAge5B*Settings$KCaloryNeed_B5+
+      NAge6B*Settings$KCaloryNeed_B6+
+      NAge7B*Settings$KCaloryNeed_B7+
+      NAge8B*Settings$KCaloryNeed_B8+
+      NAge9B*Settings$KCaloryNeed_B9+
+      NAge10B*Settings$KCaloryNeed_B10+
+      NAge1G*Settings$KCaloryNeed_G1+
+      NAge2G*Settings$KCaloryNeed_G2+
+      NAge3G*Settings$KCaloryNeed_G3+
+      NAge4G*Settings$KCaloryNeed_G4+
+      NAge5G*Settings$KCaloryNeed_G5+
+      NAge6G*Settings$KCaloryNeed_G6+
+      NAge7G*Settings$KCaloryNeed_G7+
+      NAge8G*Settings$KCaloryNeed_G8+
+      NAge9G*Settings$KCaloryNeed_G9+
+      NAge10G*Settings$KCaloryNeed_G10]
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
             .SDcols=c("Size","NKids","NInfants","NSmallKids","NElementary",
@@ -204,7 +245,7 @@ for(year in years){
                      "NAge2B","NAge2G","NAge3B","NAge3G","NAge4B","NAge4G",
                      "NAge5B","NAge5G","NAge6B","NAge6G","NAge7B","NAge7G"
                      ,"NAge8B","NAge8G","NAge9B","NAge9G","NAge10B","NAge10G",
-                     "NAge1_A_B","NAge1_A_G",
+                     "NAge1_A_B","NAge1_A_G","Calorie_Need1","Calorie_Need2",
                      "NAge2_A_B","NAge2_A_G","NAge3_A_B","NAge3_A_G","NAge4_A_B","NAge4_A_G",
                      "NAge5_A_B","NAge5_A_G","NAge6_A_B","NAge6_A_G","NAge7_A_B","NAge7_A_G"
                      ,"NAge8_A_B","NAge8_A_G","NAge9_A_B","NAge9_A_G","NAge10_A_B","NAge10_A_G"),#,"TotalIncome"),
