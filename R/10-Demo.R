@@ -14,6 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(stringr)
+library(plotrix)
 
 #P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
 
@@ -197,7 +198,28 @@ for(year in years){
   P[,NAge10_A_B:=ifelse(Age>60 & Sex=="Male",1,0)]
   P[,NAge10_A_G:=ifelse(Age>60 & Sex=="Female",1,0)]
   
-  P[,Calorie_Need1:=NAge1_A_B*Settings$KCaloryNeed_A_B1+
+  P[,Calorie_Need1:=NAge1B*Settings$KCaloryNeed_B1+
+      NAge2B*Settings$KCaloryNeed_B2+
+      NAge3B*Settings$KCaloryNeed_B3+
+      NAge4B*Settings$KCaloryNeed_B4+
+      NAge5B*Settings$KCaloryNeed_B5+
+      NAge6B*Settings$KCaloryNeed_B6+
+      NAge7B*Settings$KCaloryNeed_B7+
+      NAge8B*Settings$KCaloryNeed_B8+
+      NAge9B*Settings$KCaloryNeed_B9+
+      NAge10B*Settings$KCaloryNeed_B10+
+      NAge1G*Settings$KCaloryNeed_G1+
+      NAge2G*Settings$KCaloryNeed_G2+
+      NAge3G*Settings$KCaloryNeed_G3+
+      NAge4G*Settings$KCaloryNeed_G4+
+      NAge5G*Settings$KCaloryNeed_G5+
+      NAge6G*Settings$KCaloryNeed_G6+
+      NAge7G*Settings$KCaloryNeed_G7+
+      NAge8G*Settings$KCaloryNeed_G8+
+      NAge9G*Settings$KCaloryNeed_G9+
+      NAge10G*Settings$KCaloryNeed_G10]
+  
+  P[,Calorie_Need2:=NAge1_A_B*Settings$KCaloryNeed_A_B1+
       NAge2_A_B*Settings$KCaloryNeed_A_B2+
       NAge3_A_B*Settings$KCaloryNeed_A_B3+
       NAge4_A_B*Settings$KCaloryNeed_A_B4+
@@ -218,26 +240,7 @@ for(year in years){
       NAge9_A_G*Settings$KCaloryNeed_A_G9+
       NAge10_A_G*Settings$KCaloryNeed_A_G10]
   
-  P[,Calorie_Need2:=NAge1B*Settings$KCaloryNeed_B1+
-      NAge2B*Settings$KCaloryNeed_B2+
-      NAge3B*Settings$KCaloryNeed_B3+
-      NAge4B*Settings$KCaloryNeed_B4+
-      NAge5B*Settings$KCaloryNeed_B5+
-      NAge6B*Settings$KCaloryNeed_B6+
-      NAge7B*Settings$KCaloryNeed_B7+
-      NAge8B*Settings$KCaloryNeed_B8+
-      NAge9B*Settings$KCaloryNeed_B9+
-      NAge10B*Settings$KCaloryNeed_B10+
-      NAge1G*Settings$KCaloryNeed_G1+
-      NAge2G*Settings$KCaloryNeed_G2+
-      NAge3G*Settings$KCaloryNeed_G3+
-      NAge4G*Settings$KCaloryNeed_G4+
-      NAge5G*Settings$KCaloryNeed_G5+
-      NAge6G*Settings$KCaloryNeed_G6+
-      NAge7G*Settings$KCaloryNeed_G7+
-      NAge8G*Settings$KCaloryNeed_G8+
-      NAge9G*Settings$KCaloryNeed_G9+
-      NAge10G*Settings$KCaloryNeed_G10]
+
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
             .SDcols=c("Size","NKids","NInfants","NSmallKids","NElementary",
@@ -268,7 +271,31 @@ for(year in years){
   # P1<-P1[Relationship== 'Head']
   # HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
   # save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-}
+  
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  HHWeights<- as.data.table(HHWeights)
+  HHWeights>-HHWeights[,HHID:=as.numeric(HHID)]
+  HHWeights[,Year:=NULL]
+  
+  P1<-merge(P1,HHWeights)
+  
+  weighted.hist(P1$Age,P1$Weight,breaks=1:99,main="Age weighted histogram in Iran (1397)")
+
+  P1<-merge(P1,HHBase)
+  P1U<-P1[Region=="Urban"]
+  weighted.hist(P1U$Age,P1U$Weight,breaks=1:99,main="Age weighted histogram in Urban Areas (1397)")
+  
+  P1R<-P1[Region=="Rural"]
+  weighted.hist(P1R$Age,P1R$Weight,breaks=1:99,main="Age weighted histogram in Rural reas (1397)")
+  
+  plot(density(P1$Age),weights =P1$Weight)
+  lines(density(P1U$Age),weights =P1U$Weight)
+  lines(density(P1R$Age),weights =P1R$Weight)
+  
+  weighted.hist(P1$Age,P1$Weight,breaks=c(0,1,2,3,4,10,15,20,60),
+                main="Age weighted histogram in Iran (1397)")
+  
+  }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
