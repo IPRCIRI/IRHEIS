@@ -114,7 +114,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
   #Calculate Per Values
-  MD[,EqSizeCalory2 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
+  MD[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
   MD[,EqSizeCalory3 :=
        NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult) +
        NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult) +
@@ -137,7 +137,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult) +
        NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)]
   
-  MD[,EqSizeCalory :=
+  MD[,EqSizeCalory2 :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult) +
        NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult) +
        NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult) +
