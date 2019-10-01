@@ -55,7 +55,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodProtein)])
     save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
-    if(year %in% 83:96){
+    if(year %in% 83:97){
       pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos","Expenditure"))
      # TF <- TF[,pcols,with=FALSE]
       TF <- TF[Code %in% ft$StartCode:ft$EndCode]
@@ -81,3 +81,6 @@ for(year in (Settings$startyear:Settings$endyear)){
 cat("\n\n==============Finish==============\nIt took ")
 endtime <- proc.time()
 cat((endtime-starttime)[3],"seconds.")
+
+
+

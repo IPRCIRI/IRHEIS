@@ -21,10 +21,24 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
   #Head-Count Ratio Index
-  cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
-      MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
-      MD[,weighted.mean(Engel,Weight*Size)],"\t",
-      MD[,weighted.mean(FPLine,Weight*Size)])
+ # cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
+  #    MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
+  #    MD[,weighted.mean(Engel,Weight*Size)],"\t",
+   #   MD[,weighted.mean(FPLine,Weight*Size)])
+  
+  #Intesnsity of Poverty (Poverty gap index)
+  MD[FinalPoor==1,Index:=1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine,
+                                          Weight))]
+  MD[FinalPoor==1,weighted.mean(Index,Weight)]
+  
+  
+  #Poverty depth index (Foster-Greer-Thorbecke)
+  MD[FinalPoor==1,Index2:=(1-(weighted.mean(Total_Exp_Month_Per_nondurable/PovertyLine
+                                            ,Weight)))^2]
+  MD[FinalPoor==1,weighted.mean(Index2,Weight)]
+  
+  cat(MD[,weighted.mean(Index,Weight*Size,na.rm = TRUE)],"\t",
+      MD[,weighted.mean(Index2,Weight*Size,na.rm = TRUE)])
 }
 
 
