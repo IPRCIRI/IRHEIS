@@ -272,8 +272,8 @@ HHBase<-HHBase[,.(HHID,Region,ProvinceCode,Month)]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
 SMD<-MD[,.(HHID,Decile,Weight,Size,EqSizeRevOECD,
-           Total_Exp_Month,Total_Exp_Month_Per,TFoodExpenditure,
-           Total_Exp_Month_nondurable,Total_Exp_Month_Per_nondurable)]
+           Total_Exp_Month,Total_Exp_Month_Per,TOriginalFoodExpenditure)]
+           #Total_Exp_Month_nondurable,Total_Exp_Month_Per_nondurable)]
            
 ################################################
 #######  Merge Information  #############
@@ -371,9 +371,9 @@ Total[,weighted.mean(EV2,Weight,na.rm = TRUE)]
 Total[,weighted.mean(EV2,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(EV2,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 Total[,weighted.mean(EV2,Weight,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
-Total[,weighted.mean(EV2/TFoodExpenditure,Weight,na.rm = TRUE)]
-Total[,weighted.mean(EV2/TFoodExpenditure,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
-Total[,weighted.mean(EV2/TFoodExpenditure,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
+Total[,weighted.mean(EV2/TOriginalFoodExpenditure,Weight,na.rm = TRUE)]
+Total[,weighted.mean(EV2/TOriginalFoodExpenditure,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
+Total[,weighted.mean(EV2/TOriginalFoodExpenditure,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 
 Total<-Total[,CV2:=GExpenditures*(1-((CowP2/CowP1)^CowShare)*((SheepP2/SheepP1)^SheepShare)*
                                    ((BerenjP2/BerenjP1)^BerenjShare)*((RoghanP2/RoghanP1)^RoghanShare)*
@@ -509,7 +509,7 @@ Total[,weighted.mean(TokhmemorghKG,Weight)]
 Total[,weighted.mean(TokhmemorghKG,Weight),by=.(Region)][order(Region)]
 Total[,weighted.mean(TokhmemorghKG,Weight),by=.(Decile)][order(Decile)]
 
-x<-Total[,.(Total_Exp_Month_Per_nondurable,Decile)]
+#x<-Total[,.(Total_Exp_Month_Per_nondurable,Decile)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

@@ -12,6 +12,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(data.table)
 library(stringr)
 library(readxl)
+library(spatstat)
 
 cat("\n\n================ FoodGroups =====================================\n")
 year<-96
@@ -19,13 +20,19 @@ year<-96
  load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
  load( file = paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+ MetaData <- read_excel("C:/IRHEIS/Data/MetaData.xlsx", sheet = "FoodGroupTables")
+ MetaData<-as.data.table(MetaData) 
+ MetaData<-MetaData[,SheetName:=NULL]
+ FoodNames<-MetaData
+ save(FoodNames,file ="FoodNames.rda" )
+ load(file = "FoodNames.rda")
  
  Base2<-merge(BigFData,FData,by="HHID")
  
  Base2<-merge(Base2,MD[,.(HHID,NewArea,NewArea2,ProvinceCode,cluster3,Decile,
                             FinalFoodPoor,FinalPoor,Weight,EqSizeRevOECD,EqSizeCalory,PEngel)],by="HHID")
 
- Base<-Base2[PEngel>0.5]
+ Base<-Base2[FinalFoodPoor==1]
  Base<-Base[,FGrams_Per:=FGrams/EqSizeCalory]
  Base<-Base[,FoodKCalories_Per:=FoodKCaloriesHH/EqSizeCalory]
  Base<-Base[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]
@@ -48,6 +55,13 @@ year<-96
  BaseM<-BaseX1[,.(ProvinceCode,N,N2,FoodType,Average_New)]
  BaseM2<-BaseM[FoodType=="Berenj"]
  BaseM<-BaseM[,.(ProvinceCode,FoodType,N,Average_New)]
+ BaseM<-merge(BaseM,FoodNames)
+ BaseM<-BaseM[,Average_Protein:=Average_New*Protein]
+ BaseM<-BaseM[order(ProvinceCode,FoodType)]
+ write.csv(BaseM,file="BaseM.csv")
+ 
+ BaseP<-BaseM[,.(Total_Protein=sum(Average_Protein)),
+              by=.(ProvinceCode)]
  
  BaseX<-BaseX[,Region:=as.integer(str_sub(HHID,1,1))]
  BaseX[,weighted.mean(FoodProtein2,Weight)]
@@ -70,7 +84,18 @@ year<-96
 
 # Base[FoodType=="Goosht" & FinalPoor==1 ,weighted.mean(FGrams_Per,Weight,na.rm = TRUE),by=.(ProvinceCode)]
 
-
+ Base3<-Base2[FinalPoor==1]
+ Base3<-Base3[,FGrams_Per:=FGrams/EqSizeCalory]
+ Base3<-Base3[,FoodKCalories_Per:=FoodKCaloriesHH/EqSizeCalory]
+ BaseX3<-Base3[,.(.N,Average_Consumption=weighted.mean(FGrams_Per,Weight),
+                 cluster3=mean(cluster3)),
+              by=.(ProvinceCode,FoodType)]
+ BaseX3<-BaseX3[,N2:=max(N),by=.(ProvinceCode)]
+ BaseX3<-BaseX3[,Average_New:=N*Average_Consumption/N2]
+ BaseM3<-BaseX3[,.(ProvinceCode,N,N2,FoodType,Average_New)]
+ BaseM3<-BaseM3[order(ProvinceCode,FoodType)]
+ write.csv(BaseM3,file="BaseM3.csv")
+ 
 cat("\n\n==============Finish==============\nIt took ")
 endtime <- proc.time()
 cat((endtime-starttime)[3],"seconds.")
