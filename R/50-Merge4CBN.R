@@ -114,8 +114,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
   #Calculate Per Values
-  MD[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
-  MD[,EqSizeCalory3 :=
+  MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
+  MD[,EqSizeCalory2 :=
        NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult) +
        NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult) +
        NAge3B*(Settings$KCaloryNeed_B3/Settings$KCaloryNeed_Adult) +
@@ -137,7 +137,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult) +
        NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)]
   
-  MD[,EqSizeCalory2 :=
+  MD[,EqSizeCalory :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult) +
        NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult) +
        NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult) +
@@ -147,7 +147,6 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge7_A_B*(Settings$KCaloryNeed_A_B7/Settings$KCaloryNeed_Adult) +
        NAge8_A_B*(Settings$KCaloryNeed_A_B8/Settings$KCaloryNeed_Adult) +
        NAge9_A_B*(Settings$KCaloryNeed_A_B9/Settings$KCaloryNeed_Adult) +
-       NAge10_A_B*(Settings$KCaloryNeed_A_B10/Settings$KCaloryNeed_Adult) +
        NAge1_A_G*(Settings$KCaloryNeed_A_G1/Settings$KCaloryNeed_Adult) +
        NAge2_A_G*(Settings$KCaloryNeed_A_G2/Settings$KCaloryNeed_Adult) +
        NAge3_A_G*(Settings$KCaloryNeed_A_G3/Settings$KCaloryNeed_Adult) +
@@ -156,8 +155,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge6_A_G*(Settings$KCaloryNeed_A_G6/Settings$KCaloryNeed_Adult) +
        NAge7_A_G*(Settings$KCaloryNeed_A_G7/Settings$KCaloryNeed_Adult) +
        NAge8_A_G*(Settings$KCaloryNeed_A_G8/Settings$KCaloryNeed_Adult) +
-       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult)+
-       NAge10_A_G*(Settings$KCaloryNeed_A_G10/Settings$KCaloryNeed_Adult)]
+       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult)]
   
   MD[,Relative_Calorie1 :=FoodKCaloriesHH/Calorie_Need1]
   MD[,Relative_Calorie2 :=FoodKCaloriesHH/Calorie_Need2]

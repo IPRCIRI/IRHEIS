@@ -62,6 +62,9 @@ for(year in (Settings$startyear:Settings$endyear)){
       MD[,weighted.mean(Engel,Weight*Size)],"\t",
       MD[,weighted.mean(FPLine,Weight*Size)])
   
+  #MD[,weighted.mean(Size,Weight)*sum(Weight),by=.(Region,Decile)]
+  #MD[,weighted.mean(HIndivNo,Weight)*sum(Weight),by=.(Region,Decile)]
+  
   MD[FinalPoor==1,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=c("ProvinceCode")][order(ProvinceCode)]
   
   MD[,weighted.mean(FinalPoor2,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
