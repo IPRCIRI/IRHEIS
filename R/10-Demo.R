@@ -154,7 +154,7 @@ for(year in years){
   P[,NHigh:= ifelse(EduLevel0=="High" & Student==TRUE,1,0)]
   P[,NPre:= ifelse(EduLevel0=="Pre" & Student==TRUE,1,0)]
   
-  #Age Groups
+  #Age Groups 1
   P[,NAge1B:=ifelse(Age==0 & Sex=="Male",1,0)]
   P[,NAge1G:=ifelse(Age==0 & Sex=="Female",1,0)]
   P[,NAge2B:=ifelse(Age==1 & Sex=="Male",1,0)]
@@ -176,27 +176,25 @@ for(year in years){
   P[,NAge10B:=ifelse(Age>59 & Sex=="Male",1,0)]
   P[,NAge10G:=ifelse(Age>59 & Sex=="Female",1,0)]
   
-  #Age Groups
+  #Age Groups 2
   P[,NAge1_A_B:=ifelse(Age==0 & Sex=="Male",1,0)]
   P[,NAge1_A_G:=ifelse(Age==0 & Sex=="Female",1,0)]
   P[,NAge2_A_B:=ifelse(Age==1 & Sex=="Male",1,0)]
   P[,NAge2_A_G:=ifelse(Age==1 & Sex=="Female",1,0)]
-  P[,NAge3_A_B:=ifelse(Age==2 & Sex=="Male",1,0)]
-  P[,NAge3_A_G:=ifelse(Age==2 & Sex=="Female",1,0)]
-  P[,NAge4_A_B:=ifelse(Age==3 & Sex=="Male",1,0)]
-  P[,NAge4_A_G:=ifelse(Age==3 & Sex=="Female",1,0)]
-  P[,NAge5_A_B:=ifelse(Age==4 & Sex=="Male",1,0)]
-  P[,NAge5_A_G:=ifelse(Age==4 & Sex=="Female",1,0)]
-  P[,NAge6_A_B:=ifelse(Age<=1 & Age>4 & Sex=="Male",1,0)]
-  P[,NAge6_A_G:=ifelse(Age<=1 & Age>4 & Sex=="Female",1,0)]
-  P[,NAge7_A_B:=ifelse(Age<=17 & Age>1 & Sex=="Male",1,0)]
-  P[,NAge7_A_G:=ifelse(Age<=17 & Age>1 & Sex=="Female",1,0)]
-  P[,NAge8_A_B:=ifelse(Age<=29 & Age>18 & Sex=="Male",1,0)]
-  P[,NAge8_A_G:=ifelse(Age<=29 & Age>18 & Sex=="Female",1,0)]
-  P[,NAge9_A_B:=ifelse(Age<=60 & Age>29 & Sex=="Male",1,0)]
-  P[,NAge9_A_G:=ifelse(Age<=60 & Age>29 & Sex=="Female",1,0)]
-  P[,NAge10_A_B:=ifelse(Age>60 & Sex=="Male",1,0)]
-  P[,NAge10_A_G:=ifelse(Age>60 & Sex=="Female",1,0)]
+  P[,NAge3_A_B:=ifelse(Age==2 & Age==3 & Sex=="Male",1,0)]
+  P[,NAge3_A_G:=ifelse(Age==2 & Age==3 & Sex=="Female",1,0)]
+  P[,NAge4_A_B:=ifelse(Age==4 & Age==5 & Sex=="Male",1,0)]
+  P[,NAge4_A_G:=ifelse(Age==4 & Age==5 & Sex=="Female",1,0)]
+  P[,NAge5_A_B:=ifelse(Age<=11 & Age>=6 & Sex=="Male",1,0)]
+  P[,NAge5_A_G:=ifelse(Age<=11 & Age>=6 & Sex=="Female",1,0)]
+  P[,NAge6_A_B:=ifelse(Age<=17 & Age>=12 & Sex=="Male",1,0)]
+  P[,NAge6_A_G:=ifelse(Age<=17 & Age>=12 & Sex=="Female",1,0)]
+  P[,NAge7_A_B:=ifelse(Age<=29 & Age>=18 & Sex=="Male",1,0)]
+  P[,NAge7_A_G:=ifelse(Age<=29 & Age>=18 & Sex=="Female",1,0)]
+  P[,NAge8_A_B:=ifelse(Age<=60 & Age>=30 & Sex=="Male",1,0)]
+  P[,NAge8_A_G:=ifelse(Age<=60 & Age>=30 & Sex=="Female",1,0)]
+  P[,NAge9_A_B:=ifelse(Age>60 & Sex=="Male",1,0)]
+  P[,NAge9_A_G:=ifelse(Age>60 & Sex=="Female",1,0)]
   
   P[,Calorie_Need1:=NAge1B*Settings$KCaloryNeed_B1+
       NAge2B*Settings$KCaloryNeed_B2+
@@ -294,6 +292,20 @@ for(year in years){
   
   weighted.hist(P1$Age,P1$Weight,breaks=c(0,1,2,3,4,10,15,20,60),
                 main="Age weighted histogram in Iran (1397)")
+  
+  P1[,G1:=ifelse(Age<5,1,0)]
+  P1[,G2:=ifelse(Age>4 & Age<10,1,0)]
+  P1[,G3:=ifelse(Age>9 & Age<15,1,0)]
+  P1[,G4:=ifelse(Age>14 & Age<20,1,0)]
+  P1[,G5:=ifelse(Age>19 & Age<60,1,0)]
+  P1[,G6:=ifelse(Age>59,1,0)]
+  
+  P1[,weighted.mean(G1,Weight)]
+  P1[,weighted.mean(G2,Weight)]
+  P1[,weighted.mean(G3,Weight)]
+  P1[,weighted.mean(G4,Weight)]
+  P1[,weighted.mean(G5,Weight)]
+  P1[,weighted.mean(G6,Weight)]
   
   }
 
