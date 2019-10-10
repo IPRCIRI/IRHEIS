@@ -36,8 +36,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
             "Durables", "Education", "Energy", "Furnitures","Hotels",
             "House", "Medicals","Behdashts","Transportations","Others",
-           "Resturants"
-           #,"Benzins","Gazs","Barghs","NaftSefids"
+           "Resturants","Barghs"
+           #,"Benzins","Gazs","NaftSefids"
            )){
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
    }
@@ -69,7 +69,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,TransportationData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,BenzinData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,GazData,by =c("HHID"),all=TRUE)
-  #MD<-merge(MD,BarghData,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,BarghData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,NaftSefidData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,HouseData,by =c("HHID"),all=TRUE)
@@ -81,8 +81,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                 "Communication_Exp", "EducExpenditure", "Energy_Exp", 
                 "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", "Transportation_Exp",
                 "Other_Exp", "ServiceExp", "Medical_Exp", "Durable_Exp", 
-                "Resturant_Exp"
-                #,"Benzin_Exp","Gaz_Exp","Bargh_Exp","NaftSefid_Exp"
+                "Resturant_Exp","Bargh_Exp"
+                #,"Benzin_Exp","Gaz_Exp","NaftSefid_Exp"
                 )) 
     MD[is.na(get(col)), (col) := 0]
 #  MD<-MD[,Yaraneh:=416000*Size]
@@ -190,6 +190,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   
   cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)])
+  
+  MD[,weighted.mean(Bargh_Exp,Weight),by=.(Decile)]
+  MD[,weighted.median(Bargh_Exp,Weight),by=.(Decile)]
+  
+  MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)]
+  MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)]
 }
 
 

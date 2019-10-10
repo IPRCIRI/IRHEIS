@@ -121,7 +121,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   MDR<-MD2[Region=="Rural"]
   save(MDU,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor2.rda"))
   save(MDR,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor3.rda"))
-}
+
+  MD[,weighted.mean(Bargh_Exp,Weight),by=.(Decile)][order(Decile)]
+  MD[,weighted.median(Bargh_Exp,Weight),by=.(Decile)][order(Decile)]
+  
+  MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)][order(ProvinceCode)]
+  MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)][order(ProvinceCode)]
+  }
 
 #MD[,Benzin_Exp:=as.numeric(Benzin_Exp)]
 #MD2<-MD[,.(HHID,HIndivNo,Region,NewArea2,Decile,Percentile,Size,Weight,Total_Exp_Month_Per_nondurable,Benzin_Exp)]
