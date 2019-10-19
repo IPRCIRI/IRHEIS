@@ -115,6 +115,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(lactating,file = paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
 } 
+x<-lactating[lactating==1]
+lactating[,mean(lactating)]
+
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
