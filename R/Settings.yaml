@@ -120,6 +120,7 @@ KCaloryNeed_A_B8: 2900.0
 KCaloryNeed_A_G8: 2200.0
 KCaloryNeed_A_B9: 2350.0
 KCaloryNeed_A_G9: 2000.0
+KCaloryNeed_lactating: 500.0
 InitialPoorPercentile:
 - 1
 - 2
