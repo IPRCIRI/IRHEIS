@@ -135,7 +135,8 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge7G*(Settings$KCaloryNeed_G7/Settings$KCaloryNeed_Adult) +
        NAge8G*(Settings$KCaloryNeed_G8/Settings$KCaloryNeed_Adult) +
        NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult) +
-       NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)]
+       NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)+
+       lactating*500]
   
   MD[,EqSizeCalory :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult) +
@@ -155,8 +156,10 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge6_A_G*(Settings$KCaloryNeed_A_G6/Settings$KCaloryNeed_Adult) +
        NAge7_A_G*(Settings$KCaloryNeed_A_G7/Settings$KCaloryNeed_Adult) +
        NAge8_A_G*(Settings$KCaloryNeed_A_G8/Settings$KCaloryNeed_Adult) +
-       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult)]
+       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult)+
+       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult)]
   
+
   MD[,Relative_Calorie1 :=FoodKCaloriesHH/Calorie_Need1]
   MD[,Relative_Calorie2 :=FoodKCaloriesHH/Calorie_Need2]
   MD[,OriginalFoodExpenditure_Per :=OriginalFoodExpenditure/EqSizeCalory]
@@ -190,9 +193,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   
   cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)])
-  
-  MD[,weighted.mean(Bargh_Exp,Weight),by=.(Decile)]
-  MD[,weighted.median(Bargh_Exp,Weight),by=.(Decile)]
   
   MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)]
   MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)]
