@@ -136,7 +136,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge8G*(Settings$KCaloryNeed_G8/Settings$KCaloryNeed_Adult) +
        NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult) +
        NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)+
-       lactating*500]
+       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult)]
   
   MD[,EqSizeCalory :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult) +
