@@ -47,7 +47,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #EngleD<-merge(EngleD,EngleX,by=c("Region","cluster3"))
   EngleD[,PovertyLine:=FPLine/Engel]
-  EngleD[,PovertyLine2:=4525809]
+  EngleD[,PovertyLine2:=5580259]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   
 
@@ -71,15 +71,18 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD[,weighted.mean(HIndivNo,Weight)*sum(Weight),by=.(Region,Decile)][order(Region,Decile)]
   
   MD[FinalPoor==1,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=c("ProvinceCode")][order(ProvinceCode)]
+
   
-  MD[,weighted.mean(FinalPoor2,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")][order(Region,cluster3)]
   MD[,weighted.mean(FinalPoor2,Weight*Size),by=c("Region")]
   MD[,weighted.mean(FinalPoor2,Weight*Size)]
   MD3<-MD[,.(HHID,FinalPoor,Weight)]
   save(MD3,file=paste0(Settings$HEISProcessedPath,"Y",year,"PoorsforMerge.rda"))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
-}
+
+ # write.csv(EngleD,file ="Results.csv" )
+  }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

@@ -36,7 +36,7 @@ year<-96
  Base<-Base[,FGrams_Per:=FGrams/EqSizeCalory]
  Base<-Base[,FoodKCalories_Per:=FoodKCaloriesHH/EqSizeCalory]
  Base<-Base[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]
- Base<-Base[,Coef:=FoodKCalories_Per/2100]
+ Base<-Base[,Coef:=FoodKCalories_Per/Settings$KCaloryNeed_Adult]
  
  Base<-Base[,FoodKCalories_PerNew:=FoodKCalories_Per/Coef]
  Base<-Base[,FGrams_PerNew:=FGrams_Per/Coef]
@@ -48,17 +48,17 @@ year<-96
  
  BaseX1<-Base[,.(.N,Average_Consumption=weighted.mean(FGrams_PerNew,Weight),
                             cluster3=mean(cluster3)),
-             by=.(ProvinceCode,FoodType)]
+             by=.(Region,FoodType)]
 
- BaseX1<-BaseX1[,N2:=max(N),by=.(ProvinceCode)]
+ BaseX1<-BaseX1[,N2:=max(N),by=.(Region)]
  BaseX1<-BaseX1[,Average_New:=N*Average_Consumption/N2]
- BaseM<-BaseX1[,.(ProvinceCode,N,N2,FoodType,Average_New)]
+ BaseM<-BaseX1[,.(Region,N,N2,FoodType,Average_New)]
  BaseM2<-BaseM[FoodType=="Berenj"]
- BaseM<-BaseM[,.(ProvinceCode,FoodType,N,Average_New)]
+ BaseM<-BaseM[,.(Region,FoodType,N,Average_New)]
  BaseM<-merge(BaseM,FoodNames)
  BaseM<-BaseM[,Average_Protein:=Average_New*Protein]
- BaseM<-BaseM[order(ProvinceCode,FoodType)]
- write.csv(BaseM,file="BaseM.csv")
+ BaseM<-BaseM[order(Region,FoodType)]
+ write.csv(BaseM,file="BaseM3.csv")
  
  BaseP<-BaseM[,.(Total_Protein=sum(Average_Protein)),
               by=.(ProvinceCode)]
