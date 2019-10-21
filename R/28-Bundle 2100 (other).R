@@ -15,7 +15,7 @@ library(readxl)
 library(spatstat)
 
 cat("\n\n================ FoodGroups =====================================\n")
-year<-96
+year<-97
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
  load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
@@ -48,17 +48,17 @@ year<-96
  
  BaseX1<-Base[,.(.N,Average_Consumption=weighted.mean(FGrams_PerNew,Weight),
                             cluster3=mean(cluster3)),
-             by=.(Region,FoodType)]
+             by=.(ProvinceCode,FoodType)]
 
- BaseX1<-BaseX1[,N2:=max(N),by=.(Region)]
+ BaseX1<-BaseX1[,N2:=max(N),by=.(ProvinceCode)]
  BaseX1<-BaseX1[,Average_New:=N*Average_Consumption/N2]
- BaseM<-BaseX1[,.(Region,N,N2,FoodType,Average_New)]
+ BaseM<-BaseX1[,.(ProvinceCode,N,N2,FoodType,Average_New)]
  BaseM2<-BaseM[FoodType=="Berenj"]
- BaseM<-BaseM[,.(Region,FoodType,N,Average_New)]
+ BaseM<-BaseM[,.(ProvinceCode,FoodType,N,Average_New)]
  BaseM<-merge(BaseM,FoodNames)
  BaseM<-BaseM[,Average_Protein:=Average_New*Protein]
- BaseM<-BaseM[order(Region,FoodType)]
- write.csv(BaseM,file="BaseM3.csv")
+ BaseM<-BaseM[order(ProvinceCode,FoodType)]
+ write.csv(BaseM,file="BaseM.csv")
  
  BaseP<-BaseM[,.(Total_Protein=sum(Average_Protein)),
               by=.(ProvinceCode)]
