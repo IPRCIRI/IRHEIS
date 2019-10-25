@@ -38,7 +38,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","MorghExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,MorghExpenditure:=as.numeric(MorghExpenditure)]
   }
   TF[,Code:=NULL]
@@ -69,7 +69,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","CowExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,CowExpenditure:=as.numeric(CowExpenditure)]
   }
   TF[,Code:=NULL]
@@ -101,7 +101,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","SheepExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,SheepExpenditure:=as.numeric(SheepExpenditure)]
   }
   TF[,Code:=NULL]

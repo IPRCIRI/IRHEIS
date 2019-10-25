@@ -36,7 +36,7 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
     P2 <- cbind(P2c,P2nc)[,nP2,with=FALSE]
   }
   
-  if(year==97){
+  if(year>=96){
     a <- unlist(P2Cols[P2Cols$Year==year,])
     ind <- which(!is.na(a))[2:46]
     setnames(P2,names(a[ind]))

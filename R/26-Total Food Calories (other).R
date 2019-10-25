@@ -55,7 +55,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodTKCalories)])
       save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
-    if(year %in% 83:96){
+    if(year >=83){
       pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos","Expenditure"))
       TF <- TF[,pcols,with=FALSE]
       TF <- TF[Code %in% ft$StartCode:ft$EndCode]
@@ -74,10 +74,10 @@ for(year in (Settings$startyear:Settings$endyear)){
       FData[, FoodTKCalories:=Calorie_per_gram*FGrams]
       
       BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodTKCalories)])
-      save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
   }
 }
+save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
