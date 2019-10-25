@@ -38,7 +38,7 @@ for (year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","FoodExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year>= 84){
   TF[,FoodExpenditure:=as.numeric(FoodExpenditure)]
   }
   TF[,Code:=NULL]

@@ -90,7 +90,7 @@ for(year in 92:Settings$endyear){
                        Geo2=substr(HHID,2,3),
                        Geo4=substr(HHID,2,5))]
   if(year %in% 95:96) GeoInfo[Geo4=="2909", Geo4:="2911"] # Tabas (3) # This is just a guess!
-  
+  if(year >=97) cat("Check this line for, What is Tabas code for >=97?")
   cat(":\t",length(unique(GeoInfo$Geo2)))
   cat(":\t",GeoInfo[order(Geo2),Geo2][c(1,nrow(GeoInfo))])
   cat(":\t",length(unique(GeoInfo$Geo4)))

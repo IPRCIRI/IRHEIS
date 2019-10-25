@@ -39,7 +39,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","MorghExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,MorghExpenditure:=as.numeric(MorghExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
@@ -81,7 +81,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","CowExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,CowExpenditure:=as.numeric(CowExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
@@ -123,7 +123,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","SheepExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,SheepExpenditure:=as.numeric(SheepExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
@@ -165,7 +165,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","BerenjIExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,BerenjIExpenditure:=as.numeric(BerenjIExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
@@ -207,7 +207,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","BerenjFExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,BerenjFExpenditure:=as.numeric(BerenjFExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
@@ -249,7 +249,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","RoghanExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,RoghanExpenditure:=as.numeric(RoghanExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
@@ -291,7 +291,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","Kilos","Grams","TokhmemorghExpenditure"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode | Code==11511]
-  if(year %in% 84:96){
+  if(year >= 84){
     TF[,TokhmemorghExpenditure:=as.numeric(TokhmemorghExpenditure)]
   }
   for (col in c("Kilos","Grams")) TF[is.na(get(col)), (col) := 0]
