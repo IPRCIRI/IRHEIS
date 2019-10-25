@@ -576,8 +576,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[CountyCode==	3003	,County_Name:="	Nazarabad	"]
   HHBase[CountyCode==	3004	,County_Name:="	Taleghan	"]
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
-  HHBase<-merge(HHBase,lactating,by="HHID")
+
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 
  # rm(HHBase)

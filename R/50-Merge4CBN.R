@@ -22,6 +22,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #load Demos+FoodPrices+Weights
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
+  HHBase<-merge(HHBase,lactating,by="HHID")
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
   load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
