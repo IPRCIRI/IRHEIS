@@ -67,6 +67,8 @@ for(year in years){
   P1[,Sex := factor(Sex, levels=1:2,
                     labels=c("Male","Female"))]
   
+  P1<-P1[Sex=="Male" | Sex=="Female"]
+  
   if(year %in% 63:64){
     P1[,Literate:=LitState<=3]
   }else if(year %in% 65:68){
@@ -415,7 +417,8 @@ for(year in years){
            weighted.mean(GA9,Weight)*Settings$KCaloryNeed_A_G9]
   
   
-  
+  cat(P1[,mean(Calorie_WorldBank)],"\n")
+  cat(P1[,mean(Calorie_Need_Anstitoo)],"\n")
   }
 
 endtime <- proc.time()
