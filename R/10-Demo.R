@@ -31,7 +31,7 @@ for(year in years){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
   if(year<=84){
     EduCodeT <- EduCodesA
   }else if(year %in% 85:92){
@@ -197,7 +197,7 @@ for(year in years){
   P[,NAge8_A_G:=ifelse(Age<=60 & Age>=30 & Sex=="Female",1,0)]
   P[,NAge9_A_B:=ifelse(Age>60 & Sex=="Male",1,0)]
   P[,NAge9_A_G:=ifelse(Age>60 & Sex=="Female",1,0)]
-  
+  P<- merge(P,lactating,by="HHID",all.x = TRUE)
   P[,Calorie_Need1:=NAge1B*Settings$KCaloryNeed_B1+
       NAge2B*Settings$KCaloryNeed_B2+
       NAge3B*Settings$KCaloryNeed_B3+
@@ -217,7 +217,9 @@ for(year in years){
       NAge7G*Settings$KCaloryNeed_G7+
       NAge8G*Settings$KCaloryNeed_G8+
       NAge9G*Settings$KCaloryNeed_G9+
-      NAge10G*Settings$KCaloryNeed_G10]
+      NAge10G*Settings$KCaloryNeed_G10+
+      lactating*(Settings$KCaloryNeed_lactating)]
+  
   
   P[,Calorie_Need2:=NAge1_A_B*Settings$KCaloryNeed_A_B1+
       NAge2_A_B*Settings$KCaloryNeed_A_B2+
@@ -236,7 +238,8 @@ for(year in years){
       NAge6_A_G*Settings$KCaloryNeed_A_G6+
       NAge7_A_G*Settings$KCaloryNeed_A_G7+
       NAge8_A_G*Settings$KCaloryNeed_A_G8+
-      NAge9_A_G*Settings$KCaloryNeed_A_G9]
+      NAge9_A_G*Settings$KCaloryNeed_A_G9+
+      lactating*(Settings$KCaloryNeed_lactating)]
   
 
   
@@ -276,10 +279,14 @@ for(year in years){
   HHWeights[,Year:=NULL]
   
   P1<-merge(P1,HHWeights)
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
+  
   
   weighted.hist(P1$Age,P1$Weight,breaks=1:99,main="Age weighted histogram in Iran (1397)")
 
   P1<-merge(P1,HHBase)
+  P1<- merge(P1,lactating,by="HHID",all.x = TRUE)
+  
   P1U<-P1[Region=="Urban"]
   weighted.hist(P1U$Age,P1U$Weight,breaks=1:99,main="Age weighted histogram in Urban Areas (1397)")
   
@@ -355,7 +362,9 @@ for(year in years){
            weighted.mean(B9,Weight)*Settings$KCaloryNeed_B9 +
            weighted.mean(G9,Weight)*Settings$KCaloryNeed_G9 +
            weighted.mean(B10,Weight)*Settings$KCaloryNeed_B10 +
-           weighted.mean(G10,Weight)*Settings$KCaloryNeed_G10]
+           weighted.mean(G10,Weight)*Settings$KCaloryNeed_G10+
+           weighted.mean(lactating,Weight)*(Settings$KCaloryNeed_lactating)]
+  
   
   
   P1[,BA1:=ifelse(Age==0 & Sex=="Male",1,0)]
@@ -414,7 +423,9 @@ for(year in years){
            weighted.mean(BA8,Weight)*Settings$KCaloryNeed_A_B8 +
            weighted.mean(GA8,Weight)*Settings$KCaloryNeed_A_G8 +
            weighted.mean(BA9,Weight)*Settings$KCaloryNeed_A_B9 +
-           weighted.mean(GA9,Weight)*Settings$KCaloryNeed_A_G9]
+           weighted.mean(GA9,Weight)*Settings$KCaloryNeed_A_G9 +
+           weighted.mean(lactating,Weight)*Settings$KCaloryNeed_lactating]
+  
   
   
   cat(P1[,mean(Calorie_WorldBank)],"\n")
