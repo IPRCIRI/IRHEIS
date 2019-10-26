@@ -117,7 +117,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #Calculate Per Values
   MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
-  MD[,EqSizeCalory :=
+  MD[,EqSizeCalory2 :=
        NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult) +
        NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult) +
        NAge3B*(Settings$KCaloryNeed_B3/Settings$KCaloryNeed_Adult) +
@@ -140,7 +140,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)+
        lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult)]
   
-  MD[,EqSizeCalory2 :=
+  MD[,EqSizeCalory :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult) +
        NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult) +
        NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult) +
