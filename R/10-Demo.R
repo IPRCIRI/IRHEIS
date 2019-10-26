@@ -146,7 +146,7 @@ for(year in years){
   
   
   P[,Size:=1]
-  P[,NKids:=ifelse(Age<18,1,0)]
+  P[,NKids:=ifelse(Age<15,1,0)]
   
   P[,NInfants:=ifelse(Age<=2,1,0)]
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
