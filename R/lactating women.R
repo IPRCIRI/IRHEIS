@@ -110,13 +110,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   TFL<-merge(HHI,TF,by="HHID", all.x = T)
   for (col in c("FoodExpenditure")) 
     TFL[is.na(get(col)), (col) := 0]
-  TFL<-TFL[,lactating:=ifelse(NInfants0>0&FoodExpenditure==0,1,0)]
+  TFL<-TFL[,lactating:=ifelse(NInfants0>0 & FoodExpenditure==0,1,0)]
   lactating<-TFL[,.(HHID,lactating)]
   
   save(lactating,file = paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
+  cat(lactating[,mean(lactating)],"\n")
 } 
 x<-lactating[lactating==1]
-lactating[,mean(lactating)]
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
