@@ -24,6 +24,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
   HHBase<-merge(HHBase,lactating,by="HHID")
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
   load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
@@ -89,6 +90,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[is.na(get(col)), (col) := 0]
 #  MD<-MD[,Yaraneh:=416000*Size]
   
+  MD<-merge(MD,Calorie_Need)
+  
   #Calculate Monthly Total Expenditures 
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
           "Amusement_Exp", "Communication_Exp", 
@@ -118,48 +121,48 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Calculate Per Values
   MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
   MD[,EqSizeCalory2 :=
-       NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult) +
-       NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult) +
-       NAge3B*(Settings$KCaloryNeed_B3/Settings$KCaloryNeed_Adult) +
-       NAge4B*(Settings$KCaloryNeed_B4/Settings$KCaloryNeed_Adult) +
-       NAge5B*(Settings$KCaloryNeed_B5/Settings$KCaloryNeed_Adult) +
-       NAge6B*(Settings$KCaloryNeed_B6/Settings$KCaloryNeed_Adult) +
-       NAge7B*(Settings$KCaloryNeed_B7/Settings$KCaloryNeed_Adult) +
-       NAge8B*(Settings$KCaloryNeed_B8/Settings$KCaloryNeed_Adult) +
-       NAge9B*(Settings$KCaloryNeed_B9/Settings$KCaloryNeed_Adult) +
-       NAge10B*(Settings$KCaloryNeed_B10/Settings$KCaloryNeed_Adult)+
-       NAge1G*(Settings$KCaloryNeed_G1/Settings$KCaloryNeed_Adult) +
-       NAge2G*(Settings$KCaloryNeed_G2/Settings$KCaloryNeed_Adult) +
-       NAge3G*(Settings$KCaloryNeed_G3/Settings$KCaloryNeed_Adult) +
-       NAge4G*(Settings$KCaloryNeed_G4/Settings$KCaloryNeed_Adult) +
-       NAge5G*(Settings$KCaloryNeed_G5/Settings$KCaloryNeed_Adult) +
-       NAge6G*(Settings$KCaloryNeed_G6/Settings$KCaloryNeed_Adult) +
-       NAge7G*(Settings$KCaloryNeed_G7/Settings$KCaloryNeed_Adult) +
-       NAge8G*(Settings$KCaloryNeed_G8/Settings$KCaloryNeed_Adult) +
-       NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult) +
-       NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)+
-       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult)]
+       NAge1B*(Settings$KCaloryNeed_B1/Settings$Calorie_Need_WorldBank) +
+       NAge2B*(Settings$KCaloryNeed_B2/Settings$Calorie_Need_WorldBank) +
+       NAge3B*(Settings$KCaloryNeed_B3/Settings$Calorie_Need_WorldBank) +
+       NAge4B*(Settings$KCaloryNeed_B4/Settings$Calorie_Need_WorldBank) +
+       NAge5B*(Settings$KCaloryNeed_B5/Settings$Calorie_Need_WorldBank) +
+       NAge6B*(Settings$KCaloryNeed_B6/Settings$Calorie_Need_WorldBank) +
+       NAge7B*(Settings$KCaloryNeed_B7/Settings$Calorie_Need_WorldBank) +
+       NAge8B*(Settings$KCaloryNeed_B8/Settings$Calorie_Need_WorldBank) +
+       NAge9B*(Settings$KCaloryNeed_B9/Settings$Calorie_Need_WorldBank) +
+       NAge10B*(Settings$KCaloryNeed_B10/Settings$Calorie_Need_WorldBank)+
+       NAge1G*(Settings$KCaloryNeed_G1/Settings$Calorie_Need_WorldBank) +
+       NAge2G*(Settings$KCaloryNeed_G2/Settings$Calorie_Need_WorldBank) +
+       NAge3G*(Settings$KCaloryNeed_G3/Settings$Calorie_Need_WorldBank) +
+       NAge4G*(Settings$KCaloryNeed_G4/Settings$Calorie_Need_WorldBank) +
+       NAge5G*(Settings$KCaloryNeed_G5/Settings$Calorie_Need_WorldBank) +
+       NAge6G*(Settings$KCaloryNeed_G6/Settings$Calorie_Need_WorldBank) +
+       NAge7G*(Settings$KCaloryNeed_G7/Settings$Calorie_Need_WorldBank) +
+       NAge8G*(Settings$KCaloryNeed_G8/Settings$Calorie_Need_WorldBank) +
+       NAge9G*(Settings$KCaloryNeed_G9/Settings$Calorie_Need_WorldBank) +
+       NAge10G*(Settings$KCaloryNeed_G10/Settings$Calorie_Need_WorldBank)+
+       lactating*(Settings$KCaloryNeed_lactating/Settings$Calorie_Need_WorldBank)]
   
   MD[,EqSizeCalory :=
-       NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult) +
-       NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult) +
-       NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult) +
-       NAge4_A_B*(Settings$KCaloryNeed_A_B4/Settings$KCaloryNeed_Adult) +
-       NAge5_A_B*(Settings$KCaloryNeed_A_B5/Settings$KCaloryNeed_Adult) +
-       NAge6_A_B*(Settings$KCaloryNeed_A_B6/Settings$KCaloryNeed_Adult) +
-       NAge7_A_B*(Settings$KCaloryNeed_A_B7/Settings$KCaloryNeed_Adult) +
-       NAge8_A_B*(Settings$KCaloryNeed_A_B8/Settings$KCaloryNeed_Adult) +
-       NAge9_A_B*(Settings$KCaloryNeed_A_B9/Settings$KCaloryNeed_Adult) +
-       NAge1_A_G*(Settings$KCaloryNeed_A_G1/Settings$KCaloryNeed_Adult) +
-       NAge2_A_G*(Settings$KCaloryNeed_A_G2/Settings$KCaloryNeed_Adult) +
-       NAge3_A_G*(Settings$KCaloryNeed_A_G3/Settings$KCaloryNeed_Adult) +
-       NAge4_A_G*(Settings$KCaloryNeed_A_G4/Settings$KCaloryNeed_Adult) +
-       NAge5_A_G*(Settings$KCaloryNeed_A_G5/Settings$KCaloryNeed_Adult) +
-       NAge6_A_G*(Settings$KCaloryNeed_A_G6/Settings$KCaloryNeed_Adult) +
-       NAge7_A_G*(Settings$KCaloryNeed_A_G7/Settings$KCaloryNeed_Adult) +
-       NAge8_A_G*(Settings$KCaloryNeed_A_G8/Settings$KCaloryNeed_Adult) +
-       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult)+
-       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult)]
+       NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$Calorie_Need_Anstitoo) +
+       NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$Calorie_Need_Anstitoo) +
+       NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$Calorie_Need_Anstitoo) +
+       NAge4_A_B*(Settings$KCaloryNeed_A_B4/Settings$Calorie_Need_Anstitoo) +
+       NAge5_A_B*(Settings$KCaloryNeed_A_B5/Settings$Calorie_Need_Anstitoo) +
+       NAge6_A_B*(Settings$KCaloryNeed_A_B6/Settings$Calorie_Need_Anstitoo) +
+       NAge7_A_B*(Settings$KCaloryNeed_A_B7/Settings$Calorie_Need_Anstitoo) +
+       NAge8_A_B*(Settings$KCaloryNeed_A_B8/Settings$Calorie_Need_Anstitoo) +
+       NAge9_A_B*(Settings$KCaloryNeed_A_B9/Settings$Calorie_Need_Anstitoo) +
+       NAge1_A_G*(Settings$KCaloryNeed_A_G1/Settings$Calorie_Need_Anstitoo) +
+       NAge2_A_G*(Settings$KCaloryNeed_A_G2/Settings$Calorie_Need_Anstitoo) +
+       NAge3_A_G*(Settings$KCaloryNeed_A_G3/Settings$Calorie_Need_Anstitoo) +
+       NAge4_A_G*(Settings$KCaloryNeed_A_G4/Settings$Calorie_Need_Anstitoo) +
+       NAge5_A_G*(Settings$KCaloryNeed_A_G5/Settings$Calorie_Need_Anstitoo) +
+       NAge6_A_G*(Settings$KCaloryNeed_A_G6/Settings$Calorie_Need_Anstitoo) +
+       NAge7_A_G*(Settings$KCaloryNeed_A_G7/Settings$Calorie_Need_Anstitoo) +
+       NAge8_A_G*(Settings$KCaloryNeed_A_G8/Settings$Calorie_Need_Anstitoo) +
+       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$Calorie_Need_Anstitoo)+
+       lactating*(Settings$KCaloryNeed_lactating/Settings$Calorie_Need_Anstitoo)]
   
 
   MD[,Relative_Calorie1 :=FoodKCaloriesHH/Calorie_Need1]
