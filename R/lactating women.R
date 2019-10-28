@@ -23,7 +23,7 @@ P1Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P1Cols))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
+
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Food))
   
@@ -69,7 +69,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   P[,NKids:=ifelse(Age<18,1,0)]
   
   P[,NInfants:=ifelse(Age<=2,1,0)]
-  P[,NInfants0:=ifelse(Age==0,1,0)]
+  if(year %in% 83:84){
+    P[,NInfants0:=ifelse(Age==1,1,0)]
+  }else{
+    P[,NInfants0:=ifelse(Age==0,1,0)]
+  }
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
   
   
