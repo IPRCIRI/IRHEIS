@@ -342,7 +342,7 @@ for(year in years){
   P1[,weighted.mean(G9,Weight)]
   P1[,weighted.mean(G10,Weight)]
   
-  P1<-P1[,Calorie_WorldBank:=
+  P1<-P1[,Calorie_Need_WorldBank:=
            weighted.mean(B1,Weight)*Settings$KCaloryNeed_B1 +
            weighted.mean(G1,Weight)*Settings$KCaloryNeed_G1 +
            weighted.mean(B2,Weight)*Settings$KCaloryNeed_B2 +
@@ -426,11 +426,13 @@ for(year in years){
            weighted.mean(GA9,Weight)*Settings$KCaloryNeed_A_G9 +
            weighted.mean(lactating,Weight)*Settings$KCaloryNeed_lactating]
   
-  
-  
-  cat(P1[,mean(Calorie_WorldBank)],"\n")
+  cat(P1[,mean(Calorie_Need_WorldBank)],"\n")
   cat(P1[,mean(Calorie_Need_Anstitoo)],"\n")
-  }
+  
+  Calorie_Need<-P1[,.(Calorie_Need_WorldBank=mean(Calorie_Need_WorldBank),
+                      Calorie_Need_Anstitoo=mean(Calorie_Need_Anstitoo)),by="HHID"]
+  save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
+    }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
