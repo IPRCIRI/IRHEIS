@@ -241,11 +241,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   
-  cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)],"\n")
-  cat(MD[,weighted.mean(Size,Weight)],"\n")
+ # cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)],"\n")
+ # cat(MD[,weighted.mean(Size,Weight)],"\n")
   cat(MD[,weighted.mean(EqSizeCalory,Weight)],"\n")
-  cat(MD[,weighted.mean(EqSizeCalory2,Weight)],"\n")
-  cat(MD[,weighted.mean(EqSizeCalory3,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory2,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory3,Weight)],"\n")
   
   MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)]
   MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)]
