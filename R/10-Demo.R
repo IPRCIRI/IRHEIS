@@ -300,6 +300,8 @@ for(year in years){
   weighted.hist(P1$Age,P1$Weight,breaks=c(0,1,2,3,4,10,15,20,60),
                 main="Age weighted histogram in Iran (1397)")
  
+
+  
   P1[,B1:=ifelse(Age==0 & Sex=="Male",1,0)]
   P1[,B2:=ifelse(Age==1 & Sex=="Male",1,0)]
   P1[,B3:=ifelse(Age==2 &  Sex=="Male",1,0)]
