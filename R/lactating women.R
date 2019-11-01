@@ -44,7 +44,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   P1 <- P1[, lapply(.SD, f)] 
   
   
-  P1[is.na(Age)]
+  
   P1[,Relationship :=factor(Relationship, levels=1:9, 
                             labels=c("Head","Spouse","Child","Child-in-Law",
                                      "Grand-Child","Parent","Sister/Brother",
@@ -69,22 +69,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   P[,NKids:=ifelse(Age<18,1,0)]
   
   P[,NInfants:=ifelse(Age<=2,1,0)]
+  
   if(year %in% 83:84){
-    P[,NInfants0:=ifelse(Age==1,1,0)]
-  }else{
+    for (col in c("Age"))
+     P[is.na(get(col)),(col):=0]     
+    }
+  
     P[,NInfants0:=ifelse(Age==0,1,0)]
-  }
+
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
   
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
             .SDcols=c("Size","NInfants0"),
             by="HHID"]
-  
-  
   HHI <- merge(B,PSum,by="HHID")
-  
-  
+
   
   ft <- FoodTables[Year == year]
   tab <- ft$Table
