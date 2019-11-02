@@ -28,9 +28,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #Choose one of these
   #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCaloriesHH_Per]
-  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_Anstitoo/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_Anstitoo/TFoodKCaloriesHH_Per]
   #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_WorldBank/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_Anstitoo/TFoodKCaloriesHH_Per]
+  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_Anstitoo/TFoodKCaloriesHH_Per]
   
   
   #SMD[,Bundle_Value2:=TOriginalFoodExpenditure_Per/Relative_Calorie1]
@@ -54,7 +54,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
   
   SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-  SMD[,crw:=cumsum(Weight)/sum(Weight),by=Region]  # Cumulative Relative Weight
+  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
   
   #Calculate deciles by weights
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
@@ -88,7 +88,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
     
     SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-    SMD[,crw:=cumsum(Weight)/sum(Weight),by=Region]  # Cumulative Relative Weight
+    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
     
     #Calculate deciles by weights
     SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
