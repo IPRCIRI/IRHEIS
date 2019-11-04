@@ -26,7 +26,11 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Food))
-  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  HHWeights<- as.data.table(HHWeights)
+  HHWeights>-HHWeights[,HHID:=as.numeric(HHID)]
+  HHWeights[,Year:=NULL]
   
   P1 <- rbind(Tables[[paste0("R",year,"P1")]],Tables[[paste0("U",year,"P1")]])
   nP1 <- names(P1)
@@ -116,11 +120,27 @@ for(year in (Settings$startyear:Settings$endyear)){
     TFL[is.na(get(col)), (col) := 0]
   TFL<-TFL[,lactating:=ifelse(NInfants0>0 & FoodExpenditure==0,1,0)]
   lactating<-TFL[,.(HHID,lactating)]
-  
-  save(lactating,file = paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
-  cat(lactating[,mean(lactating)],"\n")
+ 
+  TFL<-merge(TFL,HHWeights,by="HHID",all = T)
+  TFL<-merge(TFL,HHBase[,.(HHID,ProvinceCode,NewArea2)],by="HHID", all.x = T)
+  TFL<-TFL[,lac:=sum(lactating*Weight),by="ProvinceCode"]
+  TFL<-TFL[,infants0:=ifelse(NInfants0>0,1,0)]
+  TFL<-TFL[,inf:=sum(infants0*Weight), by="ProvinceCode"]
+  TFL<-TFL[,sahm:=lac/inf]
+ostan<-TFL[!duplicated(TFL$ProvinceCode),.(ProvinceCode,sahm,NewArea2)]
+
+TFL<-TFL[,lac_kol:=sum(lactating*Weight)]
+TFL<-TFL[,inf_kol:=sum(infants0*Weight)]
+sh<-TFL[!duplicated(TFL$lac_kol)]
+shirdeh<-sh$lac_kol/sh$inf_kol
+
+
+
+save(lactating,file = paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
+cat(lactating[,mean(lactating)],"\n")
+cat(shirdeh,"\n")
 } 
-x<-lactating[lactating==1]
+
 
 
 endtime <- proc.time()
