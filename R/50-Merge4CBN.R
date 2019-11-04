@@ -121,7 +121,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Calculate Per Values
   MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
   
-  MD[,EqSizeCalory :=
+  MD[,EqSizeCalory2 :=
        NAge1B*(Settings$KCaloryNeed_B1/Calorie_Need_WorldBank) +
        NAge2B*(Settings$KCaloryNeed_B2/Calorie_Need_WorldBank) +
        NAge3B*(Settings$KCaloryNeed_B3/Calorie_Need_WorldBank) +
@@ -144,7 +144,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge10G*(Settings$KCaloryNeed_G10/Calorie_Need_WorldBank)+
        lactating*(Settings$KCaloryNeed_lactating/Calorie_Need_WorldBank)]
   
-  MD[,EqSizeCalory2 :=
+  MD[,EqSizeCalory :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Calorie_Need_Anstitoo) +
        NAge2_A_B*(Settings$KCaloryNeed_A_B2/Calorie_Need_Anstitoo) +
        NAge3_A_B*(Settings$KCaloryNeed_A_B3/Calorie_Need_Anstitoo) +
@@ -246,7 +246,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   #cat(MD[,weighted.mean(EqSizeCalory,Weight)],"\n")
   #cat(MD[,weighted.mean(EqSizeCalory2,Weight)],"\n")
   #cat(MD[,weighted.mean(EqSizeCalory4,Weight)],"\n")
-  cat(MD[,weighted.mean(EqSizeCalory5,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory5,Weight)],"\n")
+  
+  cat(MD[Region=="Urban",weighted.mean(MetrPrice,Weight,na.rm = TRUE)],"\n")
   
   MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)]
   MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)]

@@ -28,7 +28,7 @@ EduCodesD <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_D))
 years <- Settings$startyear:Settings$endyear
 
 for(year in years){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  #cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
@@ -428,7 +428,7 @@ for(year in years){
            weighted.mean(GA9,Weight)*Settings$KCaloryNeed_A_G9 +
            weighted.mean(lactating,Weight)*Settings$KCaloryNeed_lactating]
   
-  cat(P1[,mean(Calorie_Need_WorldBank)],"\n")
+  #cat(P1[,mean(Calorie_Need_WorldBank)],"\n")
   cat(P1[,mean(Calorie_Need_Anstitoo)],"\n")
   
   Calorie_Need<-P1[,.(Calorie_Need_WorldBank=mean(Calorie_Need_WorldBank),
