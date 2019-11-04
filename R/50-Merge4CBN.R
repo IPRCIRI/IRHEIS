@@ -18,7 +18,7 @@ library(ggplot2)
 library(spatstat)
 
 for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  #cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   #load Demos+FoodPrices+Weights
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
@@ -121,7 +121,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Calculate Per Values
   MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
   
-  MD[,EqSizeCalory2 :=
+  MD[,EqSizeCalory :=
        NAge1B*(Settings$KCaloryNeed_B1/Calorie_Need_WorldBank) +
        NAge2B*(Settings$KCaloryNeed_B2/Calorie_Need_WorldBank) +
        NAge3B*(Settings$KCaloryNeed_B3/Calorie_Need_WorldBank) +
@@ -144,7 +144,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge10G*(Settings$KCaloryNeed_G10/Calorie_Need_WorldBank)+
        lactating*(Settings$KCaloryNeed_lactating/Calorie_Need_WorldBank)]
   
-  MD[,EqSizeCalory4 :=
+  MD[,EqSizeCalory2 :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Calorie_Need_Anstitoo) +
        NAge2_A_B*(Settings$KCaloryNeed_A_B2/Calorie_Need_Anstitoo) +
        NAge3_A_B*(Settings$KCaloryNeed_A_B3/Calorie_Need_Anstitoo) +
@@ -165,7 +165,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge9_A_G*(Settings$KCaloryNeed_A_G9/Calorie_Need_Anstitoo)+
        lactating*(Settings$KCaloryNeed_lactating/Calorie_Need_Anstitoo)]
   
-  MD[,EqSizeCalory5 :=
+  MD[,EqSizeCalory4 :=
        NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult_WorldBank) +
        NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult_WorldBank) +
        NAge3B*(Settings$KCaloryNeed_B3/Settings$KCaloryNeed_Adult_WorldBank) +
@@ -188,7 +188,7 @@ for(year in (Settings$startyear:Settings$endyear)){
        NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult_WorldBank)+
        lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult_WorldBank)]
   
-  MD[,EqSizeCalory :=
+  MD[,EqSizeCalory5 :=
        NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult_Anstitoo) +
        NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult_Anstitoo) +
        NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult_Anstitoo) +
@@ -243,9 +243,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
  # cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)],"\n")
  # cat(MD[,weighted.mean(Size,Weight)],"\n")
-  cat(MD[,weighted.mean(EqSizeCalory,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory,Weight)],"\n")
   #cat(MD[,weighted.mean(EqSizeCalory2,Weight)],"\n")
-  #cat(MD[,weighted.mean(EqSizeCalory3,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory4,Weight)],"\n")
+  cat(MD[,weighted.mean(EqSizeCalory5,Weight)],"\n")
   
   MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)]
   MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)]
