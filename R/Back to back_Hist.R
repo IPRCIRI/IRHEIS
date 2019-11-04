@@ -140,17 +140,13 @@ hist(foo, prob=TRUE)
 curve(dnorm(x, mean=mean(foo), sd=sd(foo)), add=TRUE)
 
 
-Poverty <- read_excel("C:/Users/pc1/Desktop/Poverty.xlsx",sheet = "Age")
+Poverty <- read_excel("C:/Users/pc1/Desktop/Poverty.xlsx",sheet = "Age2")
 save(Poverty,file = "Ages_Calorie.rda")
-Poverty<-Poverty[,.("Needed_Calorie_M1")]
-hist(Poverty, prob=TRUE, col="grey")# prob=TRUE for probabilities not counts
-lines(density(X), col="blue", lwd=2) # add a density estimate with defaults
-lines(density(X, adjust=2), lty="dotted", col="darkgreen", lwd=2) 
 
 
-p1<-ggplot(Poverty,aes(dist,val,fill=stuff,alpha=0.5))+geom_col(alpha=0.5,position="dodge")
-p2<-ggplot(Poverty,aes(dist,val,fill=stuff))+stat_smooth(aes(y=val,x=dist),method="gam",se=FALSE,formula=y~s(x,k=7))
-p3<-ggplot(Poverty,aes(dist,val,fill=stuff,alpha=0.5))+geom_density(stat="identity")
+p1<-ggplot(Poverty,aes(Age,Needed_Calorie,fill=Sex,alpha=0.5))+geom_col(alpha=0.5,position="dodge")
+p2<-ggplot(Poverty,aes(Age,Needed_Calorie,fill=Sex))+stat_smooth(aes(y=Needed_Calorie,x=Age),method="gam",se=FALSE,formula=y~s(x,k=7))
+p3<-ggplot(Poverty,aes(Age,Needed_Calorie,fill=Sex,alpha=0.5))+geom_density(stat="identity")
 
 library(gridExtra)
 grid.arrange(p1,p2,p3,nrow=3)
