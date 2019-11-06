@@ -12,7 +12,7 @@ library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
 
-source("funcdefs.R")
+#source("funcdefs.R")
 
 library(readxl)
 library(data.table)
@@ -41,7 +41,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    IncomeTable <- merge(IncomeTable,OtherIncomeData,by="HHID",all.x = TRUE)
 
    
-   IncomeTable <- IncomeTable[,lapply(.SD, repna)]
+   IncomeTable <- IncomeTable[,lapply(.SD, function(x){x[is.na(x)]<-0;return(x)})]
    
    
    IncomeTable[, NetIncome := PubWageNetIncomeY+PrvWageNetIncomeY+BussNetIncomeY+AgriNetIncomeY+OtherIncome]
