@@ -50,9 +50,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   NTL[,Code:=NULL]
   
   LoansData <- merge(NTL,HTL,all = TRUE,by="HHID")
-  LoansData[,BankName:=NULL]
-  LoansData[,HBankName:=NULL]
-  LoansData[is.na(LoansData)] <- 0
+#  LoansData[,BankName:=NULL]
+#  LoansData[,HBankName:=NULL]
+  LoansData <- LoansData[,lapply(.SD, function(x){if(class(x)=="numeric"){x[is.na(x)]<-0};return(x)})]
   
   LoansData <- LoansData[,lapply(.SD,sum),by=HHID]
   

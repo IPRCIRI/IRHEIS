@@ -11,7 +11,7 @@ cat("\n\n================ OtherIncome =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
-source("funcdefs.R")
+#source("funcdefs.R")
 
 library(data.table)
 library(stringr)
@@ -58,7 +58,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                        "Interest","Aid","HomeProduction","Intra"))
   OtherIncomeData <- OtherIncomeData[,lapply(.SD, sum, na.rm=TRUE),
                                      by=HHID,.SDcols=pcols]
-  OtherIncomeData <- OtherIncomeData[,lapply(.SD, repna), by=HHID, .SDcols=pcols]
+  OtherIncomeData <- OtherIncomeData[,lapply(.SD, function(x){x[is.na(x)]<-0;return(x)}), by=HHID, .SDcols=pcols]
   OtherIncomeData[, OtherIncome := Reduce(`+`, .SD), .SDcols=pcols]
   save(OtherIncomeData, 
        file = paste0(Settings$HEISProcessedPath,"Y",year,"OtherIncome.rda"))
