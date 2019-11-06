@@ -15,7 +15,7 @@ library(readxl)
 library(spatstat)
 
 cat("\n\n================ FoodGroups =====================================\n")
-year<-96
+year<-97
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
  load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
@@ -36,7 +36,7 @@ year<-96
  Base<-Base[,FGrams_Per:=FGrams/EqSizeCalory]
  Base<-Base[,FoodKCalories_Per:=FoodKCaloriesHH/EqSizeCalory]
  Base<-Base[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]
- Base<-Base[,Coef:=FoodKCalories_Per/2100]
+ Base<-Base[,Coef:=FoodKCalories_Per/Settings$KCaloryNeed_Adult]
  
  Base<-Base[,FoodKCalories_PerNew:=FoodKCalories_Per/Coef]
  Base<-Base[,FGrams_PerNew:=FGrams_Per/Coef]

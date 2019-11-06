@@ -79,7 +79,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   HouseData <- merge(HouseData,TRA,by = "HHID", all = TRUE)
   HouseData$MetrPrice <-HouseData$ServiceExp/HouseData$Area
   save(HouseData, file = paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
-  cat(summary(HouseData[,ServiceExp/Area]))
+ # cat(summary(HouseData[,ServiceExp/Area]))
+  cat(HouseData[,mean(MetrPrice)],"\n")
+  cat(HouseData[,median(MetrPrice)],"\n")
+  cat(HouseData[,mean(ServiceExp)],"\n")
+  cat(HouseData[,median(ServiceExp)],"\n")
 }
 
 endtime <- proc.time()

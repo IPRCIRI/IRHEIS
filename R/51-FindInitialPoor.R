@@ -23,15 +23,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD <- MD[,.(HHID,Region,NewArea,NewArea2,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
               # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-              TFoodKCaloriesHH_Per,
+              TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
                Weight,MetrPrice,Size,EqSizeRevOECD,Relative_Calorie1,Relative_Calorie2)]
   
-  SMD[,Bundle_Value1:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCaloriesHH_Per]
-  SMD[,Bundle_Value2:=TOriginalFoodExpenditure_Per/Relative_Calorie1]
-  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per/Relative_Calorie2]
+  #Choose one of these
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCaloriesHH_Per]
+  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_Anstitoo/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_WorldBank/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_Anstitoo/TFoodKCaloriesHH_Per]
   
-  #SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,FoodExpenditure_Per,FoodKCalories_Per,
-            #   Weight,MetrPrice)]
+  
+  #SMD[,Bundle_Value2:=TOriginalFoodExpenditure_Per/Relative_Calorie1]
+  #SMD[,Bundle_Value1:=TOriginalFoodExpenditure_Per/Relative_Calorie2]
+  #SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,
+  #FoodExpenditure_Per,FoodKCalories_Per, Weight,MetrPrice)]
   
   #SMD[,Bundle_Value:=FoodExpenditure_Per*Settings$KCaloryNeed_Adult/FoodKCalories_Per]
   
@@ -49,7 +54,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
   
   SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-  SMD[,crw:=cumsum(Weight)/sum(Weight),by=Region]  # Cumulative Relative Weight
+  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
   
   #Calculate deciles by weights
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
@@ -83,7 +88,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
     
     SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-    SMD[,crw:=cumsum(Weight)/sum(Weight),by=Region]  # Cumulative Relative Weight
+    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
     
     #Calculate deciles by weights
     SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
@@ -121,7 +126,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   MDR<-MD2[Region=="Rural"]
   save(MDU,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor2.rda"))
   save(MDR,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor3.rda"))
-}
+
+  MD[,weighted.mean(Bargh_Exp,Weight),by=.(Decile)][order(Decile)]
+  MD[,weighted.median(Bargh_Exp,Weight),by=.(Decile)][order(Decile)]
+  
+  MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)][order(ProvinceCode)]
+  MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)][order(ProvinceCode)]
+  }
 
 #MD[,Benzin_Exp:=as.numeric(Benzin_Exp)]
 #MD2<-MD[,.(HHID,HIndivNo,Region,NewArea2,Decile,Percentile,Size,Weight,Total_Exp_Month_Per_nondurable,Benzin_Exp)]
