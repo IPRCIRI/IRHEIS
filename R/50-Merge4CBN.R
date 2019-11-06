@@ -18,10 +18,13 @@ library(ggplot2)
 library(spatstat)
 
 for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  #cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   #load Demos+FoodPrices+Weights
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
+  HHBase<-merge(HHBase,lactating,by="HHID")
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
   load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
@@ -36,8 +39,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
             "Durables", "Education", "Energy", "Furnitures","Hotels",
             "House", "Medicals","Behdashts","Transportations","Others",
-           "Resturants"
-           #,"Benzins","Gazs","Barghs","NaftSefids"
+           "Resturants","Barghs"
+           #,"Benzins","Gazs","NaftSefids"
            )){
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
    }
@@ -69,7 +72,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,TransportationData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,BenzinData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,GazData,by =c("HHID"),all=TRUE)
-  #MD<-merge(MD,BarghData,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,BarghData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,NaftSefidData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,HouseData,by =c("HHID"),all=TRUE)
@@ -81,11 +84,13 @@ for(year in (Settings$startyear:Settings$endyear)){
                 "Communication_Exp", "EducExpenditure", "Energy_Exp", 
                 "Furniture_Exp", "Hotel_Exp", "Behdasht_Exp", "Transportation_Exp",
                 "Other_Exp", "ServiceExp", "Medical_Exp", "Durable_Exp", 
-                "Resturant_Exp"
-                #,"Benzin_Exp","Gaz_Exp","Bargh_Exp","NaftSefid_Exp"
+                "Resturant_Exp","Bargh_Exp"
+                #,"Benzin_Exp","Gaz_Exp","NaftSefid_Exp"
                 )) 
     MD[is.na(get(col)), (col) := 0]
 #  MD<-MD[,Yaraneh:=416000*Size]
+  
+  MD<-merge(MD,Calorie_Need)
   
   #Calculate Monthly Total Expenditures 
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
@@ -114,50 +119,95 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
   #Calculate Per Values
-  MD[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
-  MD[,EqSizeCalory3 :=
-       NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult) +
-       NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult) +
-       NAge3B*(Settings$KCaloryNeed_B3/Settings$KCaloryNeed_Adult) +
-       NAge4B*(Settings$KCaloryNeed_B4/Settings$KCaloryNeed_Adult) +
-       NAge5B*(Settings$KCaloryNeed_B5/Settings$KCaloryNeed_Adult) +
-       NAge6B*(Settings$KCaloryNeed_B6/Settings$KCaloryNeed_Adult) +
-       NAge7B*(Settings$KCaloryNeed_B7/Settings$KCaloryNeed_Adult) +
-       NAge8B*(Settings$KCaloryNeed_B8/Settings$KCaloryNeed_Adult) +
-       NAge9B*(Settings$KCaloryNeed_B9/Settings$KCaloryNeed_Adult) +
-       NAge10B*(Settings$KCaloryNeed_B10/Settings$KCaloryNeed_Adult)+
-       NAge1G*(Settings$KCaloryNeed_G1/Settings$KCaloryNeed_Adult) +
-       NAge2G*(Settings$KCaloryNeed_G2/Settings$KCaloryNeed_Adult) +
-       NAge3G*(Settings$KCaloryNeed_G3/Settings$KCaloryNeed_Adult) +
-       NAge4G*(Settings$KCaloryNeed_G4/Settings$KCaloryNeed_Adult) +
-       NAge5G*(Settings$KCaloryNeed_G5/Settings$KCaloryNeed_Adult) +
-       NAge6G*(Settings$KCaloryNeed_G6/Settings$KCaloryNeed_Adult) +
-       NAge7G*(Settings$KCaloryNeed_G7/Settings$KCaloryNeed_Adult) +
-       NAge8G*(Settings$KCaloryNeed_G8/Settings$KCaloryNeed_Adult) +
-       NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult) +
-       NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult)]
+  MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
   
   MD[,EqSizeCalory2 :=
-       NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult) +
-       NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult) +
-       NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult) +
-       NAge4_A_B*(Settings$KCaloryNeed_A_B4/Settings$KCaloryNeed_Adult) +
-       NAge5_A_B*(Settings$KCaloryNeed_A_B5/Settings$KCaloryNeed_Adult) +
-       NAge6_A_B*(Settings$KCaloryNeed_A_B6/Settings$KCaloryNeed_Adult) +
-       NAge7_A_B*(Settings$KCaloryNeed_A_B7/Settings$KCaloryNeed_Adult) +
-       NAge8_A_B*(Settings$KCaloryNeed_A_B8/Settings$KCaloryNeed_Adult) +
-       NAge9_A_B*(Settings$KCaloryNeed_A_B9/Settings$KCaloryNeed_Adult) +
-       NAge10_A_B*(Settings$KCaloryNeed_A_B10/Settings$KCaloryNeed_Adult) +
-       NAge1_A_G*(Settings$KCaloryNeed_A_G1/Settings$KCaloryNeed_Adult) +
-       NAge2_A_G*(Settings$KCaloryNeed_A_G2/Settings$KCaloryNeed_Adult) +
-       NAge3_A_G*(Settings$KCaloryNeed_A_G3/Settings$KCaloryNeed_Adult) +
-       NAge4_A_G*(Settings$KCaloryNeed_A_G4/Settings$KCaloryNeed_Adult) +
-       NAge5_A_G*(Settings$KCaloryNeed_A_G5/Settings$KCaloryNeed_Adult) +
-       NAge6_A_G*(Settings$KCaloryNeed_A_G6/Settings$KCaloryNeed_Adult) +
-       NAge7_A_G*(Settings$KCaloryNeed_A_G7/Settings$KCaloryNeed_Adult) +
-       NAge8_A_G*(Settings$KCaloryNeed_A_G8/Settings$KCaloryNeed_Adult) +
-       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult)+
-       NAge10_A_G*(Settings$KCaloryNeed_A_G10/Settings$KCaloryNeed_Adult)]
+       NAge1B*(Settings$KCaloryNeed_B1/Calorie_Need_WorldBank) +
+       NAge2B*(Settings$KCaloryNeed_B2/Calorie_Need_WorldBank) +
+       NAge3B*(Settings$KCaloryNeed_B3/Calorie_Need_WorldBank) +
+       NAge4B*(Settings$KCaloryNeed_B4/Calorie_Need_WorldBank) +
+       NAge5B*(Settings$KCaloryNeed_B5/Calorie_Need_WorldBank) +
+       NAge6B*(Settings$KCaloryNeed_B6/Calorie_Need_WorldBank) +
+       NAge7B*(Settings$KCaloryNeed_B7/Calorie_Need_WorldBank) +
+       NAge8B*(Settings$KCaloryNeed_B8/Calorie_Need_WorldBank) +
+       NAge9B*(Settings$KCaloryNeed_B9/Calorie_Need_WorldBank) +
+       NAge10B*(Settings$KCaloryNeed_B10/Calorie_Need_WorldBank)+
+       NAge1G*(Settings$KCaloryNeed_G1/Calorie_Need_WorldBank) +
+       NAge2G*(Settings$KCaloryNeed_G2/Calorie_Need_WorldBank) +
+       NAge3G*(Settings$KCaloryNeed_G3/Calorie_Need_WorldBank) +
+       NAge4G*(Settings$KCaloryNeed_G4/Calorie_Need_WorldBank) +
+       NAge5G*(Settings$KCaloryNeed_G5/Calorie_Need_WorldBank) +
+       NAge6G*(Settings$KCaloryNeed_G6/Calorie_Need_WorldBank) +
+       NAge7G*(Settings$KCaloryNeed_G7/Calorie_Need_WorldBank) +
+       NAge8G*(Settings$KCaloryNeed_G8/Calorie_Need_WorldBank) +
+       NAge9G*(Settings$KCaloryNeed_G9/Calorie_Need_WorldBank) +
+       NAge10G*(Settings$KCaloryNeed_G10/Calorie_Need_WorldBank)+
+       lactating*(Settings$KCaloryNeed_lactating/Calorie_Need_WorldBank)]
+  
+  MD[,EqSizeCalory :=
+       NAge1_A_B*(Settings$KCaloryNeed_A_B1/Calorie_Need_Anstitoo) +
+       NAge2_A_B*(Settings$KCaloryNeed_A_B2/Calorie_Need_Anstitoo) +
+       NAge3_A_B*(Settings$KCaloryNeed_A_B3/Calorie_Need_Anstitoo) +
+       NAge4_A_B*(Settings$KCaloryNeed_A_B4/Calorie_Need_Anstitoo) +
+       NAge5_A_B*(Settings$KCaloryNeed_A_B5/Calorie_Need_Anstitoo) +
+       NAge6_A_B*(Settings$KCaloryNeed_A_B6/Calorie_Need_Anstitoo) +
+       NAge7_A_B*(Settings$KCaloryNeed_A_B7/Calorie_Need_Anstitoo) +
+       NAge8_A_B*(Settings$KCaloryNeed_A_B8/Calorie_Need_Anstitoo) +
+       NAge9_A_B*(Settings$KCaloryNeed_A_B9/Calorie_Need_Anstitoo) +
+       NAge1_A_G*(Settings$KCaloryNeed_A_G1/Calorie_Need_Anstitoo) +
+       NAge2_A_G*(Settings$KCaloryNeed_A_G2/Calorie_Need_Anstitoo) +
+       NAge3_A_G*(Settings$KCaloryNeed_A_G3/Calorie_Need_Anstitoo) +
+       NAge4_A_G*(Settings$KCaloryNeed_A_G4/Calorie_Need_Anstitoo) +
+       NAge5_A_G*(Settings$KCaloryNeed_A_G5/Calorie_Need_Anstitoo) +
+       NAge6_A_G*(Settings$KCaloryNeed_A_G6/Calorie_Need_Anstitoo) +
+       NAge7_A_G*(Settings$KCaloryNeed_A_G7/Calorie_Need_Anstitoo) +
+       NAge8_A_G*(Settings$KCaloryNeed_A_G8/Calorie_Need_Anstitoo) +
+       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Calorie_Need_Anstitoo)+
+       lactating*(Settings$KCaloryNeed_lactating/Calorie_Need_Anstitoo)]
+  
+  MD[,EqSizeCalory4 :=
+       NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge3B*(Settings$KCaloryNeed_B3/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge4B*(Settings$KCaloryNeed_B4/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge5B*(Settings$KCaloryNeed_B5/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge6B*(Settings$KCaloryNeed_B6/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge7B*(Settings$KCaloryNeed_B7/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge8B*(Settings$KCaloryNeed_B8/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge9B*(Settings$KCaloryNeed_B9/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge10B*(Settings$KCaloryNeed_B10/Settings$KCaloryNeed_Adult_WorldBank)+
+       NAge1G*(Settings$KCaloryNeed_G1/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge2G*(Settings$KCaloryNeed_G2/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge3G*(Settings$KCaloryNeed_G3/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge4G*(Settings$KCaloryNeed_G4/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge5G*(Settings$KCaloryNeed_G5/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge6G*(Settings$KCaloryNeed_G6/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge7G*(Settings$KCaloryNeed_G7/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge8G*(Settings$KCaloryNeed_G8/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult_WorldBank) +
+       NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult_WorldBank)+
+       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult_WorldBank)]
+  
+  MD[,EqSizeCalory5 :=
+       NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge4_A_B*(Settings$KCaloryNeed_A_B4/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge5_A_B*(Settings$KCaloryNeed_A_B5/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge6_A_B*(Settings$KCaloryNeed_A_B6/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge7_A_B*(Settings$KCaloryNeed_A_B7/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge8_A_B*(Settings$KCaloryNeed_A_B8/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge9_A_B*(Settings$KCaloryNeed_A_B9/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge1_A_G*(Settings$KCaloryNeed_A_G1/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge2_A_G*(Settings$KCaloryNeed_A_G2/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge3_A_G*(Settings$KCaloryNeed_A_G3/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge4_A_G*(Settings$KCaloryNeed_A_G4/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge5_A_G*(Settings$KCaloryNeed_A_G5/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge6_A_G*(Settings$KCaloryNeed_A_G6/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge7_A_G*(Settings$KCaloryNeed_A_G7/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge8_A_G*(Settings$KCaloryNeed_A_G8/Settings$KCaloryNeed_Adult_Anstitoo) +
+       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult_Anstitoo)+
+       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult_Anstitoo)]
   
   MD[,Relative_Calorie1 :=FoodKCaloriesHH/Calorie_Need1]
   MD[,Relative_Calorie2 :=FoodKCaloriesHH/Calorie_Need2]
@@ -190,8 +240,18 @@ for(year in (Settings$startyear:Settings$endyear)){
    ##############################################################
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
-  cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)])
- MD[Region=="Urban",weighted.mean(Total_Exp_Month_Per,Weight*Size),by=.(ProvinceCode)]
+  
+ # cat(MD[,weighted.mean(Total_Exp_Month_Per_nondurable,Weight*Size)],"\n")
+ # cat(MD[,weighted.mean(Size,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory2,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory4,Weight)],"\n")
+  #cat(MD[,weighted.mean(EqSizeCalory5,Weight)],"\n")
+  
+  cat(MD[Region=="Urban",weighted.mean(MetrPrice,Weight,na.rm = TRUE)],"\n")
+  
+  MD[,weighted.mean(Bargh_Exp,Weight),by=.(ProvinceCode)]
+  MD[,weighted.median(Bargh_Exp,Weight),by=.(ProvinceCode)]
 }
 
 
