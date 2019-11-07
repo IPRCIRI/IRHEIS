@@ -1,4 +1,4 @@
-# 00-DownloaCompressedFiles.R
+# 103-DownloaCompressedFiles.R
 # downloads the RAR files that are not present in the folder 
 # specified in Settings file
 #
@@ -6,6 +6,10 @@
 # Licence: GPL-3
 
 rm(list=ls())
+
+starttime <- proc.time()
+cat("\n\n================ DownloaCompressedFiles =====================================\n")
+
 
 library(yaml)
 library(readxl)
@@ -39,3 +43,8 @@ if(length(files_to_download)>0){
     cat("All files in the range specified in Setting.yaml file are present, no need to download.")
 }
 
+
+endtime <- proc.time()
+
+cat("\n\n============================\nIt took ")
+cat(endtime-starttime)
