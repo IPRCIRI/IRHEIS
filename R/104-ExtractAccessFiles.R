@@ -1,4 +1,4 @@
-# 03-ExtractAccessFiles.R
+# 104-ExtractAccessFiles.R
 # downloads the RAR (and zip) files that are not present in the folder 
 # specified in Settings file
 #
@@ -6,6 +6,10 @@
 # Licence: GPL-3
 
 rm(list=ls())
+
+starttime <- proc.time()
+cat("\n\n================ ExtractAccessFiles =====================================\n")
+
 
 library(yaml)
 library(readxl)
@@ -62,3 +66,9 @@ if (length(years_had_error)>0 ){
   cat(" the *.mdb files manually for these years:\n")
   cat(years_had_error)
 }
+
+
+endtime <- proc.time()
+
+cat("\n\n============================\nIt took ")
+cat(endtime-starttime)
