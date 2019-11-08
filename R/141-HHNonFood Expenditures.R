@@ -106,9 +106,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TE),c("HHID","Code","HouseandEnergy_Exp"))
   TE <- TE[,pcols,with=FALSE]
   #TE <- TE[Code %in% ty$StartCode:ty$EndCode]
-  if(year %in% 84:94){
-    TE[,HouseandEnergy_Exp:=as.numeric(HouseandEnergy_Exp)]
-  }
+ # if(year %in% 84:94){
+ #   TE[,HouseandEnergy_Exp:=as.numeric(HouseandEnergy_Exp)]
+ # }
   #TL[,HouseandEnergy_Exp:=as.numeric(HouseandEnergy_Exp)]
   TE[,Code:=NULL]
   
@@ -117,6 +117,68 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   HouseandEnergyData <- TE[,lapply(.SD,sum),by=HHID]
   save(HouseandEnergyData, file = paste0(Settings$HEISProcessedPath,"Y",year,"HouseandEnergys.rda"))
+}
+
+cat("\n\n================ Section4:HHHouse =====================================\n")
+
+HouseTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_House))
+
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  
+  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
+  
+  ty <- HouseTables[Year==year][,1:7]
+  tab <- ty$Table
+  
+  UTL <- Tables[[paste0("U",year,tab)]]
+  RTL <- Tables[[paste0("R",year,tab)]]
+  TL <- rbind(UTL,RTL)
+  for(n in names(TL)){
+    x <- which(ty==n)
+    if(length(x)>0)
+      setnames(TL,n,names(ty)[x])
+  }
+  pcols <- intersect(names(TL),c("HHID","Code","ServiceExp"))
+  TL <- TL[,pcols,with=FALSE]
+  TL <- TL[Code %in% ty$StartCode:ty$EndCode]
+  TL[,ServiceExp:=as.numeric(ServiceExp)]
+  
+  TL[,Code:=NULL]
+  
+  
+  TL[is.na(TL)] <- 0
+  
+  HouseData <- TL[,lapply(.SD,sum),by=HHID]
+  
+
+  # cat("\n",year,",",mean(HouseData$ServiceExp,na.rm = TRUE))
+  ty <- HouseTables[Year==year]
+  rt <- Tables[[paste0("R",year,ty$HATable)]]
+  ut <- Tables[[paste0("U",year,ty$HATable)]]
+  
+  if(year <= 68){
+    rt$New <- NA
+    setnames(rt,"New",ty$HACode)
+  }
+  ns <- c(ty$HAHHID,ty$HRCode,ty$HACode)
+  
+  TRA <- rbind( rt[,ns,with=FALSE], ut[,ns,with=FALSE])
+  
+  setnames(TRA,ty$HAHHID,"HHID")
+  setnames(TRA,ty$HRCode,"Rooms")
+  setnames(TRA,ty$HACode,"Area")
+  
+  TRA[Area==0,Area:=NA]
+  
+  HouseData <- merge(HouseData,TRA,by = "HHID", all = TRUE)
+  HouseData$MetrPrice <-HouseData$ServiceExp/HouseData$Area
+  save(HouseData, file = paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
+  # cat(summary(HouseData[,ServiceExp/Area]))
+  cat(HouseData[,mean(MetrPrice)],"\n")
+  cat(HouseData[,median(MetrPrice)],"\n")
+  cat(HouseData[,mean(ServiceExp)],"\n")
+  cat(HouseData[,median(ServiceExp)],"\n")
 }
 
 cat("\n\n================ Section5:HHFurniture =====================================\n")

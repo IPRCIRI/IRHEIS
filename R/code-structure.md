@@ -4,9 +4,11 @@
 131-140 Food Expenditures
 141-150 NonFood Expenditures
 151-160 Food Calories
-3x Income
+170-180 Merge Information, Poverty Lines and Rates
+------------------------------------
+701-750 Other Food's and calories calculations
+201-250 Income
 4x Loans and Finance
-5x Poverty Calculations (Main) 
 6x Poverty Calculations (Other)
 7x Map + Plot + Prediction + Index
 8x Poors properties
