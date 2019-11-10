@@ -69,6 +69,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 
  # write.csv(EngleD,file ="Results.csv" )
+  
+  MDU2<-MD[Region=="Urban" ,.(HHID,cluster3)]
+  save(MDU2,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU2.rda"))
+  MDR3<-MD[Region=="Rural" ,.(HHID,cluster3)]
+  save(MDR3,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR3.rda"))
   }
 
 endtime <- proc.time()

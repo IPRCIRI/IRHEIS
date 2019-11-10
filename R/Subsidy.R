@@ -43,8 +43,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   UTSubsidyW[,check1:=Dycol05/(Dycol04*Dycol03)]
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   UMD<-MD[Region=="Urban"]
-  UMD<-UMD[,.(HHID,FinalPoor)]
-  names(UMD) <- c("Address", "FinalPoor")
+  UMD<-UMD[,.(HHID,FinalPoor,Decile)]
+  names(UMD) <- c("Address", "FinalPoor","Decile")
   UTSubsidyW<-merge(UTSubsidyW,UMD)
 }
 
