@@ -15,7 +15,7 @@ library(readxl)
 library(data.table)
 library(stringr)
 library(plotrix)
-
+library(Hmisc)
 #P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
 
 P1Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P1Cols))
@@ -293,9 +293,9 @@ for(year in years){
   P1R<-P1[Region=="Rural"]
   weighted.hist(P1R$Age,P1R$Weight,breaks=1:99,main="Age weighted histogram in Rural reas (1397)")
   
-  plot(density(P1$Age),weights =P1$Weight)
-  lines(density(P1U$Age),weights =P1U$Weight)
-  lines(density(P1R$Age),weights =P1R$Weight)
+  #plot(density(P1$Age),weights =P1$Weight)
+  #lines(density(P1U$Age),weights =P1U$Weight)
+  #lines(density(P1R$Age),weights =P1R$Weight)
   
   weighted.hist(P1$Age,P1$Weight,breaks=c(0,1,2,3,4,10,15,20,60),
                 main="Age weighted histogram in Iran (1397)")
@@ -434,6 +434,42 @@ for(year in years){
   Calorie_Need<-P1[,.(Calorie_Need_WorldBank=mean(Calorie_Need_WorldBank),
                       Calorie_Need_Anstitoo=mean(Calorie_Need_Anstitoo)),by="HHID"]
   save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU2.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR3.rda"))
+  P1U<-P1[Region=="Urban"]
+  P1R<-P1[Region=="Rural"]
+  
+  P1U<-merge(P1U,MDU2,all.x = TRUE)
+  P1R<-merge(P1R,MDR3,all.x = TRUE)
+  
+  P1U2<-P1U[cluster3==2]
+  P1R3<-P1R[cluster3==3]
+  
+
+  Age <- P1U2$Age
+  Sex <- P1U2$Sex
+  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Urban- Second cluster')
+  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  
+  Age <- P1R3$Age
+  Sex <- P1R3$Sex
+  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Rural- Third cluster')
+  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  
+  Age <- P1U$Age
+  Sex <- P1U$Sex
+  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Urban- Total')
+  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  
+  Age <- P1R$Age
+  Sex <- P1R$Sex
+  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Rural-Total')
+  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
     }
 
 endtime <- proc.time()
