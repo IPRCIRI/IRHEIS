@@ -28,7 +28,7 @@ EduCodesD <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_D))
 years <- Settings$startyear:Settings$endyear
 
 for(year in years){
-  #cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
@@ -146,8 +146,8 @@ for(year in years){
   
   
   P[,Size:=1]
+  P[,Kids:=ifelse(Relationship=="Child",1,0)]
   P[,NKids:=ifelse(Age<15,1,0)]
-  
   P[,NInfants:=ifelse(Age<=2,1,0)]
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
 
@@ -433,8 +433,11 @@ for(year in years){
   
   Calorie_Need<-P1[,.(Calorie_Need_WorldBank=mean(Calorie_Need_WorldBank),
                       Calorie_Need_Anstitoo=mean(Calorie_Need_Anstitoo)),by="HHID"]
-  save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
   
+  save(P1,file=paste0(Settings$HEISProcessedPath,"Y",year,"P1.rda"))
+  save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
+}
+
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU2.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR3.rda"))
   P1U<-P1[Region=="Urban"]
@@ -470,7 +473,7 @@ for(year in years){
   out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Rural-Total')
   barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
   barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
-    }
+    
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
