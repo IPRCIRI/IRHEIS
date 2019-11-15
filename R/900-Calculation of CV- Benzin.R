@@ -1,6 +1,4 @@
 # Calculation of CV- Benzin
-# 
-#
 # Copyright © 2019: Arin Shahbazian
 # Licence: GPL-3
 
@@ -97,7 +95,7 @@ cat("\n\n================ Other =====================================\n")
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  MD<-MD[,.(HHID,Region,Total_Exp_Month,Total_Exp_Month_nondurable,
+  MD<-MD[,.(HHID,Region,ProvinceCode,Total_Exp_Month,Total_Exp_Month_nondurable,
             Size,EqSizeRevOECD,Weight, Decile)]
   save(MD, file = paste0(Settings$HEISProcessedPath,"Y",year,"MD.rda"))
 }
@@ -117,29 +115,19 @@ Total<-Total[,Benzin_Exp_Add:=ifelse(Benzin_Exp<600000,0,Benzin_Exp-600000)]
 Total<-Total[Decile %in% 1:10]
 
 #Price Indexes
-#load(file="Index_Dataset97.rda")
-#Total<-merge(Total,Index_Dataset97,by=c("Region","Month"),all.x=TRUE)
-
-Berenj_Esfand96<-114.4
-Morgh_Esfand96<-122.1
-Ghand_Esfand96<-108.4
-
-
-Berenj_Esfand97<-145.6
-Morgh_Esfand97<-265.6
-Ghand_Esfand97<-170.3
-
+load(file="Index98.rda")
+Total<-merge(Total,Index98,by="ProvinceCode")
 
 ############New Prices###########
 Total[,BenzinP1:=Benzin_Exp]
-Total[,TransportationP1:=Transportation_Exp]
-Total[,Other_ExpP1:=Other_Exp]
+Total[,TransportationP1:=Transportation_Exp*Mehr98/137]
+Total[,Other_ExpP1:=Other_Exp*Mehr98/137]
 
 #Total[,BenzinP2:=ifelse(Benzin_Exp<600000, Benzin_Exp*1.5,Benzin_Exp*3)]
 Total[,BenzinP2:=ifelse(Benzin_Exp<600000, Benzin_Exp*1.5,
                         600000*1.5+Benzin_Exp_Add*3)]
-Total[,TransportationP2:=Transportation_Exp*1.11]
-Total[,Other_ExpP2:=Other_Exp*1.005]
+Total[,TransportationP2:=TransportationP1*1.11]
+Total[,Other_ExpP2:=Other_ExpP1*1.01]
 
 ################################################
 ################  CV  #################
@@ -157,6 +145,10 @@ Total[,weighted.mean(CV,Weight,na.rm = TRUE)]
 Total[,weighted.mean(CV,Weight,na.rm = TRUE),by=.(Region)][order(Region)]
 Total[,weighted.mean(CV,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
 Total[,weighted.mean(CV,Weight,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
+
+
+Total[,weighted.mean(Benzin_Exp,Weight,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
+Total[,weighted.mean(Size,Weight,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
 
 
 endtime <- proc.time()
