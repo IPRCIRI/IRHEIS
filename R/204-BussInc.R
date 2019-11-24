@@ -29,6 +29,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   UTbussW <- Tables[[paste0("U",year,tab)]]
   RTbussW <- Tables[[paste0("R",year,tab)]]
   TbussW <- rbind(UTbussW,RTbussW,fill=TRUE)
+  save(TbussW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TbussW.rda"))
+  
+  
   for(n in names(TbussW)){
     x <- which(busswt==n)
     if(length(x)>0)

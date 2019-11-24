@@ -53,6 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   TprvW <- rbind(RTprvW,UTprvW,fill=TRUE)
+  save(TprvW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TprvW.rda"))
   
   pcols <- intersect(names(TprvW),c("HHID","IndivNo","WageSector","PrvWageNetIncomeY"))
   TprvW <- TprvW[,pcols,with=FALSE]

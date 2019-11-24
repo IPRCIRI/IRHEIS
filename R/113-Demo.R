@@ -16,6 +16,9 @@ library(data.table)
 library(stringr)
 library(plotrix)
 library(Hmisc)
+library(haven)
+library(sm)
+library(gridExtra)
 #P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
 
 P1Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P1Cols))
@@ -293,14 +296,19 @@ for(year in years){
   P1R<-P1[Region=="Rural"]
   weighted.hist(P1R$Age,P1R$Weight,breaks=1:99,main="Age weighted histogram in Rural reas (1397)")
   
-  #plot(density(P1$Age),weights =P1$Weight)
-  #lines(density(P1U$Age),weights =P1U$Weight)
+ # plot(density(P1$Age),weights =P1$Weight)
+ # lines(density(P1U$Age),weights =P1U$Weight)
   #lines(density(P1R$Age),weights =P1R$Weight)
   
-  weighted.hist(P1$Age,P1$Weight,breaks=c(0,1,2,3,4,10,15,20,60),
-                main="Age weighted histogram in Iran (1397)")
+ # weighted.hist(P1$Age,P1$Weight,breaks=c(0,1,2,3,4,10,15,20,60),
+              #  main="Age weighted histogram in Iran (1397)")
  
-
+  load(file = "Cal_Edition.rda")
+  Poverty<-as.data.table(Poverty)
+  Edited<-Poverty[,.(Age,Sex,Cal_B_Edited,Cal_W_Edited)]
+  P1<-merge(P1,Edited,by=c("Sex", "Age"))
+  
+  P1[,weighted.mean(B1,Weight)]
   
   P1[,B1:=ifelse(Age==0 & Sex=="Male",1,0)]
   P1[,B2:=ifelse(Age==1 & Sex=="Male",1,0)]
@@ -438,42 +446,80 @@ for(year in years){
   save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
 }
 
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU2.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR3.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR.rda"))
   P1U<-P1[Region=="Urban"]
   P1R<-P1[Region=="Rural"]
   
-  P1U<-merge(P1U,MDU2,all.x = TRUE)
-  P1R<-merge(P1R,MDR3,all.x = TRUE)
+  P1U<-merge(P1U,MDU,all.x = TRUE)
+  P1R<-merge(P1R,MDR,all.x = TRUE)
   
-  P1U2<-P1U[cluster3==2]
-  P1R3<-P1R[cluster3==3]
+  P1U2<-P1U[cluster3==2 ]
+  P1R3<-P1R[cluster3==3 ]
   
+ # sm.density.compare(P1U$Age, P1U$cluster3==2)
+  weighted.hist(P1U$Age,P1U$Weight,breaks=1:99,main="Age weighted histogram in Urban Areas (1397)")
+  weighted.hist(P1U2$Age,P1U2$Weight,breaks=1:99,main="Age weighted histogram in Urban Areas (1397)")
+  plot(density(P1U$Age),weights =P1U$Weight)
+  lines(density(P1U2$Age),weights =P1U2$Weight)
+  
+#  sm.density.compare(P1R$Age, P1R$cluster3==3)
+  weighted.hist(P1R$Age,P1R$Weight,breaks=1:99,main="Age weighted histogram in Urban Areas (1397)")
+  weighted.hist(P1R3$Age,P1R3$Weight,breaks=1:99,main="Age weighted histogram in Urban Areas (1397)")
+  plot(density(P1R$Age),weights =P1R$Weight)
+  lines(density(P1R3$Age),weights =P1R3$Weight)
 
-  Age <- P1U2$Age
-  Sex <- P1U2$Sex
-  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Urban- Second cluster')
-  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
-  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+
+ # Age1 <- P1U2$Age
+ # Age2 <- P1U$Age
+ # out <- histbackback(split(Age1, Age2), probability=TRUE, main = 'Urban- Second cluster')
+#  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+ # barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
   
-  Age <- P1R3$Age
-  Sex <- P1R3$Sex
-  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Rural- Third cluster')
-  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
-  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+ # Age <- P1R3$Age
+ # Sex <- P1R3$Sex
+ # out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Rural- Third cluster')
+#  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+#  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
   
-  Age <- P1U$Age
-  Sex <- P1U$Sex
-  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Urban- Total')
-  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
-  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  #Age <- P1U$Age
+  #Sex <- P1U$Sex
+ # out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Urban- Total')
+ # barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+ # barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
   
-  Age <- P1R$Age
-  Sex <- P1R$Sex
-  out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Rural-Total')
-  barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
-  barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  #Age <- P1R$Age
+  #Sex <- P1R$Sex
+  #out <- histbackback(split(Age, Sex), probability=FALSE, main = 'Rural-Total')
+  #barplot(-out$left, col="red" , horiz=TRUE, space=0, add=TRUE, axes=FALSE)
+  #barplot(out$right, col="blue", horiz=TRUE, space=0, add=TRUE, axes=FALSE)
     
+  load(file = "Cal_Edition.rda")
+  plot(density(Poverty$Needed_Calorie_W))
+  lines(density(Poverty$Needed_Calorie_B))
+  
+  ggplot(Poverty, aes(fill=Sex, y=diff, x=Age)) + 
+    geom_bar(position="dodge", stat="identity")
+  
+  Poverty<-as.data.table(Poverty)
+  PovertyM<-Poverty[Sex=="Male"]
+  PovertyF<-Poverty[Sex=="Female"]
+  
+  p1<-ggplot(PovertyM,aes(Age,Needed_Calorie_W))+geom_density(stat="identity")
+  p2<-ggplot(PovertyM,aes(Age,Cal_W_Edited))+geom_density(stat="identity")
+  grid.arrange(p1,p2,nrow=3)
+  
+  p1<-ggplot(PovertyF,aes(Age,Needed_Calorie_W))+geom_density(stat="identity")
+  p2<-ggplot(PovertyF,aes(Age,Cal_W_Edited))+geom_density(stat="identity")
+  grid.arrange(p1,p2,nrow=3)
+  
+  p1<-ggplot(PovertyM,aes(Age,Needed_Calorie_B))+geom_density(stat="identity")
+  p2<-ggplot(PovertyM,aes(Age,Cal_W_Edited))+geom_density(stat="identity")
+  grid.arrange(p1,p2,nrow=3)
+  
+  p1<-ggplot(PovertyF,aes(Age,Needed_Calorie_B))+geom_density(stat="identity")
+  p2<-ggplot(PovertyF,aes(Age,Cal_W_Edited))+geom_density(stat="identity")
+  grid.arrange(p1,p2,nrow=3)
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
