@@ -1,4 +1,4 @@
-#172- Step 2.R
+#172- Step 2-2.R
 # 
 # Copyright © 2018: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -31,8 +31,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
   
   #Calculate Per Values
-  MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
-  
+
   MD[,EqSizeCalory :=
        NAge0B	*(Settings$	KCaloryNeed_B0	/Calorie_Need_WorldBank)+
        NAge1B	*(Settings$	KCaloryNeed_B1	/Calorie_Need_WorldBank)+
@@ -237,72 +236,210 @@ for(year in (Settings$startyear:Settings$endyear)){
        lactating*(Settings$KCaloryNeed_lactating/Calorie_Need_WorldBank)]
   
   MD[,EqSizeCalory2 :=
-       NAge1_A_B*(Settings$KCaloryNeed_A_B1/Calorie_Need_Anstitoo) +
-       NAge2_A_B*(Settings$KCaloryNeed_A_B2/Calorie_Need_Anstitoo) +
-       NAge3_A_B*(Settings$KCaloryNeed_A_B3/Calorie_Need_Anstitoo) +
-       NAge4_A_B*(Settings$KCaloryNeed_A_B4/Calorie_Need_Anstitoo) +
-       NAge5_A_B*(Settings$KCaloryNeed_A_B5/Calorie_Need_Anstitoo) +
-       NAge6_A_B*(Settings$KCaloryNeed_A_B6/Calorie_Need_Anstitoo) +
-       NAge7_A_B*(Settings$KCaloryNeed_A_B7/Calorie_Need_Anstitoo) +
-       NAge8_A_B*(Settings$KCaloryNeed_A_B8/Calorie_Need_Anstitoo) +
-       NAge9_A_B*(Settings$KCaloryNeed_A_B9/Calorie_Need_Anstitoo) +
-       NAge1_A_G*(Settings$KCaloryNeed_A_G1/Calorie_Need_Anstitoo) +
-       NAge2_A_G*(Settings$KCaloryNeed_A_G2/Calorie_Need_Anstitoo) +
-       NAge3_A_G*(Settings$KCaloryNeed_A_G3/Calorie_Need_Anstitoo) +
-       NAge4_A_G*(Settings$KCaloryNeed_A_G4/Calorie_Need_Anstitoo) +
-       NAge5_A_G*(Settings$KCaloryNeed_A_G5/Calorie_Need_Anstitoo) +
-       NAge6_A_G*(Settings$KCaloryNeed_A_G6/Calorie_Need_Anstitoo) +
-       NAge7_A_G*(Settings$KCaloryNeed_A_G7/Calorie_Need_Anstitoo) +
-       NAge8_A_G*(Settings$KCaloryNeed_A_G8/Calorie_Need_Anstitoo) +
-       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Calorie_Need_Anstitoo)+
+       NAge0_A_B	*(Settings$	KCaloryNeed_A_B0	/Calorie_Need_Anstitoo)+
+       NAge1_A_B	*(Settings$	KCaloryNeed_A_B1	/Calorie_Need_Anstitoo)+
+       NAge2_A_B	*(Settings$	KCaloryNeed_A_B2	/Calorie_Need_Anstitoo)+
+       NAge3_A_B	*(Settings$	KCaloryNeed_A_B3	/Calorie_Need_Anstitoo)+
+       NAge4_A_B	*(Settings$	KCaloryNeed_A_B4	/Calorie_Need_Anstitoo)+
+       NAge5_A_B	*(Settings$	KCaloryNeed_A_B5	/Calorie_Need_Anstitoo)+
+       NAge6_A_B	*(Settings$	KCaloryNeed_A_B6	/Calorie_Need_Anstitoo)+
+       NAge7_A_B	*(Settings$	KCaloryNeed_A_B7	/Calorie_Need_Anstitoo)+
+       NAge8_A_B	*(Settings$	KCaloryNeed_A_B8	/Calorie_Need_Anstitoo)+
+       NAge9_A_B	*(Settings$	KCaloryNeed_A_B9	/Calorie_Need_Anstitoo)+
+       NAge10_A_B	*(Settings$	KCaloryNeed_A_B10	/Calorie_Need_Anstitoo)+
+       NAge11_A_B	*(Settings$	KCaloryNeed_A_B11	/Calorie_Need_Anstitoo)+
+       NAge12_A_B	*(Settings$	KCaloryNeed_A_B12	/Calorie_Need_Anstitoo)+
+       NAge13_A_B	*(Settings$	KCaloryNeed_A_B13	/Calorie_Need_Anstitoo)+
+       NAge14_A_B	*(Settings$	KCaloryNeed_A_B14	/Calorie_Need_Anstitoo)+
+       NAge15_A_B	*(Settings$	KCaloryNeed_A_B15	/Calorie_Need_Anstitoo)+
+       NAge16_A_B	*(Settings$	KCaloryNeed_A_B16	/Calorie_Need_Anstitoo)+
+       NAge17_A_B	*(Settings$	KCaloryNeed_A_B17	/Calorie_Need_Anstitoo)+
+       NAge18_A_B	*(Settings$	KCaloryNeed_A_B18	/Calorie_Need_Anstitoo)+
+       NAge19_A_B	*(Settings$	KCaloryNeed_A_B19	/Calorie_Need_Anstitoo)+
+       NAge20_A_B	*(Settings$	KCaloryNeed_A_B20	/Calorie_Need_Anstitoo)+
+       NAge21_A_B	*(Settings$	KCaloryNeed_A_B21	/Calorie_Need_Anstitoo)+
+       NAge22_A_B	*(Settings$	KCaloryNeed_A_B22	/Calorie_Need_Anstitoo)+
+       NAge23_A_B	*(Settings$	KCaloryNeed_A_B23	/Calorie_Need_Anstitoo)+
+       NAge24_A_B	*(Settings$	KCaloryNeed_A_B24	/Calorie_Need_Anstitoo)+
+       NAge25_A_B	*(Settings$	KCaloryNeed_A_B25	/Calorie_Need_Anstitoo)+
+       NAge26_A_B	*(Settings$	KCaloryNeed_A_B26	/Calorie_Need_Anstitoo)+
+       NAge27_A_B	*(Settings$	KCaloryNeed_A_B27	/Calorie_Need_Anstitoo)+
+       NAge28_A_B	*(Settings$	KCaloryNeed_A_B28	/Calorie_Need_Anstitoo)+
+       NAge29_A_B	*(Settings$	KCaloryNeed_A_B29	/Calorie_Need_Anstitoo)+
+       NAge30_A_B	*(Settings$	KCaloryNeed_A_B30	/Calorie_Need_Anstitoo)+
+       NAge31_A_B	*(Settings$	KCaloryNeed_A_B31	/Calorie_Need_Anstitoo)+
+       NAge32_A_B	*(Settings$	KCaloryNeed_A_B32	/Calorie_Need_Anstitoo)+
+       NAge33_A_B	*(Settings$	KCaloryNeed_A_B33	/Calorie_Need_Anstitoo)+
+       NAge34_A_B	*(Settings$	KCaloryNeed_A_B34	/Calorie_Need_Anstitoo)+
+       NAge35_A_B	*(Settings$	KCaloryNeed_A_B35	/Calorie_Need_Anstitoo)+
+       NAge36_A_B	*(Settings$	KCaloryNeed_A_B36	/Calorie_Need_Anstitoo)+
+       NAge37_A_B	*(Settings$	KCaloryNeed_A_B37	/Calorie_Need_Anstitoo)+
+       NAge38_A_B	*(Settings$	KCaloryNeed_A_B38	/Calorie_Need_Anstitoo)+
+       NAge39_A_B	*(Settings$	KCaloryNeed_A_B39	/Calorie_Need_Anstitoo)+
+       NAge40_A_B	*(Settings$	KCaloryNeed_A_B40	/Calorie_Need_Anstitoo)+
+       NAge41_A_B	*(Settings$	KCaloryNeed_A_B41	/Calorie_Need_Anstitoo)+
+       NAge42_A_B	*(Settings$	KCaloryNeed_A_B42	/Calorie_Need_Anstitoo)+
+       NAge43_A_B	*(Settings$	KCaloryNeed_A_B43	/Calorie_Need_Anstitoo)+
+       NAge44_A_B	*(Settings$	KCaloryNeed_A_B44	/Calorie_Need_Anstitoo)+
+       NAge45_A_B	*(Settings$	KCaloryNeed_A_B45	/Calorie_Need_Anstitoo)+
+       NAge46_A_B	*(Settings$	KCaloryNeed_A_B46	/Calorie_Need_Anstitoo)+
+       NAge47_A_B	*(Settings$	KCaloryNeed_A_B47	/Calorie_Need_Anstitoo)+
+       NAge48_A_B	*(Settings$	KCaloryNeed_A_B48	/Calorie_Need_Anstitoo)+
+       NAge49_A_B	*(Settings$	KCaloryNeed_A_B49	/Calorie_Need_Anstitoo)+
+       NAge50_A_B	*(Settings$	KCaloryNeed_A_B50	/Calorie_Need_Anstitoo)+
+       NAge51_A_B	*(Settings$	KCaloryNeed_A_B51	/Calorie_Need_Anstitoo)+
+       NAge52_A_B	*(Settings$	KCaloryNeed_A_B52	/Calorie_Need_Anstitoo)+
+       NAge53_A_B	*(Settings$	KCaloryNeed_A_B53	/Calorie_Need_Anstitoo)+
+       NAge54_A_B	*(Settings$	KCaloryNeed_A_B54	/Calorie_Need_Anstitoo)+
+       NAge55_A_B	*(Settings$	KCaloryNeed_A_B55	/Calorie_Need_Anstitoo)+
+       NAge56_A_B	*(Settings$	KCaloryNeed_A_B56	/Calorie_Need_Anstitoo)+
+       NAge57_A_B	*(Settings$	KCaloryNeed_A_B57	/Calorie_Need_Anstitoo)+
+       NAge58_A_B	*(Settings$	KCaloryNeed_A_B58	/Calorie_Need_Anstitoo)+
+       NAge59_A_B	*(Settings$	KCaloryNeed_A_B59	/Calorie_Need_Anstitoo)+
+       NAge60_A_B	*(Settings$	KCaloryNeed_A_B60	/Calorie_Need_Anstitoo)+
+       NAge61_A_B	*(Settings$	KCaloryNeed_A_B61	/Calorie_Need_Anstitoo)+
+       NAge62_A_B	*(Settings$	KCaloryNeed_A_B62	/Calorie_Need_Anstitoo)+
+       NAge63_A_B	*(Settings$	KCaloryNeed_A_B63	/Calorie_Need_Anstitoo)+
+       NAge64_A_B	*(Settings$	KCaloryNeed_A_B64	/Calorie_Need_Anstitoo)+
+       NAge65_A_B	*(Settings$	KCaloryNeed_A_B65	/Calorie_Need_Anstitoo)+
+       NAge66_A_B	*(Settings$	KCaloryNeed_A_B66	/Calorie_Need_Anstitoo)+
+       NAge67_A_B	*(Settings$	KCaloryNeed_A_B67	/Calorie_Need_Anstitoo)+
+       NAge68_A_B	*(Settings$	KCaloryNeed_A_B68	/Calorie_Need_Anstitoo)+
+       NAge69_A_B	*(Settings$	KCaloryNeed_A_B69	/Calorie_Need_Anstitoo)+
+       NAge70_A_B	*(Settings$	KCaloryNeed_A_B70	/Calorie_Need_Anstitoo)+
+       NAge71_A_B	*(Settings$	KCaloryNeed_A_B71	/Calorie_Need_Anstitoo)+
+       NAge72_A_B	*(Settings$	KCaloryNeed_A_B72	/Calorie_Need_Anstitoo)+
+       NAge73_A_B	*(Settings$	KCaloryNeed_A_B73	/Calorie_Need_Anstitoo)+
+       NAge74_A_B	*(Settings$	KCaloryNeed_A_B74	/Calorie_Need_Anstitoo)+
+       NAge75_A_B	*(Settings$	KCaloryNeed_A_B75	/Calorie_Need_Anstitoo)+
+       NAge76_A_B	*(Settings$	KCaloryNeed_A_B76	/Calorie_Need_Anstitoo)+
+       NAge77_A_B	*(Settings$	KCaloryNeed_A_B77	/Calorie_Need_Anstitoo)+
+       NAge78_A_B	*(Settings$	KCaloryNeed_A_B78	/Calorie_Need_Anstitoo)+
+       NAge79_A_B	*(Settings$	KCaloryNeed_A_B79	/Calorie_Need_Anstitoo)+
+       NAge80_A_B	*(Settings$	KCaloryNeed_A_B80	/Calorie_Need_Anstitoo)+
+       NAge81_A_B	*(Settings$	KCaloryNeed_A_B81	/Calorie_Need_Anstitoo)+
+       NAge82_A_B	*(Settings$	KCaloryNeed_A_B82	/Calorie_Need_Anstitoo)+
+       NAge83_A_B	*(Settings$	KCaloryNeed_A_B83	/Calorie_Need_Anstitoo)+
+       NAge84_A_B	*(Settings$	KCaloryNeed_A_B84	/Calorie_Need_Anstitoo)+
+       NAge85_A_B	*(Settings$	KCaloryNeed_A_B85	/Calorie_Need_Anstitoo)+
+       NAge86_A_B	*(Settings$	KCaloryNeed_A_B86	/Calorie_Need_Anstitoo)+
+       NAge87_A_B	*(Settings$	KCaloryNeed_A_B87	/Calorie_Need_Anstitoo)+
+       NAge88_A_B	*(Settings$	KCaloryNeed_A_B88	/Calorie_Need_Anstitoo)+
+       NAge89_A_B	*(Settings$	KCaloryNeed_A_B89	/Calorie_Need_Anstitoo)+
+       NAge90_A_B	*(Settings$	KCaloryNeed_A_B90	/Calorie_Need_Anstitoo)+
+       NAge91_A_B	*(Settings$	KCaloryNeed_A_B91	/Calorie_Need_Anstitoo)+
+       NAge92_A_B	*(Settings$	KCaloryNeed_A_B92	/Calorie_Need_Anstitoo)+
+       NAge93_A_B	*(Settings$	KCaloryNeed_A_B93	/Calorie_Need_Anstitoo)+
+       NAge94_A_B	*(Settings$	KCaloryNeed_A_B94	/Calorie_Need_Anstitoo)+
+       NAge95_A_B	*(Settings$	KCaloryNeed_A_B95	/Calorie_Need_Anstitoo)+
+       NAge96_A_B	*(Settings$	KCaloryNeed_A_B96	/Calorie_Need_Anstitoo)+
+       NAge97_A_B	*(Settings$	KCaloryNeed_A_B97	/Calorie_Need_Anstitoo)+
+       NAge98_A_B	*(Settings$	KCaloryNeed_A_B98	/Calorie_Need_Anstitoo)+
+       NAge99_A_B	*(Settings$	KCaloryNeed_A_B99	/Calorie_Need_Anstitoo)+
+       NAge0_A_G	*(Settings$	KCaloryNeed_A_G0	/Calorie_Need_Anstitoo)+
+       NAge1_A_G	*(Settings$	KCaloryNeed_A_G1	/Calorie_Need_Anstitoo)+
+       NAge2_A_G	*(Settings$	KCaloryNeed_A_G2	/Calorie_Need_Anstitoo)+
+       NAge3_A_G	*(Settings$	KCaloryNeed_A_G3	/Calorie_Need_Anstitoo)+
+       NAge4_A_G	*(Settings$	KCaloryNeed_A_G4	/Calorie_Need_Anstitoo)+
+       NAge5_A_G	*(Settings$	KCaloryNeed_A_G5	/Calorie_Need_Anstitoo)+
+       NAge6_A_G	*(Settings$	KCaloryNeed_A_G6	/Calorie_Need_Anstitoo)+
+       NAge7_A_G	*(Settings$	KCaloryNeed_A_G7	/Calorie_Need_Anstitoo)+
+       NAge8_A_G	*(Settings$	KCaloryNeed_A_G8	/Calorie_Need_Anstitoo)+
+       NAge9_A_G	*(Settings$	KCaloryNeed_A_G9	/Calorie_Need_Anstitoo)+
+       NAge10_A_G	*(Settings$	KCaloryNeed_A_G10	/Calorie_Need_Anstitoo)+
+       NAge11_A_G	*(Settings$	KCaloryNeed_A_G11	/Calorie_Need_Anstitoo)+
+       NAge12_A_G	*(Settings$	KCaloryNeed_A_G12	/Calorie_Need_Anstitoo)+
+       NAge13_A_G	*(Settings$	KCaloryNeed_A_G13	/Calorie_Need_Anstitoo)+
+       NAge14_A_G	*(Settings$	KCaloryNeed_A_G14	/Calorie_Need_Anstitoo)+
+       NAge15_A_G	*(Settings$	KCaloryNeed_A_G15	/Calorie_Need_Anstitoo)+
+       NAge16_A_G	*(Settings$	KCaloryNeed_A_G16	/Calorie_Need_Anstitoo)+
+       NAge17_A_G	*(Settings$	KCaloryNeed_A_G17	/Calorie_Need_Anstitoo)+
+       NAge18_A_G	*(Settings$	KCaloryNeed_A_G18	/Calorie_Need_Anstitoo)+
+       NAge19_A_G	*(Settings$	KCaloryNeed_A_G19	/Calorie_Need_Anstitoo)+
+       NAge20_A_G	*(Settings$	KCaloryNeed_A_G20	/Calorie_Need_Anstitoo)+
+       NAge21_A_G	*(Settings$	KCaloryNeed_A_G21	/Calorie_Need_Anstitoo)+
+       NAge22_A_G	*(Settings$	KCaloryNeed_A_G22	/Calorie_Need_Anstitoo)+
+       NAge23_A_G	*(Settings$	KCaloryNeed_A_G23	/Calorie_Need_Anstitoo)+
+       NAge24_A_G	*(Settings$	KCaloryNeed_A_G24	/Calorie_Need_Anstitoo)+
+       NAge25_A_G	*(Settings$	KCaloryNeed_A_G25	/Calorie_Need_Anstitoo)+
+       NAge26_A_G	*(Settings$	KCaloryNeed_A_G26	/Calorie_Need_Anstitoo)+
+       NAge27_A_G	*(Settings$	KCaloryNeed_A_G27	/Calorie_Need_Anstitoo)+
+       NAge28_A_G	*(Settings$	KCaloryNeed_A_G28	/Calorie_Need_Anstitoo)+
+       NAge29_A_G	*(Settings$	KCaloryNeed_A_G29	/Calorie_Need_Anstitoo)+
+       NAge30_A_G	*(Settings$	KCaloryNeed_A_G30	/Calorie_Need_Anstitoo)+
+       NAge31_A_G	*(Settings$	KCaloryNeed_A_G31	/Calorie_Need_Anstitoo)+
+       NAge32_A_G	*(Settings$	KCaloryNeed_A_G32	/Calorie_Need_Anstitoo)+
+       NAge33_A_G	*(Settings$	KCaloryNeed_A_G33	/Calorie_Need_Anstitoo)+
+       NAge34_A_G	*(Settings$	KCaloryNeed_A_G34	/Calorie_Need_Anstitoo)+
+       NAge35_A_G	*(Settings$	KCaloryNeed_A_G35	/Calorie_Need_Anstitoo)+
+       NAge36_A_G	*(Settings$	KCaloryNeed_A_G36	/Calorie_Need_Anstitoo)+
+       NAge37_A_G	*(Settings$	KCaloryNeed_A_G37	/Calorie_Need_Anstitoo)+
+       NAge38_A_G	*(Settings$	KCaloryNeed_A_G38	/Calorie_Need_Anstitoo)+
+       NAge39_A_G	*(Settings$	KCaloryNeed_A_G39	/Calorie_Need_Anstitoo)+
+       NAge40_A_G	*(Settings$	KCaloryNeed_A_G40	/Calorie_Need_Anstitoo)+
+       NAge41_A_G	*(Settings$	KCaloryNeed_A_G41	/Calorie_Need_Anstitoo)+
+       NAge42_A_G	*(Settings$	KCaloryNeed_A_G42	/Calorie_Need_Anstitoo)+
+       NAge43_A_G	*(Settings$	KCaloryNeed_A_G43	/Calorie_Need_Anstitoo)+
+       NAge44_A_G	*(Settings$	KCaloryNeed_A_G44	/Calorie_Need_Anstitoo)+
+       NAge45_A_G	*(Settings$	KCaloryNeed_A_G45	/Calorie_Need_Anstitoo)+
+       NAge46_A_G	*(Settings$	KCaloryNeed_A_G46	/Calorie_Need_Anstitoo)+
+       NAge47_A_G	*(Settings$	KCaloryNeed_A_G47	/Calorie_Need_Anstitoo)+
+       NAge48_A_G	*(Settings$	KCaloryNeed_A_G48	/Calorie_Need_Anstitoo)+
+       NAge49_A_G	*(Settings$	KCaloryNeed_A_G49	/Calorie_Need_Anstitoo)+
+       NAge50_A_G	*(Settings$	KCaloryNeed_A_G50	/Calorie_Need_Anstitoo)+
+       NAge51_A_G	*(Settings$	KCaloryNeed_A_G51	/Calorie_Need_Anstitoo)+
+       NAge52_A_G	*(Settings$	KCaloryNeed_A_G52	/Calorie_Need_Anstitoo)+
+       NAge53_A_G	*(Settings$	KCaloryNeed_A_G53	/Calorie_Need_Anstitoo)+
+       NAge54_A_G	*(Settings$	KCaloryNeed_A_G54	/Calorie_Need_Anstitoo)+
+       NAge55_A_G	*(Settings$	KCaloryNeed_A_G55	/Calorie_Need_Anstitoo)+
+       NAge56_A_G	*(Settings$	KCaloryNeed_A_G56	/Calorie_Need_Anstitoo)+
+       NAge57_A_G	*(Settings$	KCaloryNeed_A_G57	/Calorie_Need_Anstitoo)+
+       NAge58_A_G	*(Settings$	KCaloryNeed_A_G58	/Calorie_Need_Anstitoo)+
+       NAge59_A_G	*(Settings$	KCaloryNeed_A_G59	/Calorie_Need_Anstitoo)+
+       NAge60_A_G	*(Settings$	KCaloryNeed_A_G60	/Calorie_Need_Anstitoo)+
+       NAge61_A_G	*(Settings$	KCaloryNeed_A_G61	/Calorie_Need_Anstitoo)+
+       NAge62_A_G	*(Settings$	KCaloryNeed_A_G62	/Calorie_Need_Anstitoo)+
+       NAge63_A_G	*(Settings$	KCaloryNeed_A_G63	/Calorie_Need_Anstitoo)+
+       NAge64_A_G	*(Settings$	KCaloryNeed_A_G64	/Calorie_Need_Anstitoo)+
+       NAge65_A_G	*(Settings$	KCaloryNeed_A_G65	/Calorie_Need_Anstitoo)+
+       NAge66_A_G	*(Settings$	KCaloryNeed_A_G66	/Calorie_Need_Anstitoo)+
+       NAge67_A_G	*(Settings$	KCaloryNeed_A_G67	/Calorie_Need_Anstitoo)+
+       NAge68_A_G	*(Settings$	KCaloryNeed_A_G68	/Calorie_Need_Anstitoo)+
+       NAge69_A_G	*(Settings$	KCaloryNeed_A_G69	/Calorie_Need_Anstitoo)+
+       NAge70_A_G	*(Settings$	KCaloryNeed_A_G70	/Calorie_Need_Anstitoo)+
+       NAge71_A_G	*(Settings$	KCaloryNeed_A_G71	/Calorie_Need_Anstitoo)+
+       NAge72_A_G	*(Settings$	KCaloryNeed_A_G72	/Calorie_Need_Anstitoo)+
+       NAge73_A_G	*(Settings$	KCaloryNeed_A_G73	/Calorie_Need_Anstitoo)+
+       NAge74_A_G	*(Settings$	KCaloryNeed_A_G74	/Calorie_Need_Anstitoo)+
+       NAge75_A_G	*(Settings$	KCaloryNeed_A_G75	/Calorie_Need_Anstitoo)+
+       NAge76_A_G	*(Settings$	KCaloryNeed_A_G76	/Calorie_Need_Anstitoo)+
+       NAge77_A_G	*(Settings$	KCaloryNeed_A_G77	/Calorie_Need_Anstitoo)+
+       NAge78_A_G	*(Settings$	KCaloryNeed_A_G78	/Calorie_Need_Anstitoo)+
+       NAge79_A_G	*(Settings$	KCaloryNeed_A_G79	/Calorie_Need_Anstitoo)+
+       NAge80_A_G	*(Settings$	KCaloryNeed_A_G80	/Calorie_Need_Anstitoo)+
+       NAge81_A_G	*(Settings$	KCaloryNeed_A_G81	/Calorie_Need_Anstitoo)+
+       NAge82_A_G	*(Settings$	KCaloryNeed_A_G82	/Calorie_Need_Anstitoo)+
+       NAge83_A_G	*(Settings$	KCaloryNeed_A_G83	/Calorie_Need_Anstitoo)+
+       NAge84_A_G	*(Settings$	KCaloryNeed_A_G84	/Calorie_Need_Anstitoo)+
+       NAge85_A_G	*(Settings$	KCaloryNeed_A_G85	/Calorie_Need_Anstitoo)+
+       NAge86_A_G	*(Settings$	KCaloryNeed_A_G86	/Calorie_Need_Anstitoo)+
+       NAge87_A_G	*(Settings$	KCaloryNeed_A_G87	/Calorie_Need_Anstitoo)+
+       NAge88_A_G	*(Settings$	KCaloryNeed_A_G88	/Calorie_Need_Anstitoo)+
+       NAge89_A_G	*(Settings$	KCaloryNeed_A_G89	/Calorie_Need_Anstitoo)+
+       NAge90_A_G	*(Settings$	KCaloryNeed_A_G90	/Calorie_Need_Anstitoo)+
+       NAge91_A_G	*(Settings$	KCaloryNeed_A_G91	/Calorie_Need_Anstitoo)+
+       NAge92_A_G	*(Settings$	KCaloryNeed_A_G92	/Calorie_Need_Anstitoo)+
+       NAge93_A_G	*(Settings$	KCaloryNeed_A_G93	/Calorie_Need_Anstitoo)+
+       NAge94_A_G	*(Settings$	KCaloryNeed_A_G94	/Calorie_Need_Anstitoo)+
+       NAge95_A_G	*(Settings$	KCaloryNeed_A_G95	/Calorie_Need_Anstitoo)+
+       NAge96_A_G	*(Settings$	KCaloryNeed_A_G96	/Calorie_Need_Anstitoo)+
+       NAge97_A_G	*(Settings$	KCaloryNeed_A_G97	/Calorie_Need_Anstitoo)+
+       NAge98_A_G	*(Settings$	KCaloryNeed_A_G98	/Calorie_Need_Anstitoo)+
+       NAge99_A_G	*(Settings$	KCaloryNeed_A_G99	/Calorie_Need_Anstitoo)+
        lactating*(Settings$KCaloryNeed_lactating/Calorie_Need_Anstitoo)]
   
-  MD[,EqSizeCalory4 :=
-       NAge1B*(Settings$KCaloryNeed_B1/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge2B*(Settings$KCaloryNeed_B2/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge3B*(Settings$KCaloryNeed_B3/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge4B*(Settings$KCaloryNeed_B4/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge5B*(Settings$KCaloryNeed_B5/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge6B*(Settings$KCaloryNeed_B6/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge7B*(Settings$KCaloryNeed_B7/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge8B*(Settings$KCaloryNeed_B8/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge9B*(Settings$KCaloryNeed_B9/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge10B*(Settings$KCaloryNeed_B10/Settings$KCaloryNeed_Adult_WorldBank)+
-       NAge1G*(Settings$KCaloryNeed_G1/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge2G*(Settings$KCaloryNeed_G2/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge3G*(Settings$KCaloryNeed_G3/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge4G*(Settings$KCaloryNeed_G4/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge5G*(Settings$KCaloryNeed_G5/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge6G*(Settings$KCaloryNeed_G6/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge7G*(Settings$KCaloryNeed_G7/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge8G*(Settings$KCaloryNeed_G8/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge9G*(Settings$KCaloryNeed_G9/Settings$KCaloryNeed_Adult_WorldBank) +
-       NAge10G*(Settings$KCaloryNeed_G10/Settings$KCaloryNeed_Adult_WorldBank)+
-       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult_WorldBank)]
-  
-  MD[,EqSizeCalory5 :=
-       NAge1_A_B*(Settings$KCaloryNeed_A_B1/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge2_A_B*(Settings$KCaloryNeed_A_B2/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge3_A_B*(Settings$KCaloryNeed_A_B3/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge4_A_B*(Settings$KCaloryNeed_A_B4/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge5_A_B*(Settings$KCaloryNeed_A_B5/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge6_A_B*(Settings$KCaloryNeed_A_B6/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge7_A_B*(Settings$KCaloryNeed_A_B7/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge8_A_B*(Settings$KCaloryNeed_A_B8/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge9_A_B*(Settings$KCaloryNeed_A_B9/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge1_A_G*(Settings$KCaloryNeed_A_G1/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge2_A_G*(Settings$KCaloryNeed_A_G2/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge3_A_G*(Settings$KCaloryNeed_A_G3/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge4_A_G*(Settings$KCaloryNeed_A_G4/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge5_A_G*(Settings$KCaloryNeed_A_G5/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge6_A_G*(Settings$KCaloryNeed_A_G6/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge7_A_G*(Settings$KCaloryNeed_A_G7/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge8_A_G*(Settings$KCaloryNeed_A_G8/Settings$KCaloryNeed_Adult_Anstitoo) +
-       NAge9_A_G*(Settings$KCaloryNeed_A_G9/Settings$KCaloryNeed_Adult_Anstitoo)+
-       lactating*(Settings$KCaloryNeed_lactating/Settings$KCaloryNeed_Adult_Anstitoo)]
-  
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN2.rda"))
-
+  
 }
 
 

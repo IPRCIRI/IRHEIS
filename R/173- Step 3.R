@@ -23,8 +23,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN2.rda"))
   
  
-  MD[,Relative_Calorie1 :=FoodKCaloriesHH/Calorie_Need1]
-  MD[,Relative_Calorie2 :=FoodKCaloriesHH/Calorie_Need2]
+  #MD[,Relative_Calorie1 :=FoodKCaloriesHH/Calorie_Need1]
+  #MD[,Relative_Calorie2 :=FoodKCaloriesHH/Calorie_Need2]
   MD[,OriginalFoodExpenditure_Per :=OriginalFoodExpenditure/EqSizeCalory]
   MD[,FoodKCaloriesHH_Per:=FoodKCaloriesHH/EqSizeCalory]
   MD[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]

@@ -53,6 +53,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   TpubW <- rbind(RTpubW,UTpubW,fill=TRUE)
+  save(TpubW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TpubW.rda"))
+  
   
   #  print(names(TpubW))
   

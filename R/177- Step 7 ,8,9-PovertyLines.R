@@ -70,10 +70,10 @@ for(year in (Settings$startyear:Settings$endyear)){
 
  # write.csv(EngleD,file ="Results.csv" )
   
-  MDU2<-MD[Region=="Urban" ,.(HHID,cluster3)]
-  save(MDU2,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU2.rda"))
-  MDR3<-MD[Region=="Rural" ,.(HHID,cluster3)]
-  save(MDR3,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR3.rda"))
+  MDU<-MD[Region=="Urban" ,.(HHID,cluster3)]
+  save(MDU,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU.rda"))
+  MDR<-MD[Region=="Rural" ,.(HHID,cluster3)]
+  save(MDR,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR.rda"))
   }
 
 endtime <- proc.time()
