@@ -30,7 +30,7 @@ year<-97
  Base2<-merge(BigFData,FData,by="HHID")
  
  Base2<-merge(Base2,MD[,.(HHID,NewArea,NewArea2,ProvinceCode,cluster3,Decile,
-                            FinalFoodPoor,FinalPoor,Weight,EqSizeRevOECD,EqSizeCalory,PEngel)],by="HHID")
+                            FinalFoodPoor,FinalPoor,Weight,EqSizeOECD,EqSizeCalory,PEngel)],by="HHID")
 
  Base<-Base2[FinalFoodPoor==1]
  Base<-Base[,FGrams_Per:=FGrams/EqSizeCalory]

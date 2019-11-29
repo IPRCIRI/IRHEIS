@@ -96,7 +96,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   MD<-MD[,.(HHID,HIndivNo,Region,ProvinceCode,NewArea2,Total_Exp_Month,Total_Exp_Month_nondurable,
-            Size,EqSizeRevOECD,Weight, Decile,HSex,HEduLevel,
+            Size,EqSizeOECD,Weight, Decile,HSex,HEduLevel,
             HEduYears,HActivityState)]
   save(MD, file = paste0(Settings$HEISProcessedPath,"Y",year,"MD.rda"))
 }
