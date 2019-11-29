@@ -37,8 +37,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #load Expenditures
   
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
-             "Durables", "Education", "Energy", "Furnitures","HotelRestaurants",
-             "House", "Medicals","Hygienes","Transportations","Others",
+             "Durables", "Education", "Furnitures","HotelRestaurants",
+             "HouseandEnergys","House", "Medicals","Hygienes","Transportations","Others",
              "Resturants"
   )){
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
@@ -64,7 +64,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,AmusementData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,CommunicationData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,EducData,by =c("HHID"),all=TRUE)
-  MD<-merge(MD,EnergyData,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,HouseandEnergyData,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,HouseData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,FurnitureData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,HotelRestaurantData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,HygieneData,by =c("HHID"),all=TRUE)
@@ -74,16 +75,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD<-merge(MD,BarghData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,NaftSefidData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
-  MD<-merge(MD,HouseData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,DurableData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ResturantData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,InvestmentData,by =c("HHID"),all=TRUE)
   for (col in c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
-                "Communication_Exp", "Education_Exp", "Energy_Exp", 
+                "Communication_Exp", "Education_Exp", "HouseandEnergy_Exp", 
                 "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", "Transportation_Exp",
-                "Other_Exp", "ServiceExp", "Medical_Exp", "Durable_Exp", 
-                "Resturant_Exp"
+                "Other_Exp", "Medical_Exp", "Durable_Exp", 
+                "Resturant_Exp","ServiceExp"
   )) 
     MD[is.na(get(col)), (col) := 0]
   #  MD<-MD[,Yaraneh:=416000*Size]
@@ -93,8 +93,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Calculate Monthly Total Expenditures 
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
           "Amusement_Exp", "Communication_Exp", 
-          "Energy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
-          "Transportation_Exp", "Other_Exp", "ServiceExp")
+          "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
+          "Transportation_Exp", "Other_Exp")
   w <- c(nw, "Medical_Exp", "Durable_Exp")
   # pw <- c(nw, "Added_Food_Exp_Month")
   #Lw <- c(pw,  "Medical_Exp", "Durable_Exp")
