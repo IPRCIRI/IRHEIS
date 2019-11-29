@@ -27,7 +27,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,OldPoor:=1]
 
   i <- 0
-  while(MD[(NewPoor-OldPoor)!=0,.N]>5  & i <=15){
+  while(MD[(NewPoor-OldPoor)!=0,.N]>0.001*nrow(MD[NewPoor==1])  & i <=15){
+#    cat(nrow(MD[NewPoor==1]))
     i <- i + 1
     MD[,ThisIterationPoor:=NewPoor]
     MD[,FPLine:=NULL]    
@@ -36,7 +37,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               by=.(cluster3,Region)]
     MD <- merge(MD,MDP,by=c("Region","cluster3"))
 #    print(MDP)
-    x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
+    #x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
@@ -51,15 +52,15 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per,TFoodKCaloriesHH_Per,TOriginalFoodExpenditure,Total_Exp_Month,
             #  TFoodExpenditure2,Total_Exp_Month_nondurable2,Total_Exp_Month2,
              # Total_Exp_Month_Per2,
-              EqSizeRevOECD,EqSizeCalory,Decile,Bundle_Value)]
+              EqSizeOECD,EqSizeCalory,Decile,Bundle_Value)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster3,Percentile,FinalFoodPoor)]
-  UrbanFinalfood<-MDFinalfood[Region=="Urban"]
-  RuralFinalfood<-MDFinalfood[Region=="Rural"]
-  save(UrbanFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"UrbanFinalfood.rda"))
-  save(RuralFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"RuralFinalfood.rda"))
-  
+  # MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster3,Percentile,FinalFoodPoor)]
+  # UrbanFinalfood<-MDFinalfood[Region=="Urban"]
+  # RuralFinalfood<-MDFinalfood[Region=="Rural"]
+  # save(UrbanFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"UrbanFinalfood.rda"))
+  # save(RuralFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"RuralFinalfood.rda"))
+  # 
 }
 
 endtime <- proc.time()
