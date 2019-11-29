@@ -12,7 +12,7 @@ cat("\n\n================ ReadWriteIntoR =====================================\n
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
-file.copy(from = Settings$D80LinkSource, to = Settings$D80LinkDest)
+file.copy(from = Settings$D80LinkSource, to = Settings$D80LinkDest, overwrite = TRUE)
 
 library(RODBC)
 library(foreign)
@@ -24,11 +24,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   l <- dir(path=Settings$HEISAccessPath, pattern=glob2rx(paste0(year,".*")),ignore.case = TRUE)
-  if(year==80)
-  cns<-odbcConnectAccess2007(Settings$D80LinkDest)
-  else
- cns<-odbcConnectAccess2007(paste0(Settings$HEISAccessPath, l))
-  
+  if(year==80){
+    cns<-odbcConnectAccess2007(Settings$D80LinkDest)
+  }else{
+    cns<-odbcConnectAccess2007(paste0(Settings$HEISAccessPath, l))
+  }
   tbls <- data.table(sqlTables(cns))[TABLE_TYPE %in% c("TABLE","SYNONYM"),]$TABLE_NAME
   print(tbls)
   Tables <- vector(mode = "list")#, length = length(tbls))
