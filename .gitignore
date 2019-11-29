@@ -221,3 +221,5 @@ pip-log.txt
 
 .sync.ffs_db
 sync.ffs_db
+R/dt2Urban.rda
+R/dt2Rural.rda
