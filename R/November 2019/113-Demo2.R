@@ -1015,7 +1015,7 @@ for(year in years){
   #  PSum <- PSum[TotalIncome>0]
   
   HHI <- merge(B,PSum,by="HHID")
-  HHI[,EqSizeRevOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
+  HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
                                1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
   HHI <- HHI[!is.na(HLiterate)]
   
@@ -1025,11 +1025,7 @@ for(year in years){
   
   rm(HHI)
   
-  # P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
-  # P1<-P1[Relationship== 'Head']
-  # HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
-  # save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-  
+ 
   load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
   HHWeights<- as.data.table(HHWeights)
   HHWeights>-HHWeights[,HHID:=as.numeric(HHID)]
