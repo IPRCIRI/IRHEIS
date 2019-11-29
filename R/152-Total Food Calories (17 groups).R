@@ -27,7 +27,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   FData <- merge(HHBase[,.(HHID,Region,Size)],
                  FData,by = "HHID",all.x = TRUE)
   
-  FData <- FData[FoodKCaloriesHH<100000] # arbitrary removal of outliers
+  FData <- FData[FoodKCaloriesHH<100000] # arbitrary removal of outliers 
+  # TODO: remove households that had some event (religious, weddings, ...) instead of this arbitrary removal
  
   FDataRural<-FData[(FData$Region=="Rural"),]
   FDataUrban<-FData[(FData$Region=="Urban"),]
