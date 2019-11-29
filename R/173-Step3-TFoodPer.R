@@ -31,11 +31,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #Calculate per_Calory from resturants
   MD[,Calory_Price:=(OriginalFoodExpenditure_Per/FoodKCaloriesHH_Per)]
-  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)][order(Calory_Price)]
+  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)]
   MD[,ResturantKCalories:=(Settings$OutFoodKCXShare*Resturant_Exp)/Calory_Price_Area]
   for (col in c("ResturantKCalories")) MD[is.na(get(col)), (col) := 0]
   MD[,TFoodKCaloriesHH:=FoodKCaloriesHH+ResturantKCalories]
-  MD[,TOriginalFoodExpenditure:=OriginalFoodExpenditure+(Settings$OutFoodKCXShare*Resturant_Exp)]
+  MD[,TOriginalFoodExpenditure:=OriginalFoodExpenditure+Resturant_Exp]
   
   MD[,TOriginalFoodExpenditure_Per :=TOriginalFoodExpenditure/EqSizeCalory]
   MD[,TFoodKCaloriesHH_Per:=TFoodKCaloriesHH/EqSizeCalory]
