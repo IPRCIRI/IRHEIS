@@ -15,6 +15,11 @@ library(data.table)
 library(ggplot2)
 library(stats)
 
+FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
+                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
+                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -25,56 +30,36 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
-  MD <- MD[,PEngel:=TOriginalFoodExpenditure/Total_Exp_Month]
-  MD2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine]
-  MD2 <- MD2[,PEngel:=TOriginalFoodExpenditure/Total_Exp_Month]
-  MD2U <- MD2[Region=="Urban"]
-  MD2R <- MD2[Region=="Rural"]
 
 
-  #EngleD<-merge(EngleD,EngleX,by=c("Region","cluster3"))
   EngleD[,PovertyLine:=FPLine/Engel]
-  EngleD[,PovertyLine2:=5580259]
-  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
-  
-
- #MD<-MD[Region=="Urban"]
-
-  
+  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
-  MD[,FinalPoor2:=ifelse(Total_Exp_Month_Per < PovertyLine2,1,0 )]
-  cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
-      MD[,weighted.mean(PovertyLine,Weight*Size)],"\t",
-     # MD[,weighted.mean(PovertyLine2,Weight*Size)],"\t",
-      MD[,weighted.mean(Engel,Weight*Size)],"\t",
-      MD[,weighted.mean(FPLine,Weight*Size)])
   
-  MD[FinalPoor==1,weighted.mean(TFoodKCaloriesHH_Per,Weight)]
-  MD[FinalPoor==1,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Region)]
-    MD[FinalPoor==1,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Region,cluster3)]
-  
-  #MD[,crw:=sum(Size*Weight),by=Region]
-  #MD[,sum((Size*Weight)/crw),by=.(Region,Decile)][order(Region,Decile)]
-  #MD[,weighted.mean(HIndivNo,Weight)*sum(Weight),by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[FinalPoor==1,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=c("ProvinceCode")][order(ProvinceCode)]
-
-  
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")][order(Region,cluster3)]
-  MD[,weighted.mean(FinalPoor2,Weight*Size),by=c("Region")]
-  MD[,weighted.mean(FinalPoor2,Weight*Size)]
-  MD3<-MD[,.(HHID,FinalPoor,Weight)]
-  save(MD3,file=paste0(Settings$HEISProcessedPath,"Y",year,"PoorsforMerge.rda"))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
-
- # write.csv(EngleD,file ="Results.csv" )
   
-  MDU<-MD[Region=="Urban" ,.(HHID,cluster3)]
-  save(MDU,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDU.rda"))
-  MDR<-MD[Region=="Rural" ,.(HHID,cluster3)]
-  save(MDR,file=paste0(Settings$HEISProcessedPath,"Y",year,"MDR.rda"))
-  }
+
+  MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
+  MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
+  
+  X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size))]
+  X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
+                          PovertyDepth=weighted.mean(FGT2M,Weight*Size))]
+  X1[,Year:=year]
+  X2[,Year:=year]
+  X <- merge(X1,X2,by="Year")
+  FinalCountryResults <- rbind(FinalCountryResults,X)
+  
+  X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=cluster3]
+  X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
+                          PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by=cluster3]
+  X1[,Year:=year]
+  X2[,Year:=year]
+  X <- merge(X1,X2,by=c("Year","cluster3"))
+  FinalClusterResults <- rbind(FinalClusterResults,X)
+}
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
