@@ -271,7 +271,7 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 HHBase<-HHBase[,.(HHID,Region,ProvinceCode,Month)]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
-SMD<-MD[,.(HHID,Decile,Weight,Size,EqSizeRevOECD,
+SMD<-MD[,.(HHID,Decile,Weight,Size,EqSizeOECD,
            Total_Exp_Month,Total_Exp_Month_Per,TOriginalFoodExpenditure)]
            #Total_Exp_Month_nondurable,Total_Exp_Month_Per_nondurable)]
            

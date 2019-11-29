@@ -53,7 +53,7 @@ for(year in 77:96){
   D[,RXT2:=Total_Exp_Month/CPI*100]
   
   D0 <- D[,.(Year,HHID,Region,Quarter,Geo2,Geo4,FGeo2,FGeo4,
-             HAge,Size,EqSizeRevOECD,Weight,
+             HAge,Size,EqSizeOECD,Weight,
              RXND,RXD,RXT)]
   D0[,YoB := 1300+Year-HAge]
   
@@ -82,9 +82,9 @@ BigD[,Cohort20:=cut(YoB,breaks=seq(from=1275,to=1395,by=20),
 
 
 
-BigD[,RXNDpc:=RXND/EqSizeRevOECD]
-BigD[,RXDpc:=RXD/EqSizeRevOECD]
-BigD[,RXTpc:=RXT/EqSizeRevOECD]
+BigD[,RXNDpc:=RXND/EqSizeOECD]
+BigD[,RXDpc:=RXD/EqSizeOECD]
+BigD[,RXTpc:=RXT/EqSizeOECD]
 
 BigD[,Geo4:=factor(Geo4)]
 Geo4D <- data.table(read_excel("../Data/Geo4.xlsx","Changed"))

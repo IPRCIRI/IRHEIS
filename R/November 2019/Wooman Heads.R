@@ -320,7 +320,7 @@ EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
   
 
   HHI <- merge(B,PSum,by="HHID")
-  HHI[,EqSizeRevOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
+  HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
                                1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
   HHI <- HHI[!is.na(HLiterate)]
   
@@ -392,10 +392,10 @@ EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
          weighted.mean(Total_Exp_Month_Per_nondurable,Weight),by=.(HMarritalState)]
   
   HHBase[HSex=="Female" & Region=="Urban",
-         weighted.mean(Behdasht_Exp/EqSizeRevOECD,Weight),by=.(HMarritalState)]
+         weighted.mean(Behdasht_Exp/EqSizeOECD,Weight),by=.(HMarritalState)]
   
   HHBase[HSex=="Female" & Region=="Rural",
-         weighted.mean(Behdasht_Exp/EqSizeRevOECD,Weight),by=.(HMarritalState)]
+         weighted.mean(Behdasht_Exp/EqSizeOECD,Weight),by=.(HMarritalState)]
   
   HHBase[HSex=="Female" & Region=="Urban",
          weighted.mean(FoodExpenditure/Size,Weight),by=.(HMarritalState)]
