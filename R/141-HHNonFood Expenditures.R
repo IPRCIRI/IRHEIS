@@ -113,9 +113,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   TE[,Code:=NULL]
   
   
+  TE[,HouseandEnergy_Exp:=as.integer(HouseandEnergy_Exp)]
   TE[is.na(TE)] <- 0
-  
   HouseandEnergyData <- TE[,lapply(.SD,sum),by=HHID]
+  print(nrow(HouseandEnergyData))
   save(HouseandEnergyData, file = paste0(Settings$HEISProcessedPath,"Y",year,"HouseandEnergys.rda"))
 }
 
