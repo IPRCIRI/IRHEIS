@@ -88,11 +88,14 @@ for(year in years){
   
   P1[,EduYears:=EduCodeT$yoe[match(EduCode,EduCodeT$Code)]]
   P1$EduYears[P1$Literate==FALSE] <- 0
-  P1[,EduLevel:=cut(EduYears,breaks=c(-1,0,6,12,22),
+  P1[,EduLevel0:=cut(EduYears,breaks=c(-1,0,6,12,22),
                     labels= c("Illiterate","Primary","Secondary","University"))]
-  P1[,EduLevel0:=cut(EduYears,breaks=c(-1,0,6,9,11,12,22),
+  P1[,EduLevel1:=cut(EduYears,breaks=c(-1,0,6,9,11,12,22),
                      labels= c("Illiterate","Elementary","Middle","High","Pre","University"))]
- 
+  P1[,EduLevel:=cut(EduYears,breaks=c(-1,0,6,12,14,16,18,23),
+                     labels= c("Illiterate","Primary","Secondary",
+                               "College","Bachelors","Masters","PhD"))]
+  
   P1[,ActivityState:=as.numeric(substr(as.character(ActivityState),1,1))]
   
   if(year %in% 63:64){
@@ -132,10 +135,6 @@ for(year in years){
   
   P <- P[order(P$HHID),]
   
-  # B <- P[P[Age>=10,.SD,#.I[TotalIncome==max(TotalIncome)],
-  #          by=HHID][,V1]][,c("HHID","IndivNo","Sex","Age",
-  #                            "Literate","Student",#"EduYears","EduLevel",
-  #                            "ActivityState","MarritalState"),with=FALSE]  
   B <- P[IndivNo==1]
   setnames(B,2:length(B),sapply(X=names(B)[2:length(B)],function(X){paste("H",X,sep="")}))
   B <- B[order(HHID,HIndivNo)]
@@ -147,17 +146,20 @@ for(year in years){
   
   B <- B[!is.na(HActivityState) & !is.na(HLiterate)]
   
-  
+### Define Age Groups ==========================================  
   P[,Size:=1]
   P[,Kids:=ifelse(Relationship=="Child",1,0)]
   P[,NKids:=ifelse(Age<15,1,0)]
   P[,NInfants:=ifelse(Age<=2,1,0)]
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
 
-  P[,NElementary:= ifelse(EduLevel0=="Elementary" & Student==TRUE,1,0)]
-  P[,NMiddle:= ifelse(EduLevel0=="Middle" & Student==TRUE,1,0)]
-  P[,NHigh:= ifelse(EduLevel0=="High" & Student==TRUE,1,0)]
-  P[,NPre:= ifelse(EduLevel0=="Pre" & Student==TRUE,1,0)]
+  P[,NElementary:= ifelse(EduLevel=="Elementary" & Student==TRUE,1,0)]
+  P[,NHigh:= ifelse(EduLevel=="High" & Student==TRUE,1,0)]
+  P[,NCollege:=ifelse(EduLevel=="College" & Student==TRUE,1,0)]
+  P[,NBachelors:=ifelse(EduLevel=="Bachelors" & Student==TRUE,1,0)]
+  P[,NMasters:=ifelse(EduLevel=="Masters" & Student==TRUE,1,0)]
+  P[,NPhD:=ifelse(EduLevel=="PhD" & Student==TRUE,1,0)]
+  P[,NUniv:=NCollege+NBachelors+NMasters+NPhD]
   
   #Age Groups 1
   P[,NAge1B:=ifelse(Age==0 & Sex=="Male",1,0)]
@@ -248,20 +250,33 @@ for(year in years){
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
             .SDcols=c("Size","NKids","NInfants","NSmallKids","NElementary",
-                     "NMiddle","NHigh","NPre","NAge1B","NAge1G",
-                     "NAge2B","NAge2G","NAge3B","NAge3G","NAge4B","NAge4G",
-                     "NAge5B","NAge5G","NAge6B","NAge6G","NAge7B","NAge7G"
-                     ,"NAge8B","NAge8G","NAge9B","NAge9G","NAge10B","NAge10G",
-                     "NAge1_A_B","NAge1_A_G","Calorie_Need1","Calorie_Need2",
-                     "NAge2_A_B","NAge2_A_G","NAge3_A_B","NAge3_A_G","NAge4_A_B","NAge4_A_G",
-                     "NAge5_A_B","NAge5_A_G","NAge6_A_B","NAge6_A_G","NAge7_A_B","NAge7_A_G"
-                     ,"NAge8_A_B","NAge8_A_G","NAge9_A_B","NAge9_A_G"),#,"TotalIncome"),
+                     "NHigh","NCollege","NBachelors","NMasters","NPhD","NUniv",
+                     "NAge1B","NAge1G",
+                     "NAge2B","NAge2G",
+                     "NAge3B","NAge3G",
+                     "NAge4B","NAge4G",
+                     "NAge5B","NAge5G",
+                     "NAge6B","NAge6G",
+                     "NAge7B","NAge7G",
+                     "NAge8B","NAge8G",
+                     "NAge9B","NAge9G",
+                     "NAge10B","NAge10G",
+                     "Calorie_Need1","Calorie_Need2",
+                     "NAge1_A_B","NAge1_A_G",
+                     "NAge2_A_B","NAge2_A_G",
+                     "NAge3_A_B","NAge3_A_G",
+                     "NAge4_A_B","NAge4_A_G",
+                     "NAge5_A_B","NAge5_A_G",
+                     "NAge6_A_B","NAge6_A_G",
+                     "NAge7_A_B","NAge7_A_G",
+                     "NAge8_A_B","NAge8_A_G",
+                     "NAge9_A_B","NAge9_A_G"),
             by="HHID"]
 
 #  PSum <- PSum[TotalIncome>0]
   
   HHI <- merge(B,PSum,by="HHID")
-  HHI[,EqSizeRevOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
+  HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
                                1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
   HHI <- HHI[!is.na(HLiterate)]
 
@@ -269,45 +284,19 @@ for(year in years){
   save(HHI,year,file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   
   
-  rm(HHI)
   
-  # P1<-P1[,`:=`(Dimension=.N),by=.(HHID)]
-  # P1<-P1[Relationship== 'Head']
-  # HHBase<-merge(HHBase,P1,by =c("HHID"),all=TRUE)
-  # save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-  
-  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
-  HHWeights<- as.data.table(HHWeights)
-  HHWeights>-HHWeights[,HHID:=as.numeric(HHID)]
-  HHWeights[,Year:=NULL]
-  
-  P1<-merge(P1,HHWeights)
+
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
   
   
-  weighted.hist(P1$Age,P1$Weight,breaks=1:99,main="Age weighted histogram in Iran (1397)")
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  HHWeights <- as.data.table(HHWeights)
+  HHWeights <- HHWeights[,HHID:=as.numeric(HHID)]
+  HHWeights[,Year:=NULL]
+  
+  P1<-merge(P1,HHWeights)
+  P1 <- merge(P1,lactating)
 
-  P1<-merge(P1,HHBase)
-  P1<- merge(P1,lactating,by="HHID",all.x = TRUE)
-  
-  P1U<-P1[Region=="Urban"]
-  weighted.hist(P1U$Age,P1U$Weight,breaks=1:99,main="Age weighted histogram in Urban Areas (1397)")
-  
-  P1R<-P1[Region=="Rural"]
-  weighted.hist(P1R$Age,P1R$Weight,breaks=1:99,main="Age weighted histogram in Rural reas (1397)")
-  
- # plot(density(P1$Age),weights =P1$Weight)
- # lines(density(P1U$Age),weights =P1U$Weight)
-  #lines(density(P1R$Age),weights =P1R$Weight)
-  
- # weighted.hist(P1$Age,P1$Weight,breaks=c(0,1,2,3,4,10,15,20,60),
-              #  main="Age weighted histogram in Iran (1397)")
- 
-  load(file = "Cal_Edition.rda")
-  Poverty<-as.data.table(Poverty)
-  Edited<-Poverty[,.(Age,Sex,Cal_B_Edited,Cal_W_Edited)]
-  P1<-merge(P1,Edited,by=c("Sex", "Age"))
-  
 
   
   P1[,B1:=ifelse(Age==0 & Sex=="Male",1,0)]
@@ -438,6 +427,12 @@ for(year in years){
   
   cat(P1[,mean(Calorie_Need_WorldBank)],"\n")
   cat(P1[,mean(Calorie_Need_Anstitoo)],"\n")
+  
+  HHI <- merge(HHI,HHWeights)
+  cat(HHI[,weighted.mean(Calorie_Need1/Size,Weight)],"\n")
+  cat(HHI[,weighted.mean(Calorie_Need2/Size,Weight)],"\n")
+  
+#  rm(HHI)
   
   Calorie_Need<-P1[,.(Calorie_Need_WorldBank=mean(Calorie_Need_WorldBank),
                       Calorie_Need_Anstitoo=mean(Calorie_Need_Anstitoo)),by="HHID"]
