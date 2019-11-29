@@ -110,13 +110,13 @@ for(year in (Settings$startyear:Settings$endyear)){
  # MD[, Total_Exp_Month := Total_Exp_Month*1.2]
  # MD[, Total_Exp_Month_nondurable := Total_Exp_Month_nondurable*1.2]
   
-  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
-  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
+  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
 
  
   #MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
   MD<-MD[Size!=0 & OriginalFoodExpenditure!=0 & !is.na(FoodKCaloriesHH)]
-  #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
+  #MD[,Home_Per_Metr:=MetrPrice/EqSizeOECD]
   
   #Calculate Per Values
   MD[,EqSizeCalory3 :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
@@ -231,8 +231,8 @@ for(year in (Settings$startyear:Settings$endyear)){
  # MD[, Total_Exp_Month2 := Reduce(`+`, .SD), .SDcols=Lw]
  # MD[, Total_Exp_Month_nondurable2 := Reduce(`+`, .SD), .SDcols=pw]
   
- # MD[,Total_Exp_Month_Per2:=Total_Exp_Month2/EqSizeRevOECD]
- # MD[,Total_Exp_Month_Per_nondurable2:=Total_Exp_Month_nondurable2/EqSizeRevOECD]
+ # MD[,Total_Exp_Month_Per2:=Total_Exp_Month2/EqSizeOECD]
+ # MD[,Total_Exp_Month_Per_nondurable2:=Total_Exp_Month_nondurable2/EqSizeOECD]
  
 #  MD[,FoodExpenditure_Per2 :=(FoodExpenditure+Added_Food_Exp_Month)/EqSizeCalory]
 #  MD[,TFoodExpenditure2:=FoodExpenditure+Added_Food_Exp_Month+(Settings$OutFoodKCXShare*Resturant_Exp)]

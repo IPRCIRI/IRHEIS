@@ -23,7 +23,7 @@ D92 <- merge(MD,IncomeTable,by="HHID", all.x=TRUE)
 D92[is.na(WorkClass), WorkClass:="Rtr"]
 D92 <- D92[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode,NewArea,
               HEmployed,HUnemployed,
-              Weight,EqSizeRevOECD,
+              Weight,EqSizeOECD,
               HBY=1300+Year-HAge,
               CPI=70.916,
               Total_Exp_Month,Total_Exp_Month_nondurable,
@@ -38,7 +38,7 @@ D93 <- merge(MD,IncomeTable,by="HHID", all.x=TRUE)
 D93[is.na(WorkClass), WorkClass:="Rtr"]
 D93 <- D93[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode,NewArea
               ,HEmployed,HUnemployed
-              ,Weight,EqSizeRevOECD,
+              ,Weight,EqSizeOECD,
               HBY=1300+Year-HAge,
               CPI=81.948,
               Total_Exp_Month,Total_Exp_Month_nondurable,
@@ -53,7 +53,7 @@ D94 <- merge(MD,IncomeTable,by="HHID", all.x=TRUE)
 D94[is.na(WorkClass), WorkClass:="Rtr"]
 D94 <- D94[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode,NewArea
               ,HEmployed,HUnemployed
-              ,Weight,EqSizeRevOECD,
+              ,Weight,EqSizeOECD,
               HBY=1300+Year-HAge,
               CPI=91.714,
               Total_Exp_Month,Total_Exp_Month_nondurable,
@@ -68,7 +68,7 @@ D95 <- merge(MD,IncomeTable,by="HHID", all.x=TRUE)
 D95[is.na(WorkClass), WorkClass:="Rtr"]
 D95 <- D95[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode,NewArea
               ,HEmployed,HUnemployed
-              ,Weight,EqSizeRevOECD,
+              ,Weight,EqSizeOECD,
               HBY=1300+Year-HAge,
               CPI=100.000,
               Total_Exp_Month,Total_Exp_Month_nondurable,
@@ -83,7 +83,7 @@ D96 <- merge(MD,IncomeTable,by="HHID", all.x=TRUE)
 D96[is.na(WorkClass), WorkClass:="Rtr"]
 D96 <- D96[,.(HHID,Region,Year,Quarter,Month,ProvinceCode,CountyCode,NewArea
               ,HEmployed,HUnemployed
-              ,Weight,EqSizeRevOECD,
+              ,Weight,EqSizeOECD,
               HBY=1300+Year-HAge,
               CPI=109.650,
               Total_Exp_Month,Total_Exp_Month_nondurable,
@@ -114,8 +114,8 @@ for(P in list(P23,P34,P45,P56)){
   P[NetIncome.y==0,NetIncome.y:=NA]
   P[,c0:=log(Total_Exp_Month_Per_nondurable.x/CPI.x*100)]
   P[,c1:=log(Total_Exp_Month_Per_nondurable.y/CPI.y*100)]
-  P[,y0:=log(NetIncome.x/EqSizeRevOECD.x/CPI.x*100)]
-  P[,y1:=log(NetIncome.y/EqSizeRevOECD.y/CPI.y*100)]
+  P[,y0:=log(NetIncome.x/EqSizeOECD.x/CPI.x*100)]
+  P[,y1:=log(NetIncome.y/EqSizeOECD.y/CPI.y*100)]
   #sd(P$y0,na.rm = TRUE)
   #sd(P$y1,na.rm = TRUE)
   print(cov.wt(P[!is.na(y0) & !is.na(y1),.(y0,y1)],wt = P[!is.na(y0) & !is.na(y1)]$Weight.x,cor = TRUE)$cor[2,1])

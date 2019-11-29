@@ -104,8 +104,8 @@ w <- c(nw, "Medical_Exp", "Durable_Exp")
 MD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
 MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
 
-MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
-MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
+MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
 MD<-MD[Size!=0 & FoodExpenditure!=0 & !is.na(FoodKCalories)]
 
 #Calculate Per Values
@@ -125,7 +125,7 @@ MD[,TFoodExpenditure_Per :=TFoodExpenditure/EqSizeCalory]
 MD[,TFoodKCalories_Per:=TFoodKCalories/EqSizeCalory]
 
 SMD <- MD[,.(HHID,Region,NewArea,Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,TFoodKCalories_Per,
-             Weight,MetrPrice,Size,EqSizeRevOECD)]
+             Weight,MetrPrice,Size,EqSizeOECD)]
 
 SMD[,Bundle_Value:=TFoodExpenditure_Per*Settings$KCaloryNeed_Adult/TFoodKCalories_Per]
 

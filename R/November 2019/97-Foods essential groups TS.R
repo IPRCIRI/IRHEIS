@@ -315,7 +315,7 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 HHBase<-HHBase[,.(HHID,Region,ProvinceCode)]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
-SMD<-SMD[,.(HHID,Decile,Weight,Dimension,EqSizeRevOECD,Total_Exp_Month_Per_nondurable)]
+SMD<-SMD[,.(HHID,Decile,Weight,Dimension,EqSizeOECD,Total_Exp_Month_Per_nondurable)]
 
 ################################################
 #######  Merge Information  #############

@@ -170,8 +170,8 @@ CBN<-CBN[FoodExpenditure!=0]
 CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=c(65:77,82:83)][] 
 CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=65:77][] 
 
-CBN$Total_Exp_Month_Per<-CBN$Total_Exp_Month/CBN$EqSizeRevOECD
-CBN$Total_Exp_Month_Per_nondurable<-CBN$Total_Exp_Month_nondurable/CBN$EqSizeRevOECD
+CBN$Total_Exp_Month_Per<-CBN$Total_Exp_Month/CBN$EqSizeOECD
+CBN$Total_Exp_Month_Per_nondurable<-CBN$Total_Exp_Month_nondurable/CBN$EqSizeOECD
 
 #Calculate Per_Food Expenditures Monthly
 CBN[,EqSizeCalory :=(Size-NKids) + NKids*(1800/2100)]
@@ -180,22 +180,22 @@ CBN$FoodExpenditure_Per<-CBN$FoodExpenditure/CBN$EqSizeCalory
 #Calculate Per_Food Expenditures Daily
 CBN$FoodExpenditure_Per_day<-CBN$FoodExpenditure_Per/30
 
-CBN$Ghandgram_Per_day<-CBN$Ghandgram/(30*CBN$EqSizeRevOECD)
-CBN$Hoboobatgram_Per_day<-CBN$Hoboobatgram/(30*CBN$EqSizeRevOECD)
-CBN$Berenjgram_Per_day<-CBN$Berenjgram/(30*CBN$EqSizeRevOECD)
-CBN$Nangram_Per_day<-CBN$Nangram/(30*CBN$EqSizeRevOECD)
-CBN$Roghangram_Per_day<-CBN$Roghangram/(30*CBN$EqSizeRevOECD)
-CBN$Gooshtgram_Per_day<-CBN$Gooshtgram/(30*CBN$EqSizeRevOECD)
-CBN$Morghgram_Per_day<-CBN$Morghgram/(30*CBN$EqSizeRevOECD)
-CBN$Mahigram_Per_day<-CBN$Mahigram/(30*CBN$EqSizeRevOECD)
-CBN$Shirgram_Per_day<-CBN$Shirgram/(30*CBN$EqSizeRevOECD)
-CBN$Mastgram_Per_day<-CBN$Mastgram/(30*CBN$EqSizeRevOECD)
-CBN$Panirgram_Per_day<-CBN$Panirgram/(30*CBN$EqSizeRevOECD)
-CBN$Tokhmemorghgram_Per_day<-CBN$Tokhmemorghgram/(30*CBN$EqSizeRevOECD)
-CBN$Mivegram_Per_day<-CBN$Mivegram/(30*CBN$EqSizeRevOECD)
-CBN$Sabzigram_Per_day<-CBN$Sabzigram/(30*CBN$EqSizeRevOECD)
-CBN$Makaroonigram_Per_day<-CBN$Makaroonigram/(30*CBN$EqSizeRevOECD)
-CBN$Sibzaminigram_Per_day<-CBN$Sibzaminigram/(30*CBN$EqSizeRevOECD)
+CBN$Ghandgram_Per_day<-CBN$Ghandgram/(30*CBN$EqSizeOECD)
+CBN$Hoboobatgram_Per_day<-CBN$Hoboobatgram/(30*CBN$EqSizeOECD)
+CBN$Berenjgram_Per_day<-CBN$Berenjgram/(30*CBN$EqSizeOECD)
+CBN$Nangram_Per_day<-CBN$Nangram/(30*CBN$EqSizeOECD)
+CBN$Roghangram_Per_day<-CBN$Roghangram/(30*CBN$EqSizeOECD)
+CBN$Gooshtgram_Per_day<-CBN$Gooshtgram/(30*CBN$EqSizeOECD)
+CBN$Morghgram_Per_day<-CBN$Morghgram/(30*CBN$EqSizeOECD)
+CBN$Mahigram_Per_day<-CBN$Mahigram/(30*CBN$EqSizeOECD)
+CBN$Shirgram_Per_day<-CBN$Shirgram/(30*CBN$EqSizeOECD)
+CBN$Mastgram_Per_day<-CBN$Mastgram/(30*CBN$EqSizeOECD)
+CBN$Panirgram_Per_day<-CBN$Panirgram/(30*CBN$EqSizeOECD)
+CBN$Tokhmemorghgram_Per_day<-CBN$Tokhmemorghgram/(30*CBN$EqSizeOECD)
+CBN$Mivegram_Per_day<-CBN$Mivegram/(30*CBN$EqSizeOECD)
+CBN$Sabzigram_Per_day<-CBN$Sabzigram/(30*CBN$EqSizeOECD)
+CBN$Makaroonigram_Per_day<-CBN$Makaroonigram/(30*CBN$EqSizeOECD)
+CBN$Sibzaminigram_Per_day<-CBN$Sibzaminigram/(30*CBN$EqSizeOECD)
 CBN[,EqSizeCalory:=NULL]
 
 load(file="PriceIndex95.rda")
@@ -233,8 +233,8 @@ CBN$Mive_W<-CBN$Mivegram_Per_day*CBN$MivePrice*0.001*30
 CBN$Sabzi_W<-CBN$Sabzigram_Per_day*CBN$SabziPrice*0.001*30
 CBN$Makarooni_W<-CBN$Makaroonigram_Per_day*CBN$MakarooniPrice*0.001*30
 CBN$Sibzamini_W<-CBN$Sibzaminigram_Per_day*CBN$SibzaminiPrice*0.001*30
-CBN$Home_W<-CBN$ServiceExp/CBN$EqSizeRevOECD
-CBN$Home_Per_Metr<-CBN$MetrPrice/CBN$EqSizeRevOECD
+CBN$Home_W<-CBN$ServiceExp/CBN$EqSizeOECD
+CBN$Home_Per_Metr<-CBN$MetrPrice/CBN$EqSizeOECD
 
 #Seperate big cities
 CBN[,sum(Weight*Size),by=ProvinceCode][order(V1)]

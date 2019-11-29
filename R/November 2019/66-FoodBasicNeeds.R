@@ -51,7 +51,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per,TFoodTKCalories_Per,TFoodExpenditure,Total_Exp_Month,
             #  TFoodExpenditure2,Total_Exp_Month_nondurable2,Total_Exp_Month2,
              # Total_Exp_Month_Per2,
-              EqSizeRevOECD,EqSizeCalory,Decile,Bundle_Value)]
+              EqSizeOECD,EqSizeCalory,Decile,Bundle_Value)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster3,Percentile,FinalFoodPoor)]
