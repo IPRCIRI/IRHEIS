@@ -261,7 +261,7 @@ for(year in years){
 #  PSum <- PSum[TotalIncome>0]
   
   HHI <- merge(B,PSum,by="HHID")
-  HHI[,EqSizeRevOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
+  HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
                                1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
   HHI <- HHI[!is.na(HLiterate)]
 

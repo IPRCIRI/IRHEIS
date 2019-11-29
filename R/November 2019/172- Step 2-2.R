@@ -22,13 +22,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
   
-  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
-  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
+  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
   
   
   #MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
   MD<-MD[Size!=0 & OriginalFoodExpenditure!=0 & !is.na(FoodKCaloriesHH)]
-  #MD[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
+  #MD[,Home_Per_Metr:=MetrPrice/EqSizeOECD]
   
   #Calculate Per Values
 
