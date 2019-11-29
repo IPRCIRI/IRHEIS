@@ -81,12 +81,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   CBN[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
   CBN[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
 
-  CBN[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeRevOECD]
-  CBN[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeRevOECD]
+  CBN[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+  CBN[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
 
   CBN<-merge(CBN,BigFoodPrice,by=c("NewArea","Region"),all.x = TRUE)
   CBN<-CBN[Size!=0 & FoodExpenditure!=0 & !is.na(FoodKCalories)]
-  #CBN[,Home_Per_Metr:=MetrPrice/EqSizeRevOECD]
+  #CBN[,Home_Per_Metr:=MetrPrice/EqSizeOECD]
   
   #Calculate Per Values
   CBN[,EqSizeCalory :=(Size-NKids) + NKids*(Settings$KCaloryNeed_Child/Settings$KCaloryNeed_Adult)]
