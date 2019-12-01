@@ -55,6 +55,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,PriceIndex:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1*V1
                     +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2*V2)/V
       ,by=.(Region,NewArea2)]
+  
+  Compare<-SMD[,.(Old=mean(PriceIndex2),
+                  New=mean(PriceIndex)),by=.(Region,NewArea2)]
 
   SMD[,V1:=NULL]
   SMD[,V2:=NULL]
@@ -70,9 +73,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
   
+  C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
+           Min=min(Total_Exp_Month_Per_nondurable),
+           Mean=mean(Total_Exp_Month_Per_nondurable)),
+        by=.(Region,NewArea,NewArea2,Decile)]
+  
   # FirstSMD<-SMD[,.(HHID,Region,NewArea2,NewArea2,Percentile,Decile)]
   # FirstSMD<-FirstSMD[,Realfirstpoor:=ifelse(Decile %in% 1:2,1,0)]
   # save(FirstSMD, file=paste0(Settings$HEISProcessedPath,"Y",year,"FirstSMD.rda"))
+  
+
+  
+  B<-MD[,.(.N,Mean=mean(MetrPrice)),
+        by=.(Region,NewArea2)]
   
   SMD[,NewPoor:=1]
   SMD[,ThisIterationPoor:=0]
@@ -129,8 +142,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
+  A<-MD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
+           Min=min(Total_Exp_Month_Per_nondurable),
+           Mean=mean(Total_Exp_Month_Per_nondurable)),
+        by=.(Region,NewArea,NewArea2,Decile)]
   
-
+write.csv(A,file = "A.csv")
+write.csv(B,file = "B.csv")
 }
 
 
