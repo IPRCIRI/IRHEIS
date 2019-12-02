@@ -41,8 +41,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")][order(Region,cluster3)]
-  MD[,weighted.mean(FinalPoor2,Weight*Size),by=c("Region")]
-  MD[,weighted.mean(FinalPoor2,Weight*Size)]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region")]
+  MD[,weighted.mean(FinalPoor,Weight*Size)]
   MD3<-MD[,.(HHID,FinalPoor,Weight)]
   save(MD3,file=paste0(Settings$HEISProcessedPath,"Y",year,"PoorsforMerge.rda"))
 }
+  
+endtime <- proc.time()
+cat("\n\n============================\nIt took ")
+cat((endtime-starttime)["elapsed"])
+cat(" seconds")
