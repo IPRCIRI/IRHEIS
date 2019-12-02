@@ -26,6 +26,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
+  MD<-MD[Region=="Rural"]
  
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),

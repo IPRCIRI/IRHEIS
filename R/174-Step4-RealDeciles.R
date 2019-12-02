@@ -147,8 +147,9 @@ for(year in (Settings$startyear:Settings$endyear)){
            Mean=mean(Total_Exp_Month_Per_nondurable)),
         by=.(Region,NewArea,NewArea2,Decile)]
   
-write.csv(A,file = "A.csv")
-write.csv(B,file = "B.csv")
+#write.csv(A,file = "A.csv")
+#write.csv(B,file = "B.csv")
+#write.csv(C,file = "C.csv")
 }
 
 
