@@ -28,6 +28,8 @@ EduCodesB <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_B))
 EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
 EduCodesD <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_D))
 
+Educ <- data.table(Year=NA_integer_,Educ=NA_integer_,ProvinceCode=NA_real_)[0]
+
 years <- Settings$startyear:Settings$endyear
 
 for(year in years){
@@ -439,7 +441,13 @@ for(year in years){
   
   save(P1,file=paste0(Settings$HEISProcessedPath,"Y",year,"P1.rda"))
   save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
-}
+
+  P1<-merge(P1,HHBase[,.(HHID,ProvinceCode)])
+  X2 <- P1[Sex=="Female" & Age>18,.(Educ=weighted.mean(EduYears>12,Weight,na.rm = TRUE)),by=ProvinceCode]
+  X2[,Year:=year]
+  Educ <- rbind(Educ,X2)
+  write.csv(Educ,file = "Educ.csv")
+  }
 
 
 

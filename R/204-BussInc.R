@@ -61,7 +61,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 
    save(BussIncomeData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BussIncome.rda"))
-}
+
+   Buss1<-BussIncomeData[,.(HHID,BussEarners)]
+   save(Buss1, file = paste0(Settings$HEISProcessedPath,"Y",year,"Buss1.rda"))
+   
+   Buss2<-TbussW[,.(HHID,IndivNo)]
+   save(Buss2, file = paste0(Settings$HEISProcessedPath,"Y",year,"Buss2.rda"))
+   
+   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
