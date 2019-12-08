@@ -1,5 +1,5 @@
 # 32-PrvWage.R
-# Builds the PubWageData data.table for wage income data of 
+# Builds the PrvWageData data.table for wage income data of 
 # households working in private sector.
 #
 # Copyright © 2017-2018: Arin Shahbazian & Majid Einian
@@ -94,6 +94,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   
     save(PrvWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
  #  print(mean(PrvWageData$PrvWageNetIncomeY))
+    
+    Prv1<-PrvWageData[,.(HHID,PrvEarners)]
+    save(Prv1, file = paste0(Settings$HEISProcessedPath,"Y",year,"Prv1.rda"))
+    
+    Prv2<-TprvW[,.(HHID,IndivNo)]
+    save(Prv2, file = paste0(Settings$HEISProcessedPath,"Y",year,"Prv2.rda"))
+    
 }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

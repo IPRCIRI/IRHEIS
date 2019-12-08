@@ -88,7 +88,14 @@ for(year in (Settings$startyear:Settings$endyear)){
                        ,by=HHID]
   
    save(PubWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
-  }
+  
+   Pub1<-PubWageData[,.(HHID,PubEarners)]
+   save(Pub1, file = paste0(Settings$HEISProcessedPath,"Y",year,"Pub1.rda"))
+   
+   Pub2<-TpubW[,.(HHID,IndivNo)]
+   save(Pub2, file = paste0(Settings$HEISProcessedPath,"Y",year,"Pub2.rda"))
+   
+   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)

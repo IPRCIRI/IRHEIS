@@ -78,6 +78,8 @@ for(year in (Settings$startyear:Settings$endyear)){
            Mean=mean(Total_Exp_Month_Per_nondurable)),
         by=.(Region,NewArea,NewArea2,Decile)]
   
+
+  
   # FirstSMD<-SMD[,.(HHID,Region,NewArea2,NewArea2,Percentile,Decile)]
   # FirstSMD<-FirstSMD[,Realfirstpoor:=ifelse(Decile %in% 1:2,1,0)]
   # save(FirstSMD, file=paste0(Settings$HEISProcessedPath,"Y",year,"FirstSMD.rda"))
@@ -147,9 +149,13 @@ for(year in (Settings$startyear:Settings$endyear)){
            Mean=mean(Total_Exp_Month_Per_nondurable)),
         by=.(Region,NewArea,NewArea2,Decile)]
   
+  D<-MD[,.(.N,Mean=weighted.median(Durable_Exp/Size,Weight)),
+         by=.(Region,NewArea2,Decile)]
+  
 #write.csv(A,file = "A.csv")
 #write.csv(B,file = "B.csv")
 #write.csv(C,file = "C.csv")
+#write.csv(D,file = "D.csv")
 }
 
 

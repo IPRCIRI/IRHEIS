@@ -56,7 +56,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
    save(AgriIncomeData, file = paste0(Settings$HEISProcessedPath,"Y",year,"AgriWages.rda"))
-}
+
+   Agri1<-AgriIncomeData[,.(HHID,AgriEarners)]
+   save(Agri1, file = paste0(Settings$HEISProcessedPath,"Y",year,"Agri1.rda"))
+   
+   Agri2<-TAgriW[,.(HHID,IndivNo)]
+   save(Agri2, file = paste0(Settings$HEISProcessedPath,"Y",year,"Agri2.rda"))
+   
+   }
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat(endtime-starttime)
