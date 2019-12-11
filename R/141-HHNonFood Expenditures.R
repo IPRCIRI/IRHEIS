@@ -123,9 +123,9 @@ for(year in (Settings$startyear:Settings$endyear)){
 cat("\n\n================ Section4:HHHouse =====================================\n")
 
 HouseTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_House))
-
+p0<-0
 for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  cat(paste0("\n------------------------------\nYear:",year,"\t"))
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
@@ -164,7 +164,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   ns <- c(ty$HAHHID,ty$HRCode,ty$HACode)
   
-  TRA <- rbind( rt[,ns,with=FALSE], ut[,ns,with=FALSE])
+  TRA <- rbind( ut[,ns,with=FALSE],rt[,ns,with=FALSE] )
   
   setnames(TRA,ty$HAHHID,"HHID")
   setnames(TRA,ty$HRCode,"Rooms")
@@ -174,12 +174,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   HouseData <- merge(HouseData,TRA,by = "HHID", all = TRUE)
   HouseData$MetrPrice <-HouseData$ServiceExp/HouseData$Area
+  HouseData <- HouseData[!is.na(MetrPrice)]
   save(HouseData, file = paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
   # cat(summary(HouseData[,ServiceExp/Area]))
-  cat(HouseData[,mean(MetrPrice)],"\n")
-  cat(HouseData[,median(MetrPrice)],"\n")
-  cat(HouseData[,mean(ServiceExp)],"\n")
-  cat(HouseData[,median(ServiceExp)],"\n")
+  cat(HouseData[,mean(MetrPrice)]/p0-1,"\n")
+#  cat(HouseData[,median(MetrPrice)],"\n")
+#  cat(HouseData[,mean(ServiceExp)],"\n")
+#  cat(HouseData[,median(ServiceExp)],"\n")
+  p0 <- HouseData[,mean(MetrPrice)]
+  
 }
 
 cat("\n\n================ Section5:HHFurniture =====================================\n")
