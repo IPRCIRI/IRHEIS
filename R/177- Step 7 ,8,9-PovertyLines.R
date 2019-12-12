@@ -17,6 +17,8 @@ library(stats)
 
 FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
+                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
@@ -43,6 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
   
+  ################Country##################
   X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size))]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
@@ -52,10 +55,23 @@ for(year in (Settings$startyear:Settings$endyear)){
   X <- merge(X1,X2,by="Year")
   FinalCountryResults <- rbind(FinalCountryResults,X)
   
+  ################Region##################
+  X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=Region]
+  X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
+                          PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by=Region]
+  X1[,Year:=year]
+  X2[,Year:=year]
+  X <- merge(X1,X2,by=c("Year","Region"))
+  FinalRegionResults <- rbind(FinalRegionResults,X)
+  
+  ################Cluster##################
   X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=cluster3]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
                           PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by=cluster3]
+  
+
   X1[,Year:=year]
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","cluster3"))
