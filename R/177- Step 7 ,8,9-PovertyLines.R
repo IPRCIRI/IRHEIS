@@ -77,8 +77,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
-  cat(MD[TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
-         weighted.mean(Engel,Weight)])
+  cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
 }
 
 endtime <- proc.time()

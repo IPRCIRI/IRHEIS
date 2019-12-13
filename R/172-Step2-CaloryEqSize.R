@@ -139,47 +139,47 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,weighted.mean(EqSizeCalory5,Weight)]
   MD[,weighted.mean(EqSizeCalory3,Weight)]
   
-  X1 <- MD[,.(Exp=weighted.mean(Total_Exp_Month_Per,Weight)),by=ProvinceCode]
-  X1[,Year:=year]
-  Final <- rbind(Final,X1)
-  write.csv(Final,file = "Exp.csv")
+  # X1 <- MD[,.(Exp=weighted.mean(Total_Exp_Month_Per,Weight)),by=ProvinceCode]
+  # X1[,Year:=year]
+  #Final <- rbind(Final,X1)
+  #write.csv(Final,file = "Exp.csv")
   
  # X2 <- MD[,.(Educ=weighted.mean(HEduYears>12,Weight,na.rm = TRUE)),by=ProvinceCode]
  # X2[,Year:=year]
  # Educ <- rbind(Educ,X2)
  # write.csv(Educ,file = "Educ.csv")
   
-  X3 <- MD[,.(Marrital=weighted.mean(HMarritalState=="Married",Weight,na.rm = TRUE)),by=ProvinceCode]
-  X3[,Year:=year]
-  Marrital <- rbind(Marrital,X3)
-  write.csv(Marrital,file = "Marrital.csv")
+  #X3 <- MD[,.(Marrital=weighted.mean(HMarritalState=="Married",Weight,na.rm = TRUE)),by=ProvinceCode]
+  #X3[,Year:=year]
+  #Marrital <- rbind(Marrital,X3)
+  #write.csv(Marrital,file = "Marrital.csv")
   
-  X4 <- MD[,.(Sex=weighted.mean(HSex=="Female",Weight,na.rm = TRUE)),by=ProvinceCode]
-  X4[,Year:=year]
-  Sex <- rbind(Sex,X4)
-  write.csv(Sex,file = "Sex.csv")
+  # X4 <- MD[,.(Sex=weighted.mean(HSex=="Female",Weight,na.rm = TRUE)),by=ProvinceCode]
+  # X4[,Year:=year]
+  #Sex <- rbind(Sex,X4)
+  #write.csv(Sex,file = "Sex.csv")
   
-  X5 <- MD[,.(HeadEmploy=weighted.mean(HActivityState=="Employed",Weight,na.rm = TRUE)),by=ProvinceCode]
-  X5[,Year:=year]
-  HeadEmploy <- rbind(HeadEmploy,X5)
-  write.csv(HeadEmploy,file = "HeadEmploy.csv")
+  # X5 <- MD[,.(HeadEmploy=weighted.mean(HActivityState=="Employed",Weight,na.rm = TRUE)),by=ProvinceCode]
+  # X5[,Year:=year]
+  #HeadEmploy <- rbind(HeadEmploy,X5)
+  # write.csv(HeadEmploy,file = "HeadEmploy.csv")
   
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"WomanEmployed.rda"))
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"NumberEmployed.rda"))
+  # load(file = paste0(Settings$HEISProcessedPath,"Y",year,"WomanEmployed.rda"))
+  #load(file = paste0(Settings$HEISProcessedPath,"Y",year,"NumberEmployed.rda"))
   
-  MD<-merge(MD,WomanEmployed,all.x = TRUE)
-  MD<-merge(MD,NumberEmployed,all.x = TRUE)
-  MD[is.na(MD)] <- 0
+  # MD<-merge(MD,WomanEmployed,all.x = TRUE)
+  # MD<-merge(MD,NumberEmployed,all.x = TRUE)
+  # MD[is.na(MD)] <- 0
   
-  X6 <- MD[,.(WomanEmploy=weighted.mean(indivsum,Weight,na.rm = TRUE)),by=ProvinceCode]
-  X6[,Year:=year]
-  WomanEmploy <- rbind(WomanEmploy,X6)
-  write.csv(WomanEmploy,file = "WomanEmploy.csv")
+  # X6 <- MD[,.(WomanEmploy=weighted.mean(indivsum,Weight,na.rm = TRUE)),by=ProvinceCode]
+  # X6[,Year:=year]
+  #WomanEmploy <- rbind(WomanEmploy,X6)
+  # write.csv(WomanEmploy,file = "WomanEmploy.csv")
   
-  X7 <- MD[,.(NumberEmploy=weighted.mean(numbersum,Weight,na.rm = TRUE)),by=ProvinceCode]
-  X7[,Year:=year]
-  NumberEmploy <- rbind(NumberEmploy,X7)
-  write.csv(NumberEmploy,file = "NumberEmploy.csv")
+  #X7 <- MD[,.(NumberEmploy=weighted.mean(numbersum,Weight,na.rm = TRUE)),by=ProvinceCode]
+  #X7[,Year:=year]
+  # NumberEmploy <- rbind(NumberEmploy,X7)
+  #write.csv(NumberEmploy,file = "NumberEmploy.csv")
 }
 
 

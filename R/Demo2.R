@@ -31,7 +31,7 @@ EduCodesD <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_D))
 years <- Settings$startyear:Settings$endyear
 
 for(year in years){
-  #cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"lactating.rda"))
@@ -1047,10 +1047,10 @@ for(year in years){
   weighted.hist(P1R$Age,P1R$Weight,breaks=1:99,main="Age weighted histogram in Rural reas (1397)")
   
 
-  load(file = "Cal_Edition.rda")
-  Poverty<-as.data.table(Poverty)
-  Edited<-Poverty[,.(Age,Sex,Cal_B_Edited,Cal_W_Edited)]
-  P1<-merge(P1,Edited,by=c("Sex", "Age"))
+ # load(file = "Cal_Edition.rda")
+#  Poverty<-as.data.table(Poverty)
+ # Edited<-Poverty[,.(Age,Sex,Cal_B_Edited,Cal_W_Edited)]
+ # P1<-merge(P1,Edited,by=c("Sex", "Age"))
   
 
   P1[,	B0	:=ifelse(	Age==	0	&	Sex=="Male"	,1	,0)]
