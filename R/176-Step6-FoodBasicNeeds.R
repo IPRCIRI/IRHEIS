@@ -45,7 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   MD[,FinalFoodPoor:=OldPoor]
 
-  MD <- MD[,.(HHID,HIndivNo,Region,NewArea,NewArea2,cluster3,ProvinceCode,Size,HAge,HSex,Month,
+  MD <- MD[,.(HHID,HIndivNo,Region,NewArea,NewArea2,cluster3,ProvinceCode,Size,HAge,HSex,Month,ServiceExp,
               HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,Total_Exp_Month_nondurable,
               Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
               OriginalFoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
