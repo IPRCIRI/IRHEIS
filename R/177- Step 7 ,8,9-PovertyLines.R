@@ -20,7 +20,11 @@ FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,PovertyH
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
-FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
+FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
+                                  House_Share=NA_real_,
+                                  SampleSize=NA_integer_,
+                                  Engle=NA_integer_,FPLine=NA_integer_,
+                                  PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
 for(year in (Settings$startyear:Settings$endyear)){
@@ -68,7 +72,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalRegionResults <- rbind(FinalRegionResults,X)
   
   ################Cluster##################
-  X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
+  X1 <- MD[,.(SampleSize=.N,MetrPrice=weighted.mean(MetrPrice,Weight,na.rm = TRUE),
+              House_Share=weighted.mean(ServiceExp/Total_Exp_Month,Weight),
+              Engle=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
+              FPLine=weighted.mean(FPLine,Weight),
+              PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=cluster3]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
                           PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by=cluster3]
@@ -85,7 +93,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   #        Region=="Rural" & NewArea==11,
   #      weighted.mean(Engel,Weight)])
   
+
 }
+
+ggplot(FinalClusterResults)+
+  geom_line(mapping = aes(x=Year,y=log(MetrPrice),col=factor(cluster3)))
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
