@@ -96,6 +96,8 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 }
 save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
+save(FinalCountryResults,file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
+
 ggplot(FinalClusterResults)+
   geom_line(mapping = aes(x=Year,y=log(MetrPrice),col=factor(cluster3)))
 
