@@ -118,3 +118,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
 }
+s<-s[,cluster3:=as.factor(cluster3)]
+s<-s[,Year:=as.factor(Year)]
+
+ggplot(data=s,aes(x=Year, y=Engel, group=cluster3, colour=cluster3))+geom_line()
+FinalCountryResults1<-FinalCountryResults[,PovertyLine:=MA_PovertyLine]
+FinalCountryResults1<-FinalCountryResults1[,name:=as.factor(0)]
+FinalCountryResults1<-FinalCountryResults1[,.(Year,PovertyLine,PovertyHCR,PovertyGap,PovertyDepth,name)]
+
+load(file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
+
+FinalClusterResults<-FinalClusterResults[,cluster3:=as.factor(cluster3)]
+FinalClusterResults<-FinalClusterResults[,Year:=as.factor(Year)]
+ggplot(data=FinalClusterResults,aes(x=Year, y=Engle, group=cluster3, colour=cluster3))+geom_line()
+FinalCountryResults<-FinalCountryResults[,name:=as.factor(1)]
+FinalCountryResults<-rbind(FinalCountryResults,FinalCountryResults1)
+FinalCountryResults<-FinalCountryResults[,Year:=as.factor(Year)]
+ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR, group=name, colour=name))+geom_line()
+
