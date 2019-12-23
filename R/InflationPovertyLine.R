@@ -109,8 +109,15 @@ for(year in (Settings$endyear:Settings$startyear)){
   
   
 }
-save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
-save(FinalCountryResults,file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
+save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResultsI.rda"))
+save(FinalCountryResults,file=paste0(Settings$HEISProcessedPath,"FinalCountryResultsI.rda"))
+FinalCountryResults1<-FinalCountryResults[,name:=as.factor(0)]
+
+load(file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
+FinalCountryResults<-FinalCountryResults[,name:=as.factor(1)]
+FinalCountryResults<-rbind(FinalCountryResults,FinalCountryResults1)
+FinalCountryResults<-FinalCountryResults[,Year:=as.factor(Year)]
+ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR, group=name, colour=name))+geom_line()
 
 ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR))+geom_line()
 

@@ -92,6 +92,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #         TOriginalFoodExpenditure_Per<1.2*FPLine &
   #        Region=="Rural" & NewArea==11,
   #      weighted.mean(Engel,Weight)])
+  MD1<-MD[,.(HHID,FinalPoor)]
+  save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
   
 }
 save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
