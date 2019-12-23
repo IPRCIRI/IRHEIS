@@ -137,3 +137,7 @@ FinalCountryResults<-rbind(FinalCountryResults,FinalCountryResults1)
 FinalCountryResults<-FinalCountryResults[,Year:=as.factor(Year)]
 ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR, group=name, colour=name))+geom_line()
 
+endtime <- proc.time()
+cat("\n\n============================\nIt took ")
+cat((endtime-starttime)["elapsed"])
+cat(" seconds")
