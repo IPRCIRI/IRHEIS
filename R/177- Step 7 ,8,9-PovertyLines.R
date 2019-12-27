@@ -95,12 +95,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
   
+  Poors<-MD[FinalPoor==1]
+  
 }
 save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
 save(FinalCountryResults,file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
 
 ggplot(FinalClusterResults)+
   geom_line(mapping = aes(x=Year,y=log(MetrPrice),col=factor(cluster3)))
+
+
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
