@@ -21,7 +21,7 @@ PoorsShareResults <- data.table(Year=NA_integer_,Food_Share=NA_real_,Cigar_Share
                                 Hygiene_Share=NA_real_,Transportation_Share=NA_real_,
                                 Communication_Share=NA_real_,Amusement_Share=NA_real_,
                                 HotelRestaurant_Share=NA_real_,Other_Share=NA_real_,
-                                Durable_Share=NA_real_,
+                                Durable_Share=NA_real_,Meter_Price=NA_real_,
                                 cluster3=NA_integer_)[0]
 
 ShareResults <- data.table(Year=NA_integer_,Share=NA_real_,Type=NA_character_,
@@ -32,7 +32,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
-  #Poors<-MD[FinalPoor==1]
+  MD<-MD[FinalPoor==1]
   #MD<-MD[Region=="Rural"]
   
  
@@ -42,6 +42,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               Cigar_Share=weighted.mean(Cigar_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
               cloth_Share=weighted.mean(Cloth_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
               House_Share=weighted.mean(HouseandEnergy_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+              Meter_Price=weighted.mean(MetrPrice,Weight,na.rm = TRUE),
               Furniture_Share=weighted.mean(Furniture_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
               Hygiene_Share=weighted.mean(Hygiene_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
               Transportation_Share=weighted.mean(Transportation_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
@@ -81,17 +82,64 @@ for(year in (Settings$startyear:Settings$endyear)){
               Type="Furniture"),by=cluster3]
   X6[,Year:=year]
   ShareResults <- rbind(ShareResults,X6)
+  
+  X7 <- MD[,.(Share=weighted.mean(Transportation_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+              Type="Transportation"),by=cluster3]
+  X7[,Year:=year]
+  ShareResults <- rbind(ShareResults,X7)
+  
+  X8 <- MD[,.(Share=weighted.mean(Communication_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+              Type="Communication"),by=cluster3]
+  X8[,Year:=year]
+  ShareResults <- rbind(ShareResults,X8)
+  
+  X9 <- MD[,.(Share=weighted.mean(Amusement_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+              Type="Amusement"),by=cluster3]
+  X9[,Year:=year]
+  ShareResults <- rbind(ShareResults,X9)
+  
+  X10 <- MD[,.(Share=weighted.mean(Hygiene_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+              Type="Hygiene"),by=cluster3]
+  X10[,Year:=year]
+  ShareResults <- rbind(ShareResults,X10)
+  
+  X11 <- MD[,.(Share=weighted.mean(HotelRestaurant_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+              Type="HotelRestaurant"),by=cluster3]
+  X11[,Year:=year]
+  ShareResults <- rbind(ShareResults,X11)
+  
+  X12 <- MD[,.(Share=weighted.mean(Other_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+               Type="Other"),by=cluster3]
+  X12[,Year:=year]
+  ShareResults <- rbind(ShareResults,X12)
+  
+  X13 <- MD[,.(Share=weighted.mean(Durable_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+               Type="Durable"),by=cluster3]
+  X13[,Year:=year]
+  ShareResults <- rbind(ShareResults,X13)
+  
+  X14 <- MD[,.(Share=weighted.mean(Medical_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+               Type="Medical"),by=cluster3]
+  X14[,Year:=year]
+  ShareResults <- rbind(ShareResults,X14)
 }
 
 save(PoorsShareResults,file=paste0(Settings$HEISProcessedPath,"PoorsShareResults.rda"))
 save(ShareResults,file=paste0(Settings$HEISProcessedPath,"ShareResults.rda"))
 
 ggplot(PoorsShareResults)+
-  geom_line(mapping = aes(x=Year,y=Food_Share,col=factor(cluster3)))
+  geom_line(mapping = aes(x=Year,y=Meter_Price,col=factor(cluster3)))
 
+ggplot(ShareResults, aes(fill=Type, y=Share, x=Year)) + 
+  geom_bar(position="dodge", stat="identity")+
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank(),)
 
+ShareResults7<-ShareResults[cluster3==13]
 
-
+ggplot(ShareResults7, aes(fill=Type, y=Share, x=Year)) + 
+  geom_bar(position="stack", stat="identity") +
+  ggtitle("Goods shares in clusters")
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
