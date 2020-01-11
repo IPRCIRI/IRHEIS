@@ -33,21 +33,20 @@ for(year in (Settings$endyear:Settings$startyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
-  if(year!=97){
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year+1,"EngleD.rda"))
-  
+  if(year!=95){
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleD.rda"))
+    load(file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
+    
   #MD<-MD[Region=="Rural"]
-  E<-EngleD
   
+  Fin<-FinalClusterResults[Year==95]
   
   I<-inflation[Year==year]
-  i<-as.double(I$Inflation)
-  EngleD$FPLine<-E$FPLine
-  EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
-                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
-                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
-  i<-i/100
-  EngleD[,PovertyLine:=FPLine*(1-i)/Engel]
+  i<-as.double(I$CPI)
+  Fin<-Fin[,PL:=PovertyLine*i/100]
+  EngleD<-merge(EngleD,Fin[,.(cluster3,PL)],by=c("cluster3"))
+
+  EngleD[,PovertyLine:=PL]
   }else{
     EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
                   .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
@@ -105,8 +104,7 @@ for(year in (Settings$endyear:Settings$startyear)){
   #         TOriginalFoodExpenditure_Per<1.2*FPLine &
   #        Region=="Rural" & NewArea==11,
   #      weighted.mean(Engel,Weight)])
-  save(EngleD,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleD.rda"))
-  
+
   
 }
 save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResultsI.rda"))
@@ -117,6 +115,9 @@ load(file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
 FinalCountryResults<-FinalCountryResults[,name:=as.factor(1)]
 FinalCountryResults<-rbind(FinalCountryResults,FinalCountryResults1)
 FinalCountryResults<-FinalCountryResults[,Year:=as.factor(Year)]
+FinalClusterResults<-FinalClusterResults[,Year:=as.factor(Year)]
+FinalClusterResults<-FinalClusterResults[,cluster3:=as.factor(cluster3)]
+
 ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR, group=name, colour=name))+geom_line()
 
 ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR))+geom_line()
