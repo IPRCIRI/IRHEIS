@@ -132,7 +132,7 @@ ggplot(PoorsShareResults)+
 
 ShareResults_S2<-ShareResults[Type=="Food" & cluster3==13]
 ggplot(ShareResults_S2, aes(fill=factor(FinalPoor), y=Share, x=Year)) + 
-  geom_bar(position="dodge", stat="identity")
+  geom_bar(position="dodge", stat="identity") 
 
 ShareResults_S2<-ShareResults[Type=="HouseandEnergy" & cluster3==13]
 ggplot(ShareResults_S2, aes(fill=factor(FinalPoor), y=Share, x=Year)) + 
