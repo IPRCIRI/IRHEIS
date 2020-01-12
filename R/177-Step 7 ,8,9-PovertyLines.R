@@ -21,7 +21,7 @@ FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,PovertyH
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
-                                  House_Share=NA_real_,
+                                  House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
                                   SampleSize=NA_integer_,
                                   Engle=NA_integer_,FPLine=NA_integer_,
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
@@ -30,7 +30,7 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
 FinalClusterDiff <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
                                   House_Share=NA_real_,Food_Share=NA_real_,Durable_Share=NA_real_,
                                   SampleSize=NA_integer_,Clusterdiff=NA_integer_,
-                                  Engle=NA_integer_,FPLine=NA_integer_,
+                                  Engle=NA_integer_,FPLine=NA_integer_,FoodKCaloriesHH_Per=NA_real_,
                                   Total_Exp_Month_Per_nondurable=NA_real_,
                                   Total_Exp_Month_Per=NA_real_,
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
@@ -89,6 +89,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               Durable_Share=weighted.mean(Durable_Exp/Total_Exp_Month,Weight),
               Engle=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
               FPLine=weighted.mean(FPLine,Weight),
+              FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
               Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
               Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
               cluster3=weighted.mean(cluster3,Weight),
@@ -108,6 +109,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               House_Share=weighted.mean(ServiceExp/Total_Exp_Month,Weight),
               Engle=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
               FPLine=weighted.mean(FPLine,Weight),
+              FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
               PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=cluster3]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
@@ -134,7 +136,10 @@ save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterRes
 save(FinalCountryResults,file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
 
 ggplot(FinalClusterResults)+
-  geom_line(mapping = aes(x=Year,y=log(MetrPrice),col=factor(cluster3)))
+  geom_line(mapping = aes(x=Year,y=log(FoodKCaloriesHH_Per),col=factor(cluster3)))
+
+ggplot(FinalClusterDiff)+
+  geom_line(mapping = aes(x=Year,y=MetrPrice,col=factor(Clusterdiff)))
 
 ggplot(FinalClusterDiff)+
   geom_line(mapping = aes(x=Year,y=MetrPrice,col=factor(Clusterdiff)))
@@ -163,7 +168,12 @@ ggplot(FinalClusterDiff)+
 ggplot(FinalClusterDiff)+
   geom_line(mapping = aes(x=Year,y=Total_Exp_Month_Per,col=factor(Clusterdiff)))
 
-
+MD7<-MD[cluster3==1]
+plot(MD7$TOriginalFoodExpenditure_Per~MD7$HHEngle)
+abline(h = MD7$FPLine*1.2, col="blue")
+abline(h = MD7$FPLine*0.8, col="blue")
+plot(MD7$Total_Exp_Month_Per~MD7$HHEngle)
+abline(h = MD7$PovertyLine, col="blue")
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
