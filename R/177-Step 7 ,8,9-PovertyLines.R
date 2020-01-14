@@ -168,12 +168,25 @@ ggplot(FinalClusterDiff)+
 ggplot(FinalClusterDiff)+
   geom_line(mapping = aes(x=Year,y=Total_Exp_Month_Per,col=factor(Clusterdiff)))
 
-MD7<-MD[cluster3==1]
+MD7<-MD[cluster3==7]
 plot(MD7$TOriginalFoodExpenditure_Per~MD7$HHEngle)
 abline(h = MD7$FPLine*1.2, col="blue")
 abline(h = MD7$FPLine*0.8, col="blue")
 plot(MD7$Total_Exp_Month_Per~MD7$HHEngle)
 abline(h = MD7$PovertyLine, col="blue")
+
+plot(log(MD7$TOriginalFoodExpenditure_Per)~log(MD7$Total_Exp_Month_Per))
+smoothScatter(log(MD$TOriginalFoodExpenditure_Per),log(MD$Total_Exp_Month_Per))
+smoothScatter(log(MD$Total_Exp_Month_Per),(MD$TOriginalFoodExpenditure_Per/MD$Total_Exp_Month_Per))
+
+Area7<-MD[,.(HHID,Size,Decile,Region,ProvinceCode,FinalPoor,Area,Weight)]
+Area7[FinalPoor==1,weighted.mean(Area,Weight,na.rm = TRUE)]
+
+
+
+MD77<-MD7[,.(.N,Total_Exp_Month_Per_nondurable=mean(Total_Exp_Month_Per_nondurable),
+             HHEngle=mean(HHEngle)),by="Percentile"]
+plot(MD77$HHEngle~MD77$Percentile)
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
