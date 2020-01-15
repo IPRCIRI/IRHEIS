@@ -60,6 +60,7 @@ MDS_Investment: InvestmentTables
 MDS_Medical: MedicalTables
 MDS_Hygiene: HygieneTables
 MDS_Loans: LoanTables
+MDS_FinServices: FinServicesTables
 MDS_House: HouseTables
 MDS_Education: EducationTables
 MDS_Insurance: InsuranceTables
