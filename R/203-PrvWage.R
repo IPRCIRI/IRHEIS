@@ -20,7 +20,7 @@ library(readxl)
 PrvWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_PrvWage))
 
 
-for(year in (Settings$startyear:Settings$endyear)){
+for(year in 84:97){#(Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   prvwt <- PrvWageTable[Year==year]
