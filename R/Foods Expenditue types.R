@@ -14,6 +14,10 @@ library(data.table)
 library(stringr)
 library(readxl)
 
+FoodExpShare <- data.table(Year=NA_integer_,Region=NA_integer_,ProvinceCode=NA_real_,
+                           Share=NA_real_)[0]
+
+
 for (year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:", year, "\n"))
   load(file = paste0(Settings$HEISProcessedPath, "Y", year, "Merged4CBN.rda"))
@@ -82,9 +86,19 @@ for (year in (Settings$startyear:Settings$endyear)){
   TTF<-merge(TTF,G8,all.x = TRUE)
   TTF[is.na(TTF)] <- 0
   
-  TTF[,weighted.mean(FoodExp2/FoodExpenditure),by=ProvinceCode]
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+  TTF<-merge(TTF,MD[,.(HHID,Decile,FinalPoor)],all.x = TRUE)
   
+  TTF[,weighted.mean(FoodExp8/FoodExpenditure),by=ProvinceCode]
+  
+  X1 <- TTF[,.(Share=weighted.mean(FoodExp1/FoodExpenditure)),by=.(Region,ProvinceCode)]
+  X1[,Year:=year]
+  
+  FoodExpShare <- rbind(FoodExpShare,X1)
 }
+
+
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
