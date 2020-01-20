@@ -35,7 +35,7 @@ for (year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TF,n,names(ft)[x])
   }
-  pcols <- intersect(names(TF),c("HHID","Code","FoodExpenditure"))
+  pcols <- intersect(names(TF),c("HHID","Code","FoodExpenditure","BuyingMethod"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
   if(year>= 84){
@@ -43,6 +43,8 @@ for (year in (Settings$startyear:Settings$endyear)){
   }
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
+  save(TF, file = paste0(Settings$HEISProcessedPath,"Y",year,"TF.rda"))
+  
   FoodData <- TF[,lapply(.SD,sum),by=HHID]
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods2.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
