@@ -8,7 +8,7 @@ HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 97.0
+startyear: 89.0
 endyear: 97.0
 baseyear: 95.0
 OS: Windows
@@ -60,6 +60,7 @@ MDS_Investment: InvestmentTables
 MDS_Medical: MedicalTables
 MDS_Hygiene: HygieneTables
 MDS_Loans: LoanTables
+MDS_FinServices: FinServicesTables
 MDS_House: HouseTables
 MDS_Education: EducationTables
 MDS_Insurance: InsuranceTables
