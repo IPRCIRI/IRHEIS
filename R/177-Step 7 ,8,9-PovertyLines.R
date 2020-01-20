@@ -21,9 +21,18 @@ FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,PovertyH
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
-                                  House_Share=NA_real_,
+                                  House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
                                   SampleSize=NA_integer_,
                                   Engle=NA_integer_,FPLine=NA_integer_,
+                                  PovertyLine=NA_real_,PovertyHCR=NA_real_,
+                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+
+FinalClusterDiff <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
+                                  House_Share=NA_real_,Food_Share=NA_real_,Durable_Share=NA_real_,
+                                  SampleSize=NA_integer_,Clusterdiff=NA_integer_,
+                                  Engle=NA_integer_,FPLine=NA_integer_,FoodKCaloriesHH_Per=NA_real_,
+                                  Total_Exp_Month_Per_nondurable=NA_real_,
+                                  Total_Exp_Month_Per=NA_real_,
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
@@ -34,6 +43,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
+  #MD<-MD[cluster3==7]
+  MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
  
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
@@ -70,12 +81,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","Region"))
   FinalRegionResults <- rbind(FinalRegionResults,X)
+
   
   ################Cluster##################
   X1 <- MD[,.(SampleSize=.N,MetrPrice=weighted.mean(MetrPrice,Weight,na.rm = TRUE),
               House_Share=weighted.mean(ServiceExp/Total_Exp_Month,Weight),
               Engle=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
               FPLine=weighted.mean(FPLine,Weight),
+              FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
               PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=cluster3]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
@@ -88,23 +101,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
-  #cat(MD[TOriginalFoodExpenditure_Per>0.8*FPLine &
-  #         TOriginalFoodExpenditure_Per<1.2*FPLine &
-  #        Region=="Rural" & NewArea==11,
-  #      weighted.mean(Engel,Weight)])
+
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
   
   Poors<-MD[FinalPoor==1]
   
 }
-save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
-save(FinalCountryResults,file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
-
-ggplot(FinalClusterResults)+
-  geom_line(mapping = aes(x=Year,y=log(MetrPrice),col=factor(cluster3)))
-
-
 
 
 endtime <- proc.time()
