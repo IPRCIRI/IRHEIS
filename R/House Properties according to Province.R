@@ -18,7 +18,13 @@ library(stringr)
 library(readxl)
 
 tenure <- data.table(Year=NA_integer_,Region=NA_integer_,ProvinceCode=NA_real_,
-                           OwnLandandBuilding=NA_real_)[0]
+                           OwnLandandBuilding=NA_real_,
+                     Apartment=NA_real_,
+                     Rented=NA_real_,
+                     Mortgage=NA_real_,
+                     AgainstService=NA_real_,
+                     Other=NA_real_,
+                     Free=NA_real_)[0]
 
 
 for (year in (Settings$startyear:Settings$endyear)){
@@ -30,7 +36,13 @@ for (year in (Settings$startyear:Settings$endyear)){
   
   MD<-merge(MD,HHHouseProperties[,.(HHID,tenure,room,area)],by="HHID")
   
-  X1 <- MD[,.(OwnLandandBuilding=weighted.mean(tenure=="OwnLandandBuilding",Weight)),by=.(Region,ProvinceCode)]
+  X1 <- MD[,.(OwnLandandBuilding=weighted.mean(tenure=="OwnLandandBuilding",Weight),
+              Apartment=weighted.mean(tenure=="Apartment",Weight),
+              Rented=weighted.mean(tenure=="Rented",Weight),
+              Mortgage=weighted.mean(tenure=="Mortgage",Weight),
+              AgainstService=weighted.mean(tenure=="AgainstService",Weight),
+              Free=weighted.mean(tenure=="Free",Weight),
+              Other=weighted.mean(tenure=="Other",Weight)),by=.(Region,ProvinceCode)]
   X1[,Year:=year]
   
   tenure <- rbind(tenure,X1)
