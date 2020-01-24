@@ -131,7 +131,7 @@ load(file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
 
 FinalClusterResults<-FinalClusterResults[,cluster3:=as.factor(cluster3)]
 FinalClusterResults<-FinalClusterResults[,Year:=as.factor(Year)]
-ggplot(data=FinalClusterResults,aes(x=Year, y=Engle, group=cluster3, colour=cluster3))+geom_line()
+ggplot(data=FinalClusterResults,aes(x=Year, y=FPLine, group=cluster3, colour=cluster3))+geom_line()
 FinalCountryResults<-FinalCountryResults[,name:=as.factor(1)]
 FinalCountryResults<-rbind(FinalCountryResults,FinalCountryResults1)
 FinalCountryResults<-FinalCountryResults[,Year:=as.factor(Year)]
