@@ -15,6 +15,7 @@ library(data.table)
 library(ggplot2)
 library(stats)
 library(spatstat)
+library(sm)
 
 FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
@@ -187,6 +188,28 @@ Area7[FinalPoor==1,weighted.mean(Area,Weight,na.rm = TRUE)]
 MD77<-MD7[,.(.N,Total_Exp_Month_Per_nondurable=mean(Total_Exp_Month_Per_nondurable),
              HHEngle=mean(HHEngle)),by="Percentile"]
 plot(MD77$HHEngle~MD77$Percentile)
+
+
+###Engle distribution###
+MDU<-MD[Region=="Urban"]
+sm.density.compare(MDU$HHEngle, MDU$cluster3==7)
+
+MDUP<-MDU[FinalPoor==1]
+sm.density.compare(MDUP$HHEngle, MDUP$cluster3==7)
+
+MDUN<-MDU[TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine]
+sm.density.compare(MDUN$HHEngle, MDUN$cluster3==7)
+sm.density.compare(MDUN$HHEngle, MDUN$cluster3)
+
+MDR<-MD[Region=="Rural"]
+sm.density.compare(MDR$HHEngle, MDR$cluster3==13)
+
+MDRP<-MDR[FinalPoor==1]
+sm.density.compare(MDRP$HHEngle, MDRP$cluster3==13)
+
+MDRN<-MDR[TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine]
+sm.density.compare(MDRN$HHEngle, MDRN$cluster3==13)
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
