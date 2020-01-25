@@ -263,6 +263,9 @@ for(year in years){
   HHI <- merge(B,PSum,by="HHID")
   HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
                                1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
+  #HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.3,
+  #                          1 + (Size-NKids-1)*0.5 + (NKids)*0.3)]
+  #HHI[,EqSizeOECD := sqrt(Size)]
   HHI <- HHI[!is.na(HLiterate)]
 
   rm(P,B,PSum)

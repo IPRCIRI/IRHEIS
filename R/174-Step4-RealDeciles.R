@@ -144,15 +144,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
-  load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+  #load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
-  MD<-merge(MD,HHHouseProperties)
+  #MD<-merge(MD,HHHouseProperties)
   
-MD[,weighted.mean(tenure=="OwnLandandBuilding" | tenure=="Apartment",Weight),
-        by=.(Region,Decile)][order(Region,Decile)]
+#MD[,weighted.mean(tenure=="OwnLandandBuilding" | tenure=="Apartment",Weight),
+    #    by=.(Region,Decile)][order(Region,Decile)]
   
-MD[,weighted.mean(car=="True",Weight),
-   by=.(Region,Decile)][order(Region,Decile)]
+#MD[,weighted.mean(car=="True",Weight),
+ #  by=.(Region,Decile)][order(Region,Decile)]
 
 MD[,weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
    by=.(Region,Decile)][order(Region,Decile)]
@@ -175,8 +175,8 @@ MD[,weighted.mean(HEduYears>10,Weight),
 MD[,weighted.mean(HEduYears>13,Weight),
    by=.(Region,Decile)][order(Region,Decile)]
 
-MD[,weighted.mean(area/Size,Weight),
-   by=.(Region,Decile)][order(Region,Decile)]
+#MD[,weighted.mean(area/Size,Weight),
+ #  by=.(Region,Decile)][order(Region,Decile)]
 
 MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
    by=.(Region,Decile)][order(Region,Decile)]
