@@ -43,7 +43,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
-  MD<-MD[cluster3==13]
+  #MD<-MD[cluster3==13]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
  
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,

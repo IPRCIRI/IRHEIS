@@ -12,11 +12,15 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
 library(stringr)
+library(ggplot2)
 library(readxl)
 
 FoodExpShare <- data.table(Year=NA_integer_,Region=NA_integer_,ProvinceCode=NA_real_,
-                           Share=NA_real_)[0]
+                           Share1=NA_real_,Share2=NA_real_,
+                           Share3=NA_real_,Share4=NA_real_)[0]
 
+FoodMethodShare <- data.table(Year=NA_integer_,Method=NA_real_,
+                              Region=NA_character_,share=NA_real_)[0]
 
 for (year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:", year, "\n"))
@@ -87,15 +91,46 @@ for (year in (Settings$startyear:Settings$endyear)){
   TTF[is.na(TTF)] <- 0
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
-  TTF<-merge(TTF,MD[,.(HHID,Decile,FinalPoor)],all.x = TRUE)
+  TF<-merge(TF,MD[,.(HHID,Decile,FinalPoor,Region,ProvinceCode,Weight)],all.x = TRUE)
+  TF<-TF[Region=="Urban" | Region=="Rural"]
+  TF<-TF[ Region=="Rural" ]
+    TF[,Method:=ifelse(BuyingMethod==1,"Buying",
+              ifelse(BuyingMethod==2,"Home_Production",
+              ifelse(BuyingMethod==3 | BuyingMethod==4 | 
+              BuyingMethod==5 | BuyingMethod==7,"Against_Service",
+              ifelse(BuyingMethod==6,"Agriculture","Free"))))]
+    
+    TF<-TF[Method!="Buying"]
+    TF <- TF[,Total:=sum(FoodExpenditure*Weight),by=.(Region)]
+    TF <- TF[,share:=FoodExpenditure/Total]
+    X2 <- TF[,.(share=sum(share*Weight)),by=.(Method,Region)]
+
+    
+  
+  X2[,Year:=year]
+  FoodMethodShare <- rbind(FoodMethodShare,X2)
+
+  
+   TTF<-merge(TTF,MD[,.(HHID,Decile,FinalPoor)],all.x = TRUE)
   
   TTF[,weighted.mean(FoodExp8/FoodExpenditure),by=ProvinceCode]
   
-  X1 <- TTF[,.(Share=weighted.mean(FoodExp1/FoodExpenditure)),by=.(Region,ProvinceCode)]
+  X1 <- TTF[,.(Share1=weighted.mean(FoodExp1/FoodExpenditure),
+               Share2=weighted.mean(FoodExp2/FoodExpenditure),
+               Share3=weighted.mean((FoodExp3+FoodExp4+FoodExp5+FoodExp7)/FoodExpenditure),
+               Share4=weighted.mean(FoodExp6/FoodExpenditure)),by=.(Region,ProvinceCode)]
   X1[,Year:=year]
   
   FoodExpShare <- rbind(FoodExpShare,X1)
+  #FoodExpShare<-FoodExpShare[ProvinceCode==1]
 }
+
+ggplot(FoodMethodShare, aes(fill=Method, y=share, x=Year)) + 
+  geom_bar(position="stack", stat="identity") +
+  ggtitle("Types of food preparation")
+
+ggplot(FoodExpShare)+
+  geom_line(mapping = aes(x=Year,y=Share1,col=factor(Region)))
 
 
 

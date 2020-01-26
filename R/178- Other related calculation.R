@@ -132,6 +132,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   Poors<-MD[FinalPoor==1]
   
+
+  MDR<-MD[Region=="Rural"]
+  #MDRP<-MDR[FinalPoor==1]
+  MDRN<-MDR[TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine]
+  a<-ggplot(MDRN,aes(x=HHEngle, fill=factor(cluster3))) + geom_density(alpha=0.25)+
+     ggtitle(year)
+
+plot(a)
 }
 save(FinalClusterResults,file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
 save(FinalCountryResults,file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
