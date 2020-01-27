@@ -93,14 +93,24 @@ for (year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   TF<-merge(TF,MD[,.(HHID,Decile,FinalPoor,Region,ProvinceCode,Weight)],all.x = TRUE)
   TF<-TF[Region=="Urban" | Region=="Rural"]
-  TF<-TF[ Region=="Rural" ]
+  TF<-TF[ Region=="Urban" & ProvinceCode==11]
+  if (year>82){
+        TF[,Method:=ifelse(BuyingMethod==1,"Buying",
+                       ifelse(BuyingMethod==2,"Home_Production",
+                              ifelse(BuyingMethod==3 | BuyingMethod==4 | 
+                                       BuyingMethod==5 | BuyingMethod==7,"Against_Service",
+                                     ifelse(BuyingMethod==6,"Agriculture","Free"))))]
+  }
+  else {
     TF[,Method:=ifelse(BuyingMethod==1,"Buying",
-              ifelse(BuyingMethod==2,"Home_Production",
-              ifelse(BuyingMethod==3 | BuyingMethod==4 | 
-              BuyingMethod==5 | BuyingMethod==7,"Against_Service",
-              ifelse(BuyingMethod==6,"Agriculture","Free"))))]
+                       ifelse(BuyingMethod==2,"Home_Production",
+                              ifelse(BuyingMethod==3 | BuyingMethod==4 | 
+                                       BuyingMethod==6 | BuyingMethod==8,"Against_Service",
+                                     ifelse(BuyingMethod==5,"Agriculture","Free"))))]
+  }
+
     
-    TF<-TF[Method!="Buying"]
+    #TF<-TF[Method!="Buying"]
     TF <- TF[,Total:=sum(FoodExpenditure*Weight),by=.(Region)]
     TF <- TF[,share:=FoodExpenditure/Total]
     X2 <- TF[,.(share=sum(share*Weight)),by=.(Method,Region)]
