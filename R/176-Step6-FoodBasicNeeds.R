@@ -20,6 +20,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 
+  #load(file = "CPI.rda")
+  #CPI<-as.data.table(CPI)
+  #CPI<-CPI[,Decile:=as.character(Decile)]
+  #MD<-merge(MD,CPI,by="Decile")
+  
   #Determine Food (Equal 2100 KCal) Bundle
   #MDPoors<-MD[InitialPoor==1]
   MD[,NewPoor:=InitialPoor]
