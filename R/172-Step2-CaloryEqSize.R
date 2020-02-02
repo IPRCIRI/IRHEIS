@@ -28,7 +28,8 @@ NumberEmploy <- data.table(Year=NA_integer_,NumberEmploy=NA_integer_,ProvinceCod
 
 
 for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+ # cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  cat("\n")
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
   
@@ -180,6 +181,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #X7[,Year:=year]
   # NumberEmploy <- rbind(NumberEmploy,X7)
   #write.csv(NumberEmploy,file = "NumberEmploy.csv")
+  
+  cat(MD[,weighted.mean(Total_Exp_Month_Per,Weight)])
 }
 
 
