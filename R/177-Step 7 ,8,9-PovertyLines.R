@@ -16,7 +16,9 @@ library(ggplot2)
 library(stats)
 library(spatstat)
 
-FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
+FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,
+                                  Engle=NA_real_,Bundle_Value=NA_real_,
+                                  Total_Exp_Month_Per=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
@@ -43,7 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
-  #MD<-MD[cluster3==13]
+  #MD<-MD[cluster3==1]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
  
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
@@ -64,7 +66,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   ################Country##################
 
   X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size))]
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Engle=weighted.mean(HHEngle,Weight),
+              Bundle_Value=weighted.mean(Bundle_Value,Weight),
+              Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight))]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
                           PovertyDepth=weighted.mean(FGT2M,Weight*Size))]
   X1[,Year:=year]
