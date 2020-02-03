@@ -136,7 +136,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
   }
-  MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile)],by="HHID")
+  MD <- merge(MD,SMD[,.(HHID,Bundle_Value,Bundle_Value_H,NewPoor,Decile,Percentile)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
   
   
