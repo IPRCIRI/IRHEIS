@@ -144,6 +144,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
+  MDD2<-MD[,.(HHID,Decile)]
+  names(MDD2)<-c("HHID","Decile_F")
+  save(MDD2,file = "MDD2.rda")
+  
   #load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
   #MD<-merge(MD,HHHouseProperties)

@@ -33,8 +33,10 @@ for(year in (Settings$startyear:Settings$endyear)){
     i <- i + 1
     MD[,ThisIterationPoor:=NewPoor]
     MD[,FPLine:=NULL]    
+    MD[,FPLine2:=NULL]
     MDP <- MD[ThisIterationPoor==1,
-              .(FPLine=weighted.mean(Bundle_Value_T,Weight,na.rm = TRUE)),
+              .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
+                FPLine2=weighted.mean(Bundle_Value_T,Weight,na.rm = TRUE)),
               by=.(cluster3,Region)]
     MD <- merge(MD,MDP,by=c("Region","cluster3"))
     #    print(MDP)
@@ -53,8 +55,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   #   Total_Exp_Month_Per,TFoodKCaloriesHH_Per,TOriginalFoodExpenditure,Total_Exp_Month,
   #  TFoodExpenditure2,Total_Exp_Month_nondurable2,Total_Exp_Month2,
   # Total_Exp_Month_Per2,
-  #   EqSizeOECD,EqSizeCalory,Decile,Bundle_Value_T)]
+  #   EqSizeOECD,EqSizeCalory,Decile,Bundle_Value)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+  
+ # MDF<-MD[FinalFoodPoor==1]
+  MD[,weighted.mean(FinalFoodPoor,Weight)]
+  MD[,weighted.mean(FPLine,Weight),by=c("Region","cluster3")]
+  MD[,weighted.mean(FPLine2,Weight),by=c("Region","cluster3")]
+ # MDF<-MDF[,.(HHID,FinalFoodPoor)]
+ # load(file = "MDF1.rda")
+ # x<-merge(MDF1,MDF)
   
   # MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster3,Percentile,FinalFoodPoor)]
   # UrbanFinalfood<-MDFinalfood[Region=="Urban"]
