@@ -54,8 +54,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   V2T<-VT$V2
   SMD <- merge(SMD,X,by=c("Region","NewArea2"))
   
-  SMD[,PriceIndex:=(((V1+V1T)/2)*(log(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1)))+
-        (((V2+V2T)/2)*(log(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2))) ,by=.(Region,NewArea2)]
+  SMD[,PriceIndex:=((exp((V1+V1T)/2))*(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1))*
+        ((exp((V2+V2T)/2))*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)) ,by=.(Region,NewArea2)]
   
   
   Compare<-SMD[,.(Old=mean(PriceIndex2),
@@ -66,7 +66,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,V:=NULL]
   
   
-  SMD[,Total_Exp_Month_Per_nondurable_Real:=-Total_Exp_Month_Per_nondurable/PriceIndex] 
+  SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
   
   SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
   SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
@@ -117,9 +117,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     SMDIterationPoor <- merge(SMDIterationPoor,X,by=c("Region","NewArea2"))
     SMDIterationPoor[,PriceIndex:=NULL]  
     
-    Index <- SMDIterationPoor[,.(PriceIndex=((V1+V1T)/2*(log(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1)))+
-                                   ((V2+V2T)/2*(log(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2)))) ,by=.(Region,NewArea2)]
-    Index <- Index[,.(PriceIndex=-mean(PriceIndex)),by=.(Region,NewArea2)]
+    Index <- SMDIterationPoor[,.(PriceIndex=(exp((V1+V1T)/2)*(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1))*
+                                   (exp((V2+V2T)/2)*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2))) ,by=.(Region,NewArea2)]
+    Index <- Index[,.(PriceIndex=mean(PriceIndex)),by=.(Region,NewArea2)]
     
     
     SMD[,PriceIndex:=NULL]  
@@ -147,47 +147,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
-  load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
-  
-  MD<-merge(MD,HHHouseProperties)
-  
-  MD[,weighted.mean(tenure=="OwnLandandBuilding" | tenure=="Apartment",Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(car=="True",Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(Cloth_Exp/Total_Exp_Month,Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(Size,Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(Region=="Urban",Weight),
-     by=.(Decile)][order(Decile)]
-  
-  MD[,weighted.mean(HActivityState=="Employed",Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(HEduYears>10,Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(HEduYears>13,Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(area/Size,Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
-     by=.(Region,Decile)][order(Region,Decile)]
-  
-  A<-MD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
-           Min=min(Total_Exp_Month_Per_nondurable),
-           Mean=mean(Total_Exp_Month_Per_nondurable)),
-        by=.(Region,NewArea,NewArea2,Decile)]
+ # load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
   
   

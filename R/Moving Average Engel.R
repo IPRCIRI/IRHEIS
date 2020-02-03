@@ -38,11 +38,14 @@ for(Cluster3 in (1:13)){
 }
 s<-s[,MA_PovertyLine:=FPLine/MA_Engel]
 
-FinalCountryResults <- data.table(Year=NA_integer_,MA_PovertyLine=NA_real_,PovertyHCR=NA_real_,
-                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+FinalCountryResults <- data.table(Year=NA_integer_,MA_Engel=NA_integer_,
+                                  Calory_Price_Area=NA_integer_,FoodPoverty=NA_integer_,
+                                  FPLine=NA_integer_,
+                                  MA_PovertyLine=NA_real_,PovertyHCR=NA_real_)[0]
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,
                                  Calory_Price_Area=NA_integer_,
-                                 Engle=NA_integer_,FPLine=NA_integer_,
+                                 MA_Engel=NA_integer_,
+                                 FoodPoverty=NA_integer_,FPLine=NA_integer_,
                                  MA_PovertyLine=NA_real_,PovertyHCR=NA_real_)[0]
 FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
                                   House_Share=NA_real_,
@@ -51,9 +54,9 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
                                   MA_PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
-FinalProvinceResults<-data.table(Year=NA_integer_,ProvinceCode=NA_integer_,
-                                 Calory_Price_Area=NA_integer_,
-                                 Engle=NA_integer_,FPLine=NA_integer_,
+FinalProvinceResults<-data.table(Year=NA_integer_,ProvinceCode=NA_integer_,MA_Engel=NA_integer_,
+                                 Calory_Price_Area=NA_integer_,FoodPoverty=NA_integer_,
+                                 FPLine=NA_integer_,
                                  MA_PovertyLine=NA_real_,PovertyHCR=NA_real_)[0]
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
@@ -67,9 +70,11 @@ for(year in (Settings$startyear:Settings$endyear)){
                 .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                   FPLine=mean(FPLine)),by=.(Region,cluster3)]
   f<-s[Year==year]
-  
-  EngleD<-merge(EngleD,f[,.(cluster3,MA_PovertyLine)],by=c("cluster3"))
-  MD <- merge(MD,EngleD[,.(cluster3,Region,MA_PovertyLine,Engel)],by=c("Region","cluster3"))
+  z<-s[Year==year]
+ #MD<-MD[,cluster3:=as.factor(cluster3)]
+  #MD<-merge(MD,s[,.(MA_Engel,cluster3)],by=c("cluster3"),all.x = T)
+  EngleD<-merge(EngleD,f[,.(cluster3,MA_PovertyLine,MA_Engel)],by=c("cluster3"))
+  MD <- merge(MD,EngleD[,.(cluster3,Region,MA_PovertyLine,MA_Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < MA_PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
@@ -80,17 +85,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   ################Country##################
   
-  X1 <- MD[,.(MA_PovertyLine=weighted.mean(MA_PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size))]
+  X1 <- MD[,.(FPLine=weighted.mean(FPLine,Weight),MA_Engel=weighted.mean(MA_Engel,Weight),FoodPoverty=weighted.mean(FinalFoodPoor,Weight*Size),
+              MA_PovertyLine=weighted.mean(MA_PovertyLine,Weight*Size),
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Calory_Price_Area=weighted.mean(Calory_Price_Area,Weight))]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
                           PovertyDepth=weighted.mean(FGT2M,Weight*Size))]
   X1[,Year:=year]
   X2[,Year:=year]
-  X <- merge(X1,X2,by="Year")
+  X <-X1
   FinalCountryResults <- rbind(FinalCountryResults,X)
   
   ################Region##################
-  X1 <- MD[,.(Engle=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
+  X1 <- MD[,.(MA_Engel=weighted.mean(MA_Engel,Weight),FoodPoverty=weighted.mean(FinalFoodPoor,Weight*Size),
               FPLine=weighted.mean(FPLine,Weight),
               MA_PovertyLine=weighted.mean(MA_PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
@@ -118,11 +125,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults<- rbind(FinalClusterResults,X)
   ################Province##################
-  X1 <- MD[,.(Engle=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
-              FPLine=weighted.mean(FPLine,Weight),
+  X1 <- MD[,.(FPLine=weighted.mean(FPLine,Weight),MA_Engel=weighted.mean(MA_Engel,Weight),FoodPoverty=weighted.mean(FinalFoodPoor,Weight*Size),
               MA_PovertyLine=weighted.mean(MA_PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
-              Calory_Price_Area=weighted.mean(Calory_Price_Area,Weight)),by=ProvinceCode]
+              Calory_Price_Area=weighted.mean(Calory_Price_Area,Weight)),by=c("ProvinceCode")]
   
   
 X1[,Year:=year]
@@ -133,7 +139,7 @@ X1[,Year:=year]
   M<-M[,ProvinceCode:=as.integer(ProvinceCode)]
   M<-distinct(M)
   M<-M[NewArea2!="Sh_Arak"]
- # FinalProvinceResults<-merge(FinalProvinceResults,M,by="ProvinceCode")
+ #FinalProvinceResults<-merge(FinalProvinceResults,M,by="ProvinceCode")
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
   #cat(MD[TOriginalFoodExpenditure_Per>0.8*FPLine &
   #         TOriginalFoodExpenditure_Per<1.2*FPLine &
@@ -142,8 +148,9 @@ X1[,Year:=year]
   
 
 }
-write_xlsx(FinalProvinceResults,path="ProvinceResults.xlsx",col_names=T)
-write_xlsx(FinalRegionResults,path="RegionResults.xlsx",col_names=T)
+FinalProvinceResults1<-FinalProvinceResults[Year==97]
+write_xlsx(X,path="ProvinceResults.xlsx",col_names=T)
+write_xlsx(M,path="ostan.xlsx",col_names=T)
 
 s<-s[,cluster3:=as.factor(cluster3)]
 s<-s[,Year:=as.factor(Year)]
