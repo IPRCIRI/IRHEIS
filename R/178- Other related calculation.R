@@ -37,6 +37,9 @@ FinalClusterDiff <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=N
                                PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
+ProvinceResults <- data.table(Year=NA_integer_,ProvinceCode=NA_integer_,
+                              Total_Exp_Per=NA_real_,HSex=NA_character_)[0]
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -121,6 +124,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
+  
+  
+  ################Province##################
+  X1 <- MD[,.(Total_Exp_Per=weighted.mean(Total_Exp_Month_Per,Weight,na.rm = TRUE)),by=.(ProvinceCode,HSex)]
+ 
+    X1[,Year:=year]
+  ProvinceResults <- rbind(ProvinceResults,X1)
+  
+  write.csv(ProvinceResults,file = "ProvinceResults.csv")
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
   #cat(MD[TOriginalFoodExpenditure_Per>0.8*FPLine &
