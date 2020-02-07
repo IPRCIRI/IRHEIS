@@ -230,6 +230,7 @@ sm.density.compare(MDRP$HHEngle, MDRP$cluster3==13)
 MDRN<-MDR[TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine]
 sm.density.compare(MDRN$HHEngle, MDRN$cluster3==13)
 
+write.csv(ProvinceResults,file = ProvinceResults.csv)
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
