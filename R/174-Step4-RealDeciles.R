@@ -190,8 +190,8 @@ MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
            Mean=mean(Total_Exp_Month_Per_nondurable)),
         by=.(Region,NewArea,NewArea2,Decile)]
   
-  D<-MD[,.(.N,Mean=weighted.median(Durable_Exp/Size,Weight)),
-         by=.(Region,NewArea2,Decile)]
+ # D<-MD[,.(.N,Mean=weighted.median(Durable_Exp/Size,Weight)),
+ #        by=.(Region,NewArea2,Decile)]
   
 #write.csv(A,file = "A.csv")
 #write.csv(B,file = "B.csv")
