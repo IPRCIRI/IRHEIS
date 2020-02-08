@@ -52,19 +52,23 @@ for(year in (Settings$startyear:Settings$endyear)){
                   TOriginalFoodExpenditure_Per<1.2*FPLine &
                   (TOriginalFoodExpenditure/Total_Exp_Month) > 0.4,
                 .(.N),by=.(Region,cluster3)]
+  names(HighEngle1)<-c("Regiuon", "cluster3","N40")
   
   HighEngle2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                       TOriginalFoodExpenditure_Per<1.2*FPLine &
                       (TOriginalFoodExpenditure/Total_Exp_Month) > 0.45,
                     .(.N),by=.(Region,cluster3)]
+  names(HighEngle2)<-c("Regiuon", "cluster3","N45")
   
   HighEngle3 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                       TOriginalFoodExpenditure_Per<1.2*FPLine &
                       (TOriginalFoodExpenditure/Total_Exp_Month) > 0.5,
                     .(.N),by=.(Region,cluster3)]
+  names(HighEngle3)<-c("Regiuon", "cluster3","N50")
   
-  HighEngle<-rbind(HighEngle1,HighEngle2,HighEngle3)
- 
+  HighEngle<-merge(HighEngle1,HighEngle2)
+  HighEngle<-merge(HighEngle,HighEngle3)
+
   EngleD1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                   TOriginalFoodExpenditure_Per<1.2*FPLine &
                 (TOriginalFoodExpenditure/Total_Exp_Month) < 0.5 &
