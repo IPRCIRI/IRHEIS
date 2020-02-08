@@ -45,15 +45,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
-  MD<-MD[cluster3==13]
+  #MD<-MD[cluster3==1]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
                 .(.N,Engle=weighted.mean((TOriginalFoodExpenditure+ServiceExp)/Total_Exp_Month,Weight),
-                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
+                  FPLine2=mean(FPLine2)),by=.(Region,cluster3)]
   
   
-  EngleD[,PovertyLine:=FPLine/Engle]
+  EngleD[,PovertyLine:=FPLine2/Engle]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engle)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=(TOriginalFoodExpenditure+ServiceExp)/Total_Exp_Month,Weight]
@@ -92,7 +92,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X1 <- MD[,.(SampleSize=.N,MetrPrice=weighted.mean(MetrPrice,Weight,na.rm = TRUE),
               House_Share=weighted.mean(ServiceExp/Total_Exp_Month,Weight),
               Engle=weighted.mean((TOriginalFoodExpenditure+ServiceExp)/Total_Exp_Month,Weight),
-              FPLine=weighted.mean(FPLine,Weight),
+              FPLine=weighted.mean(FPLine2,Weight),
               FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
               PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=cluster3]
@@ -105,7 +105,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
-  cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
+  cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
   
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))

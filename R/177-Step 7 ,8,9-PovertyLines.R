@@ -38,6 +38,11 @@ FinalClusterDiff <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=N
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
+HighEngles<-data.table(Year=NA_integer_,Region=NA_integer_,cluster3=NA_real_,N40=NA_real_,
+                    N45=NA_real_,N50=NA_real_,N=NA_real_)[0]
+
+
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -45,14 +50,54 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
-  #MD<-MD[cluster3==1]
+  #MD<-MD[cluster3==7]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
- 
-  EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
+  
+  HighEngle1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                  TOriginalFoodExpenditure_Per<1.2*FPLine &
+                  (TOriginalFoodExpenditure/Total_Exp_Month) > 0.4,
+                .(.N),by=.(Region,cluster3)]
+  names(HighEngle1)<-c("Region", "cluster3","N40")
+  
+  HighEngle2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                      TOriginalFoodExpenditure_Per<1.2*FPLine &
+                      (TOriginalFoodExpenditure/Total_Exp_Month) > 0.45,
+                    .(.N),by=.(Region,cluster3)]
+  names(HighEngle2)<-c("Region", "cluster3","N45")
+  
+  HighEngle3 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                      TOriginalFoodExpenditure_Per<1.2*FPLine &
+                      (TOriginalFoodExpenditure/Total_Exp_Month) > 0.5,
+                    .(.N),by=.(Region,cluster3)]
+  names(HighEngle3)<-c("Region", "cluster3","N50")
+  
+  HighEngle4 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                      TOriginalFoodExpenditure_Per<1.2*FPLine,
+                    .(.N),by=.(Region,cluster3)]
+  
+  HighEngle<-merge(HighEngle1,HighEngle2)
+  HighEngle<-merge(HighEngle,HighEngle3)
+  HighEngle<-merge(HighEngle,HighEngle4)
+
+  EngleD1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                  TOriginalFoodExpenditure_Per<1.2*FPLine &
+                (TOriginalFoodExpenditure/Total_Exp_Month) < 0.45 &
+                  (cluster3!=6 & cluster3!=7 & cluster3!=11 &
+                     cluster3!=12 & cluster3!=13),
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
-
+  EngleD2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                   TOriginalFoodExpenditure_Per<1.2*FPLine &
+                   (TOriginalFoodExpenditure/Total_Exp_Month) < 0.45 &
+                   (cluster3==6 | cluster3==7 | cluster3==11 |
+                      cluster3==12 | cluster3==13),
+                 .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
+                   FPLine=mean(FPLine)),by=.(Region,cluster3)]
+  
+  
+  EngleD<-rbind(EngleD1,EngleD2)
+  
   EngleD[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
@@ -62,6 +107,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
+  
+  ################High Engle##################
+  
+  X1 <- HighEngle
+
+  X1[,Year:=year]
+
+  HighEngles <- rbind(HighEngles,X1)
   
   ################Country##################
 
@@ -106,13 +159,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
+  #cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
 
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
   
   Poors<-MD[FinalPoor==1]
   
+  a<-MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+        TOriginalFoodExpenditure_Per<1.2*FPLine &
+        cluster3==7,
+        .(x=TOriginalFoodExpenditure/Total_Exp_Month)]
+  
 }
+
+ggplot(HighEngles)+
+  geom_line(mapping = aes(x=Year,y=N50/N,col=factor(cluster3)))
 
 
 endtime <- proc.time()
