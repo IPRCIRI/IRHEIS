@@ -1,4 +1,4 @@
-#176-Step 6- FoodBasicNeeds.R
+#176-Step 6- FoodBasicNeeds (version 3).R
 # 
 # Copyright © 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -19,47 +19,48 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
-
-  #load(file = "CPI.rda")
-  #CPI<-as.data.table(CPI)
-  #CPI<-CPI[,Decile:=as.character(Decile)]
-  #MD<-merge(MD,CPI,by="Decile")
+  MD[,Bundle_Value_T:=Bundle_Value+Bundle_Value_H]
   
   #Determine Food (Equal 2100 KCal) Bundle
   #MDPoors<-MD[InitialPoor==1]
   MD[,NewPoor:=InitialPoor]
   #MD[,NewPoor:=ifelse(Decile %in% c(1,2,3,4),1,0)]
   MD[,OldPoor:=1]
-
+  
   i <- 0
   while(MD[(NewPoor-OldPoor)!=0,.N]>0.001*nrow(MD[NewPoor==1])  & i <=15){
-#    cat(nrow(MD[NewPoor==1]))
+    #    cat(nrow(MD[NewPoor==1]))
     i <- i + 1
     MD[,ThisIterationPoor:=NewPoor]
     MD[,FPLine:=NULL]    
     MDP <- MD[ThisIterationPoor==1,
-              .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
+              .(FPLine=weighted.mean(Bundle_Value_H,Weight,na.rm = TRUE)),
               by=.(cluster3,Region)]
     MD <- merge(MD,MDP,by=c("Region","cluster3"))
-#    print(MDP)
+    #    print(MDP)
     #x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
-    MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
+    MD[,NewPoor:=ifelse(ServiceExp/Size < FPLine,1,0)]
     print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
   }
-
+  
   MD[,FinalFoodPoor:=OldPoor]
-
- # MD <- MD[,.(HHID,HIndivNo,Region,NewArea,NewArea2,cluster3,ProvinceCode,Size,HAge,HSex,Month,ServiceExp,
-          #    HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,Total_Exp_Month_nondurable,
-           #   Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
-           #   OriginalFoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
-           #   Total_Exp_Month_Per,TFoodKCaloriesHH_Per,TOriginalFoodExpenditure,Total_Exp_Month,
-            #  TFoodExpenditure2,Total_Exp_Month_nondurable2,Total_Exp_Month2,
-             # Total_Exp_Month_Per2,
-           #   EqSizeOECD,EqSizeCalory,Decile,Bundle_Value)]
+  
+  # MD <- MD[,.(HHID,HIndivNo,Region,NewArea,NewArea2,cluster3,ProvinceCode,Size,HAge,HSex,Month,ServiceExp,
+  #    HLiterate,HEduLevel0,HActivityState,Area,Rooms,MetrPrice,Total_Exp_Month_nondurable,
+  #   Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
+  #   OriginalFoodExpenditure_Per,FPLine,Weight,Percentile,FinalFoodPoor,
+  #   Total_Exp_Month_Per,TFoodKCaloriesHH_Per,TOriginalFoodExpenditure,Total_Exp_Month,
+  #  TFoodExpenditure2,Total_Exp_Month_nondurable2,Total_Exp_Month2,
+  # Total_Exp_Month_Per2,
+  #   EqSizeOECD,EqSizeCalory,Decile,Bundle_Value_H)]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
-  MD[,weighted.mean(FinalFoodPoor,Weight)]
+  
+  MDF1<-MD[FinalFoodPoor==1]
+  MDF1<-MDF1[,.(HHID,FinalFoodPoor)]
+  names(MDF1)<-c("HHID","F1")
+  save(MDF1,file = "MDF1.rda")
+  MD[,weighted.mean(FinalFoodPoor,Weight),by=ProvinceCode]
   # MDFinalfood<-MD[,.(HHID,Region,NewArea,cluster3,Percentile,FinalFoodPoor)]
   # UrbanFinalfood<-MDFinalfood[Region=="Urban"]
   # RuralFinalfood<-MDFinalfood[Region=="Rural"]

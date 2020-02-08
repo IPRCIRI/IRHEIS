@@ -144,6 +144,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
+  MDD1<-MD[,.(HHID,Decile)]
+  names(MDD1)<-c("HHID","Decile_FH")
+  save(MDD1,file = "MDD1.rda")
+  
+  load(file = "MDD2.rda")
+  MDD<-merge(MDD1,MDD2)
+  MDD<-as.data.table(MDD)
+  MDD<-MDD[,Decile_F:=as.numeric(Decile_F)]
+  MDD<-MDD[,Decile_FH:=as.numeric(Decile_FH)]
+  MDD[,diff:=Decile_F-Decile_FH]
+  
+  diff1<-MDD[diff==1]
+  diff2<-MDD[diff==-1]
+  diff<-MDD[diff==0]
   #load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
   #MD<-merge(MD,HHHouseProperties)
