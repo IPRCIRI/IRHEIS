@@ -149,31 +149,35 @@ X1[,Year:=year]
 
 }
 FinalProvinceResults1<-FinalProvinceResults[Year==97]
-write_xlsx(X,path="ProvinceResults.xlsx",col_names=T)
+write_xlsx(CaloryPrice,path="CaloryPrice.xlsx",col_names=T)
 write_xlsx(M,path="ostan.xlsx",col_names=T)
 
 s<-s[,cluster3:=as.factor(cluster3)]
 s<-s[,Year:=as.factor(Year)]
 
-ggplot(data=FinalClusterResults,aes(x=Year, y=PovertyHCR, group=cluster3, colour=cluster3))+geom_line()
+ggplot(data=FinalClusterResults,aes(x=Year, y=PovertyHCR, group=cluster3, colour=cluster3,type=cluster3))+geom_line()
 FinalCountryResults1<-FinalCountryResults
-FinalCountryResults1<-FinalCountryResults1[,name:=as.factor(0)]
-FinalCountryResults1<-FinalCountryResults1[,.(Year,MA_PovertyLine,PovertyHCR,PovertyGap,PovertyDepth,name)]
+FinalCountryResults5<-FinalCountryResults[,name:=as.factor(0)]
+FinalCountryResults1<-FinalCountryResults1[,.(Year,MA_PovertyLine,PovertyHCR,name)]
 
 load(file=paste0(Settings$HEISProcessedPath,"FinalCountryResults.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
-FinalCountryResults2<-merge(FinalCountryResults1,FinalCountryResults[,.(PovertyLine,Year)],by=c("Year"))
+FinalCountryResults5<-FinalCountryResults5[,.(PovertyHCR,name,Year)]
+FinalCountryResults<-FinalCountryResults[,.(PovertyHCR,name,Year)]
+
 FinalClusterResults<-FinalClusterResults[,cluster3:=as.factor(cluster3)]
 FinalClusterResults<-FinalClusterResults[,Year:=as.factor(Year)]
-ggplot(data=FinalCountryResults2,aes(x=Year, y=MA_PovertyLine/PovertyLine))+geom_line()
+FinalCountryResults<-FinalCountryResults[,Year:=as.factor(Year)]
+
+ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR))+geom_line(group=1)
 FinalCountryResults<-FinalCountryResults[,name:=as.factor(1)]
 
 FinalCountryResults2<-FinalCountryResults2[,PovertyLine:=MA_PovertyLine]
 FinalCountryResults2<-FinalCountryResults2[,.(Year,PovertyLine,PovertyHCR,PovertyGap,PovertyDepth,name)]
-FinalCountryResults2<-FinalCountryResults2[,Year:=as.factor(Year)]
+FinalCountryResults2<-FinalCountryResults
 
-
-ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR, group=name, colour=name))+geom_line()
+FinalCountryResults<-rbind(FinalCountryResults,FinalCountryResults5)
+ggplot(data=FinalCountryResults,aes(x=Year, y=PovertyHCR, group=name, colour=name, type=name))+geom_line()
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
