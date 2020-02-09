@@ -44,7 +44,7 @@ for (year in (Settings$startyear:Settings$endyear)){
   TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
   save(TF, file = paste0(Settings$HEISProcessedPath,"Y",year,"TF.rda"))
-  
+  TF<-TF[BuyingMethod!=8]
   FoodData <- TF[,lapply(.SD,sum),by=HHID]
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods2.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
