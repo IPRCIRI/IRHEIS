@@ -73,6 +73,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
   
+  SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable)]
+  SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+  SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10),by=Region]
+  
+  
+  
   C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
            Min=min(Total_Exp_Month_Per_nondurable),
            Mean=mean(Total_Exp_Month_Per_nondurable)),
@@ -136,7 +142,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
   }
-  MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile)],by="HHID")
+  MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
   
 
@@ -207,6 +213,15 @@ MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
 #write.csv(B,file = "B.csv")
 #write.csv(C,file = "C.csv")
 #write.csv(D,file = "D.csv")
+   
+   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+   MD<-merge(MD,HHHouseProperties)
+   
+   FractioninData<-MD[,.(Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_nondurable,Weight),
+                         tenure=weighted.mean(tenure=="OwnLandandBuilding",Weight),
+                         HActivityState=weighted.mean(HActivityState=="Employed",Weight),
+                         Car=weighted.mean(car=="True",Weight)),
+                      by=c("Percentile","Region")]
 }
 
 

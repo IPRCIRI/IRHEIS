@@ -24,10 +24,11 @@ ExpSize <- data.table(Year=NA_integer_,Size=NA_real_,Total_Exp_Month_nondurable=
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
 
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
   MD<-MD[Size<6]
-  MD<-MD[Region=="Rural"]
+  MD<-MD[Region=="Urban"]
+  MD<-MD[as.numeric(Decile)<3 & as.numeric(Decile)>1]
   
   X1 <- MD[,.(Total_Exp_Month_nondurable=weighted.mean(Total_Exp_Month_nondurable,Weight*Size),
               OriginalFoodExpenditure=weighted.mean(OriginalFoodExpenditure,Weight*Size),
@@ -39,10 +40,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 }
 
-ggplot(ExpSize)+
-  geom_line(mapping = aes(x=Year,y=Total_Exp_Month_nondurable,col=factor(Size)))
+ggplot(MD)+
+  geom_line(mapping = aes(x=Year,y=OriginalFoodExpenditure/Total_Exp_Month,col=factor(Size)))
 
-ggplot(ExpSize, aes(fill=factor(Size), y=Total_Exp_Month_nondurable, x=Year)) + 
+ggplot(MD, aes(fill=factor(Size), y=OriginalFoodExpenditure/Total_Exp_Month, x=Year)) + 
   geom_bar(position="dodge", stat="identity")
 
 ggplot(ExpSize, aes(fill=factor(Size), y=OriginalFoodExpenditure, x=Year)) + 
