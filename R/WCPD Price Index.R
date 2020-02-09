@@ -46,8 +46,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                      +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)/2
       ,by=.(Region,NewArea2)]
   
-  X <- SMD[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-              weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea2)]
+  X <- SMD[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+              weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea2)]
   X[,V:=V1+V2]
   VT<-X[NewArea2=="Sh_Tehran"]
   V1T<-VT$V1
@@ -108,8 +108,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     #                                             weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2)/2)
     #                           ,by=.(Region,NewArea2)]
     
-    X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-                             weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea2)]
+    X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+                             weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea2)]
     X[,V:=V1+V2]
     VT<-X[NewArea2=="Sh_Tehran"]
     V1T<-VT$V1
@@ -143,7 +143,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   setnames(MD,"NewPoor","InitialPoor")
   
   
-  MD[,weighted.mean(InitialPoor,Weight), by=.(NewArea2,Region)]
+  MD[,weighted.mean(InitialPoor,Weight,na.rm = TRUE), by=.(NewArea2,Region)]
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
