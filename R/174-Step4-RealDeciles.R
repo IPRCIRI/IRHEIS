@@ -202,8 +202,8 @@ MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
           by=.(Region,Decile)]
   
 #write.csv(A,file = "A.csv")
-write.csv(AA,file = "AA.csv")
-write.csv(DD,file = "DD.csv")
+#write.csv(AA,file = "AA.csv")
+#write.csv(DD,file = "DD.csv")
 #write.csv(B,file = "B.csv")
 #write.csv(C,file = "C.csv")
 #write.csv(D,file = "D.csv")

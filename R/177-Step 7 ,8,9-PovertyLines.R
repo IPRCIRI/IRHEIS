@@ -50,7 +50,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
-  #MD<-MD[cluster3==7]
+  #MD<-MD[cluster3==13]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   
   HighEngle1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
@@ -79,24 +79,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   HighEngle<-merge(HighEngle,HighEngle3)
   HighEngle<-merge(HighEngle,HighEngle4)
 
-  EngleD1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine &
-                (TOriginalFoodExpenditure/Total_Exp_Month) < 0.45 &
-                  (cluster3!=6 & cluster3!=7 & cluster3!=11 &
-                     cluster3!=12 & cluster3!=13),
+  EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                  TOriginalFoodExpenditure_Per<1.2*FPLine ,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
-  EngleD2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                   TOriginalFoodExpenditure_Per<1.2*FPLine &
-                   (TOriginalFoodExpenditure/Total_Exp_Month) < 0.45 &
-                   (cluster3==6 | cluster3==7 | cluster3==11 |
-                      cluster3==12 | cluster3==13),
-                 .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
-                   FPLine=mean(FPLine)),by=.(Region,cluster3)]
-  
-  
-  EngleD<-rbind(EngleD1,EngleD2)
+
   
   EngleD[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
@@ -176,6 +164,10 @@ for(year in (Settings$startyear:Settings$endyear)){
 ggplot(HighEngles)+
   geom_line(mapping = aes(x=Year,y=N50/N,col=factor(cluster3)))
 
+ggplot(FinalClusterResults)+
+  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
+
+#write.csv(FinalClusterResults,file = FinalClusterResults.csv)
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
