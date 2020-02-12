@@ -169,6 +169,27 @@ ggplot(FinalClusterResults)+
 
 #write.csv(FinalClusterResults,file = FinalClusterResults.csv)
 
+
+Job<-MD[FinalPoor==1,weighted.mean(HActivityState=="Employed",Weight),by=ProvinceCode]
+IncomeWithoutWork<-MD[FinalPoor==1,weighted.mean(HActivityState=="Income without Work",Weight),by=ProvinceCode]
+
+Widow<-MD[FinalPoor==1,weighted.mean(HSex=="Female",Weight),by=ProvinceCode]
+
+load(file=paste0(Settings$HEISProcessedPath,"Y",97,"job.rda"))
+MD<-merge(MD,job,by="HHID")
+Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Pub==9,Weight),
+           by=ProvinceCode]
+
+Prvjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv==9,Weight),
+           by=ProvinceCode]
+
+Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv<3 & Job_Main_Code_Prv>0,Weight)+
+             weighted.mean(Job_Main_Code_Pub<3 & Job_Main_Code_Pub>0,Weight),by=ProvinceCode]
+
+sub_share<-MD[FinalPoor==1,sub_share:=Subsidy/(12*Total_Exp_Month_nondurable)]
+
+
+
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat((endtime-starttime)["elapsed"])

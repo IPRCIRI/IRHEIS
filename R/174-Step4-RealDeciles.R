@@ -222,6 +222,57 @@ MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
                          HActivityState=weighted.mean(HActivityState=="Employed",Weight),
                          Car=weighted.mean(car=="True",Weight)),
                       by=c("Percentile","Region")]
+   
+   #write.csv(FractioninData,file = "FractioninData.csv")
+   
+   Deciles<-MD[,.(HHID,Decile,Decile_Nominal,Region,ProvinceCode,HIndivNo,Weight)]
+   Deciles<-Deciles[,diff:=as.numeric(Decile)-as.numeric(Decile_Nominal)]
+   decileTest<-Deciles[,.(Positive=weighted.mean(diff>0,Weight),
+              Zero=weighted.mean(diff==0,Weight),
+              Minus=weighted.mean(diff<0,Weight)),by=ProvinceCode]
+   
+   decile7<-Deciles[,.(before=weighted.mean(as.numeric(Decile_Nominal)>7,Weight),
+                       after=weighted.mean(as.numeric(Decile)>7,Weight)),by=ProvinceCode]
+   
+   ###Exp
+   x2<-FractioninData[Region=="Urban",.(Total_Exp_Month_Per_nondurable,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$Total_Exp_Month_Per_nondurable)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$Total_Exp_Month_Per_nondurable)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   x2<-FractioninData[Region=="Rural",.(Total_Exp_Month_Per_nondurable,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$Total_Exp_Month_Per_nondurable)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$Total_Exp_Month_Per_nondurable)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   
+   ###Tenure
+   x2<-FractioninData[Region=="Urban",.(tenure,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$tenure)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$tenure)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   x2<-FractioninData[Region=="Rural",.(tenure,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$tenure)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$tenure)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   
+   ###HActivity
+   x2<-FractioninData[Region=="Urban",.(HActivityState,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$HActivityState)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$HActivityState)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   x2<-FractioninData[Region=="Rural",.(HActivityState,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$HActivityState)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$HActivityState)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   
+   ###Car
+   x2<-FractioninData[Region=="Urban",.(Car,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$Car)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$Car)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   x2<-FractioninData[Region=="Rural",.(Car,Percentile)]
+   x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$Car)])
+   ggplot(x2, aes(x = x2$Percentile, y = x2$Car)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
 }
 
 
