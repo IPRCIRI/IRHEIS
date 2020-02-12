@@ -35,6 +35,17 @@ for(year in (Settings$startyear:Settings$endyear)){
              (Size==4 & Total_Exp98>70000000) |
              (Size>=5 & Total_Exp98>80000000) ]
   
+  SMD<-SMD[ ,HighIncome:=ifelse((Size==1 & Total_Exp98>40000000) |
+             (Size==2 & Total_Exp98>50000000) |
+             (Size==3 & Total_Exp98>60000000) |
+             (Size==4 & Total_Exp98>70000000) |
+             (Size>=5 & Total_Exp98>80000000),1,0) ]
+  
+  SMD<-SMD[,Size2:=ifelse(Size<5,Size,5)]
+  
+  HighIncomeProv<-SMD[,weighted.mean(HighIncome,Weight),by=ProvinceCode]
+  HighIncomeSize<-SMD[,weighted.mean(HighIncome,Weight),by=Size2]
+  
   HT1<-SMD[ProvinceCode==23 & HomePrice98>12000000000]
   HT2<-SMD[ProvinceCode!=23 & HomePrice98>9000000000]
   HT <-rbind(HT1,HT2)
@@ -66,9 +77,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   Having<-merge(Having,All32,all = TRUE)
   Having[is.na(Having)] <- 0
   
-  write.csv(HousePrice2,file = "HousePrice2.csv")
-  write.csv(HighIncome2,file = "HighIncome2.csv")
-  write.csv(Having,file = "Having.csv")
+  #write.csv(HousePrice2,file = "HousePrice2.csv")
+  #write.csv(HighIncome2,file = "HighIncome2.csv")
+  #write.csv(Having,file = "Having.csv")
 }
 
 
