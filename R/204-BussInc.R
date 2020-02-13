@@ -53,6 +53,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
 
    TbussW[is.na(TbussW)] <- 0
+   TbussW2<-TbussW[WorkType==4,.(HHID,WorkType)]
+   save(TbussW2, file = paste0(Settings$HEISProcessedPath,"Y",year,"TbussW2.rda"))
+   
+   
    BussIncomeData <- TbussW[,.(BussNetIncomeY=sum(BussNetIncomeY),
                                BussEarners=.N,
                                Sector=100),
