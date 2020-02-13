@@ -13,7 +13,7 @@ Settings <- yaml.load_file("Settings.yaml")
 
 #library(readxl)
 library(data.table)
-#library(ggplot2)
+library(ggplot2)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -201,10 +201,10 @@ MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
            Mean=mean(Total_Exp_Month_Per_nondurable)),
         by=.(Region,Decile)]
   
-  D<-MD[,.(.N,Mean=weighted.median(Durable_Exp/Size,Weight)),
+  D<-MD[,.(.N,Mean=weighted.mean(Durable_Exp/Size,Weight)),
          by=.(Region,NewArea2,Decile)]
   
-   DD<-MD[,.(.N,Mean=weighted.median(Durable_Exp/Size,Weight)),
+   DD<-MD[,.(.N,Mean=weighted.mean(Durable_Exp/Size,Weight)),
           by=.(Region,Decile)]
   
 #write.csv(A,file = "A.csv")
@@ -217,7 +217,7 @@ MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
    MD<-merge(MD,HHHouseProperties)
    
-   FractioninData<-MD[,.(Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_nondurable,Weight),
+   FractioninData<-MD[,.(Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
                          tenure=weighted.mean(tenure=="OwnLandandBuilding",Weight),
                          HActivityState=weighted.mean(HActivityState=="Employed",Weight),
                          Car=weighted.mean(car=="True",Weight)),

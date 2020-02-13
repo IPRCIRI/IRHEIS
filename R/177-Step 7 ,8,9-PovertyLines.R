@@ -174,6 +174,7 @@ Job<-MD[FinalPoor==1,weighted.mean(HActivityState=="Employed",Weight),by=Provinc
 IncomeWithoutWork<-MD[FinalPoor==1,weighted.mean(HActivityState=="Income without Work",Weight),by=ProvinceCode]
 
 Widow<-MD[FinalPoor==1,weighted.mean(HSex=="Female",Weight),by=ProvinceCode]
+Widow2<-MD[HSex=="Female",weighted.mean(FinalPoor,Weight),by=ProvinceCode]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",97,"job.rda"))
 MD<-merge(MD,job,by="HHID")
