@@ -27,33 +27,39 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
                                   Engle=NA_integer_,FPLine=NA_integer_,
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
-inflation <- as.data.table(read_excel("~/GitHub/IRHEIS/Data/inflation.xlsx",col_names = T))
-for(year in (Settings$endyear:Settings$startyear)){
+inflation <- as.data.table(read_excel("~/GitHub/IRHEIS/Data/ProvinceCPI.xlsx", 
+                                                             sheet = "Province"))
+load(file=paste0(Settings$HEISProcessedPath,"Province.rda"))
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   if(year!=95){
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleD.rda"))
-    load(file=paste0(Settings$HEISProcessedPath,"FinalClusterResults.rda"))
+  
     
   #MD<-MD[Region=="Rural"]
   
-  Fin<-FinalClusterResults[Year==95]
+  Fin<-FinalProvinceResults[Year==95]
   
   I<-inflation[Year==year]
-  i<-as.double(I$CPI)
-  Fin<-Fin[,PL:=PovertyLine*i/100]
-  EngleD<-merge(EngleD,Fin[,.(cluster3,PL)],by=c("cluster3"))
-
+  Fin<-merge(Fin,I[,.(ProvinceCode,total)],by=c("ProvinceCode"))
+  Fin<-Fin[,PL:=PovertyLine*total/100]
+  EngleD<-FinalProvinceResults[Year==year]
+  EngleD<-merge(EngleD,Fin[,.(ProvinceCode,PL)],by=c("ProvinceCode"))
   EngleD[,PovertyLine:=PL]
   }else{
-    EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
+    EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
                   .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
-                    FPLine=mean(FPLine)),by=.(Region,cluster3)]
+                    FPLine=mean(FPLine)),by=.(ProvinceCode)]
     EngleD[,PovertyLine:=FPLine/Engel]
+  
+    
   }
-  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
+  FF<-inflation[Year==year]
+  EngleD<-merge(EngleD,FF[,.(ProvinceCode,total)])
+  MD <- merge(MD,EngleD[,.(ProvinceCode,PovertyLine,Engel,total)],by=c("ProvinceCode"))
+  MD<-MD[,Total_Exp_Month_Per:=Total_Exp_Month_Per]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
