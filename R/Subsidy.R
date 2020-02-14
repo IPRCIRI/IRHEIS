@@ -54,8 +54,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   names(RMD) <- c("Address", "FinalPoor","Decile","Decile_Nominal","Month")
   RTSubsidyW<-merge(RTSubsidyW,RMD)
   
-  xU<-UTSubsidyW[check1>455000]
-  xR<-RTSubsidyW[check1>455000]
+  xU<-UTSubsidyW[check1>1000000]
+  xR<-RTSubsidyW[check1>1000000]
   
   save(xU,file = "xU.rda")
   save(xR,file = "xR.rda")
