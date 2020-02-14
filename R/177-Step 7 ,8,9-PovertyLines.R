@@ -187,7 +187,14 @@ Prvjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv==9,Weight),
 Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv<3 & Job_Main_Code_Prv>0,Weight)+
              weighted.mean(Job_Main_Code_Pub<3 & Job_Main_Code_Pub>0,Weight),by=ProvinceCode]
 
-sub_share<-MD[FinalPoor==1,sub_share:=Subsidy/(12*Total_Exp_Month_nondurable)]
+sub_share<-MD[FinalPoor==1,.(HHID,Region.x,ProvinceCode,Subsidy,Decile,Decile_Nominal,
+                             sub_share=Subsidy/(12*Total_Exp_Month_nondurable))]
+
+sub_share2<-MD[FinalPoor==1,.( sub_share=weighted.mean(Subsidy/(12*Total_Exp_Month_nondurable),Weight),
+                               Edu=weighted.mean(HEduYears,Weight),
+                               NKids=weighted.mean(NKids,Weight),
+                               OtherExp=weighted.mean((Total_Exp_Month-OriginalFoodExpenditure-ServiceExp)/Total_Exp_Month,Weight)),by=ProvinceCode]
+
 
 
 
