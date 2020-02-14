@@ -111,7 +111,7 @@ for(year in (84:Settings$endyear)){
   colnames(EngleND)[colnames(EngleND) == 'Engel'] <- 'Engeln'
   colnames(EngleND)[colnames(EngleND) == 'Year'] <- 'Yearn'
   nnyear=year+2
-  if(year >Settings$endyear-1){nnyear=year}
+  if(year >Settings$endyear-2){nnyear=year}
   load(file=paste0(Settings$HEISProcessedPath,"Y",nnyear,"EngleDD.rda"))
   EngleNND <- EngleDD
   colnames(EngleNND)[colnames(EngleNND) == 'Engel'] <- 'Engelnn'
@@ -135,11 +135,12 @@ for(year in (84:Settings$endyear)){
   EngleMD<-merge(EngleMD,EngleDD)
   EngleMD<-merge(EngleMD,EngleND)
   EngleMD<-merge(EngleMD,EngleNND)
+                 
+  EngleMD <- EngleMD[,Engelm:=(Engel+Engelp+Engelpp+Engelnn+Engeln)/5]  
+  if(year==97){  EngleMD <- EngleMD[,Engelm:=(Engel+Engelp+Engelpp)/3]  }
+  if(year==96){  EngleMD <- EngleMD[,Engelm:=(Engel+Engelp+Engelpp+Engeln)/4]  }
   
-  
-  EngleMD <- EngleMD[,Engelm:=ifelse(year==97,(Engel+Engelp+Engelpp)/3,
-                              ifelse(year==96,(Engel+Engelp+Engelpp+Engeln)/4,
-                                     (Engel+Engelp+Engelpp+Engelnn+Engeln)/5))]
+#  EngleMD <- EngleMD[,Engelm:=Engel]
   EngleMD <- subset(EngleMD, select = c(cluster3,Engelm,Region,Year))
   
   
@@ -234,17 +235,17 @@ for(year in (84:Settings$endyear)){
          .(x=EngleH)]
   
 }
-FinalClusterEngelPrime <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
-colnames(FinalClusterEngelPrime)[colnames(FinalClusterEngelPrime) == 'FPLine'] <- 'FPLine_p'
-colnames(FinalClusterEngelPrime)[colnames(FinalClusterEngelPrime) == 'PovertyHCR'] <- 'PovertyHCR_p'
+FinalClusterEngelPrime_ave <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
+colnames(FinalClusterEngelPrime_ave)[colnames(FinalClusterEngelPrime_ave) == 'FPLine'] <- 'FPLine_p'
+colnames(FinalClusterEngelPrime_ave)[colnames(FinalClusterEngelPrime_ave) == 'PovertyHCR'] <- 'PovertyHCR_p'
 
 load(file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
 FinalClusterEngelPrime <- merge(FinalClusterEngelPrime,
                                 FinalClusterEngel[,.(Year,cluster3,FPLine,PovertyHCR)])
-
+FinalClusterEngelPrime_ave <- merge(FinalClusterEngelPrime_ave,FinalClusterEngelPrime)
 
 library(xlsx)
-write.xlsx(FinalClusterEngelPrime, "E:/FinalClusterEngelPrime.xlsx")
+write.xlsx(FinalClusterEngelPrime, "E:/FinalClusterEngelPrime_ave.xlsx")
 ggplot(FinalClusterResults)+
   geom_line(mapping = aes(x=Year,y=MetrPrice,col=factor(cluster3),line=factor(cluster3)))
 
