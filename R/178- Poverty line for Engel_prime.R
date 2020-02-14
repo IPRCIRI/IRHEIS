@@ -191,7 +191,8 @@ colnames(FinalClusterEngelPrime)[colnames(FinalClusterEngelPrime) == 'PovertyHCR
 
 load(file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
 FinalClusterEngelPrime <- merge(FinalClusterEngelPrime,FinalClusterEngel[,.(Year,cluster3,FPLine,PovertyHCR)])
-
+FinalClusterEngelPrime <- FinalClusterEngelPrime[,.(Year,cluster3,FPLine,PovertyHCR)]
+save(FinalClusterEngelPrime,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_prime.rda"))
 
 library(xlsx)
 write.xlsx(FinalClusterEngelPrime, "E:/FinalClusterEngelPrime.xlsx")
