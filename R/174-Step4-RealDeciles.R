@@ -13,7 +13,7 @@ Settings <- yaml.load_file("Settings.yaml")
 
 #library(readxl)
 library(data.table)
-#library(ggplot2)
+library(ggplot2)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -72,6 +72,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   #Calculate deciles by weights
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
+  
+  SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable)]
+  SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+  SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10),by=Region]
+  SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100),by=Region]
+  
+  
   
   C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
            Min=min(Total_Exp_Month_Per_nondurable),
@@ -136,7 +143,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
   }
-  MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile)],by="HHID")
+  MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
   
 
@@ -190,13 +197,83 @@ MD[,weighted.mean(Amusement_Exp/Total_Exp_Month,Weight),
            Mean=mean(Total_Exp_Month_Per_nondurable)),
         by=.(Region,NewArea,NewArea2,Decile)]
   
- # D<-MD[,.(.N,Mean=weighted.median(Durable_Exp/Size,Weight)),
- #        by=.(Region,NewArea2,Decile)]
+  AA<-MD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
+           Min=min(Total_Exp_Month_Per_nondurable),
+           Mean=mean(Total_Exp_Month_Per_nondurable)),
+        by=.(Region,Decile)]
+  
+  D<-MD[,.(.N,Mean=weighted.mean(Durable_Exp/Size,Weight)),
+         by=.(Region,NewArea2,Decile)]
+  
+   DD<-MD[,.(.N,Mean=weighted.mean(Durable_Exp/Size,Weight)),
+          by=.(Region,Decile)]
   
 #write.csv(A,file = "A.csv")
+#write.csv(AA,file = "AA.csv")
+#write.csv(DD,file = "DD.csv")
 #write.csv(B,file = "B.csv")
 #write.csv(C,file = "C.csv")
 #write.csv(D,file = "D.csv")
+   
+   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+   MD<-merge(MD,HHHouseProperties)
+   
+   FractioninData<-MD[,.(Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
+                         tenure=weighted.mean(tenure=="OwnLandandBuilding",Weight),
+                         HActivityState=weighted.mean(HActivityState=="Employed",Weight),
+                         Car=weighted.mean(car=="True",Weight)),
+                      by=c("Percentile_Nominal","Region")]
+   
+   #write.csv(FractioninData,file = "FractioninData.csv")
+   
+   Deciles<-MD[,.(HHID,Decile,Decile_Nominal,Region,ProvinceCode,HIndivNo,Weight)]
+   Deciles<-Deciles[,diff:=as.numeric(Decile)-as.numeric(Decile_Nominal)]
+   decileTest<-Deciles[,.(Positive=weighted.mean(diff>0,Weight),
+              Zero=weighted.mean(diff==0,Weight),
+              Minus=weighted.mean(diff<0,Weight)),by=ProvinceCode]
+   
+   decile7<-Deciles[,.(before=weighted.mean(as.numeric(Decile_Nominal)>7,Weight),
+                       after=weighted.mean(as.numeric(Decile)>7,Weight)),by=ProvinceCode]
+   
+   ###Exp
+   x2<-FractioninData[Region=="Urban",.(Total_Exp_Month_Per_nondurable,Percentile_Nominal)]
+   x2$Percentile_Nominal <- factor(x2$Percentile_Nominal, levels = x2$Percentile_Nominal[order(x2$Percentile_Nominal)])
+   ggplot(x2, aes(x = x2$Percentile_Nominal, y = x2$Total_Exp_Month_Per_nondurable)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   x2<-FractioninData[Region=="Rural",.(Total_Exp_Month_Per_nondurable,Percentile_Nominal)]
+   x2$Percentile_Nominal <- factor(x2$Percentile_Nominal, levels = x2$Percentile_Nominal[order(x2$Percentile_Nominal)])
+   ggplot(x2, aes(x = x2$Percentile_Nominal, y = x2$Total_Exp_Month_Per_nondurable)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   
+   ###Tenure
+   #x2<-FractioninData[Region=="Urban",.(tenure,Percentile)]
+   #x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$tenure)])
+   #ggplot(x2, aes(x = x2$Percentile, y = x2$tenure)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   #x2<-FractioninData[Region=="Rural",.(tenure,Percentile)]
+   #x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$tenure)])
+   #ggplot(x2, aes(x = x2$Percentile, y = x2$tenure)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   
+   ###HActivity
+   #x2<-FractioninData[Region=="Urban",.(HActivityState,Percentile)]
+   #x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$HActivityState)])
+   #ggplot(x2, aes(x = x2$Percentile, y = x2$HActivityState)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   # x2<-FractioninData[Region=="Rural",.(HActivityState,Percentile)]
+   #x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$HActivityState)])
+   #ggplot(x2, aes(x = x2$Percentile, y = x2$HActivityState)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   
+   ###Car
+   #x2<-FractioninData[Region=="Urban",.(Car,Percentile)]
+   #x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$Car)])
+   #ggplot(x2, aes(x = x2$Percentile, y = x2$Car)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
+   #x2<-FractioninData[Region=="Rural",.(Car,Percentile)]
+   #x2$Percentile <- factor(x2$Percentile, levels = x2$Percentile[order(x2$Car)])
+   #ggplot(x2, aes(x = x2$Percentile, y = x2$Car)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+   
 }
 
 

@@ -44,19 +44,21 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   UTSubsidyW[,check1:=Dycol05/(Dycol04*Dycol03)]
   UMD<-MD[Region=="Urban"]
-  UMD<-UMD[,.(HHID,FinalPoor,Decile,Month)]
-  names(UMD) <- c("Address", "FinalPoor","Decile","Month")
+  UMD<-UMD[,.(HHID,FinalPoor,Decile,Decile_Nominal,Month)]
+  names(UMD) <- c("Address", "FinalPoor","Decile","Decile_Nominal","Month")
   UTSubsidyW<-merge(UTSubsidyW,UMD)
   
   RTSubsidyW[,check1:=Dycol05/(Dycol04*Dycol03)]
   RMD<-MD[Region=="Rural"]
-  RMD<-RMD[,.(HHID,FinalPoor,Decile,Month)]
-  names(RMD) <- c("Address", "FinalPoor","Decile","Month")
+  RMD<-RMD[,.(HHID,FinalPoor,Decile,Decile_Nominal,Month)]
+  names(RMD) <- c("Address", "FinalPoor","Decile","Decile_Nominal","Month")
   RTSubsidyW<-merge(RTSubsidyW,RMD)
   
-  xU<-UTSubsidyW[check1>455000]
-  xR<-RTSubsidyW[check1>455000]
+  xU<-UTSubsidyW[check1>1000000]
+  xR<-RTSubsidyW[check1>1000000]
   
+  save(xU,file = "xU.rda")
+  save(xR,file = "xR.rda")
 }
 
 
