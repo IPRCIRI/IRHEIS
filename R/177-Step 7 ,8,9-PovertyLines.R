@@ -38,6 +38,11 @@ FinalClusterDiff <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=N
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
+HighEngles<-data.table(Year=NA_integer_,Region=NA_integer_,cluster3=NA_real_,N40=NA_real_,
+                    N45=NA_real_,N50=NA_real_,N=NA_real_)[0]
+
+
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -45,44 +50,41 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
-  #MD<-MD[cluster3==7]
+  #MD<-MD[cluster3==13]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   
   HighEngle1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                   TOriginalFoodExpenditure_Per<1.2*FPLine &
                   (TOriginalFoodExpenditure/Total_Exp_Month) > 0.4,
                 .(.N),by=.(Region,cluster3)]
+  names(HighEngle1)<-c("Region", "cluster3","N40")
   
   HighEngle2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                       TOriginalFoodExpenditure_Per<1.2*FPLine &
                       (TOriginalFoodExpenditure/Total_Exp_Month) > 0.45,
                     .(.N),by=.(Region,cluster3)]
+  names(HighEngle2)<-c("Region", "cluster3","N45")
   
   HighEngle3 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                       TOriginalFoodExpenditure_Per<1.2*FPLine &
                       (TOriginalFoodExpenditure/Total_Exp_Month) > 0.5,
                     .(.N),by=.(Region,cluster3)]
+  names(HighEngle3)<-c("Region", "cluster3","N50")
   
-  HighEngle<-rbind(HighEngle1,HighEngle2,HighEngle3)
- 
-  EngleD1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine &
-                (TOriginalFoodExpenditure/Total_Exp_Month) < 0.5 &
-                  (cluster3!=6 & cluster3!=7 & cluster3!=11 &
-                     cluster3!=12 & cluster3!=13),
+  HighEngle4 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                      TOriginalFoodExpenditure_Per<1.2*FPLine,
+                    .(.N),by=.(Region,cluster3)]
+  
+  HighEngle<-merge(HighEngle1,HighEngle2)
+  HighEngle<-merge(HighEngle,HighEngle3)
+  HighEngle<-merge(HighEngle,HighEngle4)
+
+  EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                  TOriginalFoodExpenditure_Per<1.2*FPLine ,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
-  EngleD2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                   TOriginalFoodExpenditure_Per<1.2*FPLine &
-                   (TOriginalFoodExpenditure/Total_Exp_Month) < 0.45 &
-                   (cluster3==6 | cluster3==7 | cluster3==11 |
-                      cluster3==12 | cluster3==13),
-                 .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
-                   FPLine=mean(FPLine)),by=.(Region,cluster3)]
-  
-  
-  EngleD<-rbind(EngleD1,EngleD2)
+
   
   EngleD[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
@@ -93,6 +95,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
+  
+  ################High Engle##################
+  
+  X1 <- HighEngle
+
+  X1[,Year:=year]
+
+  HighEngles <- rbind(HighEngles,X1)
   
   ################Country##################
 
@@ -137,6 +147,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
+  #cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
 
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
@@ -152,6 +163,42 @@ for(year in (Settings$startyear:Settings$endyear)){
 # compare Engle & Engle_prime in 178
 FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
 save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
+
+ggplot(HighEngles)+
+  geom_line(mapping = aes(x=Year,y=N50/N,col=factor(cluster3)))
+
+ggplot(FinalClusterResults)+
+  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
+
+#write.csv(FinalClusterResults,file = FinalClusterResults.csv)
+
+
+Job<-MD[FinalPoor==1,weighted.mean(HActivityState=="Employed",Weight),by=ProvinceCode]
+IncomeWithoutWork<-MD[FinalPoor==1,weighted.mean(HActivityState=="Income without Work",Weight),by=ProvinceCode]
+
+Widow<-MD[FinalPoor==1,weighted.mean(HSex=="Female",Weight),by=ProvinceCode]
+Widow2<-MD[HSex=="Female",weighted.mean(FinalPoor,Weight),by=ProvinceCode]
+
+load(file=paste0(Settings$HEISProcessedPath,"Y",97,"job.rda"))
+MD<-merge(MD,job,by="HHID")
+Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Pub==9,Weight),
+           by=ProvinceCode]
+
+Prvjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv==9,Weight),
+           by=ProvinceCode]
+
+Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv<3 & Job_Main_Code_Prv>0,Weight)+
+             weighted.mean(Job_Main_Code_Pub<3 & Job_Main_Code_Pub>0,Weight),by=ProvinceCode]
+
+sub_share<-MD[FinalPoor==1,.(HHID,Region.x,ProvinceCode,Subsidy,Decile,Decile_Nominal,
+                             sub_share=Subsidy/(12*Total_Exp_Month_nondurable))]
+
+sub_share2<-MD[FinalPoor==1,.( sub_share=weighted.mean(Subsidy/(12*Total_Exp_Month_nondurable),Weight),
+                               Edu=weighted.mean(HEduYears,Weight),
+                               NKids=weighted.mean(NKids,Weight),
+                               OtherExp=weighted.mean((Total_Exp_Month-OriginalFoodExpenditure-ServiceExp)/Total_Exp_Month,Weight)),by=ProvinceCode]
+
+
 
 
 endtime <- proc.time()

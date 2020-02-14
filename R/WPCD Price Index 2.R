@@ -1,4 +1,4 @@
-# WCPD Price Index
+# WCPD Price Index 2
 # 
 # Zahra Shahidi
 # 2020
@@ -68,12 +68,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
   
-  SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+  SMD<- SMD[order(NewArea2,Total_Exp_Month_Per_nondurable_Real)]
+  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=NewArea2]  # Cumulative Relative Weight
   
   #Calculate deciles by weights
-  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
-  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
+  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=NewArea2]
+  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=NewArea2]
   
   C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
             Min=min(Total_Exp_Month_Per_nondurable),
@@ -127,12 +127,12 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
     
-    SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+    SMD<- SMD[order(NewArea2,Total_Exp_Month_Per_nondurable_Real)]
+    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=NewArea2]  # Cumulative Relative Weight
     
     #Calculate deciles by weights
-    SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
-    SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
+    SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=NewArea2]
+    SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=NewArea2]
     SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
     save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
     
@@ -147,7 +147,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
- # load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+  # load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
   
   

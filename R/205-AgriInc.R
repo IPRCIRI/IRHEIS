@@ -48,6 +48,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   TAgriW[is.na(TAgriW)] <- 0
+  TAgriW2<-TAgriW[WorkType==4,.(HHID,WorkType)]
+  save(TAgriW2, file = paste0(Settings$HEISProcessedPath,"Y",year,"TAgriW2.rda"))
+  
+  
   AgriIncomeData <- TAgriW[,.(AgriNetIncomeY=sum(AgriNetIncomeY),
                               AgriEarners=.N,
                               Sector=1000)
