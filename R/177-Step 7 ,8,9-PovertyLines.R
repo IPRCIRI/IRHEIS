@@ -80,7 +80,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   HighEngle<-merge(HighEngle,HighEngle4)
 
   EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine ,
+                  TOriginalFoodExpenditure_Per<1.2*FPLine &
+                 (TOriginalFoodExpenditure/Total_Exp_Month) < 0.4,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
@@ -147,7 +148,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
-  #cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
+  cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
 
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
