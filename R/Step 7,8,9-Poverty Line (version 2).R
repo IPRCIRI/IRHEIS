@@ -48,7 +48,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD<-MD[cluster3==1]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   
-  EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine,
+  EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine2 & TOriginalFoodExpenditure_Per<1.2*FPLine2,
                 .(.N,Engle=weighted.mean((TOriginalFoodExpenditure+ServiceExp)/Total_Exp_Month,Weight),
                   FPLine2=mean(FPLine2)),by=.(Region,cluster3)]
   

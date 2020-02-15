@@ -147,14 +147,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
- # load( file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
-  
-  
-  
-  #write.csv(A,file = "A.csv")
-  #write.csv(B,file = "B.csv")
-  #write.csv(C,file = "C.csv")
-  #write.csv(D,file = "D.csv")
 }
 
 
