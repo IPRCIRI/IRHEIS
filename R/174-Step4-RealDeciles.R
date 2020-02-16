@@ -66,36 +66,31 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
   
-  SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+  ###Real- Urban & Rural
+  #SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]  #Deciling in Urban- Rural
+  #SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+  #SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
+  #SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
   
-  #Calculate deciles by weights
-  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
-  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
+  ###Real- Country
+  SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
+  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
   
-  SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable)]
-  SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
-  SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10),by=Region]
-  SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100),by=Region]
+  ###Nominal-  Urban & Rural
+  #SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable)]  #Deciling in Urban- Rural(Nominal)
+  #SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+  #SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10),by=Region]
+  #SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100),by=Region]
   
-  
-  
-  C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
-           Min=min(Total_Exp_Month_Per_nondurable),
-           Mean=mean(Total_Exp_Month_Per_nondurable)),
-        by=.(Region,NewArea,NewArea2,Decile)]
+  ###Nominal- Country
+  SMD<- SMD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
+  SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
+  SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
   
 
-  
-  # FirstSMD<-SMD[,.(HHID,Region,NewArea2,NewArea2,Percentile,Decile)]
-  # FirstSMD<-FirstSMD[,Realfirstpoor:=ifelse(Decile %in% 1:2,1,0)]
-  # save(FirstSMD, file=paste0(Settings$HEISProcessedPath,"Y",year,"FirstSMD.rda"))
-  
-
-  
-  B<-MD[,.(.N,Mean=mean(MetrPrice)),
-        by=.(Region,NewArea2)]
-  
   SMD[,NewPoor:=1]
   SMD[,ThisIterationPoor:=0]
   i <- 0
@@ -110,10 +105,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     TPBV1 <- T_P_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
     TPBV2 <- T_P_Bundle_Value[,weighted.mean(MetrPrice,Weight,na.rm = TRUE)]
     
-    # Index2 <- SMDIterationPoor[,.(PriceIndex= (weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1+
-    #                                             weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2)/2)
-    #                           ,by=.(Region,NewArea2)]
-    
+   
     X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
                 weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea2)]
     X[,V:=V1+V2]
@@ -132,23 +124,33 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
     
-    SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]
-    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+
+    ###Real- Urban & Rural
+    #SMD<- SMD[order(Region,Total_Exp_Month_Per_nondurable_Real)]  #Deciling in Urban- Rural
+    #SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
+    #SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
+    #SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
     
-    #Calculate deciles by weights
-    SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
-    SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
+    ###Real- Country
+    SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
+    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+    SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+    SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+    
     SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
     save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
     
     
     cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
   }
+  
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
   
 
   MD[,weighted.mean(InitialPoor,Weight), by=.(NewArea2,Region)]
+  MD[,sum(Weight*Size), by=.(Decile,Region)][order(Region,Decile)]
+  MD[,sum(Weight*Size), by=.(Decile_Nominal,Region)][order(Region,Decile_Nominal)]
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
