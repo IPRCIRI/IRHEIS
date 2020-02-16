@@ -166,47 +166,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   
     MD[as.numeric(Decile)<2,weighted.mean(FinalPoor,Weight)]
     
-    MD5<-MD[ProvinceCode==11,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
+    MD5<-MD[,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
                           ifelse(FinalPoor==1 & FinalFoodPoor==0,"OnlyFinalPoor",
                            ifelse(FinalPoor==0 & FinalFoodPoor==1,"OnlyFoodPoor","Both")))]
-    a<-ggplot(MD5,aes(x=HHEngle, fill=factor(Group))) + geom_density(alpha=0.25)+
+   
+     a<-ggplot(MD5,aes(x=HHEngle, fill=factor(Group))) + geom_density(alpha=0.25)+
       ggtitle(year)
     
     plot(a)
     
-    
-    D1 <- MD[Decile==1 & Region=="Urban",.(N1=sum(Weight)),by=NewArea2]
-    D2 <- MD[Decile==2 & Region=="Urban",.(N2=sum(Weight)),by=NewArea2]
-    D3 <- MD[Decile==3 & Region=="Urban",.(N3=sum(Weight)),by=NewArea2]
-    D4 <- MD[Decile==4 & Region=="Urban",.(N4=sum(Weight)),by=NewArea2]
-    D5 <- MD[Decile==5 & Region=="Urban",.(N5=sum(Weight)),by=NewArea2]
-    D6 <- MD[Decile==6 & Region=="Urban",.(N6=sum(Weight)),by=NewArea2]
-    D7 <- MD[Decile==7 & Region=="Urban",.(N7=sum(Weight)),by=NewArea2]
-    D8 <- MD[Decile==8 & Region=="Urban",.(N8=sum(Weight)),by=NewArea2]
-    D9 <- MD[Decile==9 & Region=="Urban",.(N9=sum(Weight)),by=NewArea2]
-    D10 <- MD[Decile==10 & Region=="Urban",.(N10=sum(Weight)),by=NewArea2]
-    Dx <- MD[Region=="Urban",.(Nx=sum(Weight)),by=NewArea2]
-    Dxx <- merge(Dx,D1)
-    Dxx <- merge(Dxx,D2)
-    Dxx <- merge(Dxx,D3)
-    Dxx <- merge(Dxx,D4)
-    Dxx <- merge(Dxx,D5)
-    Dxx <- merge(Dxx,D6)
-    Dxx <- merge(Dxx,D7)
-    Dxx <- merge(Dxx,D8)
-    Dxx <- merge(Dxx,D9)
-    Dxx <- merge(Dxx,D10)
-    Dxx[,p1:=N1/Nx*100]
-    Dxx[,p2:=N2/Nx*100]
-    Dxx[,p3:=N3/Nx*100]
-    Dxx[,p4:=N4/Nx*100]
-    Dxx[,p5:=N5/Nx*100]
-    Dxx[,p6:=N6/Nx*100]
-    Dxx[,p7:=N7/Nx*100]
-    Dxx[,p8:=N8/Nx*100]
-    Dxx[,p9:=N9/Nx*100]
-    Dxx[,p10:=N10/Nx*100]
-}
+        }
 # compare Engle & Engle_prime in 178
 FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
 save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
@@ -227,7 +196,7 @@ Widow<-MD[FinalPoor==1,weighted.mean(HSex=="Female",Weight),by=ProvinceCode]
 Widow2<-MD[HSex=="Female",weighted.mean(FinalPoor,Weight),by=ProvinceCode]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",97,"job.rda"))
-MD<-merge(MD,job,by="HHID")
+MD<-merge(MD,job,by=c("HHID","Region","HActivityState"))
 Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Pub==9,Weight),
            by=ProvinceCode]
 
@@ -237,7 +206,7 @@ Prvjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv==9,Weight),
 Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv<3 & Job_Main_Code_Prv>0,Weight)+
              weighted.mean(Job_Main_Code_Pub<3 & Job_Main_Code_Pub>0,Weight),by=ProvinceCode]
 
-sub_share<-MD[FinalPoor==1,.(HHID,Region.x,ProvinceCode,Subsidy,Decile,Decile_Nominal,
+sub_share<-MD[FinalPoor==1,.(HHID,Region,ProvinceCode,Subsidy,Decile,Decile_Nominal,
                              sub_share=Subsidy/(12*Total_Exp_Month_nondurable))]
 
 sub_share2<-MD[FinalPoor==1,.( sub_share=weighted.mean(Subsidy/(12*Total_Exp_Month_nondurable),Weight),
