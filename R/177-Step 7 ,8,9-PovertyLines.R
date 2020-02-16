@@ -80,8 +80,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   HighEngle<-merge(HighEngle,HighEngle4)
 
   EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine &
-                 (TOriginalFoodExpenditure/Total_Exp_Month) < 0.4,
+                  TOriginalFoodExpenditure_Per<1.2*FPLine,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
@@ -147,7 +146,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
-  cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
+  cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
 
   MD1<-MD[,.(HHID,FinalPoor)]
@@ -160,6 +159,53 @@ for(year in (Settings$startyear:Settings$endyear)){
         cluster3==7,
         .(x=TOriginalFoodExpenditure/Total_Exp_Month)]
   
+  y<-MD[,.(.N),by=c("Region","NewArea2")][order(Region,NewArea2)]
+    x<-MD[as.numeric(Decile)==10,.(.N),by=c("Region","NewArea2")][order(Region,NewArea2)]
+  z<-merge(x,y,by=c("Region","NewArea2"))
+  z[,share:=N.x/N.y]
+  
+    MD[as.numeric(Decile)<2,weighted.mean(FinalPoor,Weight)]
+    
+    MD5<-MD[ProvinceCode==11,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
+                          ifelse(FinalPoor==1 & FinalFoodPoor==0,"OnlyFinalPoor",
+                           ifelse(FinalPoor==0 & FinalFoodPoor==1,"OnlyFoodPoor","Both")))]
+    a<-ggplot(MD5,aes(x=HHEngle, fill=factor(Group))) + geom_density(alpha=0.25)+
+      ggtitle(year)
+    
+    plot(a)
+    
+    
+    D1 <- MD[Decile==1 & Region=="Urban",.(N1=sum(Weight)),by=NewArea2]
+    D2 <- MD[Decile==2 & Region=="Urban",.(N2=sum(Weight)),by=NewArea2]
+    D3 <- MD[Decile==3 & Region=="Urban",.(N3=sum(Weight)),by=NewArea2]
+    D4 <- MD[Decile==4 & Region=="Urban",.(N4=sum(Weight)),by=NewArea2]
+    D5 <- MD[Decile==5 & Region=="Urban",.(N5=sum(Weight)),by=NewArea2]
+    D6 <- MD[Decile==6 & Region=="Urban",.(N6=sum(Weight)),by=NewArea2]
+    D7 <- MD[Decile==7 & Region=="Urban",.(N7=sum(Weight)),by=NewArea2]
+    D8 <- MD[Decile==8 & Region=="Urban",.(N8=sum(Weight)),by=NewArea2]
+    D9 <- MD[Decile==9 & Region=="Urban",.(N9=sum(Weight)),by=NewArea2]
+    D10 <- MD[Decile==10 & Region=="Urban",.(N10=sum(Weight)),by=NewArea2]
+    Dx <- MD[Region=="Urban",.(Nx=sum(Weight)),by=NewArea2]
+    Dxx <- merge(Dx,D1)
+    Dxx <- merge(Dxx,D2)
+    Dxx <- merge(Dxx,D3)
+    Dxx <- merge(Dxx,D4)
+    Dxx <- merge(Dxx,D5)
+    Dxx <- merge(Dxx,D6)
+    Dxx <- merge(Dxx,D7)
+    Dxx <- merge(Dxx,D8)
+    Dxx <- merge(Dxx,D9)
+    Dxx <- merge(Dxx,D10)
+    Dxx[,p1:=N1/Nx*100]
+    Dxx[,p2:=N2/Nx*100]
+    Dxx[,p3:=N3/Nx*100]
+    Dxx[,p4:=N4/Nx*100]
+    Dxx[,p5:=N5/Nx*100]
+    Dxx[,p6:=N6/Nx*100]
+    Dxx[,p7:=N7/Nx*100]
+    Dxx[,p8:=N8/Nx*100]
+    Dxx[,p9:=N9/Nx*100]
+    Dxx[,p10:=N10/Nx*100]
 }
 # compare Engle & Engle_prime in 178
 FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
