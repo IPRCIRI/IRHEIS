@@ -25,6 +25,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                ServiceExp,FoodExpenditure,Total_Exp_Month,
                NewArea,NewArea2,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
                # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
+               Durable_Exp,
                TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
                Weight,MetrPrice,Size,EqSizeOECD)]
   
@@ -90,6 +91,21 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
   SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
   
+  
+  C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
+            Min=min(Total_Exp_Month_Per_nondurable),
+            Mean=mean(Total_Exp_Month_Per_nondurable)),
+         by=.(Region,NewArea,NewArea2,Decile)]
+  
+  D<-SMD[,.(.N,Mean=weighted.mean(Durable_Exp/Size,Weight)),
+        by=.(Region,NewArea,NewArea2,Decile)]
+  
+  B<-SMD[,.(.N,Mean=mean(MetrPrice)),
+        by=.(Region,NewArea2)]
+  
+  write.csv(B,file = "B.csv")
+  write.csv(C,file = "C.csv")
+  write.csv(D,file = "D.csv")
 
   SMD[,NewPoor:=1]
   SMD[,ThisIterationPoor:=0]
@@ -143,6 +159,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
   }
+  
+
   
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
