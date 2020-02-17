@@ -159,17 +159,76 @@ for(year in (Settings$startyear:Settings$endyear)){
         cluster3==7,
         .(x=TOriginalFoodExpenditure/Total_Exp_Month)]
   
-  y<-MD[,.(.N),by=c("Region","NewArea2")][order(Region,NewArea2)]
-    x<-MD[as.numeric(Decile)==10,.(.N),by=c("Region","NewArea2")][order(Region,NewArea2)]
-  z<-merge(x,y,by=c("Region","NewArea2"))
-  z[,share:=N.x/N.y]
-  
+
     MD[as.numeric(Decile)<2,weighted.mean(FinalPoor,Weight)]
     
     MD5<-MD[,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
                           ifelse(FinalPoor==1 & FinalFoodPoor==0,"OnlyFinalPoor",
                            ifelse(FinalPoor==0 & FinalFoodPoor==1,"OnlyFoodPoor","Both")))]
    
+    MD[ProvinceCode==0,ProvinceName:="Markazi"]
+    MD[ProvinceCode==1,ProvinceName:="Gilan"]
+    MD[ProvinceCode==2,ProvinceName:="Mazandaran"]
+    MD[ProvinceCode==3,ProvinceName:="Az_Sharghi"]
+    MD[ProvinceCode==4,ProvinceName:="Az_Gharbi"]
+    MD[ProvinceCode==5,ProvinceName:="Kermanshah"]
+    MD[ProvinceCode==6,ProvinceName:="Khoozestan"]
+    MD[ProvinceCode==7,ProvinceName:="Fars"]
+    MD[ProvinceCode==8,ProvinceName:="Kerman"]
+    MD[ProvinceCode==9,ProvinceName:="Khorasan_Razavi"]
+    MD[ProvinceCode==10,ProvinceName:="Esfahan"]
+    MD[ProvinceCode==11,ProvinceName:="Sistan"]
+    MD[ProvinceCode==12,ProvinceName:="Kordestan"]
+    MD[ProvinceCode==13,ProvinceName:="Hamedan"]
+    MD[ProvinceCode==14,ProvinceName:="Chaharmahal"]
+    MD[ProvinceCode==15,ProvinceName:="Lorestan"]
+    MD[ProvinceCode==16,ProvinceName:="Ilam"]
+    MD[ProvinceCode==17,ProvinceName:="Kohkilooye"]
+    MD[ProvinceCode==18,ProvinceName:="Booshehr"]
+    MD[ProvinceCode==19,ProvinceName:="Zanjan"]
+    MD[ProvinceCode==20,ProvinceName:="Semnan"]
+    MD[ProvinceCode==21,ProvinceName:="Yazd"]
+    MD[ProvinceCode==22,ProvinceName:="Hormozgan"]
+    MD[ProvinceCode==23,ProvinceName:="Tehran"]
+    MD[ProvinceCode==24,ProvinceName:="Ardebil"]
+    MD[ProvinceCode==25,ProvinceName:="Ghom"]
+    MD[ProvinceCode==26,ProvinceName:="Ghazvin"]
+    MD[ProvinceCode==27,ProvinceName:="Golestan"]
+    MD[ProvinceCode==28,ProvinceName:="Khorasan_Shomali"]
+    MD[ProvinceCode==29,ProvinceName:="Khorasan_Jonoobi"]
+    MD[ProvinceCode==30,ProvinceName:="Alborz"]
+    
+    
+    MDD<-MD[,.(Population=sum(Weight*Size)), by=.(Decile,ProvinceName)][order(ProvinceName,Decile)]
+      ggplot(MDD, aes(fill=factor(Decile), y=Population, x=ProvinceName)) + 
+      geom_bar(position="fill", stat="identity") + theme_bw() +
+        theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+    
+    
+    Decile1<-MD[as.numeric(Decile)<2,.(HHID,Region,ProvinceName,NewArea2,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
+    Decile1Poors<-Decile1[,.(Decile1Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
+    ggplot(Decile1Poors, aes( y=Decile1Poors, x=ProvinceName)) + 
+      geom_bar(position="dodge", stat="identity") + theme_bw() +
+      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+    
+    Decile2<-MD[as.numeric(Decile)<3,.(HHID,Region,ProvinceName,NewArea2,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
+    Decile2Poors<-Decile2[,.(Decile2Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
+    ggplot(Decile2Poors, aes( y=Decile2Poors, x=ProvinceName)) + 
+      geom_bar(position="dodge", stat="identity") + theme_bw() +
+      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+    
+    Decile5<-MD[as.numeric(Decile)>3,.(HHID,Region,ProvinceName,NewArea2,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
+    Decile5Poors<-Decile5[,.(Decile5Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
+    ggplot(Decile5Poors, aes( y=Decile5Poors, x=ProvinceName)) + 
+      geom_bar(position="dodge", stat="identity") + theme_bw() +
+      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+    
+    MDP<-MD[FinalPoor==1,.(Population=sum(Weight*Size)), by=.(Decile,ProvinceName)][order(ProvinceName,Decile)]
+    ggplot(MDP, aes(fill=factor(Decile), y=Population, x=ProvinceName)) + 
+      geom_bar(position="fill", stat="identity") + theme_bw() +
+      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+    
      a<-ggplot(MD5,aes(x=HHEngle, fill=factor(Group))) + geom_density(alpha=0.25)+
       ggtitle(year)
     

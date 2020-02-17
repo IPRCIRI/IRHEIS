@@ -92,20 +92,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
   
   
-  C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
-            Min=min(Total_Exp_Month_Per_nondurable),
-            Mean=mean(Total_Exp_Month_Per_nondurable)),
-         by=.(Region,NewArea,NewArea2,Decile)]
+ # C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
+ #           Min=min(Total_Exp_Month_Per_nondurable),
+ #           Mean=mean(Total_Exp_Month_Per_nondurable)),
+ #        by=.(Region,NewArea,NewArea2,Decile)]
   
-  D<-SMD[,.(.N,Mean=weighted.mean(Durable_Exp/Size,Weight)),
-        by=.(Region,NewArea,NewArea2,Decile)]
+ # D<-SMD[,.(.N,Mean=weighted.mean(Durable_Exp/Size,Weight)),
+ #       by=.(Region,NewArea,NewArea2,Decile)]
+
+ # B<-SMD[,.(.N,Mean=mean(MetrPrice)),
+ #       by=.(Region,NewArea,NewArea2)]
   
-  B<-SMD[,.(.N,Mean=mean(MetrPrice)),
-        by=.(Region,NewArea2)]
-  
-  write.csv(B,file = "B.csv")
-  write.csv(C,file = "C.csv")
-  write.csv(D,file = "D.csv")
+ # write.csv(B,file = "B.csv")
+ # write.csv(C,file = "C.csv")
+ # write.csv(D,file = "D.csv")
 
   SMD[,NewPoor:=1]
   SMD[,ThisIterationPoor:=0]
@@ -171,8 +171,27 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,sum(Weight*Size), by=.(Decile_Nominal,Region)][order(Region,Decile_Nominal)]
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+  
+  ###Total
+  MDG1<-MD[,.(Population=sum(Weight*Size)), by=.(Decile,Region)][order(Region,Decile)]
+  ggplot(MDG1, aes(fill=Region, y=Population, x=Decile)) + 
+    geom_bar(position="stack", stat="identity")
 
-
+  ###Tehran
+  MDG2<-MD[,Tehran:=ifelse(NewArea==2301,1,0)]
+  MDG2<-MDG2[,.(Population=sum(Weight*Size)), by=.(Decile,Tehran)][order(Tehran,Decile)]
+  ggplot(MDG2, aes(fill=factor(Tehran), y=Population, x=Decile)) + 
+    geom_bar(position="stack", stat="identity")
+  
+  ###Sistan
+  MDG3<-MD[,Sistan:=ifelse(ProvinceCode==11,1,0)]
+  MDG3<-MDG3[,.(Population=sum(Weight*Size)), by=.(Decile,Sistan)][order(Sistan,Decile)]
+  ggplot(MDG3, aes(fill=factor(Sistan), y=Population, x=Decile)) + 
+    geom_bar(position="stack", stat="identity")
+  
+  
+  
+  
 }
 
 
