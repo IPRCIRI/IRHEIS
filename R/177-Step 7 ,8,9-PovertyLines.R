@@ -162,10 +162,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 
     MD[as.numeric(Decile)<2,weighted.mean(FinalPoor,Weight)]
     
-    MD5<-MD[,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
+    MD5<-MD[NewArea==11]
+    MD5<-MD5[,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
                           ifelse(FinalPoor==1 & FinalFoodPoor==0,"OnlyFinalPoor",
                            ifelse(FinalPoor==0 & FinalFoodPoor==1,"OnlyFoodPoor","Both")))]
-   
+    a<-ggplot(MD5,aes(x=HHEngle, fill=factor(Group))) + geom_density(alpha=0.25)+
+      ggtitle(year)
+    plot(a)
+    
     MD[ProvinceCode==0,ProvinceName:="Markazi"]
     MD[ProvinceCode==1,ProvinceName:="Gilan"]
     MD[ProvinceCode==2,ProvinceName:="Mazandaran"]
@@ -229,10 +233,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       geom_bar(position="fill", stat="identity") + theme_bw() +
       theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
     
-     a<-ggplot(MD5,aes(x=HHEngle, fill=factor(Group))) + geom_density(alpha=0.25)+
-      ggtitle(year)
-    
-    plot(a)
+
     
         }
 # compare Engle & Engle_prime in 178
