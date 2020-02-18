@@ -62,7 +62,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD<-SMD[ ,HighHouse:=ifelse((ProvinceCode==23 & HomePrice98>12000000000) |
                                   (ProvinceCode!=23 & HomePrice98>9000000000),1,0) ]
   HighHouseProv<-SMD[,weighted.mean(HighHouse,Weight),by=ProvinceCode]
-  HighHouseDecile<-SMD[,weighted.mean(HighHouse,Weight),by=c("Decile","Region")]
+  HighHouseDecile<-SMD[,weighted.mean(HighHouse,Weight),by=c("Decile")]
   
   #HT1<-SMD[ProvinceCode==23 & MetrPrice98>360000]
   #HT2<-SMD[ProvinceCode!=23 & MetrPrice98>270000]
@@ -76,7 +76,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   car <-SMD[car=="True",.(car=sum(Weight*Size))]
   car2<-SMD[car=="True",.(car2=sum(Weight*Size)),by=.(Region,Decile)]
-  car3<-SMD[,weighted.mean(car=="True",Weight),by=.(Region,Decile)]
+  car3<-SMD[,weighted.mean(car=="True",Weight),by=.(Decile)]
   
   Active <-SMD[HActivityState=="Employed",.(Active=sum(Weight*Size))]
   Active2<-SMD[HActivityState=="Employed",.(Active2=sum(Weight*Size)),by=.(Region,Decile)]
@@ -96,10 +96,14 @@ for(year in (Settings$startyear:Settings$endyear)){
                               HActivityState=="Employed" & car=="True",Weight),
              by=.(ProvinceCode)]
   
+  AllFinal<-SMD[,weighted.mean(((tenure=="OwnLandandBuilding" | tenure=="Apartment") & 
+                                     HActivityState=="Employed" & car=="True"),Weight),
+                   by=.(Decile)]
+  
   EmployeeProv<-SMD[,weighted.mean((WorkType.x==4 | WorkType.y==4),Weight),
              by=.(ProvinceCode)]
   EmployeeDecile<-SMD[,weighted.mean((WorkType.x==4 | WorkType.y==4),Weight),
-                    by=.(Region,Decile)]
+                    by=.(Decile)]
 
   
   TotalProv<-SMD[,weighted.mean(((tenure=="OwnLandandBuilding" | tenure=="Apartment") & 
@@ -124,7 +128,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                                   (Size==3 & Total_Exp98>60000000) |
                                   (Size==4 & Total_Exp98>70000000) |
                                   (Size>=5 & Total_Exp98>80000000),Weight),
-                 by=.(Region,Decile)]
+                 by=.(Decile)]
   
   
   Having<-merge(HousePrice2,HighIncome2,all = TRUE)
