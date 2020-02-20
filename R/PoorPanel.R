@@ -14,17 +14,63 @@ library(ggplot2)
 library(stats)
 library(spatstat)
 
-
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   inflation <- as.data.table(read_excel("~/GitHub/IRHEIS/Data/inflation.xlsx",col_names = T))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   C<-MD[,.(HHID,cluster3,EqSizeCalory)]
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Specific.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
 SMD<-SMD[,.(HHID,PriceIndex)]
 MD<-merge(MD,SMD,by=c("HHID"))
+MD<-merge(MD,Specific,by=c("HHID"))
+MD<-merge(MD,MD1,by=c("HHID"))
+#MD<-MD[FinalPoor==1]
+
+MD<-MD[,LivestockExpenditure:=LivestockExpenditure/EqSizeCalory]
+MD<-MD[,SheepMeatExpenditure:=SheepMeatExpenditure/EqSizeCalory]
+MD<-MD[,CowMeatExpenditure:=CowMeatExpenditure/EqSizeCalory]
+MD<-MD[,CamelMeatExpenditure:=CamelMeatExpenditure/EqSizeCalory]
+
+morgh<-MD[,BirdsMeatExpenditure:=BirdsMeatExpenditure/EqSizeCalory]
+morgh<-MD[,weighted.mean(BirdsMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+
+goosht<-MD[,weighted.mean(LivestockExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht1<-MD[,weighted.mean(SheepMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht2<-MD[,weighted.mean(CowMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht3<-MD[,weighted.mean(CamelMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+
+meat<-as.data.table(cbind(goosht$ProvinceName,goosht$FinalPoor,goosht$V1,goosht1$V1,goosht2$V1,goosht3$V1))
+
+
+Dabestan<-MD[,weighted.mean(Enrollment_Dabestan_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan1<-MD[,weighted.mean(Enrollment_Dabestan_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan2<-MD[,weighted.mean(Enrollment_Rahnamayi_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan3<-MD[,weighted.mean(Enrollment_Rahnamayi_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan4<-MD[,weighted.mean(Enrollment_Dabirestan_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan5<-MD[,weighted.mean(Enrollment_Dabirestan_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan6<-MD[,weighted.mean(KelasKonkoor,Weight*Size),by=c("ProvinceName","FinalPoor")]
+
+edu<-as.data.table(cbind(Dabestan$ProvinceName,Dabestan$FinalPoor,Dabestan$V1,
+                         Dabestan1$V1,Dabestan2$V1,Dabestan3$V1,Dabestan4$V1,
+                         Dabestan5$V1,Dabestan6$V1))
+
+tooth<-MD[,weighted.mean(tooth_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+tooth<-MD[,weighted.mean(tooth_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+
+visit<-MD[,weighted.mean(Visit_Omoomi_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit1<-MD[,weighted.mean(Visit_Omoomi_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit2<-MD[,weighted.mean(Visit_Motekhases_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit3<-MD[,weighted.mean(Visit_Motekhases_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit4<-MD[,weighted.mean(Visit_Mama_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit5<-MD[,weighted.mean(Visit_Mama_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit<-as.data.table(cbind(visit$ProvinceName,visit$FinalPoor,visit$V1,visit1$V1,
+                     visit2$V1,visit3$V1,visit4$V1,visit5$V1))
+
+phd<-MD[,weighted.mean(NPhD+NMasters,Weight*Size),by=c("ProvinceName","FinalPoor")]
 inflation<-inflation[Year==year]
 cpi<-inflation$CPI
 cpi<-as.numeric(cpi)
@@ -52,7 +98,7 @@ p6<-MD[,weighted.mean(Cloth_Exp,Weight*Size),by=c("cluster3")]
 p7<-MD[,weighted.mean(Amusement_Exp,Weight*Size),by=c("cluster3")]
 p8<-MD[,weighted.mean(Education_Exp,Weight*Size),by=c("cluster3")]
 p9<-MD[,weighted.mean(ServiceExp,Weight*Size),by=c("cluster3")]
-p10<-MD[,weighted.mean(Area,Weight*Size),by=c("cluster3")]
+p10<-MD[,weighted.mean(Area/Size,Weight*Size),by=c("ProvinceName","FinalPoor")]
 p11<-MD[,weighted.mean(MetrPrice,Weight*Size),by=c("cluster3")]
 p12<-MD[,weighted.mean(ServiceExp,Weight*Size),by=c("cluster3")]
 p13<-MD[,weighted.mean(Furniture_Exp,Weight*Size),by=c("cluster3")]

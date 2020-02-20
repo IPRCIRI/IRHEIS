@@ -39,6 +39,8 @@ Specific<-merge(Specific,Durable20,all = TRUE)
 Specific<-merge(Specific,Durable21,all = TRUE)
 
 Specific[is.na(Specific)] <- 0
+save(Specific, file=paste0(Settings$HEISProcessedPath,"Y",year,"Specific.rda"))
+
 }
 
 endtime <- proc.time()
