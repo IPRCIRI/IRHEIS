@@ -190,6 +190,59 @@ for(year in (Settings$startyear:Settings$endyear)){
     geom_bar(position="stack", stat="identity")
   
   
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+  MD<-merge(MD,HHHouseProperties)
+  
+  FractioninData<-MD[,.(Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
+                        tenure=weighted.mean(tenure=="OwnLandandBuilding",Weight),
+                        HActivityState=weighted.mean(HActivityState=="Employed",Weight),
+                        Car=weighted.mean(car=="True",Weight)),
+                     by=c("Percentile_Nominal")]
+  
+  #write.csv(FractioninData,file = "FractioninData.csv")
+  
+  Deciles<-MD[,.(HHID,Decile,Decile_Nominal,Region,ProvinceCode,HIndivNo,Weight)]
+  Deciles<-Deciles[,diff:=as.numeric(Decile)-as.numeric(Decile_Nominal)]
+  decileTest<-Deciles[,.(Positive=weighted.mean(diff>0,Weight),
+                         Zero=weighted.mean(diff==0,Weight),
+                         Minus=weighted.mean(diff<0,Weight)),by=ProvinceCode]
+  
+  decile7<-Deciles[,.(before=weighted.mean(as.numeric(Decile_Nominal)>7,Weight),
+                      after=weighted.mean(as.numeric(Decile)>7,Weight)),by=ProvinceCode]
+  
+  ###Exp
+  x2<-FractioninData[,.(Total_Exp_Month_Per_nondurable,Percentile_Nominal)]
+  x2$Percentile_Nominal <- factor(x2$Percentile_Nominal, levels = x2$Percentile_Nominal[order(x2$Percentile_Nominal)])
+  ggplot(x2, aes(x = x2$Percentile_Nominal, y = x2$Total_Exp_Month_Per_nondurable)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+  
+
+  
+  ###Tenure
+  x2<-FractioninData[,.(tenure,Percentile_Nominal)]
+  x2$Percentile_Nominal <- factor(x2$Percentile_Nominal, levels = x2$Percentile_Nominal[order(x2$tenure)])
+  ggplot(x2, aes(x = x2$Percentile_Nominal, y = x2$tenure)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+  
+
+  
+  ###HActivity
+  x2<-FractioninData[,.(HActivityState,Percentile_Nominal)]
+  x2$Percentile_Nominal <- factor(x2$Percentile_Nominal, levels = x2$Percentile_Nominal[order(x2$HActivityState)])
+  ggplot(x2, aes(x = x2$Percentile_Nominal, y = x2$HActivityState)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+  
+ 
+  ###Car
+  x2<-FractioninData[,.(Car,Percentile_Nominal)]
+  x2$Percentile_Nominal <- factor(x2$Percentile_Nominal, levels = x2$Percentile_Nominal[order(x2$Car)])
+  ggplot(x2, aes(x = x2$Percentile_Nominal, y = x2$Car)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+  
+  decile7<-Deciles[,.(before=weighted.mean(as.numeric(Decile_Nominal)>7,Weight),
+                      after=weighted.mean(as.numeric(Decile)>7,Weight)),by=ProvinceCode]
+  
+  Deciles<-MD[,.(HHID,Decile,Decile_Nominal,Region,ProvinceCode,HIndivNo,Weight)]
+  Deciles<-Deciles[,diff:=as.numeric(Decile)-as.numeric(Decile_Nominal)]
+  decileTest<-Deciles[,.(Positive=weighted.mean(diff>0,Weight),
+                         Zero=weighted.mean(diff==0,Weight),
+                         Minus=weighted.mean(diff<0,Weight)),by=ProvinceCode]
   
   
 }
