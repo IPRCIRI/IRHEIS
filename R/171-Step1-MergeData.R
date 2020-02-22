@@ -82,7 +82,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for (col in c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
                 "Communication_Exp", "Education_Exp", "HouseandEnergy_Exp", 
                 "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", "Transportation_Exp",
-                "Other_Exp", "Medical_Exp", "Durable_Exp", 
+                "Other_Exp", "Medical_Exp", "Durable_Exp", "Durable_Sale","Durable_Pure_Exp",
                 "Resturant_Exp","ServiceExp"
   )) 
     MD[is.na(get(col)), (col) := 0]
@@ -96,6 +96,7 @@ for(year in (Settings$startyear:Settings$endyear)){
           "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
           "Transportation_Exp", "Other_Exp")
   w <- c(nw, "Medical_Exp", "Durable_Exp")
+  #w <- c(nw, "Medical_Exp", "Durable_Pure_Exp")
   # pw <- c(nw, "Added_Food_Exp_Month")
   #Lw <- c(pw,  "Medical_Exp", "Durable_Exp")
   
