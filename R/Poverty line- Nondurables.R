@@ -93,14 +93,21 @@ for(year in (Settings$startyear:Settings$endyear)){
                  TOriginalFoodExpenditure_Per<1.2*FPLine,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),
                  FPLine=mean(FPLine),
+                 DurableMedical_to_NonDurable_mean_Share=weighted.mean((Durable_Exp+Medical_Exp)/Total_Exp_Month_nondurable,Weight),
+                 Durable_to_NonDurable_mean_Share=weighted.mean(Durable_Exp/Total_Exp_Month_nondurable,Weight),
+                 Durable_to_NonDurable_median_Share=weighted.median(Durable_Exp/Total_Exp_Month_nondurable,Weight),
                  Durable_Exp_mean=weighted.mean(Durable_Exp,Weight),
                  Durable_Exp_median=weighted.median(Durable_Exp,Weight),
                  Durable_Exp_mean_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight),
                  Durable_Exp_median_Per=weighted.median(Durable_Exp/EqSizeOECD,Weight)),by=.(Region,cluster3)]
   
+  ggplot(EngleD, aes(fill=factor(cluster3), y=Durable_to_NonDurable_mean_Share, x=cluster3)) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) + ylim(0,0.55)
   
   
-  EngleD[,PovertyLine:=FPLine/Engel+Durable_Exp_mean_Per]
+  EngleD[,PovertyLine_NonDurable:=FPLine/Engel]
+  EngleD[,PovertyLine:=PovertyLine_NonDurable*(1+Durable_to_NonDurable_mean_Share)]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
