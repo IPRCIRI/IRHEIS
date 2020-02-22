@@ -276,6 +276,7 @@ sub_share2<-MD[FinalPoor==1,.( sub_share=weighted.mean(Subsidy/(12*Total_Exp_Mon
                                NKids=weighted.mean(NKids,Weight),
                                OtherExp=weighted.mean((Total_Exp_Month-OriginalFoodExpenditure-ServiceExp)/Total_Exp_Month,Weight)),by=ProvinceCode]
 
+###Durable- Cluster
 DExp<-MD[,.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="cluster3"]
 ggplot(DExp, aes(fill=factor(cluster3), y=Durable_Exp_Per, x=cluster3)) + 
   geom_bar(position="dodge", stat="identity") + theme_bw() +
@@ -288,6 +289,27 @@ ggplot(DSale, aes(fill=factor(cluster3), y=Durable_Sale_Per, x=cluster3)) +
 
 DPure<-MD[,.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="cluster3"]
 ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Per, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+###Durables share- Cluster
+DExp<-MD[,.(Durable_Exp_Share=weighted.mean(Durable_Exp/Total_Exp_Month,Weight)),by="cluster3"]
+ggplot(DExp, aes(fill=factor(cluster3), y=Durable_Exp_Share, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DSale<-MD[,.(Durable_Sale_Share=weighted.mean(Durable_Sale/Total_Exp_Month,Weight)),by="cluster3"]
+ggplot(DSale, aes(fill=factor(cluster3), y=Durable_Sale_Share, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DPure<-MD[,.(Durable_Pure_Exp_Share=weighted.mean(Durable_Pure_Exp/Total_Exp_Month,Weight)),by="cluster3"]
+ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Share, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DRatio<-MD[,.(Durable_Exp_Ratio=weighted.mean(Durable_Exp/Total_Exp_Month_nondurable,Weight)),by="cluster3"]
+ggplot(DRatio, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Ratio, x=cluster3)) + 
   geom_bar(position="dodge", stat="identity") + theme_bw() +
   theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
