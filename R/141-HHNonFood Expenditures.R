@@ -514,15 +514,20 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TC,n,names(ct)[x])
   }
-  pcols <- intersect(names(TC),c("HHID","Code","Durable_Exp"))
+  pcols <- intersect(names(TC),c("HHID","Code","BuyingMethod","Durable_Exp","Durable_Sale"))
   TC <- TC[,pcols,with=FALSE]
-  
+
   if(year %in% 84:96){
     TC[,Durable_Exp:=as.numeric(Durable_Exp)]
+    TC[,Durable_Sale:=as.numeric(Durable_Sale)]
   }
+  TC<-TC[BuyingMethod==1]
   TC$Durable_Exp<-TC$Durable_Exp/12
+  TC$Durable_Sale<-TC$Durable_Sale/12
   TC[,Code:=NULL]
+  TC[,BuyingMethod:=NULL]
   TC[is.na(TC)] <- 0
+  TC[,Durable_Pure_Exp:=Durable_Exp-Durable_Sale]
   DurableData <- TC[,lapply(.SD,sum),by=HHID]
   save(DurableData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
 }
