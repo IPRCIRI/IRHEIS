@@ -184,7 +184,10 @@ for(year in years){
   P[,NAge9G:=ifelse(Age<=59 & Age>19 & Sex=="Female",1,0)]
   P[,NAge10B:=ifelse(Age>59 & Sex=="Male",1,0)]
   P[,NAge10G:=ifelse(Age>59 & Sex=="Female",1,0)]
-  
+  P[,NDabestan:=ifelse(Age>=7 & Age<=11,1,0)]
+  P[,NRahnamayi:=ifelse(Age>=12 & Age<=14,1,0)]
+  P[,NDabirestan:=ifelse(Age>=15 & Age<=17,1,0)]
+  P[,NPish:=ifelse(Age==18,1,0)]
   #Age Groups 2
   P[,NAge1_A_B:=ifelse(Age==0 & Sex=="Male",1,0)]
   P[,NAge1_A_G:=ifelse(Age==0 & Sex=="Female",1,0)]
@@ -272,7 +275,9 @@ for(year in years){
                      "NAge6_A_B","NAge6_A_G",
                      "NAge7_A_B","NAge7_A_G",
                      "NAge8_A_B","NAge8_A_G",
-                     "NAge9_A_B","NAge9_A_G"),
+                     "NAge9_A_B","NAge9_A_G",
+                     "NDabestan","NRahnamayi",
+                     "NDabirestan","NPish"),
             by="HHID"]
 
 #  PSum <- PSum[TotalIncome>0]
