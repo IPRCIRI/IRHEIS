@@ -276,6 +276,74 @@ sub_share2<-MD[FinalPoor==1,.( sub_share=weighted.mean(Subsidy/(12*Total_Exp_Mon
                                NKids=weighted.mean(NKids,Weight),
                                OtherExp=weighted.mean((Total_Exp_Month-OriginalFoodExpenditure-ServiceExp)/Total_Exp_Month,Weight)),by=ProvinceCode]
 
+###Durable- Cluster
+DExp<-MD[,.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="cluster3"]
+ggplot(DExp, aes(fill=factor(cluster3), y=Durable_Exp_Per, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DSale<-MD[,.(Durable_Sale_Per=weighted.mean(Durable_Sale/EqSizeOECD,Weight)),by="cluster3"]
+ggplot(DSale, aes(fill=factor(cluster3), y=Durable_Sale_Per, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DPure<-MD[,.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="cluster3"]
+ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Per, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+###Durables share- Cluster
+DExp<-MD[,.(Durable_Exp_Share=weighted.mean(Durable_Exp/Total_Exp_Month,Weight)),by="cluster3"]
+ggplot(DExp, aes(fill=factor(cluster3), y=Durable_Exp_Share, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DSale<-MD[,.(Durable_Sale_Share=weighted.mean(Durable_Sale/Total_Exp_Month,Weight)),by="cluster3"]
+ggplot(DSale, aes(fill=factor(cluster3), y=Durable_Sale_Share, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DPure<-MD[,.(Durable_Pure_Exp_Share=weighted.mean(Durable_Pure_Exp/Total_Exp_Month,Weight)),by="cluster3"]
+ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Share, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+DRatio<-MD[,.(Durable_Exp_Ratio=weighted.mean(Durable_Exp/Total_Exp_Month_nondurable,Weight)),by="cluster3"]
+ggplot(DRatio, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Ratio, x=cluster3)) + 
+  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+####Urban
+x2<-MD[Region=="Urban",.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="NewArea2"]
+x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Exp)])
+ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Exp)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+x2<-MD[Region=="Urban",.(Durable_Sale_Per=weighted.mean(Durable_Sale/EqSizeOECD,Weight)),by="NewArea2"]
+x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Sale_Per)])
+ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+x2<-MD[Region=="Urban",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea2"]
+x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Pure_Exp_Per)])
+ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+####Rural
+x2<-MD[Region=="Rural",.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="NewArea2"]
+x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Exp)])
+ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Exp)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+x2<-MD[Region=="Rural",.(Durable_Sale_Per=weighted.mean(Durable_Sale/EqSizeOECD,Weight)),by="NewArea2"]
+x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Sale_Per)])
+ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+x2<-MD[Region=="Rural",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea2"]
+x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Pure_Exp_Per)])
+ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
 
 
 
