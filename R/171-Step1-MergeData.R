@@ -42,6 +42,8 @@ for(year in (Settings$startyear:Settings$endyear)){
              "Resturants"
   )){
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
+    load(file = paste0(Settings$HEISProcessedPath,"Y",year,"NonFreeDurableData.rda"))
+    
   }
   
   # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Added_Food.rda")) 
@@ -76,13 +78,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD<-merge(MD,NaftSefidData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
-  MD<-merge(MD,DurableData,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,NonFreeDurableData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ResturantData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,InvestmentData,by =c("HHID"),all=TRUE)
   for (col in c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
                 "Communication_Exp", "Education_Exp", "HouseandEnergy_Exp", 
                 "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", "Transportation_Exp",
-                "Other_Exp", "Medical_Exp", "Durable_Exp", "Durable_Sale","Durable_Pure_Exp",
+                "Other_Exp", "Medical_Exp", "NonFreeDurable_Exp",
                 "Resturant_Exp","ServiceExp"
   )) 
     MD[is.na(get(col)), (col) := 0]
@@ -95,7 +97,7 @@ for(year in (Settings$startyear:Settings$endyear)){
           "Amusement_Exp", "Communication_Exp", 
           "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
           "Transportation_Exp", "Other_Exp")
-  w <- c(nw, "Medical_Exp", "Durable_Exp")
+  w <- c(nw, "Medical_Exp", "NonFreeDurable_Exp")
   #w <- c(nw, "Medical_Exp", "Durable_Pure_Exp")
   # pw <- c(nw, "Added_Food_Exp_Month")
   #Lw <- c(pw,  "Medical_Exp", "Durable_Exp")
