@@ -236,7 +236,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
     
 
-    
+    MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
         }
 # compare Engle & Engle_prime in 178
 FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]

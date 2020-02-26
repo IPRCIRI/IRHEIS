@@ -94,6 +94,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
   B<-MD[,.(.N,Mean=mean(MetrPrice)),
+        by=.(Region,NewArea2,ProvinceCode)]
+  
+  BB<-MD[,.(.N,Mean=weighted.mean(MetrPrice,Weight)),
         by=.(Region,NewArea2)]
   
   SMD[,NewPoor:=1]
@@ -211,7 +214,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #write.csv(A,file = "A.csv")
   #write.csv(AA,file = "AA.csv")
   #write.csv(DD,file = "DD.csv")
-  #write.csv(B,file = "B.csv")
+  write.csv(B,file = "B.csv")
   #write.csv(C,file = "C.csv")
   #write.csv(D,file = "D.csv")
   
