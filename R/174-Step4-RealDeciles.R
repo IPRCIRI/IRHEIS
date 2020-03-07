@@ -238,13 +238,29 @@ for(year in (Settings$startyear:Settings$endyear)){
   decile7<-Deciles[,.(before=weighted.mean(as.numeric(Decile_Nominal)>7,Weight),
                       after=weighted.mean(as.numeric(Decile)>7,Weight)),by=ProvinceCode]
   
-  Deciles<-MD[,.(HHID,Decile,Decile_Nominal,Region,ProvinceCode,HIndivNo,Weight)]
+  Deciles<-MD[,.(HHID,Decile,Decile_Nominal,Region,ProvinceCode,HIndivNo,Weight,
+                 Total_Exp_Month,Total_Exp_Month_nondurable)]
   Deciles<-Deciles[,diff:=as.numeric(Decile)-as.numeric(Decile_Nominal)]
   decileTest<-Deciles[,.(Positive=weighted.mean(diff>0,Weight),
                          Zero=weighted.mean(diff==0,Weight),
                          Minus=weighted.mean(diff<0,Weight)),by=ProvinceCode]
   
+  SMD[,TIncome:=sum(Total_Exp_Month_Per_nondurable*Weight)]
+  Share<-SMD[,Income_Share:=Total_Exp_Month_Per_nondurable/TIncome]
+  Share<-Share[,.(Income_Share=sum(Income_Share*Weight)),by=Decile]
+  save(Share,file = "Share.rda")
   
+  Deciles<-Deciles[,Low:=ifelse(as.numeric(Decile)<4,1,0)]
+  Low<-Deciles[,.(weighted.mean(Low,Weight)),by=ProvinceCode]
+  save(Low,file = "Low.rda")
+  
+  
+  Deciles<-Deciles[,L5:=ifelse(Total_Exp_Month_nondurable<5000000,1,0)]
+  L5<-Deciles[,.(sum(L5*Weight)),by=ProvinceCode]
+  save(L5,file = "L5.rda")
+  
+  #UnEmp<-MD[,UnEmp:=ifelse(HActivityState=="Unemployed" & HAge<41,1,0)]
+  #UnEmp<-UnEmp[,.(weighted.mean(UnEmp,Weight)),by=ProvinceCode]
 }
 
 
