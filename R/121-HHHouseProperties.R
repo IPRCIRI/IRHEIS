@@ -257,28 +257,76 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   HHWeights<- as.data.table(HHWeights)
   HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
   HHHouseProperties<-merge(HHHouseProperties,HHWeights)
+  HHHouseProperties<-merge(HHHouseProperties,TotalDurable)
+  
   HHHouseProperties[,weighted.mean(car=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Auto1_Irani>0 | Auto2_rani>0 | 
+                                     Auto1_Khareji>0 | Auto2_Khareji>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(motorcycle=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Motor>0 ,Weight)]
+  
+  
   HHHouseProperties[,weighted.mean(bike=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Bycycle>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(radio=="True",Weight)]
   HHHouseProperties[,weighted.mean(cassette=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Zabtesot>0 ,Weight)]
+  
+  
   HHHouseProperties[,weighted.mean(tvbw=="True",Weight)]
+  HHHouseProperties[,weighted.mean(TV_SS>0 ,Weight)]
+  
+  
   HHHouseProperties[,weighted.mean(tvcr=="True",Weight)]
+  HHHouseProperties[,weighted.mean(TV_Rangi_Irani>0 |
+                                     TV_Rangi_Khareji>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(vcr=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Video_Player>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(computer=="True",Weight)]
+  HHHouseProperties[,weighted.mean(PC>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(cellphone=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Mobile>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(freezer=="True",Weight)]
-  HHHouseProperties[,weighted.mean(refrigerator=="True",Weight)]
   HHHouseProperties[,weighted.mean(frez_refrig=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Yakhchal>0 ,Weight)]
+  
+  
+  HHHouseProperties[,weighted.mean(refrigerator=="True",Weight)]
+  HHHouseProperties[,weighted.mean(freezer2>0 ,Weight)]
+  
+
   HHHouseProperties[,weighted.mean(oven=="True",Weight)]
+  HHHouseProperties[,weighted.mean(OjaghGaz>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(vacuum=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Jaroobarghi>0 ,Weight)]
+  
   HHHouseProperties[,weighted.mean(washer=="True",Weight)]
-  HHHouseProperties[,weighted.mean(sewing=="True",Weight)]
-  HHHouseProperties[,weighted.mean(fan=="True",Weight)]
-  HHHouseProperties[,weighted.mean(cooler_water_movable=="True",Weight)]
-  HHHouseProperties[,weighted.mean(cooler_gas_movable=="True",Weight)]
   HHHouseProperties[,weighted.mean(dishwasher=="True",Weight)]
- # HHHouseProperties[,weighted.mean(Microwave=="True",Weight)]
+    HHHouseProperties[,weighted.mean(Machine_bafandei>0 ,Weight)]
+  
+  HHHouseProperties[,weighted.mean(sewing=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Charkh_Khayati>0,Weight)]
+  
+  HHHouseProperties[,weighted.mean(fan=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Panke>0 ,Weight)]
+  
+  HHHouseProperties[,weighted.mean(cooler_water_movable=="True",Weight)]
+  
+  
+  HHHouseProperties[,weighted.mean(cooler_gas_movable=="True",Weight)]
+  
+  
+  
+   # HHHouseProperties[,weighted.mean(Microwave=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Microwave>0,Weight)]
+  
 }
 
 endtime <- proc.time()
