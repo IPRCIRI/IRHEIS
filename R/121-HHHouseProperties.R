@@ -252,6 +252,33 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   HHHouseProperties<-P2
   save(HHHouseProperties, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurable.rda"))
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  HHWeights<- as.data.table(HHWeights)
+  HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
+  HHHouseProperties<-merge(HHHouseProperties,HHWeights)
+  HHHouseProperties[,weighted.mean(car=="True",Weight)]
+  HHHouseProperties[,weighted.mean(motorcycle=="True",Weight)]
+  HHHouseProperties[,weighted.mean(bike=="True",Weight)]
+  HHHouseProperties[,weighted.mean(radio=="True",Weight)]
+  HHHouseProperties[,weighted.mean(cassette=="True",Weight)]
+  HHHouseProperties[,weighted.mean(tvbw=="True",Weight)]
+  HHHouseProperties[,weighted.mean(tvcr=="True",Weight)]
+  HHHouseProperties[,weighted.mean(vcr=="True",Weight)]
+  HHHouseProperties[,weighted.mean(computer=="True",Weight)]
+  HHHouseProperties[,weighted.mean(cellphone=="True",Weight)]
+  HHHouseProperties[,weighted.mean(freezer=="True",Weight)]
+  HHHouseProperties[,weighted.mean(refrigerator=="True",Weight)]
+  HHHouseProperties[,weighted.mean(frez_refrig=="True",Weight)]
+  HHHouseProperties[,weighted.mean(oven=="True",Weight)]
+  HHHouseProperties[,weighted.mean(vacuum=="True",Weight)]
+  HHHouseProperties[,weighted.mean(washer=="True",Weight)]
+  HHHouseProperties[,weighted.mean(sewing=="True",Weight)]
+  HHHouseProperties[,weighted.mean(fan=="True",Weight)]
+  HHHouseProperties[,weighted.mean(cooler_water_movable=="True",Weight)]
+  HHHouseProperties[,weighted.mean(cooler_gas_movable=="True",Weight)]
+  HHHouseProperties[,weighted.mean(dishwasher=="True",Weight)]
+ # HHHouseProperties[,weighted.mean(Microwave=="True",Weight)]
 }
 
 endtime <- proc.time()
