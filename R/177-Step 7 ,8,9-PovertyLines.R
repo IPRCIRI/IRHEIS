@@ -147,7 +147,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
+  cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
+  cat(MD[, sum(Weight*Size)],"\t")
 
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
