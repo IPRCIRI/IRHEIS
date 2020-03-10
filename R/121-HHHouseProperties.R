@@ -21,6 +21,9 @@ library(readxl)
 P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
 
 
+Table<-data.table(Year=NA_integer_,Auto=NA_real_,Mobile=NA_real_,
+                  Refrigerator=NA_real_,TV=NA_real_)[0]
+
 years <- Settings$startyear:Settings$endyear
 
 for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P2Cols
@@ -259,6 +262,15 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   HHHouseProperties<-merge(HHHouseProperties,HHWeights)
   HHHouseProperties<-merge(HHHouseProperties,TotalDurable)
   
+  X <- HHHouseProperties[,.(Auto=weighted.mean(Auto1_Irani>0 | Auto2_rani>0 | 
+                                  Auto1_Khareji>0 | Auto2_Khareji>0 ,Weight),
+                          Mobile=weighted.mean(Mobile>0,Weight),
+             Refrigerator=weighted.mean(Yakhchal>0 | freezer2>0,Weight),
+             TV=weighted.mean(TV_Rangi_Irani>0 |
+                                TV_Rangi_Khareji>0,Weight))]
+  X[,Year:=year]
+  Table <- rbind(Table,X)
+  
   HHHouseProperties[,weighted.mean(car=="True",Weight)]
   HHHouseProperties[,weighted.mean(Auto1_Irani>0 | Auto2_rani>0 | 
                                      Auto1_Khareji>0 | Auto2_Khareji>0 ,Weight)]
@@ -294,14 +306,15 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   HHHouseProperties[,weighted.mean(freezer=="True",Weight)]
   HHHouseProperties[,weighted.mean(frez_refrig=="True",Weight)]
-  HHHouseProperties[,weighted.mean(Yakhchal>0 ,Weight)]
+  HHHouseProperties[,weighted.mean(freezer2>0 ,Weight)]
   
   
   HHHouseProperties[,weighted.mean(refrigerator=="True",Weight)]
-  HHHouseProperties[,weighted.mean(freezer2>0 ,Weight)]
+  HHHouseProperties[,weighted.mean(Yakhchal>0 ,Weight)]
   
 
   HHHouseProperties[,weighted.mean(oven=="True",Weight)]
+ # HHHouseProperties[,weighted.mean(Microwave=="True",Weight)]
   HHHouseProperties[,weighted.mean(OjaghGaz>0 ,Weight)]
   
   HHHouseProperties[,weighted.mean(vacuum=="True",Weight)]
@@ -309,23 +322,21 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   HHHouseProperties[,weighted.mean(washer=="True",Weight)]
   HHHouseProperties[,weighted.mean(dishwasher=="True",Weight)]
-    HHHouseProperties[,weighted.mean(Machine_bafandei>0 ,Weight)]
+  HHHouseProperties[,weighted.mean(Mashin_Lebasshooyi>0 ,Weight)]
   
   HHHouseProperties[,weighted.mean(sewing=="True",Weight)]
   HHHouseProperties[,weighted.mean(Charkh_Khayati>0,Weight)]
   
   HHHouseProperties[,weighted.mean(fan=="True",Weight)]
+  HHHouseProperties[,weighted.mean(cooler_water_movable=="True",Weight)]
   HHHouseProperties[,weighted.mean(Panke>0 ,Weight)]
   
-  HHHouseProperties[,weighted.mean(cooler_water_movable=="True",Weight)]
+   HHHouseProperties[,weighted.mean(cooler_gas_movable=="True",Weight)]
+  HHHouseProperties[,weighted.mean(Cooler_Gaz>0,Weight)]
   
-  
-  HHHouseProperties[,weighted.mean(cooler_gas_movable=="True",Weight)]
-  
-  
-  
-   # HHHouseProperties[,weighted.mean(Microwave=="True",Weight)]
-  HHHouseProperties[,weighted.mean(Microwave>0,Weight)]
+  load(file = "durable.rda")
+  ggplot(durable)+
+    geom_line(mapping = aes(x=Year,y=Ratio,col=factor(Type),line=factor(Type)))
   
 }
 
