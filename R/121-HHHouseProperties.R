@@ -258,11 +258,13 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurable.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-    load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
   HHWeights<- as.data.table(HHWeights)
   HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
   HHHouseProperties<-merge(HHHouseProperties,HHWeights)
   HHHouseProperties<-merge(HHHouseProperties,HHBase)
+  HHHouseProperties<-merge(HHHouseProperties,MD[,.(HHID,Decile,FinalPoor)])
   HHHouseProperties<-merge(HHHouseProperties,TotalDurable)
   
   X <- HHHouseProperties[,.(Auto=weighted.mean(Auto1_Irani>0 | Auto2_rani>0 | 
@@ -339,18 +341,29 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   load(file = "durable.rda")
   ggplot(durable)+
-    geom_line(mapping = aes(x=Year,y=Ratio,col=factor(Type),line=factor(Type))) + ylim(0,0.13)
+    geom_line(mapping = aes(x=Year,y=Ratio,col=factor(Type))) + ylim(0,0.13)
   
   HHHouseProperties[Auto1_Khareji>0,weighted.mean(Auto1_Khareji,Weight),by=.(Region,ProvinceCode)]
   HHHouseProperties[Auto1_Khareji>0,weighted.median(Auto1_Khareji,Weight),by=.(Region,ProvinceCode)]
   
     HHHouseProperties[,Number:=.N,by=.(Region,ProvinceCode)]
-  Sample<-HHHouseProperties[Auto1_Irani>0 | Auto2_rani>0 | 
-                      Auto1_Khareji>0 | Auto2_Khareji>0,
-                      .(.N,Number=mean(Number)),by=.(Region,ProvinceCode)]
-  Sample[,Ratio:=N/Number]
+ # Sample<-HHHouseProperties[Auto1_Irani>0 | Auto2_rani>0 | 
+     #                 Auto1_Khareji>0 | Auto2_Khareji>0,
+      #                .(.N,Number=mean(Number)),by=.(Region,ProvinceCode)]
+  #Sample[,Ratio:=N/Number]
   
-  
+    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurable.rda"))
+    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+    load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+    HHWeights<- as.data.table(HHWeights)
+    HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
+    HHHouseProperties<-merge(HHHouseProperties,HHWeights)
+    HHHouseProperties<-merge(HHHouseProperties,HHBase)
+    HHHouseProperties<-merge(HHHouseProperties,MD[,.(HHID,Decile,FinalPoor)])
+    HHHouseProperties<-merge(HHHouseProperties,TotalDurable)
+ x<- HHHouseProperties[ProvinceCode==2,.(Region,ProvinceCode,HHID)]
   }
 
 endtime <- proc.time()
