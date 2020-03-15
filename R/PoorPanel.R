@@ -31,6 +31,7 @@ MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea2"))
 MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"))
 MD<-MD[FinalPoor==1]
 MD[,job:=ifelse((Job_Main_Code_Pub==1 | Job_Main_Code_Prv==1 | Job_Main_Code_Cooperative==1 | Job_Main_Code_Buss==1 | Job_Main_Code_Agri==1),1,0)]
+j<-MD[,weighted.mean(job,Weight*Size),by=c("ProvinceName","FinalPoor")]
 goosht<-MD[,weighted.mean(dandan/Size,Weight*Size),by=c("ProvinceName","FinalPoor")]
 MD<-MD[,Job_Main_Code_Pub:=as.numeric(job)]
 MD<-MD[,dandan:=tooth_G+tooth_NG+tooth_Jarahi_G+tooth_Jarahi_NG]
@@ -41,12 +42,15 @@ MD<-MD[,CamelMeatExpenditure:=CamelMeatExpenditure/(EqSizeCalory*r_meat)]
 
 morgh<-MD[,BirdsMeatExpenditure:=BirdsMeatExpenditure/EqSizeCalory]
 morgh<-MD[,weighted.mean(BirdsMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+MD<-MD[,public:=ifelse(Job_Main_Code_Pub==1 | Job_Main_Code_Prv==1 | Job_Main_Code_Cooperative==1 |Job_Main_Code_Pub==2 | Job_Main_Code_Prv==2 | Job_Main_Code_Cooperative==2,1,0)]
+MD<-MD[,pri:=ifelse(Job_Main_Code_Prv==1,1,0)]
+MD<-MD[,coop:=ifelse(Job_Main_Code_Cooperative==1,1,0)]
 
 goosht<-MD[,weighted.mean(dandan/Size,Weight*Size),by=c("ProvinceName","FinalPoor")]
-goosht1<-MD[,weighted.mean(Job_Main_Code_Pub+Job_Main_Code_Prv+Job_Main_Code_Cooperative,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht1<-MD[,weighted.mean(Job_Main_Code_Pub,Weight*Size),by=c("ProvinceName","FinalPoor")]
 goosht2<-MD[,weighted.mean(CowMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
 goosht3<-MD[,weighted.mean(CamelMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
-ggplot(goosht, aes(fill=factor(FinalPoor), y=V1, x=ProvinceName)) + 
+ggplot(Dabestan1, aes(fill=factor(FinalPoor), y=V1, x=ProvinceName)) + 
   geom_col(position="stack") + theme_bw() +
   theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
@@ -57,20 +61,21 @@ Dabestan<-Dabestan[,Enrollment:=Enrollment_Dabirestan_G+Enrollment_Dabirestan_NG
                      Enrollment_Dabestan_G+Enrollment_Dabestan_NG+Enrollment_Rahnamayi_G+Enrollment_Rahnamayi_NG+
                      Enrollment_pish_G+Enrollment_pish_NG+Enrollment_Rahnamayi_Shabane+Enrollment_pish_Shabane+
                      KelasKonkoor]
-female<-MD[Size>0]
+Dabestan<-MD[NDabestan>0]
+Dabestan<-Dabestan[,enrol:=Enrollment_Dabestan_NG/NDabestan]
+female<-MD[Size>1]
 
 female<-female[,female:=ifelse(HSex=="Female",1,0)]
 female<-female[,weighted.mean(female,Weight*Size,na.rm = T),by=c("ProvinceName","FinalPoor")]
-Dabestan1<-MD[,weighted.mean(Enrollment_Dabestan_NG/(Total_Exp_Month_Per*education),Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan2<-Dabestan[,weighted.mean(enrol/Total_Exp_Month_Per,Weight*Size),by=c("ProvinceName","FinalPoor")]
 Dabestan2<-MD[,weighted.mean(Enrollment_Rahnamayi_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
 Dabestan3<-MD[,weighted.mean(Enrollment_Rahnamayi_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
 Dabestan4<-MD[,weighted.mean(Enrollment_Dabirestan_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
 Dabestan5<-MD[,weighted.mean(Enrollment_Dabirestan_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
 Dabestan6<-MD[,weighted.mean(KelasKonkoor,Weight*Size),by=c("ProvinceName","FinalPoor")]
 
-edu<-as.data.table(cbind(Dabestan$ProvinceName,Dabestan$FinalPoor,Dabestan$V1,
-                         Dabestan1$V1,Dabestan2$V1,Dabestan3$V1,Dabestan4$V1,
-                         Dabestan5$V1,Dabestan6$V1))
+edu<-as.data.table(cbind(Dabestan1$ProvinceName,Dabestan1$FinalPoor,Dabestan1$V1,
+                         Dabestan2$V1))
 
 tooth<-MD[,weighted.mean(tooth_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
 tooth<-MD[,weighted.mean(tooth_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
@@ -84,7 +89,7 @@ visit5<-MD[,weighted.mean(Visit_Mama_NG,Weight*Size),by=c("ProvinceName","FinalP
 visit<-as.data.table(cbind(visit$ProvinceName,visit$FinalPoor,visit$V1,visit1$V1,
                      visit2$V1,visit3$V1,visit4$V1,visit5$V1))
 
-phd<-MD[,weighted.mean(NPhD+NMasters,Weight*Size),by=c("ProvinceName","FinalPoor")]
+phd<-MD[,weighted.mean(NPhD+NMasters+NBachelors,Weight*Size),by=c("ProvinceName")]
 inflation<-inflation[Year==year]
 cpi<-inflation$CPI
 cpi<-as.numeric(cpi)
