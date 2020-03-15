@@ -147,7 +147,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(PovertyLine,Weight*Size)])
+  cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
+  cat(MD[, sum(Weight*Size)],"\t")
 
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
@@ -171,38 +172,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       xlim(0,1)+ylim(0,5)+
       ggtitle(year)
     plot(a)
-    
-    MD[ProvinceCode==0,ProvinceName:="Markazi"]
-    MD[ProvinceCode==1,ProvinceName:="Gilan"]
-    MD[ProvinceCode==2,ProvinceName:="Mazandaran"]
-    MD[ProvinceCode==3,ProvinceName:="Az_Sharghi"]
-    MD[ProvinceCode==4,ProvinceName:="Az_Gharbi"]
-    MD[ProvinceCode==5,ProvinceName:="Kermanshah"]
-    MD[ProvinceCode==6,ProvinceName:="Khoozestan"]
-    MD[ProvinceCode==7,ProvinceName:="Fars"]
-    MD[ProvinceCode==8,ProvinceName:="Kerman"]
-    MD[ProvinceCode==9,ProvinceName:="Khorasan_Razavi"]
-    MD[ProvinceCode==10,ProvinceName:="Esfahan"]
-    MD[ProvinceCode==11,ProvinceName:="Sistan"]
-    MD[ProvinceCode==12,ProvinceName:="Kordestan"]
-    MD[ProvinceCode==13,ProvinceName:="Hamedan"]
-    MD[ProvinceCode==14,ProvinceName:="Chaharmahal"]
-    MD[ProvinceCode==15,ProvinceName:="Lorestan"]
-    MD[ProvinceCode==16,ProvinceName:="Ilam"]
-    MD[ProvinceCode==17,ProvinceName:="Kohkilooye"]
-    MD[ProvinceCode==18,ProvinceName:="Booshehr"]
-    MD[ProvinceCode==19,ProvinceName:="Zanjan"]
-    MD[ProvinceCode==20,ProvinceName:="Semnan"]
-    MD[ProvinceCode==21,ProvinceName:="Yazd"]
-    MD[ProvinceCode==22,ProvinceName:="Hormozgan"]
-    MD[ProvinceCode==23,ProvinceName:="Tehran"]
-    MD[ProvinceCode==24,ProvinceName:="Ardebil"]
-    MD[ProvinceCode==25,ProvinceName:="Ghom"]
-    MD[ProvinceCode==26,ProvinceName:="Ghazvin"]
-    MD[ProvinceCode==27,ProvinceName:="Golestan"]
-    MD[ProvinceCode==28,ProvinceName:="Khorasan_Shomali"]
-    MD[ProvinceCode==29,ProvinceName:="Khorasan_Jonoobi"]
-    MD[ProvinceCode==30,ProvinceName:="Alborz"]
+
     
     
     MDD<-MD[,.(Population=sum(Weight*Size)), by=.(Decile,ProvinceName)][order(ProvinceName,Decile)]
@@ -212,19 +182,19 @@ for(year in (Settings$startyear:Settings$endyear)){
 
     
     
-    Decile1<-MD[as.numeric(Decile)<2,.(HHID,Region,ProvinceName,NewArea2,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
+    Decile1<-MD[as.numeric(Decile)<2,.(HHID,Region,ProvinceName,NewArea_Name,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
     Decile1Poors<-Decile1[,.(Decile1Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
     ggplot(Decile1Poors, aes( y=Decile1Poors, x=ProvinceName)) + 
       geom_bar(position="dodge", stat="identity") + theme_bw() +
       theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
     
-    Decile2<-MD[as.numeric(Decile)<3,.(HHID,Region,ProvinceName,NewArea2,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
+    Decile2<-MD[as.numeric(Decile)<3,.(HHID,Region,ProvinceName,NewArea_Name,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
     Decile2Poors<-Decile2[,.(Decile2Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
     ggplot(Decile2Poors, aes( y=Decile2Poors, x=ProvinceName)) + 
       geom_bar(position="dodge", stat="identity") + theme_bw() +
       theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
     
-    Decile5<-MD[as.numeric(Decile)>3,.(HHID,Region,ProvinceName,NewArea2,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
+    Decile5<-MD[as.numeric(Decile)>3,.(HHID,Region,ProvinceName,NewArea_Name,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
     Decile5Poors<-Decile5[,.(Decile5Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
     ggplot(Decile5Poors, aes( y=Decile5Poors, x=ProvinceName)) + 
       geom_bar(position="dodge", stat="identity") + theme_bw() +
@@ -314,35 +284,35 @@ ggplot(DRatio, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Ratio, x=cluster3))
   theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 ####Urban
-x2<-MD[Region=="Urban",.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="NewArea2"]
-x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Exp)])
-ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Exp)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+x2<-MD[Region=="Urban",.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
+x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Exp)])
+ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Exp)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
-x2<-MD[Region=="Urban",.(Durable_Sale_Per=weighted.mean(Durable_Sale/EqSizeOECD,Weight)),by="NewArea2"]
-x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Sale_Per)])
-ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+x2<-MD[Region=="Urban",.(Durable_Sale_Per=weighted.mean(Durable_Sale/EqSizeOECD,Weight)),by="NewArea_Name"]
+x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Sale_Per)])
+ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
-x2<-MD[Region=="Urban",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea2"]
-x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Pure_Exp_Per)])
-ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+x2<-MD[Region=="Urban",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
+x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Pure_Exp_Per)])
+ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
 ####Rural
-x2<-MD[Region=="Rural",.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="NewArea2"]
-x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Exp)])
-ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Exp)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+x2<-MD[Region=="Rural",.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
+x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Exp)])
+ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Exp)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
-x2<-MD[Region=="Rural",.(Durable_Sale_Per=weighted.mean(Durable_Sale/EqSizeOECD,Weight)),by="NewArea2"]
-x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Sale_Per)])
-ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+x2<-MD[Region=="Rural",.(Durable_Sale_Per=weighted.mean(Durable_Sale/EqSizeOECD,Weight)),by="NewArea_Name"]
+x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Sale_Per)])
+ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
-x2<-MD[Region=="Rural",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea2"]
-x2$NewArea2 <- factor(x2$NewArea2, levels = x2$NewArea2[order(x2$Durable_Pure_Exp_Per)])
-ggplot(x2, aes(x = x2$NewArea2, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+x2<-MD[Region=="Rural",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
+x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Pure_Exp_Per)])
+ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
 

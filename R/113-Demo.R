@@ -454,11 +454,11 @@ for(year in years){
   save(P1,file=paste0(Settings$HEISProcessedPath,"Y",year,"P1.rda"))
   save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
 
-  P1<-merge(P1,HHBase[,.(HHID,ProvinceCode)])
-  X2 <- P1[Sex=="Female" & Age>18,.(Educ=weighted.mean(EduYears>12,Weight,na.rm = TRUE)),by=ProvinceCode]
-  X2[,Year:=year]
-  Educ <- rbind(Educ,X2)
-  write.csv(Educ,file = "Educ.csv")
+  #P1<-merge(P1,HHBase[,.(HHID,ProvinceCode)])
+  #X2 <- P1[Sex=="Female" & Age>18,.(Educ=weighted.mean(EduYears>12,Weight,na.rm = TRUE)),by=ProvinceCode]
+  # X2[,Year:=year]
+  #  Educ <- rbind(Educ,X2)
+  # write.csv(Educ,file = "Educ.csv")
   }
 
 
