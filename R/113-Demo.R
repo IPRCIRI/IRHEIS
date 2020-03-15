@@ -162,6 +162,9 @@ for(year in years){
   P[,NMasters:=ifelse(EduLevel=="Masters" & Student==TRUE,1,0)]
   P[,NPhD:=ifelse(EduLevel=="PhD" & Student==TRUE,1,0)]
   P[,NUniv:=NCollege+NBachelors+NMasters+NPhD]
+  P[,NLiterate:=ifelse(EduLevel!="Illiterate",1,0)]
+  P[,NEmployed:=ifelse(ActivityState=="Employed",1,0)]
+
   
   #Age Groups 1
   P[,NAge1B:=ifelse(Age==0 & Sex=="Male",1,0)]
@@ -277,7 +280,8 @@ for(year in years){
                      "NAge8_A_B","NAge8_A_G",
                      "NAge9_A_B","NAge9_A_G",
                      "NDabestan","NRahnamayi",
-                     "NDabirestan","NPish"),
+                     "NDabirestan","NPish",
+                     "NEmployed","NLiterate"),
             by="HHID"]
 
 #  PSum <- PSum[TotalIncome>0]
