@@ -547,50 +547,99 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   #Yakhchal
   HHHouseProperties[,Number:=.N,by=.(Region,ProvinceName)]
-  Yakhchal<-HHHouseProperties[Yakhchal>0 | freezer2>0,
-                              .(.N,Number=mean(Number)),by=.(Region,ProvinceName)]
-  Yakhchal[,Yakhchal_Ratio:=N/Number]
+  Yakhchal<-HHHouseProperties[Yakhchal>0 | freezer2>0 ,
+                            .(.N,Yakhchal_Exp=weighted.mean(Yakhchal+freezer2,Weight),
+                              Yakhchal_Exp2=weighted.median(Yakhchal+freezer2,Weight)),
+                            by=.(Region,ProvinceName)]
   
-  ggplot(Yakhchal, aes(fill=factor(Region), y=Yakhchal_Ratio, x=factor(ProvinceName))) + 
+  Yakhchal<-Yakhchal[,Mean_Median:=Yakhchal_Exp-Yakhchal_Exp2]
+  
+  ggplot(Yakhchal, aes(fill=factor(Region), y=Yakhchal_Exp, x=factor(ProvinceName))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
+  
+  ggplot(Yakhchal, aes(fill=factor(Region), y=Yakhchal_Exp2, x=factor(ProvinceName))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
+  
+  ggplot(Yakhchal, aes(fill=factor(Region), y=Mean_Median, x=factor(ProvinceName))) + 
     geom_bar(position="dodge", stat="identity") + theme_bw() +
     theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
     geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
   
   
   HHHouseProperties[,Number:=.N,by=.(Region,Decile)]
-  Yakhchal<-HHHouseProperties[Yakhchal>0 | freezer2>0,
-                              .(.N,Number=mean(Number)),by=.(Region,Decile)]
-  Yakhchal[,Yakhchal_Ratio:=N/Number]
+  Yakhchal<-HHHouseProperties[Yakhchal>0 | freezer2>0 ,
+                            .(.N,Yakhchal_Exp=weighted.mean(Yakhchal+freezer2,Weight),
+                              Yakhchal_Exp2=weighted.median(Yakhchal+freezer2,Weight)),
+                            by=.(Region,Decile)]
+  Yakhchal<-Yakhchal[,Mean_Median:=Yakhchal_Exp-Yakhchal_Exp2]
   
-  ggplot(Yakhchal, aes(fill=factor(Region), y=Yakhchal_Ratio, x=factor(Decile))) + 
+  ggplot(Yakhchal, aes(fill=factor(Region), y=Yakhchal_Exp, x=factor(Decile))) + 
     geom_bar(position="dodge", stat="identity") + theme_bw() +
     theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
     geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
   
+  ggplot(Yakhchal, aes(fill=factor(Region), y=Yakhchal_Exp2, x=factor(Decile))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
+  
+  ggplot(Yakhchal, aes(fill=factor(Region), y=Mean_Median, x=factor(Decile))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)  
   
   #TV
   HHHouseProperties[,Number:=.N,by=.(Region,ProvinceName)]
   TV<-HHHouseProperties[TV_Rangi_Irani>0 |
-                          TV_Rangi_Khareji>0,
-                        .(.N,Number=mean(Number)),by=.(Region,ProvinceName)]
-  TV[,TV_Ratio:=N/Number]
+                          TV_Rangi_Khareji>0 ,
+                              .(.N,TV_Exp=weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight),
+                                TV_Exp2=weighted.median(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)),
+                              by=.(Region,ProvinceName)]
   
-  ggplot(TV, aes(fill=factor(Region), y=TV_Ratio, x=factor(ProvinceName))) + 
+  TV<-TV[,Mean_Median:=TV_Exp-TV_Exp2]
+  
+  ggplot(TV, aes(fill=factor(Region), y=TV_Exp, x=factor(ProvinceName))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
+  
+  ggplot(TV, aes(fill=factor(Region), y=TV_Exp2, x=factor(ProvinceName))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
+  
+  ggplot(TV, aes(fill=factor(Region), y=Mean_Median, x=factor(ProvinceName))) + 
     geom_bar(position="dodge", stat="identity") + theme_bw() +
     theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
     geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
   
   
   HHHouseProperties[,Number:=.N,by=.(Region,Decile)]
-  TV<-HHHouseProperties[TV_Rangi_Irani>0 |TV_Rangi_Khareji>0,
-                        .(.N,Number=mean(Number)),by=.(Region,Decile)]
-  TV[,TV_Ratio:=N/Number]
+  TV<-HHHouseProperties[TV_Rangi_Irani>0 |
+                          TV_Rangi_Khareji>0 ,
+                              .(.N,TV_Exp=weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight),
+                                TV_Exp2=weighted.median(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)),
+                              by=.(Region,Decile)]
+  TV<-TV[,Mean_Median:=TV_Exp-TV_Exp2]
   
-  ggplot(TV, aes(fill=factor(Region), y=TV_Ratio, x=factor(Decile))) + 
+  ggplot(TV, aes(fill=factor(Region), y=TV_Exp, x=factor(Decile))) + 
     geom_bar(position="dodge", stat="identity") + theme_bw() +
     theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
     geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
   
+  ggplot(TV, aes(fill=factor(Region), y=TV_Exp2, x=factor(Decile))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
+  
+  ggplot(TV, aes(fill=factor(Region), y=Mean_Median, x=factor(Decile))) + 
+    geom_bar(position="dodge", stat="identity") + theme_bw() +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)  
   }
 
 endtime <- proc.time()
