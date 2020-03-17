@@ -26,6 +26,8 @@ P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
 Table<-data.table(Year=NA_integer_,Auto=NA_real_,Mobile=NA_real_,
                   Refrigerator=NA_real_,TV=NA_real_)[0]
 
+M_Buyers <- data.table(Year=NA_integer_,cluster3=NA_real_,Mobile_Buyers_Exp=NA_real_)[0]
+
 years <- Settings$startyear:Settings$endyear
 
 for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P2Cols
@@ -265,7 +267,7 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
   HHHouseProperties<-merge(HHHouseProperties,HHWeights)
   HHHouseProperties<-merge(HHHouseProperties,HHBase)
-  HHHouseProperties<-merge(HHHouseProperties,MD[,.(HHID,Decile,FinalPoor)])
+  HHHouseProperties<-merge(HHHouseProperties,MD[,.(HHID,Decile,FinalPoor,Total_Exp_Month,cluster3)])
   HHHouseProperties<-merge(HHHouseProperties,TotalDurable)
   
   X <- HHHouseProperties[,.(Auto=weighted.mean(Auto1_Irani>0 | Auto2_rani>0 | 
@@ -639,8 +641,26 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   ggplot(TV, aes(fill=factor(Region), y=Mean_Median, x=factor(Decile))) + 
     geom_bar(position="dodge", stat="identity") + theme_bw() +
     theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
-    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)  
-  }
+    geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25) 
+  
+
+  
+  MM_Buyers<-HHHouseProperties[Mobile>0,.(Mobile_Buyers=weighted.mean(Mobile,Weight)),by=.(cluster3)]
+  M_Holders<-HHHouseProperties[,.(Mobile_Holders=weighted.mean(cellphone=="True",Weight)),by=.(cluster3)]
+  M_All<-HHHouseProperties[,.(All=weighted.mean(Mobile,Weight)),by=.(cluster3)]
+  
+  Y <- HHHouseProperties[Mobile>0,.(Mobile_Buyers_Exp=weighted.mean(Mobile,Weight)),by=.(cluster3)]
+  Y[,Year:=year]
+  M_Buyers <- rbind(M_Buyers,Y)
+  
+  M<-merge(MM_Buyers,M_Holders)
+  M<-merge(M,M_All)
+  
+  HHHouseProperties[cluster3==1,weighted.mean(Mobile/Total_Exp_Month,Weight)]
+}
+
+ggplot(M_Buyers)+
+  geom_line(mapping = aes(x=Year,y=Mobile_Buyers_Exp,col=factor(cluster3)))
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
