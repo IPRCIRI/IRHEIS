@@ -315,6 +315,12 @@ x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Dur
 ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
+MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by="Region"]
+a<-MD[FinalPoor==1 & PovertyLine-Total_Exp_Month_Per>0,
+   sum((PovertyLine-Total_Exp_Month_Per)*Size*Weight),by="Region"]
+MD[FinalPoor==1 & PovertyLine-Total_Exp_Month_Per>0,
+   sum((PovertyLine-Total_Exp_Month_Per)*Size*Weight)]
+
 
 
 endtime <- proc.time()

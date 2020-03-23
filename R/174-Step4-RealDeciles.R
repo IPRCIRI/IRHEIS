@@ -157,6 +157,33 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,sum(Weight*Size), by=.(Decile_Nominal,Region)][order(Region,Decile_Nominal)]
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"AidWage.rda"))
+  MD<-merge(MD,AidWageData,all.x = TRUE)
+  for (col in c("aid")) MD[is.na(get(col)), (col) := 0]
+  MD[,PositiveAid:=ifelse(aid>0,1,0)]
+  MD[,weighted.mean(PositiveAid,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
+  
+  
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
+  MD<-merge(MD,SubsidyWageData,all.x = TRUE)
+  for (col in c("Subsidy")) MD[is.na(get(col)), (col) := 0]
+  MD[,PositiveSubsidy:=ifelse(Subsidy>0,1,0)]
+  MD[,weighted.mean(PositiveSubsidy,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
+  
+  
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"UTSubsidyW.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"RTSubsidyW.rda"))
+  
+  TSubsidy<-rbind(UTSubsidyW,RTSubsidyW)
+  TSubsidy<-TSubsidy[,HHID:=Address]
+  MD<-merge(MD,TSubsidy[,.(HHID,check1)],all.x = TRUE)
+  MD[,Subsidy3:=ifelse(check1>800000,1,0)]
+  MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
+  
+  MD[,TotalAid:=(Subsidy+aid)/12]
+  MD_Ok<- MD[TotalAid>0]
+  MD_Ok[,ratio:=TotalAid/Total_Exp_Month]
+  x<-MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
   
 }
 

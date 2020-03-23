@@ -40,6 +40,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SubsidyWageData <- TSubsidyW[,lapply(.SD,sum),by=HHID]
   save(SubsidyWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
   
+  
 
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   UTSubsidyW[,check1:=Dycol05/(Dycol04*Dycol03)]
@@ -53,6 +54,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   RMD<-RMD[,.(HHID,FinalPoor,Decile,Decile_Nominal,Month)]
   names(RMD) <- c("Address", "FinalPoor","Decile","Decile_Nominal","Month")
   RTSubsidyW<-merge(RTSubsidyW,RMD)
+  
+  
+  save(UTSubsidyW, file = paste0(Settings$HEISProcessedPath,"Y",year,"UTSubsidyW.rda"))
+  save(RTSubsidyW, file = paste0(Settings$HEISProcessedPath,"Y",year,"RTSubsidyW.rda"))
+  
   
   xU<-UTSubsidyW[check1>1000000]
   xR<-RTSubsidyW[check1>1000000]
