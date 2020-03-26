@@ -185,7 +185,48 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD_Ok[,ratio:=TotalAid/Total_Exp_Month]
   x<-MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
   
-}
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadExp.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadCon.rda"))
+  SMD<-merge(SMD,BreadData,by="HHID")
+  SMD<-merge(SMD,BreadConsumption,by="HHID")
+  
+  SMD[is.na(SMD)] <- 0
+  
+  SMD[,weighted.mean(G01114+G01115,Weight),by=.(Region,Decile)][order(Region,Decile)]
+  SMD[,weighted.mean(G01114+G01115,Weight),by=.(Decile)][order(Decile)]
+  
+  SMD[,weighted.mean(BreadGrams,Weight),by=.(Region,Decile)][order(Region,Decile)]
+  SMD[,weighted.mean(BreadGrams,Weight),by=.(Decile)][order(Decile)]
+
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"DrugsExp.rda"))
+  SMD<-merge(SMD,DrugsExp,all.x = TRUE)
+  SMD[is.na(SMD)] <- 0
+  
+  SMD[,weighted.mean(DrugsExp,Weight),by=.(Region,Decile)][order(Region,Decile)]
+  SMD[,weighted.mean(DrugsExp,Weight),by=.(Decile)][order(Decile)]
+  
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
+  TotalFoodExp<-merge(TotalFoodExp,SMD[,.(HHID,Decile)])
+  
+  TotalFoodExp[,weighted.mean(`011211`+`011212`+`011213`+
+                                `011214`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011117`+`011118`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011231`+`011232`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011411`+`011412`+`011413`+`011414`+
+                                `011421`+`011422`+`011423`+`011424`+
+                                `011425`+`011426`+`011427`+`011428`+
+                                `011429`+`011431`+`011432`+`011433`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011441`+`011442`+`011443`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011531`+`011532`+`011533`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011812`,Weight),by=.(Decile)][order(Decile)]
+  
+  }
 
 
 endtime <- proc.time()
