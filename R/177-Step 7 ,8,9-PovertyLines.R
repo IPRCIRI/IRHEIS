@@ -49,7 +49,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  #MD<-MD[Region=="Rural"]
+  #MD<-MD[Region=="Urban"]
   #MD<-MD[cluster3==13]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   
@@ -148,6 +148,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
   cat(MD[, sum(Weight*Size)],"\t")
 
   MD1<-MD[,.(HHID,FinalPoor)]
