@@ -143,7 +143,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
     
     #cat("\n",sum(SMD[ProvinceCode==2,.N]))
-    cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
+    #cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
+    SMD[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
+    SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
   }
   
 
@@ -162,6 +164,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for (col in c("aid")) MD[is.na(get(col)), (col) := 0]
   MD[,PositiveAid:=ifelse(aid>0,1,0)]
   MD[,weighted.mean(PositiveAid,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
+  MD[,weighted.mean(PositiveAid,Weight*Size),by=.(Decile)][order(Decile)]
   
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
@@ -169,6 +172,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for (col in c("Subsidy")) MD[is.na(get(col)), (col) := 0]
   MD[,PositiveSubsidy:=ifelse(Subsidy>0,1,0)]
   MD[,weighted.mean(PositiveSubsidy,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
+  MD[,weighted.mean(PositiveSubsidy,Weight*Size),by=.(Decile)][order(Decile)]
   
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"UTSubsidyW.rda"))
@@ -179,11 +183,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,TSubsidy[,.(HHID,check1)],all.x = TRUE)
   MD[,Subsidy3:=ifelse(check1>800000,1,0)]
   MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
+  MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Decile)][order(Decile)]
   
   MD[,TotalAid:=(Subsidy+aid)/12]
   MD_Ok<- MD[TotalAid>0]
   MD_Ok[,ratio:=TotalAid/Total_Exp_Month]
   x<-MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
+  MD_Ok[,.(weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Decile)][order(Decile)]
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadExp.rda"))
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadCon.rda"))
