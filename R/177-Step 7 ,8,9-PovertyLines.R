@@ -229,23 +229,23 @@ Widow<-MD[FinalPoor==1,weighted.mean(HSex=="Female",Weight),by=ProvinceCode]
 Widow2<-MD[HSex=="Female",weighted.mean(FinalPoor,Weight),by=ProvinceCode]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",97,"job.rda"))
-MD<-merge(MD,job,by=c("HHID","Region","HActivityState"))
-Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Pub==9,Weight),
-           by=ProvinceCode]
+#MD<-merge(MD,job,by=c("HHID","Region","HActivityState"))
+#Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Pub==9,Weight),
+#           by=ProvinceCode]
 
-Prvjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv==9,Weight),
-           by=ProvinceCode]
+#Prvjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv==9,Weight),
+#           by=ProvinceCode]
 
-Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv<3 & Job_Main_Code_Prv>0,Weight)+
-             weighted.mean(Job_Main_Code_Pub<3 & Job_Main_Code_Pub>0,Weight),by=ProvinceCode]
+#Pubjob<-MD[FinalPoor==1,weighted.mean(Job_Main_Code_Prv<3 & Job_Main_Code_Prv>0,Weight)+
+#             weighted.mean(Job_Main_Code_Pub<3 & Job_Main_Code_Pub>0,Weight),by=ProvinceCode]
 
-sub_share<-MD[FinalPoor==1,.(HHID,Region,ProvinceCode,Subsidy,Decile,Decile_Nominal,
-                             sub_share=Subsidy/(12*Total_Exp_Month_nondurable))]
+#sub_share<-MD[FinalPoor==1,.(HHID,Region,ProvinceCode,Subsidy,Decile,Decile_Nominal,
+#                             sub_share=Subsidy/(12*Total_Exp_Month_nondurable))]
 
-sub_share2<-MD[FinalPoor==1,.( sub_share=weighted.mean(Subsidy/(12*Total_Exp_Month_nondurable),Weight),
-                               Edu=weighted.mean(HEduYears,Weight),
-                               NKids=weighted.mean(NKids,Weight),
-                               OtherExp=weighted.mean((Total_Exp_Month-OriginalFoodExpenditure-ServiceExp)/Total_Exp_Month,Weight)),by=ProvinceCode]
+#sub_share2<-MD[FinalPoor==1,.( sub_share=weighted.mean(Subsidy/(12*Total_Exp_Month_nondurable),Weight),
+#                               Edu=weighted.mean(HEduYears,Weight),
+#                               NKids=weighted.mean(NKids,Weight),
+#                               OtherExp=weighted.mean((Total_Exp_Month-OriginalFoodExpenditure-ServiceExp)/Total_Exp_Month,Weight)),by=ProvinceCode]
 
 ###Durable- Cluster
 DExp<-MD[,.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="cluster3"]
@@ -258,10 +258,10 @@ ggplot(DSale, aes(fill=factor(cluster3), y=Durable_Sale_Per, x=cluster3)) +
   geom_bar(position="dodge", stat="identity") + theme_bw() +
   theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
-DPure<-MD[,.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="cluster3"]
-ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Per, x=cluster3)) + 
-  geom_bar(position="dodge", stat="identity") + theme_bw() +
-  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+#DPure<-MD[,.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="cluster3"]
+#ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Per, x=cluster3)) + 
+#  geom_bar(position="dodge", stat="identity") + theme_bw() +
+#  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 ###Durables share- Cluster
 DExp<-MD[,.(Durable_Exp_Share=weighted.mean(Durable_Exp/Total_Exp_Month,Weight)),by="cluster3"]
@@ -274,15 +274,15 @@ ggplot(DSale, aes(fill=factor(cluster3), y=Durable_Sale_Share, x=cluster3)) +
   geom_bar(position="dodge", stat="identity") + theme_bw() +
   theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
-DPure<-MD[,.(Durable_Pure_Exp_Share=weighted.mean(Durable_Pure_Exp/Total_Exp_Month,Weight)),by="cluster3"]
-ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Share, x=cluster3)) + 
-  geom_bar(position="dodge", stat="identity") + theme_bw() +
-  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+#DPure<-MD[,.(Durable_Pure_Exp_Share=weighted.mean(Durable_Pure_Exp/Total_Exp_Month,Weight)),by="cluster3"]
+#ggplot(DPure, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Share, x=cluster3)) + 
+#  geom_bar(position="dodge", stat="identity") + theme_bw() +
+#  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
-DRatio<-MD[,.(Durable_Exp_Ratio=weighted.mean(Durable_Exp/Total_Exp_Month_nondurable,Weight)),by="cluster3"]
-ggplot(DRatio, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Ratio, x=cluster3)) + 
-  geom_bar(position="dodge", stat="identity") + theme_bw() +
-  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+#DRatio<-MD[,.(Durable_Exp_Ratio=weighted.mean(Durable_Exp/Total_Exp_Month_nondurable,Weight)),by="cluster3"]
+#ggplot(DRatio, aes(fill=factor(cluster3), y=Durable_Pure_Exp_Ratio, x=cluster3)) + 
+#  geom_bar(position="dodge", stat="identity") + theme_bw() +
+#  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 ####Urban
 x2<-MD[Region=="Urban",.(Durable_Exp_Per=weighted.mean(Durable_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
@@ -295,9 +295,9 @@ x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Dur
 ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
-x2<-MD[Region=="Urban",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
-x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Pure_Exp_Per)])
-ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+#x2<-MD[Region=="Urban",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
+#x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Pure_Exp_Per)])
+#ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
 ####Rural
@@ -311,18 +311,26 @@ x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Dur
 ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Sale_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
-x2<-MD[Region=="Rural",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
-x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Pure_Exp_Per)])
-ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+#x2<-MD[Region=="Rural",.(Durable_Pure_Exp_Per=weighted.mean(Durable_Pure_Exp/EqSizeOECD,Weight)),by="NewArea_Name"]
+#x2$NewArea_Name <- factor(x2$NewArea_Name, levels = x2$NewArea_Name[order(x2$Durable_Pure_Exp_Per)])
+#ggplot(x2, aes(x = x2$NewArea_Name, y = x2$Durable_Pure_Exp_Per)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
 MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by="Region"]
-a<-MD[FinalPoor==1 & PovertyLine-Total_Exp_Month_Per>0,
-   sum((PovertyLine-Total_Exp_Month_Per)*Size*Weight),by="Region"]
+
 MD[FinalPoor==1 & PovertyLine-Total_Exp_Month_Per>0,
+   sum((PovertyLine-Total_Exp_Month_Per)*Size*Weight),by="Region"]
+
+MD[FinalPoor==1,
    sum((PovertyLine-Total_Exp_Month_Per)*Size*Weight)]
 
+MD[FinalPoor==1 & PovertyLine-Total_Exp_Month_Per_nondurable>0,
+   sum((PovertyLine-Total_Exp_Month_Per_nondurable)*Size*Weight),by="Region"]
 
+MD[FinalPoor==1 & PovertyLine-Total_Exp_Month_Per_nondurable>0,
+   sum((PovertyLine-Total_Exp_Month_Per_nondurable)*Size*Weight)]
+
+MD[NewArea==2301,sum(Weight*Size)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
