@@ -143,12 +143,30 @@ for(year in (Settings$startyear:Settings$endyear)){
     save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
     
     #cat("\n",sum(SMD[ProvinceCode==2,.N]))
-    #cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
+    cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
     SMD[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
     SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
+    
+    
+ #   NewDecile<-SMD[,.(HHID,Decile)]
+ #   names(NewDecile)<-c("HHID","NewDecile")
+ #   save(NewDecile,file=paste0(Settings$HEISProcessedPath,"Y",year,"NewDecile.rda"))
+    
+   #    OldDecile<-SMD[,.(HHID,Decile)]
+    #   names(OldDecile)<-c("HHID","OldDecile")
+     #  save(OldDecile,file=paste0(Settings$HEISProcessedPath,"Y",year,"OldDecile.rda"))
+    
   }
   
-
+  #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"NewDecile.rda"))
+  #DecileCompare<-merge(as.data.table(OldDecile),NewDecile,by="HHID")
+  #DecileCompare[,Diff:=as.numeric(NewDecile)-as.numeric(OldDecile)]
+  #DecileCompare2<- DecileCompare[,.(.N),by=Diff]
+  
+  #ggplot(DecileCompare2, aes(fill=factor(Diff), y=N, x=factor(Diff))) + 
+  #  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  #  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+  #  geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
   
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
