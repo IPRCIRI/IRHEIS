@@ -92,12 +92,18 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD<-merge(MD,Calorie_Need)
   
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durablele_Detail.rda"))
+  MD<-merge(MD,Durablele_Detail)
+  
   #Calculate Monthly Total Expenditures 
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
           "Amusement_Exp", "Communication_Exp", 
           "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
-          "Transportation_Exp", "Other_Exp")
-  w <- c(nw, "Medical_Exp", "NonFreeDurable_Exp")
+          "Transportation_Exp", "Other_Exp"
+          ,"Out_from_Durable"
+          )
+  w <- c(nw, "Medical_Exp", "Remain_Durable")
+  #w <- c(nw, "Medical_Exp", "NonFreeDurable_Exp")
   #w <- c(nw, "Medical_Exp", "Durable_Pure_Exp")
   # pw <- c(nw, "Added_Food_Exp_Month")
   #Lw <- c(pw,  "Medical_Exp", "Durable_Exp")
@@ -105,6 +111,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
   MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
   
+  MD[,weighted.mean(Total_Exp_Month,Weight)]
+  MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
 
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
   
