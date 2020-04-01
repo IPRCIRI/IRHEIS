@@ -25,6 +25,8 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Specific.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Job.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Data.rda"))
+
 MD<-merge(MD,job,by=("HHID"))
 MD<-merge(MD,Specific,by=c("HHID"))
 MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea2"))
@@ -154,6 +156,22 @@ Real<-d
   d<-d[,Year:=year]
   Real<-rbind(Real,d)
 }
+Data<-Data[Decile==1 | Decile==2 | Decile==3]
+J1<-as.data.table(Data[,weighted.mean(Simple_Jobs_Staff,Weight*Size)])
+J2<-as.data.table(Data[,weighted.mean(Opreators_machinery_equipment,Weight*Size)])
+J3<-as.data.table(Data[,weighted.mean(Craftsman,Weight*Size)])
+J4<-as.data.table(Data[,weighted.mean(Skilled_staff_agriculture_forestr_fishing,Weight*Size)])
+J5<-as.data.table(Data[,weighted.mean(Staff_service_sales,Weight*Size)])
+J6<-as.data.table(Data[,weighted.mean(Office_staff,Weight*Size)])
+J7<-as.data.table(Data[,weighted.mean(Technician,Weight*Size)])
+J8<-as.data.table(Data[,weighted.mean(Expert,Weight*Size)])
+J9<-as.data.table(Data[,weighted.mean(Manager,Weight*Size)])
+
+J<-rbind(J1,J2,J3,J4,J5,J6,J7,J8,J9)
+
+
+
+
 }
 save(PANEL, file=paste0(Settings$HEISProcessedPath,"panelpoor.rda"))
 PANEL<-PANEL[,cluster3:=as.factor(cluster3)]
