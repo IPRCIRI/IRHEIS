@@ -144,9 +144,29 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     #cat("\n",sum(SMD[ProvinceCode==2,.N]))
     cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
+    SMD[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
+    SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
+    
+    
+ #   NewDecile<-SMD[,.(HHID,Decile)]
+ #   names(NewDecile)<-c("HHID","NewDecile")
+ #   save(NewDecile,file=paste0(Settings$HEISProcessedPath,"Y",year,"NewDecile.rda"))
+    
+   #    OldDecile<-SMD[,.(HHID,Decile)]
+    #   names(OldDecile)<-c("HHID","OldDecile")
+     #  save(OldDecile,file=paste0(Settings$HEISProcessedPath,"Y",year,"OldDecile.rda"))
+    
   }
   
-
+  #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"NewDecile.rda"))
+  #DecileCompare<-merge(as.data.table(OldDecile),NewDecile,by="HHID")
+  #DecileCompare[,Diff:=as.numeric(NewDecile)-as.numeric(OldDecile)]
+  #DecileCompare2<- DecileCompare[,.(.N),by=Diff]
+  
+  #ggplot(DecileCompare2, aes(fill=factor(Diff), y=N, x=factor(Diff))) + 
+  #  geom_bar(position="dodge", stat="identity") + theme_bw() +
+  #  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
+  #  geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
   
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
@@ -157,8 +177,80 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,sum(Weight*Size), by=.(Decile_Nominal,Region)][order(Region,Decile_Nominal)]
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"AidWage.rda"))
+  MD<-merge(MD,AidWageData,all.x = TRUE)
+  for (col in c("aid")) MD[is.na(get(col)), (col) := 0]
+  MD[,PositiveAid:=ifelse(aid>0,1,0)]
+  MD[,weighted.mean(PositiveAid,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
+  MD[,weighted.mean(PositiveAid,Weight*Size),by=.(Decile)][order(Decile)]
   
-}
+  
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
+  MD<-merge(MD,SubsidyWageData,all.x = TRUE)
+  for (col in c("Subsidy")) MD[is.na(get(col)), (col) := 0]
+  MD[,PositiveSubsidy:=ifelse(Subsidy>0,1,0)]
+  MD[,weighted.mean(PositiveSubsidy,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
+  MD[,weighted.mean(PositiveSubsidy,Weight*Size),by=.(Decile)][order(Decile)]
+  
+  
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"UTSubsidyW.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"RTSubsidyW.rda"))
+  
+  TSubsidy<-rbind(UTSubsidyW,RTSubsidyW)
+  TSubsidy<-TSubsidy[,HHID:=Address]
+  MD<-merge(MD,TSubsidy[,.(HHID,check1)],all.x = TRUE)
+  MD[,Subsidy3:=ifelse(check1>800000,1,0)]
+  MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
+  MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Decile)][order(Decile)]
+  
+  MD[,TotalAid:=(Subsidy+aid)/12]
+  MD_Ok<- MD[TotalAid>0]
+  MD_Ok[,ratio:=TotalAid/Total_Exp_Month]
+  x<-MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
+  MD_Ok[,.(weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Decile)][order(Decile)]
+  
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadExp.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadCon.rda"))
+  SMD<-merge(SMD,BreadData,by="HHID")
+  SMD<-merge(SMD,BreadConsumption,by="HHID")
+  
+  SMD[is.na(SMD)] <- 0
+  
+  SMD[,weighted.mean(G01114+G01115,Weight),by=.(Region,Decile)][order(Region,Decile)]
+  SMD[,weighted.mean(G01114+G01115,Weight),by=.(Decile)][order(Decile)]
+  
+  SMD[,weighted.mean(BreadGrams,Weight),by=.(Region,Decile)][order(Region,Decile)]
+  SMD[,weighted.mean(BreadGrams,Weight),by=.(Decile)][order(Decile)]
+
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"DrugsExp.rda"))
+  SMD<-merge(SMD,DrugsExp,all.x = TRUE)
+  SMD[is.na(SMD)] <- 0
+  
+  SMD[,weighted.mean(DrugsExp,Weight),by=.(Region,Decile)][order(Region,Decile)]
+  SMD[,weighted.mean(DrugsExp,Weight),by=.(Decile)][order(Decile)]
+  
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
+  TotalFoodExp<-merge(TotalFoodExp,SMD[,.(HHID,Decile)])
+  
+  TotalFoodExp[,weighted.mean(`011211`+`011212`+`011213`+
+                                `011214`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011117`+`011118`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011231`+`011232`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011411`+`011412`+`011413`+`011414`+
+                                `011421`+`011422`+`011423`+`011424`+
+                                `011425`+`011426`+`011427`+`011428`+
+                                `011429`+`011431`+`011432`+`011433`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011441`+`011442`+`011443`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011531`+`011532`+`011533`,Weight),by=.(Decile)][order(Decile)]
+  
+  TotalFoodExp[,weighted.mean(`011812`,Weight),by=.(Decile)][order(Decile)]
+  
+  }
 
 
 endtime <- proc.time()
