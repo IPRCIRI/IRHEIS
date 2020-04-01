@@ -84,6 +84,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-MD[,Pub_Employee:=ifelse(Main_Job_Name_Pub==0,0,1)]
   MD<-MD[,Prv_Employee:=ifelse(Main_Job_Name_Prv==0,0,1)]
   MD<-MD[,Cooperative_Employee:=ifelse(Main_Job_Name_Cooperative==0,0,1)]
+  MD<-MD[,Simple_Jobs_Staff:=ifelse(Job_Main_Code_Pub==9 | Job_Main_Code_Prv==9 | Job_Main_Code_Cooperative==9 | Job_Main_Code_Buss==9 | Job_Main_Code_Agri==9,1,0)]
+  MD<-MD[,Opreators_machinery_equipment:=ifelse(Job_Main_Code_Pub==8 | Job_Main_Code_Prv==8 | Job_Main_Code_Cooperative==8 | Job_Main_Code_Buss==8 | Job_Main_Code_Agri==8,1,0)]
+  MD<-MD[,Craftsman:=ifelse(Job_Main_Code_Pub==7 | Job_Main_Code_Prv==7 | Job_Main_Code_Cooperative==7 | Job_Main_Code_Buss==7 | Job_Main_Code_Agri==7,1,0)]
+  MD<-MD[,Skilled_staff_agriculture_forestr_fishing:=ifelse(Job_Main_Code_Pub==6 | Job_Main_Code_Prv==6 | Job_Main_Code_Cooperative==6 | Job_Main_Code_Buss==6 | Job_Main_Code_Agri==6,1,0)]
+  MD<-MD[,Staff_service_sales:=ifelse(Job_Main_Code_Pub==5 | Job_Main_Code_Prv==5 | Job_Main_Code_Cooperative==5 | Job_Main_Code_Buss==5 | Job_Main_Code_Agri==5,1,0)]
+  MD<-MD[,Office_staff:=ifelse(Job_Main_Code_Pub==4 | Job_Main_Code_Prv==4 | Job_Main_Code_Cooperative==4 | Job_Main_Code_Buss==4 | Job_Main_Code_Agri==4,1,0)]
+  MD<-MD[,Technician:=ifelse(Job_Main_Code_Pub==3 | Job_Main_Code_Prv==3 | Job_Main_Code_Cooperative==3 | Job_Main_Code_Buss==3 | Job_Main_Code_Agri==3,1,0)]
+  MD<-MD[,Expert:=ifelse(Job_Main_Code_Pub==2 | Job_Main_Code_Prv==2 | Job_Main_Code_Cooperative==2 | Job_Main_Code_Buss==2 | Job_Main_Code_Agri==2,1,0)]
+  MD<-MD[,Manager:=ifelse(Job_Main_Code_Pub==1 | Job_Main_Code_Prv==1 | Job_Main_Code_Cooperative==1 | Job_Main_Code_Buss==1 | Job_Main_Code_Agri==1,1,0)]
   
   MD<-MD[,Aid_Per:=Aid/Size]
   MD<-MD[,Ratio_Aid_Per:=Aid_Per/NetIncome]
@@ -152,8 +161,9 @@ for(year in (Settings$startyear:Settings$endyear)){
               Decile_Nominal,Percentile,Percentile_Nominal,InitialPoor,FinalPoor,FPLine,PovertyLine,Engel,HHEngle,RedMeat_Per,WhiteMeat_Per,Meat_Per,
               R_RedMeat_Per,R_WhiteMeat_Per,R_Meat_Per,Dabestan_Per,Rahnamayi_Per,Dabirestan_Per,Pish_Per,Education_Per,Ratio_Education_Per,Visit,
               Tooth,Medicine,R_Medicine,Ratio_R_Medicine,Real_Total_Exp_Month,Real_FoodExpenditure,Real_Durable_Exp,Pub_Employee,Prv_Employee,
-              Cooperative_Employee,Aid,Aid_Per,Ratio_Aid_Per,HFemale,NEmployed,Ratio_NEmployed,Square_NEmployed,NLiterate,Ratio_NLiterate,
-              Square_NLiterate,RentalHouse,Car,Bathroom,Computer,Motorcycle,Water,Gas,Sewage,KarosineCook,KarosineHeat,GasHeat)]
+              Cooperative_Employee,Simple_Jobs_Staff,Opreators_machinery_equipment,Craftsman,Skilled_staff_agriculture_forestr_fishing,
+              Staff_service_sales,Office_staff,Technician,Expert,Manager,Aid,Aid_Per,Ratio_Aid_Per,HFemale,NEmployed,Ratio_NEmployed,Square_NEmployed,
+              NLiterate,Ratio_NLiterate,Square_NLiterate,RentalHouse,Car,Bathroom,Computer,Motorcycle,Water,Gas,Sewage,KarosineCook,KarosineHeat,GasHeat)]
   save(Data, file=paste0(Settings$HEISProcessedPath,"Y",year,"Data.rda"))
 }
 
