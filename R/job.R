@@ -26,6 +26,11 @@ for(year in (Settings$startyear:Settings$endyear)){
                 Main_Job_Name_Buss,
                 Job_Main_Code_Pub,Job_Main_Code_Prv,Job_Main_Code_Cooperative,
                 Job_Main_Code_Buss,Job_Main_Code_Agri,
+                Original_Job_Name_Cooperative,CooperativeWageNetIncomeY,
+                AgriEarners,Original_Job_Name_Agri,BussEarners,
+                Original_Job_Name_Buss,
+                Job_Original_Code_Pub,Job_Original_Code_Prv,Job_Original_Code_Cooperative,
+                Job_Original_Code_Buss,Job_Original_Code_Agri,
                 Aid,Homemade,
                 Interest,Intra,Rent,Retirement,Subsidy)]
   
