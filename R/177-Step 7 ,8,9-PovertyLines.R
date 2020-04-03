@@ -49,7 +49,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  MD<-MD[Region=="Rural"]
+  #MD<-MD[Region=="Rural"]
   #MD<-MD[cluster3==13]
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   
