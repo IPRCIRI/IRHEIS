@@ -147,7 +147,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     SMD[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
     SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
     
-    
+    SMD[,weighted.mean(Size,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
  #   NewDecile<-SMD[,.(HHID,Decile)]
  #   names(NewDecile)<-c("HHID","NewDecile")
  #   save(NewDecile,file=paste0(Settings$HEISProcessedPath,"Y",year,"NewDecile.rda"))
@@ -200,13 +200,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   TSubsidy<-TSubsidy[,HHID:=Address]
   MD<-merge(MD,TSubsidy[,.(HHID,check1)],all.x = TRUE)
   MD[,Subsidy3:=ifelse(check1>800000,1,0)]
+  y<-MD[Subsidy3==1,.(HHID,Decile,Region)]
   MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
   MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Decile)][order(Decile)]
   
   MD[,TotalAid:=(Subsidy+aid)/12]
   MD_Ok<- MD[TotalAid>0]
   MD_Ok[,ratio:=TotalAid/Total_Exp_Month]
-  x<-MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
+  MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
   MD_Ok[,.(weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Decile)][order(Decile)]
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadExp.rda"))
