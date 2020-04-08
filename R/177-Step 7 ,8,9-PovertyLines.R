@@ -81,14 +81,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                   TOriginalFoodExpenditure_Per<1.2*FPLine,
-               .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),
+               .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
                  FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
 
   
   EngleD[,PovertyLine:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
-  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
+  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
@@ -331,6 +331,115 @@ MD[FinalPoor==1 & PovertyLine-Total_Exp_Month_Per_nondurable>0,
    sum((PovertyLine-Total_Exp_Month_Per_nondurable)*Size*Weight)]
 
 MD[NewArea==2301,sum(Weight*Size)]
+
+MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Region,Decile)][order(Region,Decile)]
+MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Region)][order(Region)]
+
+MD[,weighted.mean(Bundle_Value,Weight),by=.(Region,Decile)][order(Region,Decile)]
+MD[,weighted.mean(Bundle_Value,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(Bundle_Value,Weight),by=.(Region)][order(Region)]
+
+MD[,weighted.mean(HHEngle,Weight),by=.(Region,Decile)][order(Region,Decile)]
+MD[,weighted.mean(HHEngle,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(HHEngle,Weight),by=.(Region)][order(Region)]
+
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"RetirementWage.rda"))
+MD<-merge(MD,RetirementWageData,by="HHID",all.x = TRUE)
+
+RT<-MD[,.(HHID,Region,HAge,HActivityState,Decile,retirement,Weight)]
+RT[is.na(RT)] <- 0
+RT[,Old:=ifelse(retirement>0 & HAge>48,1,0)]
+RT[,weighted.mean(Old,Weight)]
+RT[,weighted.mean(Old,Weight),by=.(Region,Decile)][order(Region,Decile)]
+RT[,weighted.mean(Old,Weight),by=Decile][order(Decile)]
+RT[,weighted.mean(Old,Weight),by=Region][order(Region)]
+
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurable.rda"))
+RT<-merge(RT,TotalDurable[,.(HHID,Premium_gheyredarmani_mostakhdem,
+                             Premium_gheyredarmani_karfarma,Premium_retirement_mostakhdem,
+                             Premium_retirement_karfarma,Premium_retirement_general,
+                             Premium_retirement_Rural_Household,Premium_retirement_Rural_Govern,
+                             Premium_retirement_bank)])
+
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BussIncome.rda"))
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"AgriWages.rda"))
+
+RT<-merge(RT,PubWageData[,.(HHID,PubWageNetIncomeY)],all.x = TRUE)
+RT<-merge(RT,PrvWageData[,.(HHID,PrvWageNetIncomeY)],all.x = TRUE)
+RT<-merge(RT,BussIncomeData[,.(HHID,BussNetIncomeY)],all.x = TRUE)
+RT<-merge(RT,AgriIncomeData[,.(HHID,AgriNetIncomeY)],all.x = TRUE)
+RT[is.na(RT)] <- 0
+
+a<-RT[AgriNetIncomeY!=0,.(HHID,Region,AgriNetIncomeY,
+                          Premium_gheyredarmani_mostakhdem,Weight)]
+a[,weighted.mean(Premium_gheyredarmani_mostakhdem>0,Weight),by=Region]
+
+b<-RT[BussNetIncomeY!=0,.(HHID,Region,BussNetIncomeY,
+                          Premium_gheyredarmani_mostakhdem,Weight)]
+b[,weighted.mean(Premium_gheyredarmani_mostakhdem>0,Weight),by=Region]
+
+RT[,P:=ifelse(HActivityState=="Employed",1 ,0)]
+RT[,weighted.mean(P,Weight)]
+RT[,weighted.mean(P,Weight),by=.(Region,Decile)][order(Region,Decile)]
+RT[,weighted.mean(P,Weight),by=Decile][order(Decile)]
+RT[,weighted.mean(P,Weight),by=Region][order(Region)]
+
+RT[,P:=ifelse(HActivityState=="Income without Work",1 ,0)]
+RT[,weighted.mean(P,Weight)]
+RT[,weighted.mean(P,Weight),by=.(Region,Decile)][order(Region,Decile)]
+RT[,weighted.mean(P,Weight),by=Decile][order(Decile)]
+RT[,weighted.mean(P,Weight),by=Region][order(Region)]
+
+
+RT[,P:=ifelse(PubWageNetIncomeY>0 | PrvWageNetIncomeY>0 | 
+                BussNetIncomeY>0 | AgriNetIncomeY>0,1 ,0)]
+RT[,weighted.mean(P,Weight)]
+RT[,weighted.mean(P,Weight),by=.(Region,Decile)][order(Region,Decile)]
+RT[,weighted.mean(P,Weight),by=Decile][order(Decile)]
+RT[,weighted.mean(P,Weight),by=Region][order(Region)]
+
+
+RT[,P1:=ifelse((Premium_gheyredarmani_mostakhdem>0 |
+                 Premium_gheyredarmani_karfarma>0) & 
+                 HActivityState=="Employed",1 ,0)]
+RT[,weighted.mean(P1,Weight)]
+RT[,weighted.mean(P1,Weight),by=.(Region,Decile)][order(Region,Decile)]
+RT[,weighted.mean(P1,Weight),by=Decile][order(Decile)]
+RT[,weighted.mean(P1,Weight),by=Region][order(Region)]
+
+RT[,P2:=ifelse(Premium_gheyredarmani_karfarma>0 & HActivityState=="Employed",1 ,0)]
+RT[,weighted.mean(P2,Weight)]
+RT[,weighted.mean(P2,Weight),by=.(Region,Decile)][order(Region,Decile)]
+RT[,weighted.mean(P2,Weight),by=Decile][order(Decile)]
+RT[,weighted.mean(P2,Weight),by=Region][order(Region)]
+
+RT[,P3:=ifelse(Premium_retirement_mostakhdem>0,1 ,0)]
+RT[,weighted.mean(P3,Weight)]
+RT[,weighted.mean(P3,Weight),by=.(Region,Decile)][order(Region,Decile)]
+
+RT[,P4:=ifelse(Premium_retirement_karfarma>0,1 ,0)]
+RT[,weighted.mean(P4,Weight)]
+RT[,weighted.mean(P4,Weight),by=.(Region,Decile)][order(Region,Decile)]
+
+RT[,P5:=ifelse(Premium_retirement_general>0,1 ,0)]
+RT[,weighted.mean(P5,Weight)]
+RT[,weighted.mean(P5,Weight),by=.(Region,Decile)][order(Region,Decile)]
+
+RT[,P6:=ifelse(Premium_retirement_Rural_Household>0,1 ,0)]
+RT[,weighted.mean(P6,Weight)]
+RT[,weighted.mean(P6,Weight),by=.(Region,Decile)][order(Region,Decile)]
+
+RT[,P7:=ifelse(Premium_retirement_Rural_Govern>0,1 ,0)]
+RT[,weighted.mean(P7,Weight)]
+RT[,weighted.mean(P7,Weight),by=.(Region,Decile)][order(Region,Decile)]
+
+RT[,P8:=ifelse(Premium_retirement_bank>0,1 ,0)]
+RT[,weighted.mean(P8,Weight)]
+RT[,weighted.mean(P8,Weight),by=.(Region,Decile)][order(Region,Decile)]
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
