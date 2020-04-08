@@ -29,10 +29,11 @@ year<-97
  
  Base2<-merge(BigFData,FData,by="HHID")
  
- Base2<-merge(Base2,MD[,.(HHID,NewArea,NewArea2,ProvinceCode,cluster3,Decile,
-                            FinalFoodPoor,FinalPoor,Weight,EqSizeOECD,EqSizeCalory,PEngel)],by="HHID")
+ Base2<-merge(Base2,MD[,.(HHID,NewArea,NewArea_Name,ProvinceCode,cluster3,Decile,
+                            FinalFoodPoor,FinalPoor,Weight,EqSizeOECD,EqSizeCalory)],by="HHID")
 
- Base<-Base2[FinalFoodPoor==1]
+ Base<-Base2
+ #Base<-Base2[FinalFoodPoor==1]
  Base<-Base[,FGrams_Per:=FGrams/EqSizeCalory]
  Base<-Base[,FoodKCalories_Per:=FoodKCaloriesHH/EqSizeCalory]
  Base<-Base[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]
@@ -46,9 +47,13 @@ year<-97
                   Weight=mean(Weight),
                   ProvinceCode=mean(ProvinceCode)),by=HHID]
  
+# BaseX1<-Base[,.(.N,Average_Consumption=weighted.mean(FGrams_PerNew,Weight),
+ #                           cluster3=mean(cluster3)),
+  #           by=.(ProvinceCode,FoodType)]
+ 
  BaseX1<-Base[,.(.N,Average_Consumption=weighted.mean(FGrams_PerNew,Weight),
-                            cluster3=mean(cluster3)),
-             by=.(ProvinceCode,FoodType)]
+                 cluster3=mean(cluster3)),
+              by=.(FoodType)]
 
  BaseX1<-BaseX1[,N2:=max(N),by=.(ProvinceCode)]
  BaseX1<-BaseX1[,Average_New:=N*Average_Consumption/N2]
