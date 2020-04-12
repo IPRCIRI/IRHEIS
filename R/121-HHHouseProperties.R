@@ -22,12 +22,29 @@ library(scales)
 
 P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
 
+HighShare<-data.table(HHID=NA_real_,
+                      G13=NA_real_,
+                      Year=NA_real_,
+                      Weight=NA_real_,
+                      Auto2_rani=NA_real_,
+                      Auto1_Irani=NA_real_,
+                      Gardanband_Gold=NA_real_,
+                      Ghali_Mashini=NA_real_,
+                      freezer2=NA_real_,
+                      Lastik_Mashin=NA_real_,
+                      Mobile=NA_real_,
+                      Tamirat_Asasi=NA_real_,
+                      Travel_Haj=NA_real_,
+                      Mobl=NA_real_,
+                      Mashin_Lebasshooyi=NA_real_,
+                      TV_Rangi_Khareji=NA_real_)[0]
 
 Table<-data.table(Year=NA_integer_,Auto=NA_real_,Mobile=NA_real_,
                   Refrigerator=NA_real_,TV=NA_real_)[0]
 
 Name<-data.table(HHID=NA_real_,
                  G13=NA_real_,
+                 Year=NA_real_,
                  Paltopoost=NA_real_,
                  Lebas_Aroos=NA_real_,
                  Kolah_Imeni=NA_real_,
@@ -346,6 +363,8 @@ Name<-data.table(HHID=NA_real_,
                  Weight=NA_real_,
                  Decile=NA_real_)[0]
 
+Dep<-data.table(Year=NA_integer_, Buy=NA_real_,Use=NA_real_)[0]
+
 M_Buyers <- data.table(Year=NA_integer_,cluster3=NA_real_,Mobile_Buyers_Exp=NA_real_)[0]
 
 years <- Settings$startyear:Settings$endyear
@@ -602,6 +621,11 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   HHHouseProperties[,weighted.mean(car=="True",Weight)]
   HHHouseProperties[,weighted.mean(Auto1_Irani>0 | Auto2_rani>0 | 
                                      Auto1_Khareji>0 | Auto2_Khareji>0 ,Weight)]
+#  X1 <- HHHouseProperties[,.(Use=weighted.mean(car=="True",Weight),
+ #                            Buy=weighted.mean(Auto1_Irani>0 | Auto2_rani>0 | 
+  #                           Auto1_Khareji>0 | Auto2_Khareji>0 ,Weight))]
+#  X1[,Year:=year]
+#  Dep <- rbind(Dep,X1)
   
   HHHouseProperties[,weighted.mean(motorcycle=="True",Weight)]
   HHHouseProperties[,weighted.mean(Motor>0 ,Weight)]
@@ -617,11 +641,17 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   HHHouseProperties[,weighted.mean(tvbw=="True",Weight)]
   HHHouseProperties[,weighted.mean(TV_SS>0 ,Weight)]
+
   
   
   HHHouseProperties[,weighted.mean(tvcr=="True",Weight)]
   HHHouseProperties[,weighted.mean(TV_Rangi_Irani>0 |
                                      TV_Rangi_Khareji>0 ,Weight)]
+#  X1 <- HHHouseProperties[,.(Use=weighted.mean(tvcr=="True",Weight),
+ #                            Buy=weighted.mean(TV_Rangi_Irani>0 |
+  #                                               TV_Rangi_Khareji>0  ,Weight))]
+#  X1[,Year:=year]
+#  Dep <- rbind(Dep,X1)
   
   HHHouseProperties[,weighted.mean(vcr=="True",Weight)]
   HHHouseProperties[,weighted.mean(Video_Player>0 ,Weight)]
@@ -631,26 +661,45 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   HHHouseProperties[,weighted.mean(cellphone=="True",Weight)]
   HHHouseProperties[,weighted.mean(Mobile>0 ,Weight)]
+  X1 <- HHHouseProperties[,.(Use=weighted.mean(cellphone=="True",Weight),
+                             Buy=weighted.mean(Mobile>0  ,Weight))]
+  X1[,Year:=year]
+  Dep <- rbind(Dep,X1)
   
   HHHouseProperties[,weighted.mean(freezer=="True",Weight)]
   HHHouseProperties[,weighted.mean(frez_refrig=="True",Weight)]
   HHHouseProperties[,weighted.mean(freezer2>0 ,Weight)]
   
-  
   HHHouseProperties[,weighted.mean(refrigerator=="True",Weight)]
   HHHouseProperties[,weighted.mean(Yakhchal>0 ,Weight)]
   
+#  X1 <- HHHouseProperties[,.(Use=weighted.mean(freezer=="True" | 
+ #                                                refrigerator=="True" |
+  #                                               frez_refrig=="True",Weight),
+   #                          Buy=weighted.mean(freezer2>0 |
+    #                                             Yakhchal>0  ,Weight))]
+#  X1[,Year:=year]
+#  Dep <- rbind(Dep,X1)
 
   HHHouseProperties[,weighted.mean(oven=="True",Weight)]
  # HHHouseProperties[,weighted.mean(Microwave=="True",Weight)]
   HHHouseProperties[,weighted.mean(OjaghGaz>0 ,Weight)]
+#  X1 <- HHHouseProperties[,.(Use=weighted.mean(oven=="True" ,Weight),
+ #                            Buy=weighted.mean(OjaghGaz>0  ,Weight))]
+#  X1[,Year:=year]
+#  Dep <- rbind(Dep,X1)
   
   HHHouseProperties[,weighted.mean(vacuum=="True",Weight)]
   HHHouseProperties[,weighted.mean(Jaroobarghi>0 ,Weight)]
   
   HHHouseProperties[,weighted.mean(washer=="True",Weight)]
   HHHouseProperties[,weighted.mean(dishwasher=="True",Weight)]
-  HHHouseProperties[,weighted.mean(Mashin_Lebasshooyi>0 ,Weight)]
+  HHHouseProperties[,weighted.mean(Mashin_Lebasshooyi>0,Weight)]
+#  X1 <- HHHouseProperties[,.(Use=weighted.mean(washer=="True"  |
+ #                                                dishwasher=="True",Weight),
+  #                           Buy=weighted.mean(Mashin_Lebasshooyi>0  ,Weight))]
+#  X1[,Year:=year]
+ # Dep <- rbind(Dep,X1)
   
   HHHouseProperties[,weighted.mean(sewing=="True",Weight)]
   HHHouseProperties[,weighted.mean(Charkh_Khayati>0,Weight)]
@@ -978,16 +1027,28 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   HHHouseProperties[cluster3==1,weighted.mean(Mobile/Total_Exp_Month,Weight,TotalDurable)]
 
-#  if (year<97){
-#    TotalDurable[,G13:=Durable_Exp]
-#    TotalDurable[,Durable_Exp:=NULL]
-#  }
+  if (year<97){
+    TotalDurable[,G13:=Durable_Exp]
+    TotalDurable[,Durable_Exp:=NULL]
+  }
   
   
 #  TotalDurable<-merge(TotalDurable,HHHouseProperties[,.(HHID,Decile,Weight)],by="HHID")
 #  s2 <-TotalDurable[as.numeric(Decile)>1 & as.numeric(Decile)<4, {lapply(.SD, function(x) sum(x*Weight)/sum(G13*Weight))}][]
  # s2[,Year:=year]
   #Name <- rbind(Name,s2)
+  
+  TotalDurable<-merge(TotalDurable,HHHouseProperties[,.(HHID,Weight,Decile)],by="HHID")
+  X1<-TotalDurable[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                   .(HHID,Weight,G13,Auto2_rani,Auto1_Irani,
+                      Gardanband_Gold,
+                      Ghali_Mashini,freezer2,Lastik_Mashin,
+                      Mobile,Tamirat_Asasi,Travel_Haj,Mobl,
+                      Mashin_Lebasshooyi,TV_Rangi_Khareji)]
+  X1<-X1[, {lapply(.SD, function(x) sum(x*Weight)/sum(G13*Weight))}][]
+  
+  X1[,Year:=year]
+  HighShare <- rbind(HighShare,X1)
   }
 
 ggplot(M_Buyers)+
@@ -1024,6 +1085,7 @@ s2 <-TotalDurable[as.numeric(Decile)>1 & as.numeric(Decile)<4, {lapply(.SD, func
 
 #write.csv(s1,"s1.csv")
 #write.csv(s2,"s2.csv")
+
 
 
 
