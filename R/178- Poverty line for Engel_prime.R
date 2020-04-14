@@ -95,20 +95,21 @@ for(year in (84:Settings$endyear)){
   lyear=year-1
   load(file=paste0(Settings$HEISProcessedPath,"Y",lyear,"EngleD.rda"))
   
-  EngleDD[,Engel:=ifelse(Year==84,Engel*0.99373321396598,
-                        ifelse(Year==85,Engel*0.993843447669305,
-                        ifelse(Year==86,Engel*1.02434928631402,
-                        ifelse(Year==87,Engel*1.03833865814696,
-                        ifelse(Year==88,Engel*0.991884580703336,
-                        ifelse(Year==89,Engel*1.02022867194371,
-                        ifelse(Year==90,Engel*1.0031847133758,
-                        ifelse(Year==91,Engel*1.14083398898505,
-                        ifelse(Year==92,Engel*1.09505703422053,
-                        ifelse(Year==93,Engel*0.959860383944154,
-                        ifelse(Year==94,Engel*0.983020554066131,
-                        ifelse(Year==95,Engel*0.980751604032997,
-                        ifelse(Year==96,Engel*1.02096627164995,
-                        ifelse(Year==97,Engel*1.18205349439172,0))))))))))))))]
+  EngleDD[,Engel:=ifelse(Year==84,Engel*0.9937,
+                        ifelse(Year==85,Engel*0.9938,
+                        ifelse(Year==86,Engel*0.9936,
+                        ifelse(Year==87,Engel*1.0012,
+                        ifelse(Year==88,Engel*0.9963,
+                        ifelse(Year==89,Engel*0.9898,
+                        ifelse(Year==90,Engel*0.9664,
+                        ifelse(Year==91,Engel*1.0269,
+                        ifelse(Year==92,Engel*1.0250,
+                        ifelse(Year==93,Engel*1.0080,
+                        ifelse(Year==94,Engel*1.0006,
+                        ifelse(Year==95,Engel*0.9996,
+                        ifelse(Year==96,Engel*1.0000,
+                        ifelse(Year==97,Engel*1.0379,0))))))))))))))]
+
   EngleD  <- subset(EngleD,select = c(1,2,3,5,6))
   
   EngleDD <- subset(EngleDD, select = c(cluster3,Engel,Region))
@@ -189,9 +190,8 @@ FinalClusterEngelPrime <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR
 colnames(FinalClusterEngelPrime)[colnames(FinalClusterEngelPrime) == 'FPLine'] <- 'FPLine_p'
 colnames(FinalClusterEngelPrime)[colnames(FinalClusterEngelPrime) == 'PovertyHCR'] <- 'PovertyHCR_p'
 
-load(file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda")) 
 FinalClusterEngelPrime <- merge(FinalClusterEngelPrime,FinalClusterEngel[,.(Year,cluster3,FPLine,PovertyHCR)])
-FinalClusterEngelPrime <- FinalClusterEngelPrime[,.(Year,cluster3,FPLine,PovertyHCR)]
 save(FinalClusterEngelPrime,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_prime.rda"))
 
 library(xlsx)
