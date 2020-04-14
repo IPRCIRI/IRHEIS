@@ -162,6 +162,9 @@ for(year in years){
   P[,NMasters:=ifelse(EduLevel=="Masters" & Student==TRUE,1,0)]
   P[,NPhD:=ifelse(EduLevel=="PhD" & Student==TRUE,1,0)]
   P[,NUniv:=NCollege+NBachelors+NMasters+NPhD]
+  P[,NLiterate:=ifelse(EduLevel!="Illiterate",1,0)]
+  P[,NEmployed:=ifelse(ActivityState=="Employed",1,0)]
+
   
   #Age Groups 1
   P[,NAge1B:=ifelse(Age==0 & Sex=="Male",1,0)]
@@ -184,7 +187,10 @@ for(year in years){
   P[,NAge9G:=ifelse(Age<=59 & Age>19 & Sex=="Female",1,0)]
   P[,NAge10B:=ifelse(Age>59 & Sex=="Male",1,0)]
   P[,NAge10G:=ifelse(Age>59 & Sex=="Female",1,0)]
-  
+  P[,NDabestan:=ifelse(Age>=7 & Age<=11,1,0)]
+  P[,NRahnamayi:=ifelse(Age>=12 & Age<=14,1,0)]
+  P[,NDabirestan:=ifelse(Age>=15 & Age<=17,1,0)]
+  P[,NPish:=ifelse(Age==18,1,0)]
   #Age Groups 2
   P[,NAge1_A_B:=ifelse(Age==0 & Sex=="Male",1,0)]
   P[,NAge1_A_G:=ifelse(Age==0 & Sex=="Female",1,0)]
@@ -272,7 +278,10 @@ for(year in years){
                      "NAge6_A_B","NAge6_A_G",
                      "NAge7_A_B","NAge7_A_G",
                      "NAge8_A_B","NAge8_A_G",
-                     "NAge9_A_B","NAge9_A_G"),
+                     "NAge9_A_B","NAge9_A_G",
+                     "NDabestan","NRahnamayi",
+                     "NDabirestan","NPish",
+                     "NEmployed","NLiterate"),
             by="HHID"]
 
 #  PSum <- PSum[TotalIncome>0]
@@ -445,11 +454,11 @@ for(year in years){
   save(P1,file=paste0(Settings$HEISProcessedPath,"Y",year,"P1.rda"))
   save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
 
-  P1<-merge(P1,HHBase[,.(HHID,ProvinceCode)])
-  X2 <- P1[Sex=="Female" & Age>18,.(Educ=weighted.mean(EduYears>12,Weight,na.rm = TRUE)),by=ProvinceCode]
-  X2[,Year:=year]
-  Educ <- rbind(Educ,X2)
-  write.csv(Educ,file = "Educ.csv")
+  #P1<-merge(P1,HHBase[,.(HHID,ProvinceCode)])
+  #X2 <- P1[Sex=="Female" & Age>18,.(Educ=weighted.mean(EduYears>12,Weight,na.rm = TRUE)),by=ProvinceCode]
+  # X2[,Year:=year]
+  #  Educ <- rbind(Educ,X2)
+  # write.csv(Educ,file = "Educ.csv")
   }
 
 
