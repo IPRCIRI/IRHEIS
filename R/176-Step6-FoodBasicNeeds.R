@@ -66,6 +66,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   # save(UrbanFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"UrbanFinalfood.rda"))
   # save(RuralFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"RuralFinalfood.rda"))
   # 
+  MD[,weighted.mean(FinalFoodPoor,Weight),by=c("Region","ProvinceCode")][order(Region,ProvinceCode)]
+  MD[,weighted.mean(FinalFoodPoor,Weight),by=cluster3][order(cluster3)]
 }
 
 endtime <- proc.time()

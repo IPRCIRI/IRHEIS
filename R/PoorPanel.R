@@ -14,17 +14,84 @@ library(ggplot2)
 library(stats)
 library(spatstat)
 
-
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
-  inflation <- as.data.table(read_excel("~/GitHub/IRHEIS/Data/inflation.xlsx",col_names = T))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
+  inflation <- as.data.table(read_excel("~/GitHub/IRHEIS/Data/ProvinceCPI.xlsx",
+                                         sheet = "Province"))
+  I<-inflation[Year==year]
   C<-MD[,.(HHID,cluster3,EqSizeCalory)]
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Total_Income.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Specific.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
-SMD<-SMD[,.(HHID,PriceIndex)]
-MD<-merge(MD,SMD,by=c("HHID"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Job.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Data.rda"))
+
+MD<-merge(MD,job,by=("HHID"))
+MD<-merge(MD,Specific,by=c("HHID"))
+MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea2"))
+MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"))
+MD<-MD[FinalPoor==1]
+MD[,job:=ifelse((Job_Main_Code_Pub==1 | Job_Main_Code_Prv==1 | Job_Main_Code_Cooperative==1 | Job_Main_Code_Buss==1 | Job_Main_Code_Agri==1),1,0)]
+j<-MD[,weighted.mean(job,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht<-MD[,weighted.mean(dandan/Size,Weight*Size),by=c("ProvinceName","FinalPoor")]
+MD<-MD[,Job_Main_Code_Pub:=as.numeric(job)]
+MD<-MD[,dandan:=tooth_G+tooth_NG+tooth_Jarahi_G+tooth_Jarahi_NG]
+MD<-MD[,LivestockExpenditure:=(LivestockExpenditure+BirdsMeatExpenditure)/(EqSizeCalory*r_meat)]
+MD<-MD[,SheepMeatExpenditure:=SheepMeatExpenditure/(EqSizeCalory*r_meat)]
+MD<-MD[,CowMeatExpenditure:=CowMeatExpenditure/(EqSizeCalory*r_meat)]
+MD<-MD[,CamelMeatExpenditure:=CamelMeatExpenditure/(EqSizeCalory*r_meat)]
+
+morgh<-MD[,BirdsMeatExpenditure:=BirdsMeatExpenditure/EqSizeCalory]
+morgh<-MD[,weighted.mean(BirdsMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+MD<-MD[,public:=ifelse(Job_Main_Code_Pub==1 | Job_Main_Code_Prv==1 | Job_Main_Code_Cooperative==1 |Job_Main_Code_Pub==2 | Job_Main_Code_Prv==2 | Job_Main_Code_Cooperative==2,1,0)]
+MD<-MD[,pri:=ifelse(Job_Main_Code_Prv==1,1,0)]
+MD<-MD[,coop:=ifelse(Job_Main_Code_Cooperative==1,1,0)]
+
+goosht<-MD[,weighted.mean(dandan/Size,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht1<-MD[,weighted.mean(Job_Main_Code_Pub,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht2<-MD[,weighted.mean(CowMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+goosht3<-MD[,weighted.mean(CamelMeatExpenditure,Weight*Size),by=c("ProvinceName","FinalPoor")]
+ggplot(Dabestan1, aes(fill=factor(FinalPoor), y=V1, x=ProvinceName)) + 
+  geom_col(position="stack") + theme_bw() +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
+meat<-as.data.table(cbind(goosht$ProvinceName,goosht$FinalPoor,goosht$V1,goosht1$V1,goosht2$V1,goosht3$V1))
+Dabestan<-MD[NDabirestan>0 | NDabestan>0 | NRahnamayi>0 | NPish>0 | KelasKonkoor>0]
+Dabestan<-Dabestan[,Enrollment:=Enrollment_Dabirestan_G+Enrollment_Dabirestan_NG+Enrollment_Dabirestan_Shabane+
+                     Enrollment_Dabestan_G+Enrollment_Dabestan_NG+Enrollment_Rahnamayi_G+Enrollment_Rahnamayi_NG+
+                     Enrollment_pish_G+Enrollment_pish_NG+Enrollment_Rahnamayi_Shabane+Enrollment_pish_Shabane+
+                     KelasKonkoor]
+Dabestan<-MD[NDabestan>0]
+Dabestan<-Dabestan[,enrol:=Enrollment_Dabestan_NG/NDabestan]
+female<-MD[Size>1]
+
+female<-female[,female:=ifelse(HSex=="Female",1,0)]
+female<-female[,weighted.mean(female,Weight*Size,na.rm = T),by=c("ProvinceName","FinalPoor")]
+Dabestan2<-Dabestan[,weighted.mean(enrol/Total_Exp_Month_Per,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan2<-MD[,weighted.mean(Enrollment_Rahnamayi_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan3<-MD[,weighted.mean(Enrollment_Rahnamayi_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan4<-MD[,weighted.mean(Enrollment_Dabirestan_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan5<-MD[,weighted.mean(Enrollment_Dabirestan_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Dabestan6<-MD[,weighted.mean(KelasKonkoor,Weight*Size),by=c("ProvinceName","FinalPoor")]
+
+edu<-as.data.table(cbind(Dabestan1$ProvinceName,Dabestan1$FinalPoor,Dabestan1$V1,
+                         Dabestan2$V1))
+
+tooth<-MD[,weighted.mean(tooth_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+tooth<-MD[,weighted.mean(tooth_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+
+visit<-MD[,weighted.mean(Visit_Omoomi_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit1<-MD[,weighted.mean(Visit_Omoomi_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit2<-MD[,weighted.mean(Visit_Motekhases_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit3<-MD[,weighted.mean(Visit_Motekhases_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit4<-MD[,weighted.mean(Visit_Mama_G,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit5<-MD[,weighted.mean(Visit_Mama_NG,Weight*Size),by=c("ProvinceName","FinalPoor")]
+visit<-as.data.table(cbind(visit$ProvinceName,visit$FinalPoor,visit$V1,visit1$V1,
+                     visit2$V1,visit3$V1,visit4$V1,visit5$V1))
+
+phd<-MD[,weighted.mean(NPhD+NMasters+NBachelors,Weight*Size),by=c("ProvinceName")]
 inflation<-inflation[Year==year]
 cpi<-inflation$CPI
 cpi<-as.numeric(cpi)
@@ -52,7 +119,7 @@ p6<-MD[,weighted.mean(Cloth_Exp,Weight*Size),by=c("cluster3")]
 p7<-MD[,weighted.mean(Amusement_Exp,Weight*Size),by=c("cluster3")]
 p8<-MD[,weighted.mean(Education_Exp,Weight*Size),by=c("cluster3")]
 p9<-MD[,weighted.mean(ServiceExp,Weight*Size),by=c("cluster3")]
-p10<-MD[,weighted.mean(Area,Weight*Size),by=c("cluster3")]
+p10<-MD[,weighted.mean(Area/Size,Weight*Size),by=c("ProvinceName","FinalPoor")]
 p11<-MD[,weighted.mean(MetrPrice,Weight*Size),by=c("cluster3")]
 p12<-MD[,weighted.mean(ServiceExp,Weight*Size),by=c("cluster3")]
 p13<-MD[,weighted.mean(Furniture_Exp,Weight*Size),by=c("cluster3")]
@@ -89,6 +156,22 @@ Real<-d
   d<-d[,Year:=year]
   Real<-rbind(Real,d)
 }
+Data<-Data[Decile==1 | Decile==2 | Decile==3]
+J1<-as.data.table(Data[,weighted.mean(Simple_Jobs_Staff,Weight*Size)])
+J2<-as.data.table(Data[,weighted.mean(Opreators_machinery_equipment,Weight*Size)])
+J3<-as.data.table(Data[,weighted.mean(Craftsman,Weight*Size)])
+J4<-as.data.table(Data[,weighted.mean(Skilled_staff_agriculture_forestr_fishing,Weight*Size)])
+J5<-as.data.table(Data[,weighted.mean(Staff_service_sales,Weight*Size)])
+J6<-as.data.table(Data[,weighted.mean(Office_staff,Weight*Size)])
+J7<-as.data.table(Data[,weighted.mean(Technician,Weight*Size)])
+J8<-as.data.table(Data[,weighted.mean(Expert,Weight*Size)])
+J9<-as.data.table(Data[,weighted.mean(Manager,Weight*Size)])
+
+J<-rbind(J1,J2,J3,J4,J5,J6,J7,J8,J9)
+
+
+
+
 }
 save(PANEL, file=paste0(Settings$HEISProcessedPath,"panelpoor.rda"))
 PANEL<-PANEL[,cluster3:=as.factor(cluster3)]
