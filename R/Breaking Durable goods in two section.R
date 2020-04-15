@@ -30,13 +30,11 @@ for(year in (Settings$startyear:Settings$endyear)){
          "Sanaye_Dasti",
          "Gahvare",
          "Lavazem_Safar",
-         "MavadTamir1",
          "HazineNasb",
          "Takhtekhab",
          "Komod",
          "Anvae_Miz",
          "Mobl",
-         "MavadTamir2",
          "Ghali_Dastbaf",
          "Ghali_Mashini",
          "Mooket",
@@ -146,13 +144,24 @@ for(year in (Settings$startyear:Settings$endyear)){
          "Calculator",
          "Ghatayat_PC",
          "Other_Tajhozat_PC",
-         "Ojrat_Tamir_TV",
-         "Ojrat_Tamir_PC",
-         "Tamir_Other_Soti")
+         "Gardanband_Gold",
+         "Gardanband_Silver",
+         "Gardanband_Badal",
+         "Saat_Divari",
+         "Saat_Mochi",
+         "Gire_Kraat",
+         "Saat_Repait",
+         "Sekke_Prize",
+         "Tadfin",
+         "Aramgah",
+         "Travel_Mazhabi_Iran",
+         "Travel_Tafrihi_Iran",
+         "Travel_Haj",
+         "Travel_Khareji" )
   
   TotalDurable[, Remain_Durable := Reduce(`+`, .SD), .SDcols=g]
   TotalDurable[,Out_from_Durable:=G13-Remain_Durable]
-
+  
   Durablele_Detail<-TotalDurable[,.(HHID,G13,Remain_Durable,Out_from_Durable)]
   save(Durablele_Detail, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durablele_Detail.rda"))
   
