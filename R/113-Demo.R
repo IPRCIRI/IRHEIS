@@ -439,13 +439,13 @@ for(year in years){
            weighted.mean(GA9,Weight)*Settings$KCaloryNeed_A_G9 +
            weighted.mean(lactating,Weight)*Settings$KCaloryNeed_lactating]
   
-  #cat(P1[,mean(Calorie_Need_WorldBank)],"\n")
-  #cat(P1[,mean(Calorie_Need_Anstitoo)],"\n")
+  cat(P1[,mean(Calorie_Need_WorldBank)],"\n")
+  cat(P1[,mean(Calorie_Need_Anstitoo)],"\n")
   
   HHI <- merge(HHI,HHWeights)
   #cat(HHI[,weighted.mean(Calorie_Need1/Size,Weight)],"\n")
   #cat(HHI[,weighted.mean(Calorie_Need2/Size,Weight)],"\n")
-  cat(HHI[,weighted.mean(Size,Weight)],"\n")
+  #cat(HHI[,weighted.mean(Size,Weight)],"\n")
 #  rm(HHI)
   
   Calorie_Need<-P1[,.(Calorie_Need_WorldBank=mean(Calorie_Need_WorldBank),

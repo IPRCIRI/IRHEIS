@@ -56,6 +56,7 @@ MDS_Amusement: AmusementTables
 MDS_HotelRestaurant: HotelRestaurantTables
 MDS_Other: OtherTables
 MDS_Durable: DurableTables
+MDS_Finance: FinanceTables
 MDS_Investment: InvestmentTables
 MDS_Medical: MedicalTables
 MDS_Hygiene: HygieneTables
