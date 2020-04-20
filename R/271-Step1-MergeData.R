@@ -81,7 +81,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,NonFreeDurableData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ResturantData,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,InvestmentData,by =c("HHID"),all=TRUE)
-  for (col in c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
+  for (col in c("OriginalFoodExpenditure","FoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
                 "Communication_Exp", "Education_Exp", "HouseandEnergy_Exp", 
                 "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", "Transportation_Exp",
                 "Other_Exp", "Medical_Exp", "NonFreeDurable_Exp",
@@ -124,7 +124,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    Total_Index98<-185.1
    
    #Calculate Monthly Total Expenditures 
-   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
+   nw <- c("FoodExpenditure", "Cigar_Exp", "Cloth_Exp",
            "Amusement_Exp", "Communication_Exp", 
            "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
            "Transportation_Exp", "Other_Exp" )
@@ -134,8 +134,9 @@ for(year in (Settings$startyear:Settings$endyear)){
    # pw <- c(nw, "Added_Food_Exp_Month")
    #Lw <- c(pw,  "Medical_Exp", "Durable_Exp")
    
+   MD<-MD[,FoodExpenditure:=FoodExpenditure*FoodDrink_Index98/FoodDrink_Index]
    MD<-MD[,OriginalFoodExpenditure:=OriginalFoodExpenditure*FoodDrink_Index98/FoodDrink_Index]
-   MD<-MD[,Cigar_Exp:=Cigar_Exp*Cigar_Index98/Cigar_Index]
+  MD<-MD[,Cigar_Exp:=Cigar_Exp*Cigar_Index98/Cigar_Index]
    MD<-MD[,Cloth_Exp:=Cloth_Exp*Cloth_Index98/Cloth_Index]
    MD<-MD[,HouseandEnergy_Exp:=HouseandEnergy_Exp*HouseEnergy_Index98/HouseEnergy_Index]
    MD<-MD[,Furniture_Exp:=Furniture_Exp*Furniture_Index98/Furniture_Index]
@@ -157,7 +158,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
 
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN198.rda"))
+  cat(MD[,weighted.mean(Total_Exp_Month,Weight)])
   
+  x<-MD[,.(FoodExpenditure,OriginalFoodExpenditure,FoodExpenditure-OriginalFoodExpenditure)]
 }
 
 

@@ -22,24 +22,7 @@ FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
-FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
-                                  House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
-                                  SampleSize=NA_integer_,
-                                  Engle=NA_integer_,FPLine=NA_integer_,
-                                  PovertyLine=NA_real_,PovertyHCR=NA_real_,
-                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
-FinalClusterDiff <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
-                                  House_Share=NA_real_,Food_Share=NA_real_,Durable_Share=NA_real_,
-                                  SampleSize=NA_integer_,Clusterdiff=NA_integer_,
-                                  Engle=NA_integer_,FPLine=NA_integer_,FoodKCaloriesHH_Per=NA_real_,
-                                  Total_Exp_Month_Per_nondurable=NA_real_,
-                                  Total_Exp_Month_Per=NA_real_,
-                                  PovertyLine=NA_real_,PovertyHCR=NA_real_,
-                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
-
-HighEngles<-data.table(Year=NA_integer_,Region=NA_integer_,cluster3=NA_real_,N40=NA_real_,
-                    N45=NA_real_,N50=NA_real_,N=NA_real_)[0]
 
 
 
@@ -51,42 +34,18 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #MD<-MD[Region=="Rural"]
   #MD<-MD[cluster3==13]
-  MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
-  
-  HighEngle1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine &
-                  (TOriginalFoodExpenditure/Total_Exp_Month) > 0.4,
-                .(.N),by=.(Region,cluster3)]
-  names(HighEngle1)<-c("Region", "cluster3","N40")
-  
-  HighEngle2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                      TOriginalFoodExpenditure_Per<1.2*FPLine &
-                      (TOriginalFoodExpenditure/Total_Exp_Month) > 0.45,
-                    .(.N),by=.(Region,cluster3)]
-  names(HighEngle2)<-c("Region", "cluster3","N45")
-  
-  HighEngle3 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                      TOriginalFoodExpenditure_Per<1.2*FPLine &
-                      (TOriginalFoodExpenditure/Total_Exp_Month) > 0.5,
-                    .(.N),by=.(Region,cluster3)]
-  names(HighEngle3)<-c("Region", "cluster3","N50")
-  
-  HighEngle4 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                      TOriginalFoodExpenditure_Per<1.2*FPLine,
-                    .(.N),by=.(Region,cluster3)]
-  
-  HighEngle<-merge(HighEngle1,HighEngle2)
-  HighEngle<-merge(HighEngle,HighEngle3)
-  HighEngle<-merge(HighEngle,HighEngle4)
 
-  EngleD<- MD[as.numeric(Decile)<3,
+  
+ 
+  EngleD<- MD[TOriginalFoodExpenditure_Per>0.8*FPLine &
+                TOriginalFoodExpenditure_Per<1.2*FPLine,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
+                 FPLine=mean(FPLine)),by=.(Region)]
 
 
   
   EngleD[,PovertyLine:=FPLine/Engel]
-  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
+  MD <- merge(MD,EngleD[,.(Region,PovertyLine,Engel)],by=c("Region"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS98.rda"))
@@ -94,14 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
-  
-  ################High Engle##################
-  
-  X1 <- HighEngle
 
-  X1[,Year:=year]
-
-  HighEngles <- rbind(HighEngles,X1)
   
   ################Country##################
 
@@ -128,22 +80,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalRegionResults <- rbind(FinalRegionResults,X)
 
   
-  ################Cluster##################
-  X1 <- MD[,.(SampleSize=.N,MetrPrice=weighted.mean(MetrPrice,Weight,na.rm = TRUE),
-              House_Share=weighted.mean(ServiceExp/Total_Exp_Month,Weight),
-              Engle=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
-              FPLine=weighted.mean(FPLine,Weight),
-              FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
-              PovertyLine=weighted.mean(PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=cluster3]
-  X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
-                          PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by=cluster3]
-  
 
-  X1[,Year:=year]
-  X2[,Year:=year]
-  X <- merge(X1,X2,by=c("Year","cluster3"))
-  FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
@@ -156,13 +93,175 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   Poors<-MD[FinalPoor==1]
   
-  a<-MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-        TOriginalFoodExpenditure_Per<1.2*FPLine &
-        cluster3==7,
-        .(x=TOriginalFoodExpenditure/Total_Exp_Month)]
-  
+MD[,weighted.mean(Bundle_Value,Weight),by=.(Region,Decile)][order(Region,Decile)]
+MD[,weighted.mean(Bundle_Value,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(Bundle_Value,Weight),by=.(Region)][order(Region)]
+MD[,weighted.mean(Bundle_Value,Weight)]
 
-    MD[as.numeric(Decile)<2,weighted.mean(FinalPoor,Weight)]
+MD[,weighted.mean(FPLine,Weight),by=.(Region,Decile)][order(Region,Decile)]
+MD[,weighted.mean(FPLine,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(FPLine,Weight),by=.(Region)][order(Region)]
+MD[,weighted.mean(FPLine,Weight)]
+
+MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Region,Decile)][order(Region,Decile)]
+MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Region)][order(Region)]
+MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight)]
+
+MD[as.numeric(Decile)==1,weighted.mean(TFoodKCaloriesHH_Per,Weight),by=.(Region)][order(Region)]
+MD[as.numeric(Decile)==1,weighted.mean(TFoodKCaloriesHH_Per,Weight)]
+
+MD[,weighted.mean(OriginalFoodExpenditure_Per,Weight),by=.(Region,Decile)][order(Region,Decile)]
+MD[,weighted.mean(OriginalFoodExpenditure_Per,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(OriginalFoodExpenditure_Per,Weight),by=.(Region)][order(Region)]
+MD[,weighted.mean(OriginalFoodExpenditure_Per,Weight)]
+
+MD[FinalPoor==1,weighted.mean(OriginalFoodExpenditure_Per,Weight),by=.(Region)][order(Region)]
+MD[FinalPoor==1,weighted.mean(OriginalFoodExpenditure_Per,Weight)]
+
+
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodCon.rda"))
+MD<-merge(MD,TotalFoodCon,by="HHID")
+
+load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
+MD<-merge(MD,TotalFoodExp,by="HHID")
+
+
+MD[,weighted.mean(G0111,Weight.x)]
+MD[,weighted.mean(G01181,Weight.x)]
+MD[,weighted.mean(G01121+SheepMeatGram,Weight.x)]
+MD[,weighted.mean(G01176,Weight.x)]
+MD[,weighted.mean(G01131,Weight.x)]
+MD[,weighted.mean(`011164`,Weight.x)]
+MD[,weighted.mean(`011424`,Weight.x)]
+MD[,weighted.mean(G0116,Weight.x)]
+MD[,weighted.mean(G01123,Weight.x)]
+MD[,weighted.mean(G01114,Weight.x)]
+MD[,weighted.mean(`011428`,Weight.x)]
+MD[,weighted.mean(G01153+G01152+G01151,Weight.x)]
+MD[,weighted.mean(G0117,Weight.x)]
+MD[,weighted.mean(G01141,Weight.x)]
+MD[,weighted.mean(`011731`,Weight.x)]
+MD[,weighted.mean(G01144,Weight.x)]
+MD[,weighted.mean(G01165+G01166,Weight.x)]
+
+MD[FinalPoor==1,weighted.mean(G0111,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01181,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01121+SheepMeatGram,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01176,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01131,Weight.x)]
+MD[FinalPoor==1,weighted.mean(`011164`,Weight.x)]
+MD[FinalPoor==1,weighted.mean(`011424`,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G0116,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01123,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01114,Weight.x)]
+MD[FinalPoor==1,weighted.mean(`011428`,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01153+G01152+G01151,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G0117,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01141,Weight.x)]
+MD[FinalPoor==1,weighted.mean(`011731`,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01144,Weight.x)]
+MD[FinalPoor==1,weighted.mean(G01165+G01166,Weight.x)]
+
+MD[,weighted.mean(G0111,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01181,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01121+SheepMeatGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01176,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01131,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(`011164`,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(`011424`,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G0116,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01123,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01114,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(`011428`,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01153+G01152+G01151,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G0117,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01141,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(`011731`,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01144,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(G01165+G01166,Weight.x), by=Decile][order(Decile)]
+
+
+MD[,weighted.mean(GrainGrams,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(GhandGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(CowMeatGram+SheepMeatGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(BeansGrams,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(FishandShrimpsGrams,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(MacaroniGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(Yogurt_PasturizedGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(TreeFruitsGrams,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(PoultryMeat_MGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(BreadGrams,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(Cheese_PasturizedGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(Oil_NabatiGram+Oil_AnimalGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(Sabzi_AshGram+Sabzi_KhordanGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(MilkGrams,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(SibzaminiGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight), by=Decile][order(Decile)]
+MD[,weighted.mean(NutsGrams,Weight), by=Decile][order(Decile)]
+
+MD[,weighted.mean(GrainGrams,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(GhandGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(CowMeatGram+SheepMeatGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(BeansGrams,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(FishandShrimpsGrams,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(MacaroniGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(Yogurt_PasturizedGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(TreeFruitsGrams,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(PoultryMeat_MGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(BreadGrams,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(Cheese_PasturizedGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(Oil_NabatiGram+Oil_AnimalGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(Sabzi_AshGram+Sabzi_KhordanGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(MilkGrams,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(SibzaminiGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight.x), by=Decile][order(Decile)]
+MD[,weighted.mean(NutsGrams,Weight.x), by=Decile][order(Decile)]
+
+
+MD[FinalPoor==1,weighted.mean(GrainGrams,Weight)]
+MD[FinalPoor==1,weighted.mean(GhandGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(CowMeatGram+SheepMeatGram,Weight)]
+MD[FinalPoor==1,weighted.mean(BeansGrams,Weight)]
+MD[FinalPoor==1,weighted.mean(FishandShrimpsGrams,Weight)]
+MD[FinalPoor==1,weighted.mean(MacaroniGram,Weight)]
+MD[FinalPoor==1,weighted.mean(Yogurt_PasturizedGram,Weight)]
+MD[FinalPoor==1,weighted.mean(TreeFruitsGrams,Weight)]
+MD[FinalPoor==1,weighted.mean(PoultryMeat_MGram,Weight)]
+MD[FinalPoor==1,weighted.mean(BreadGrams,Weight)]
+MD[FinalPoor==1,weighted.mean(Cheese_PasturizedGram,Weight)]
+MD[FinalPoor==1,weighted.mean(Oil_NabatiGram+Oil_AnimalGram,Weight)]
+MD[FinalPoor==1,weighted.mean(Sabzi_AshGram+Sabzi_KhordanGram,Weight)]
+MD[FinalPoor==1,weighted.mean(MilkGrams,Weight)]
+MD[FinalPoor==1,weighted.mean(SibzaminiGram,Weight)]
+MD[FinalPoor==1,weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight)]
+MD[FinalPoor==1,weighted.mean(NutsGrams,Weight)]
+
+
+MD[as.numeric(Decile)==1,weighted.mean(GrainGrams,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(GhandGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(Cow_LiveGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(BeansGrams,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(FishandShrimpsGrams,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(MacaroniGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(Yogurt_PasturizedGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(TreeFruitsGrams,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(PoultryMeat_MGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(BreadGrams,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(Cheese_PasturizedGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(Oil_NabatiGram+Oil_AnimalGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(Sabzi_AshGram+Sabzi_KhordanGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(MilkGrams,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(SibzaminiGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight)]
+MD[as.numeric(Decile)==1,weighted.mean(NutsGrams,Weight)]
+
+
+
+
+
+
+MD[as.numeric(Decile)<2,weighted.mean(FinalPoor,Weight)]
     
     MD5<-MD[ProvinceCode!=11]
     MD5<-MD5[,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
@@ -201,10 +300,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       geom_bar(position="dodge", stat="identity") + theme_bw() +
       theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
     
-    MDP<-MD[FinalPoor==1,.(Population=sum(Weight*Size)), by=.(Decile,cluster3)][order(cluster3,Decile)]
-    ggplot(MDP, aes(fill=factor(Decile), y=Population, x=cluster3)) + 
-      geom_bar(position="fill", stat="identity") + theme_bw() +
-      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+ 
     
 
     MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
@@ -215,26 +311,27 @@ MD[,sum(Weight),by=.(Region,Decile)][order(Region,Decile)]
 MD[,sum(Weight)]
 MD[,sum(Weight*Size)]
 
-# compare Engle & Engle_prime in 178
-FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
-save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
+MD<-MD[,Total:=OriginalFoodExpenditure+Cigar_Exp+Cloth_Exp+
+         HouseandEnergy_Exp+Furniture_Exp+Hygiene_Exp+
+         Transportation_Exp+Communication_Exp+Communication_Exp+
+         Amusement_Exp+Education_Exp+HotelRestaurant_Exp+
+         Other_Exp+Durable_Exp]
+m<-MD[,.(Total,Total_Exp_Month)]
 
-ggplot(HighEngles)+
-  geom_line(mapping = aes(x=Year,y=N50/N,col=factor(cluster3)))
+Share<-MD[,.(Foodshare=weighted.mean(OriginalFoodExpenditure/Total,Weight),
+             CigarShare=weighted.mean(Cigar_Exp/Total,Weight),
+             ClothShare=weighted.mean(Cloth_Exp/Total,Weight),
+             HouseandEnergyShare=weighted.mean(HouseandEnergy_Exp/Total,Weight),
+             FurnitureShare=weighted.mean(Furniture_Exp/Total,Weight),
+             HygieneShare=weighted.mean(Hygiene_Exp/Total,Weight),
+             TransportationShare=weighted.mean(Transportation_Exp/Total,Weight),
+             CommunicationShare=weighted.mean(Communication_Exp/Total,Weight),
+             AmusementShare=weighted.mean(Amusement_Exp/Total,Weight),
+             EducationShare=weighted.mean(Education_Exp/Total,Weight),
+             HotelShare=weighted.mean(HotelRestaurant_Exp/Total,Weight),
+             OtherShare=weighted.mean(Other_Exp/Total,Weight),
+             DurableShare=weighted.mean(Durable_Exp/Total,Weight)),by=Decile]
 
-ggplot(FinalClusterResults)+
-  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
-
-#write.csv(FinalClusterResults,file = FinalClusterResults.csv)
-
-
-Job<-MD[FinalPoor==1,weighted.mean(HActivityState=="Employed",Weight),by=ProvinceCode]
-IncomeWithoutWork<-MD[FinalPoor==1,weighted.mean(HActivityState=="Income without Work",Weight),by=ProvinceCode]
-
-Widow<-MD[FinalPoor==1,weighted.mean(HSex=="Female",Weight),by=ProvinceCode]
-Widow2<-MD[HSex=="Female",weighted.mean(FinalPoor,Weight),by=ProvinceCode]
-
-MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
 
 
 endtime <- proc.time()
