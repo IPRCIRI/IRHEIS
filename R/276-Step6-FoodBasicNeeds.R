@@ -18,7 +18,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   # load data --------------------------------------
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered98.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor98.rda"))
 
   #load(file = "CPI.rda")
   #CPI<-as.data.table(CPI)
@@ -39,8 +39,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[,FPLine:=NULL]    
     MDP <- MD[ThisIterationPoor==1,
               .(FPLine=weighted.mean(Bundle_Value,Weight,na.rm = TRUE)),
-              by=.(cluster3,Region)]
-    MD <- merge(MD,MDP,by=c("Region","cluster3"))
+              by=.(Region)]
+    MD <- merge(MD,MDP,by=c("Region"))
 #    print(MDP)
     #x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
@@ -67,7 +67,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # save(RuralFinalfood, file=paste0(Settings$HEISProcessedPath,"Y",year,"RuralFinalfood.rda"))
   # 
   MD[,weighted.mean(FinalFoodPoor,Weight),by=c("Region","ProvinceCode")][order(Region,ProvinceCode)]
-  MD[,weighted.mean(FinalFoodPoor,Weight),by=cluster3][order(cluster3)]
+  #MD[,weighted.mean(FinalFoodPoor,Weight),by=cluster3][order(cluster3)]
 }
 
 endtime <- proc.time()
