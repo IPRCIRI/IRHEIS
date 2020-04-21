@@ -35,7 +35,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD<-merge(MD,job,by=("HHID"))
   MD<-merge(MD,Specific,by=c("HHID"))
-  MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea2"))
+  MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea_Name"))
   MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"))
   MD<-merge(MD,HHHouseProperties,by=c("HHID"))
   
@@ -154,7 +154,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[ProvinceCode==29,ProvinceName:="Khorasan_Jonoobi"]
   MD[ProvinceCode==30,ProvinceName:="Alborz"]
   
-  Data<-MD[,.(HHID,Region,cluster3,NewArea,NewArea2,Year,ProvinceName,HSex,HAge,Square_HAge,NKids,HActivityState,HEduYears,
+  Data<-MD[,.(HHID,Region,cluster3,NewArea,NewArea_Name,Year,ProvinceName,HSex,HAge,Square_HAge,NKids,HActivityState,HEduYears,
               Size,Weight,NUniv,Ratio_NUniv,Square_NUniv,EqSizeOECD,EqSizeCalory,FoodKCaloriesHH_Per,FoodProtein_Per,TOriginalFoodExpenditure_Per,
               TFoodKCaloriesHH_Per,Rooms,Area,Area_Per,Log_Area_Per,Square_Area_Per,Amusement_Exp,HouseandEnergy_Exp,MetrPrice,Hygiene_Exp,
               Total_Exp_Month_Per_nondurable,NetIncome,Medical_Exp,Furniture_Exp,Cloth_Exp,HouseandEnergy_Exp,ServiceExp,NonFreeDurable_Exp,Decile,

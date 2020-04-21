@@ -33,7 +33,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   #MD<-MD[FinalPoor==0]
-  MD<-MD[Region=="Rural" & NewArea2=="Sistan"]
+  MD<-MD[Region=="Rural" & NewArea_Name=="Sistan"]
   
   
   

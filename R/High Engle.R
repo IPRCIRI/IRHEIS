@@ -25,16 +25,16 @@ for(year in (Settings$startyear:Settings$endyear)){
  
   MD<-MD[,High_Engle:=ifelse(HHEngle>0.5,1,0)]
   MD[,weighted.mean(High_Engle,Weight)]
-  MD[High_Engle==1,.(sum(HIndivNo),sum(FinalPoor)),by=.(Region,NewArea2)][order(V1)]
-  MD[,weighted.mean(High_Engle,Weight),by=.(Region,NewArea2)][order(V1)]
-  MD[High_Engle==1,sum(HIndivNo),by=.(Region,NewArea2)][order(V1)]
-  MD[,sum(HIndivNo),by=.(Region,NewArea2)][order(Region)]
+  MD[High_Engle==1,.(sum(HIndivNo),sum(FinalPoor)),by=.(Region,NewArea_Name)][order(V1)]
+  MD[,weighted.mean(High_Engle,Weight),by=.(Region,NewArea_Name)][order(V1)]
+  MD[High_Engle==1,sum(HIndivNo),by=.(Region,NewArea_Name)][order(V1)]
+  MD[,sum(HIndivNo),by=.(Region,NewArea_Name)][order(Region)]
   
   HighEngle<-MD[HHEngle>0.5]
   HighEngle[,weighted.mean(FinalPoor,Weight)]
   HighEngle[,weighted.mean(FinalPoor,Weight),by=.(Region)][order(V1)]
   
-  HighEngle[,weighted.mean(FinalPoor,Weight),by=.(Region,NewArea2)][order(V1)]
+  HighEngle[,weighted.mean(FinalPoor,Weight),by=.(Region,NewArea_Name)][order(V1)]
   
   HighEngle[,sum(HIndivNo),by=.(ProvinceCode)][order(V1)]
   HighEngle[,weighted.median(Total_Exp_Month_Per_nondurable,Weight),by=.(ProvinceCode)][order(V1)]
@@ -42,13 +42,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   HighEngle[,weighted.median(Total_Exp_Month_nondurable-TOriginalFoodExpenditure,Weight),by=.(ProvinceCode)][order(V1)]
 
-  HighEngle[Region=="Rural" & NewArea2=="Sistan",sum(HIndivNo),by=.(Decile)][order(Decile)]
-  HighEngle[Region=="Rural" & NewArea2=="Sistan",weighted.mean(TOriginalFoodExpenditure_Per,Weight),by=.(Decile)][order(Decile)]
-  HighEngle[Region=="Rural" & NewArea2=="Sistan",weighted.mean(Total_Exp_Month_Per,Weight),by=.(Decile)][order(Decile)]
+  HighEngle[Region=="Rural" & NewArea_Name=="Sistan",sum(HIndivNo),by=.(Decile)][order(Decile)]
+  HighEngle[Region=="Rural" & NewArea_Name=="Sistan",weighted.mean(TOriginalFoodExpenditure_Per,Weight),by=.(Decile)][order(Decile)]
+  HighEngle[Region=="Rural" & NewArea_Name=="Sistan",weighted.mean(Total_Exp_Month_Per,Weight),by=.(Decile)][order(Decile)]
   
-  HighEngle[Region=="Urban" & NewArea2=="Sistan",sum(HIndivNo),by=.(Decile)][order(Decile)]
-  HighEngle[Region=="Urban" & NewArea2=="Sistan",weighted.mean(TOriginalFoodExpenditure_Per,Weight),by=.(Decile)][order(Decile)]
-  HighEngle[Region=="Urban" & NewArea2=="Sistan",weighted.mean(Total_Exp_Month_Per,Weight),by=.(Decile)][order(Decile)]
+  HighEngle[Region=="Urban" & NewArea_Name=="Sistan",sum(HIndivNo),by=.(Decile)][order(Decile)]
+  HighEngle[Region=="Urban" & NewArea_Name=="Sistan",weighted.mean(TOriginalFoodExpenditure_Per,Weight),by=.(Decile)][order(Decile)]
+  HighEngle[Region=="Urban" & NewArea_Name=="Sistan",weighted.mean(Total_Exp_Month_Per,Weight),by=.(Decile)][order(Decile)]
   
   }
 

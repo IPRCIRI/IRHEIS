@@ -23,7 +23,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD <- MD[,.(HHID,Region,
                ServiceExp,FoodExpenditure,Total_Exp_Month,
-               NewArea,NewArea2,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
+               NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
                # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
                TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
                Weight,MetrPrice,Size,EqSizeOECD)]
@@ -44,22 +44,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD[,PriceIndex2:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1
                      +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)/2
-      ,by=.(Region,NewArea2)]
+      ,by=.(Region,NewArea_Name)]
   
   X <- SMD[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
-              weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea2)]
+              weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
   X[,V:=V1+V2]
-  VT<-X[NewArea2=="Sh_Tehran"]
+  VT<-X[NewArea_Name=="Sh_Tehran"]
   V1T<-VT$V1
   V2T<-VT$V2
-  SMD <- merge(SMD,X,by=c("Region","NewArea2"))
+  SMD <- merge(SMD,X,by=c("Region","NewArea_Name"))
   
   SMD[,PriceIndex:=((exp((V1+V1T)/2))*(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1))*
-        ((exp((V2+V2T)/2))*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)) ,by=.(Region,NewArea2)]
+        ((exp((V2+V2T)/2))*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)) ,by=.(Region,NewArea_Name)]
   
   
   Compare<-SMD[,.(Old=mean(PriceIndex2),
-                  New=mean(PriceIndex)),by=.(Region,NewArea2)]
+                  New=mean(PriceIndex)),by=.(Region,NewArea_Name)]
   
   SMD[,V1:=NULL]
   SMD[,V2:=NULL]
@@ -68,28 +68,28 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
   
-  SMD<- SMD[order(NewArea2,Total_Exp_Month_Per_nondurable_Real)]
-  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=NewArea2]  # Cumulative Relative Weight
+  SMD<- SMD[order(NewArea_Name,Total_Exp_Month_Per_nondurable_Real)]
+  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=NewArea_Name]  # Cumulative Relative Weight
   
   #Calculate deciles by weights
-  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=NewArea2]
-  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=NewArea2]
+  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=NewArea_Name]
+  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=NewArea_Name]
   
   C<-SMD[,.(.N,Max=max(Total_Exp_Month_Per_nondurable),
             Min=min(Total_Exp_Month_Per_nondurable),
             Mean=mean(Total_Exp_Month_Per_nondurable)),
-         by=.(Region,NewArea,NewArea2,Decile)]
+         by=.(Region,NewArea,NewArea_Name,Decile)]
   
   
   
-  # FirstSMD<-SMD[,.(HHID,Region,NewArea2,NewArea2,Percentile,Decile)]
+  # FirstSMD<-SMD[,.(HHID,Region,NewArea_Name,NewArea_Name,Percentile,Decile)]
   # FirstSMD<-FirstSMD[,Realfirstpoor:=ifelse(Decile %in% 1:2,1,0)]
   # save(FirstSMD, file=paste0(Settings$HEISProcessedPath,"Y",year,"FirstSMD.rda"))
   
   
   
   B<-MD[,.(.N,Mean=mean(MetrPrice)),
-        by=.(Region,NewArea2)]
+        by=.(Region,NewArea_Name)]
   
   SMD[,NewPoor:=1]
   SMD[,ThisIterationPoor:=0]
@@ -106,33 +106,33 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     # Index2 <- SMDIterationPoor[,.(PriceIndex= (weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1+
     #                                             weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2)/2)
-    #                           ,by=.(Region,NewArea2)]
+    #                           ,by=.(Region,NewArea_Name)]
     
     X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
-                             weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea2)]
+                             weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
     X[,V:=V1+V2]
-    VT<-X[NewArea2=="Sh_Tehran"]
+    VT<-X[NewArea_Name=="Sh_Tehran"]
     V1T<-VT$V1
     V2T<-VT$V2
-    SMDIterationPoor <- merge(SMDIterationPoor,X,by=c("Region","NewArea2"))
+    SMDIterationPoor <- merge(SMDIterationPoor,X,by=c("Region","NewArea_Name"))
     SMDIterationPoor[,PriceIndex:=NULL]  
     
     Index <- SMDIterationPoor[,.(PriceIndex=(exp((V1+V1T)/2)*(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1))*
-                                   (exp((V2+V2T)/2)*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2))) ,by=.(Region,NewArea2)]
-    Index <- Index[,.(PriceIndex=mean(PriceIndex)),by=.(Region,NewArea2)]
+                                   (exp((V2+V2T)/2)*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2))) ,by=.(Region,NewArea_Name)]
+    Index <- Index[,.(PriceIndex=mean(PriceIndex)),by=.(Region,NewArea_Name)]
     
     
     SMD[,PriceIndex:=NULL]  
-    SMD <- merge(SMD,Index,by=c("Region","NewArea2"))
+    SMD <- merge(SMD,Index,by=c("Region","NewArea_Name"))
     
     SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
     
-    SMD<- SMD[order(NewArea2,Total_Exp_Month_Per_nondurable_Real)]
-    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=NewArea2]  # Cumulative Relative Weight
+    SMD<- SMD[order(NewArea_Name,Total_Exp_Month_Per_nondurable_Real)]
+    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size),by=NewArea_Name]  # Cumulative Relative Weight
     
     #Calculate deciles by weights
-    SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=NewArea2]
-    SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=NewArea2]
+    SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=NewArea_Name]
+    SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=NewArea_Name]
     SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
     save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
     
@@ -143,7 +143,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   setnames(MD,"NewPoor","InitialPoor")
   
   
-  MD[,weighted.mean(InitialPoor,Weight,na.rm = TRUE), by=.(NewArea2,Region)]
+  MD[,weighted.mean(InitialPoor,Weight,na.rm = TRUE), by=.(NewArea_Name,Region)]
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
