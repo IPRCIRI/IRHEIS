@@ -230,17 +230,17 @@ sm.density.compare(MDRP$HHEngle, MDRP$cluster3==13)
 MDRN<-MDR[TOriginalFoodExpenditure_Per>0.8*FPLine & TOriginalFoodExpenditure_Per<1.2*FPLine]
 sm.density.compare(MDRN$HHEngle, MDRN$cluster3==13)
 
-D1 <- MD[Decile==1 & Region=="Urban",.(N1=sum(Weight)),by=NewArea2]
-D2 <- MD[Decile==2 & Region=="Urban",.(N2=sum(Weight)),by=NewArea2]
-D3 <- MD[Decile==3 & Region=="Urban",.(N3=sum(Weight)),by=NewArea2]
-D4 <- MD[Decile==4 & Region=="Urban",.(N4=sum(Weight)),by=NewArea2]
-D5 <- MD[Decile==5 & Region=="Urban",.(N5=sum(Weight)),by=NewArea2]
-D6 <- MD[Decile==6 & Region=="Urban",.(N6=sum(Weight)),by=NewArea2]
-D7 <- MD[Decile==7 & Region=="Urban",.(N7=sum(Weight)),by=NewArea2]
-D8 <- MD[Decile==8 & Region=="Urban",.(N8=sum(Weight)),by=NewArea2]
-D9 <- MD[Decile==9 & Region=="Urban",.(N9=sum(Weight)),by=NewArea2]
-D10 <- MD[Decile==10 & Region=="Urban",.(N10=sum(Weight)),by=NewArea2]
-Dx <- MD[Region=="Urban",.(Nx=sum(Weight)),by=NewArea2]
+D1 <- MD[Decile==1 & Region=="Urban",.(N1=sum(Weight)),by=NewArea_Name]
+D2 <- MD[Decile==2 & Region=="Urban",.(N2=sum(Weight)),by=NewArea_Name]
+D3 <- MD[Decile==3 & Region=="Urban",.(N3=sum(Weight)),by=NewArea_Name]
+D4 <- MD[Decile==4 & Region=="Urban",.(N4=sum(Weight)),by=NewArea_Name]
+D5 <- MD[Decile==5 & Region=="Urban",.(N5=sum(Weight)),by=NewArea_Name]
+D6 <- MD[Decile==6 & Region=="Urban",.(N6=sum(Weight)),by=NewArea_Name]
+D7 <- MD[Decile==7 & Region=="Urban",.(N7=sum(Weight)),by=NewArea_Name]
+D8 <- MD[Decile==8 & Region=="Urban",.(N8=sum(Weight)),by=NewArea_Name]
+D9 <- MD[Decile==9 & Region=="Urban",.(N9=sum(Weight)),by=NewArea_Name]
+D10 <- MD[Decile==10 & Region=="Urban",.(N10=sum(Weight)),by=NewArea_Name]
+Dx <- MD[Region=="Urban",.(Nx=sum(Weight)),by=NewArea_Name]
 Dxx <- merge(Dx,D1)
 Dxx <- merge(Dxx,D2)
 Dxx <- merge(Dxx,D3)

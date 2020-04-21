@@ -21,7 +21,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
   
-  SMD <- MD[,.(HHID,Region,NewArea,NewArea2,Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
+  SMD <- MD[,.(HHID,Region,NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TFoodExpenditure_Per,
               # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
               TFoodTKCalories_Per,
                Weight,MetrPrice,Size,EqSizeOECD)]
@@ -53,7 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100),by=Region]
   
-  FirstSMD<-SMD[,.(HHID,Region,NewArea,NewArea2,Percentile,Decile)]
+  FirstSMD<-SMD[,.(HHID,Region,NewArea,NewArea_Name,Percentile,Decile)]
   FirstSMD<-FirstSMD[,Realfirstpoor:=ifelse(Decile %in% 1:2,1,0)]
   save(FirstSMD, file=paste0(Settings$HEISProcessedPath,"Y",year,"FirstSMD.rda"))
   
@@ -122,7 +122,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 }
 
 MD[,Benzin_Exp:=as.numeric(Benzin_Exp)]
-MD2<-MD[,.(HHID,HIndivNo,Region,NewArea2,Decile,Percentile,Size,Weight,Total_Exp_Month_Per_nondurable,Benzin_Exp)]
+MD2<-MD[,.(HHID,HIndivNo,Region,NewArea_Name,Decile,Percentile,Size,Weight,Total_Exp_Month_Per_nondurable,Benzin_Exp)]
 MD2<-MD2[,Add_Benzin_Exp:=Benzin_Exp-600000]
 MD2<-MD2[,Add_Benzin_Exp:=ifelse(Add_Benzin_Exp<0,0,Add_Benzin_Exp)]
 MD2<-MD2[,Extra_Benzin:=ifelse(Add_Benzin_Exp>0,1,0)]

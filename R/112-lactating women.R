@@ -122,12 +122,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   lactating<-TFL[,.(HHID,lactating)]
  
   TFL<-merge(TFL,HHWeights,by="HHID",all = T)
-  TFL<-merge(TFL,HHBase[,.(HHID,ProvinceCode,NewArea2)],by="HHID", all.x = T)
+  TFL<-merge(TFL,HHBase[,.(HHID,ProvinceCode,NewArea_Name)],by="HHID", all.x = T)
   TFL<-TFL[,lac:=sum(lactating*Weight),by="ProvinceCode"]
   TFL<-TFL[,infants0:=ifelse(NInfants0>0,1,0)]
   TFL<-TFL[,inf:=sum(infants0*Weight), by="ProvinceCode"]
   TFL<-TFL[,sahm:=lac/inf]
-ostan<-TFL[!duplicated(TFL$ProvinceCode),.(ProvinceCode,sahm,NewArea2)]
+ostan<-TFL[!duplicated(TFL$ProvinceCode),.(ProvinceCode,sahm,NewArea_Name)]
 
 TFL<-TFL[,lac_kol:=sum(lactating*Weight)]
 TFL<-TFL[,inf_kol:=sum(infants0*Weight)]

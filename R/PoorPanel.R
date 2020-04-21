@@ -29,7 +29,7 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Data.rda"))
 
 MD<-merge(MD,job,by=("HHID"))
 MD<-merge(MD,Specific,by=c("HHID"))
-MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea2"))
+MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea_Name"))
 MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"))
 MD<-MD[FinalPoor==1]
 MD[,job:=ifelse((Job_Main_Code_Pub==1 | Job_Main_Code_Prv==1 | Job_Main_Code_Cooperative==1 | Job_Main_Code_Buss==1 | Job_Main_Code_Agri==1),1,0)]

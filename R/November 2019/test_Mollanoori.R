@@ -24,28 +24,28 @@ Total[,weighted.mean(FinalPoor,Weight*Size), by=.(ProvinceCode)]
 
 Total <- Total[,Diet:=ifelse(FinalFoodPoor==1 & FinalPoor==0,1,0)]
 Total[,weighted.mean(Diet,Weight*Size), by=.(Region)]
-Total[NewArea2=="Sh_Tehran",weighted.mean(Diet,Weight*Size), by=.(Region)]
+Total[NewArea_Name=="Sh_Tehran",weighted.mean(Diet,Weight*Size), by=.(Region)]
 
 TotalD <- Total[ Diet==1,
                  .(.N, Engle=weighted.mean(FoodExpenditure/Total_Exp_Month, Weight),
-                 FPLine=mean(FPLine)), by=.(Region, NewArea2)]
+                 FPLine=mean(FPLine)), by=.(Region, NewArea_Name)]
 TotalS <- Total[ FinalPoor==1,
                  .(.N, Engle_Poor=weighted.mean(FoodExpenditure/Total_Exp_Month, Weight),
-                   FPLine=mean(FPLine)), by=.(Region, NewArea2)]
+                   FPLine=mean(FPLine)), by=.(Region, NewArea_Name)]
 
 TotalD <- TotalD[,sample1:=N]
 TotalD[,N:=NULL]
 
-TotalT <- merge(TotalD,TotalS[,.(Region, NewArea2,Engle_Poor,N)])
-TotalT[,NewArea2:=NULL]
+TotalT <- merge(TotalD,TotalS[,.(Region, NewArea_Name,Engle_Poor,N)])
+TotalT[,NewArea_Name:=NULL]
 TotalT <- TotalT[,lapply(.SD,sum),by=Region]
 
 
 Total <-Total[,FoodExp_per:=FoodExpenditure/EqSizeCalory]
 Total2 <- Total[FoodExp_per>2000000]
 #for(col in C("HStudent")) Total2[is.na(get(col)),(col):=0]
-Total2[,weighted.mean(FoodExp_per,Weight), by=.(Region, NewArea2)][order(V1)]
-Total2 <- Total2[,FoodExp_per_ostan:=weighted.mean(FoodExp_per,Weight), by=.(Region, NewArea2)]
+Total2[,weighted.mean(FoodExp_per,Weight), by=.(Region, NewArea_Name)][order(V1)]
+Total2 <- Total2[,FoodExp_per_ostan:=weighted.mean(FoodExp_per,Weight), by=.(Region, NewArea_Name)]
 
 Total2 <- Total2[Size>3,Behdasht1:=weighted.mean(Behdasht_Exp,Weight),by=.(Size)]
 x<- Total2[,.(HHID,Size,Behdasht1,Behdasht_Exp,Weight)]
@@ -63,10 +63,10 @@ Total2[,Exp2:=Reduce(`+`,.SD),.SDcols=set1]
 
 
 
-Total3 <- Total2[,.(Region, NewArea2,FoodExp_per,
+Total3 <- Total2[,.(Region, NewArea_Name,FoodExp_per,
                     FoodExpenditure,Behdasht_Exp,Amusement_Exp, Weight)]
 
-Total4 <- Total3[,lapply(.SD, sum), by=.(Region,NewArea2)]
+Total4 <- Total3[,lapply(.SD, sum), by=.(Region,NewArea_Name)]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Farhangis2.rda"))
 

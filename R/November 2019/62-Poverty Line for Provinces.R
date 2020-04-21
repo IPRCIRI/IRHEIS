@@ -46,7 +46,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   
-  MDFinalfood<-MD[,.(HHID,Region,NewArea,NewArea2,Percentile,FinalFoodPoor)]
+  MDFinalfood<-MD[,.(HHID,Region,NewArea,NewArea_Name,Percentile,FinalFoodPoor)]
 }
 
 for(year in (Settings$startyear:Settings$endyear)){
@@ -58,14 +58,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   EngleD <- MD[TFoodExpenditure_Per<1.3*FPLine & TFoodExpenditure_Per>0.7*FPLine,
                .(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=mean(FPLine),ProvinceCode=mean(ProvinceCode)),by=.(Region,NewArea2)]
+                 FPLine=mean(FPLine),ProvinceCode=mean(ProvinceCode)),by=.(Region,NewArea_Name)]
   EngleD[,PovertyLine:=FPLine/Engel]
   
   MD[,EngelPersonal:=TFoodExpenditure/Total_Exp_Month]
   TD<-MD[,PersonalPLine:=FPLine/EngelPersonal]
   save(TD,file = paste0(Settings$HEISProcessedPath,"Y",year,"MD4test.rda"))
   
-  MD <- merge(MD,EngleD[,.(NewArea2,Region,PovertyLine,Engel)],by=c("Region","NewArea2"))
+  MD <- merge(MD,EngleD[,.(NewArea_Name,Region,PovertyLine,Engel)],by=c("Region","NewArea_Name"))
   #MD<-MD[Region=="Urban" & NewArea==2301]
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   cat(MD[,weighted.mean(FinalPoor,Weight*Size)],"\t",
@@ -75,16 +75,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,weighted.mean(FinalPoor,Weight*Size),by=c("ProvinceCode")][order(ProvinceCode)]
   
-  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea2")][order(Region,NewArea2)]
+  MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","NewArea_Name")][order(Region,NewArea_Name)]
   #MD[,weighted.mean(FinalPoor,Weight*Size),by=c("Region","cluster3")]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
-  y2<-EngleD[Region=="Urban",.(PovertyLine,NewArea2)]
+  y2<-EngleD[Region=="Urban",.(PovertyLine,NewArea_Name)]
   y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PovertyLine)])
   ggplot(y2, aes(x = y2$NewArea, y = y2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
   
   
-  x2<-EngleD[Region=="Rural",.(PovertyLine,NewArea2)]
+  x2<-EngleD[Region=="Rural",.(PovertyLine,NewArea_Name)]
   x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLine)])
   ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
   
@@ -172,7 +172,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD96[,FPLine:=NULL]
     EngleD96[,PovertyLine:=NULL]
     EngleD96[,ProvinceCode:=NULL]
-    EngleD<-merge(EngleD96,EngleD95,by=c("Region","NewArea2"),all=TRUE)
+    EngleD<-merge(EngleD96,EngleD95,by=c("Region","NewArea_Name"),all=TRUE)
     EngleD[,y9091:=NULL]
     EngleD[,y9192:=NULL]
     EngleD[,y9293:=NULL]
@@ -184,7 +184,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
     EngleD[,ProvinceCode:=NULL]
-    EngleD<-merge(EngleD,EngleD94,by=c("Region","NewArea2"),all=TRUE)
+    EngleD<-merge(EngleD,EngleD94,by=c("Region","NewArea_Name"),all=TRUE)
     EngleD[,y9091:=NULL]
     EngleD[,y9192:=NULL]
     EngleD[,y9293:=NULL]
@@ -196,7 +196,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
     EngleD[,ProvinceCode:=NULL]
-    EngleD<-merge(EngleD,EngleD93,by=c("Region","NewArea2"),all=TRUE)
+    EngleD<-merge(EngleD,EngleD93,by=c("Region","NewArea_Name"),all=TRUE)
     EngleD[,y9091:=NULL]
     EngleD[,y9192:=NULL]
     EngleD[,y9293:=NULL]
@@ -208,7 +208,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
     EngleD[,ProvinceCode:=NULL]
-    EngleD<-merge(EngleD,EngleD92,by=c("Region","NewArea2"),all=TRUE)
+    EngleD<-merge(EngleD,EngleD92,by=c("Region","NewArea_Name"),all=TRUE)
     EngleD[,y9091:=NULL]
     EngleD[,y9192:=NULL]
     EngleD[,y9293:=NULL]
@@ -220,7 +220,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
     EngleD[,ProvinceCode:=NULL]
-    EngleD<-merge(EngleD,EngleD91,by=c("Region","NewArea2"),all=TRUE)
+    EngleD<-merge(EngleD,EngleD91,by=c("Region","NewArea_Name"),all=TRUE)
     EngleD[,y9091:=NULL]
     EngleD[,y9192:=NULL]
     EngleD[,y9293:=NULL]
@@ -232,7 +232,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     EngleD[,FPLine:=NULL]
     EngleD[,PovertyLine:=NULL]
     EngleD[,ProvinceCode:=NULL]
-    EngleD<-merge(EngleD,EngleD90,by=c("Region","NewArea2"),all=TRUE)
+    EngleD<-merge(EngleD,EngleD90,by=c("Region","NewArea_Name"),all=TRUE)
     EngleD[,y9091.x:=NULL]
     EngleD[,y9192.x:=NULL]
     EngleD[,y9293.x:=NULL]
@@ -255,18 +255,18 @@ for(year in (Settings$startyear:Settings$endyear)){
             "PovertyLine9096")
     
     EngleD[, PovertyLineSum := Reduce(`+`, .SD), .SDcols=w]
-    EngleD[, PovertyLineMean :=ifelse((NewArea2=="Chaharmahal" & Region=="Rural") |
-                                        (NewArea2=="Khorasan_Jonoobi" & Region=="Rural"),
-                                      PovertyLineSum/6,ifelse(NewArea2=="Khorasan_Jonoobi" & Region=="Urban",
+    EngleD[, PovertyLineMean :=ifelse((NewArea_Name=="Chaharmahal" & Region=="Rural") |
+                                        (NewArea_Name=="Khorasan_Jonoobi" & Region=="Rural"),
+                                      PovertyLineSum/6,ifelse(NewArea_Name=="Khorasan_Jonoobi" & Region=="Urban",
                                                               PovertyLineSum/5,PovertyLineSum/7))]
     
     
-    y2<-EngleD[Region=="Urban",.(PovertyLineMean,NewArea2)]
+    y2<-EngleD[Region=="Urban",.(PovertyLineMean,NewArea_Name)]
     y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PovertyLineMean)])
     ggplot(y2, aes(x = y2$NewArea, y = y2$PovertyLineMean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
     
     
-    x2<-EngleD[Region=="Rural",.(PovertyLineMean,NewArea2)]
+    x2<-EngleD[Region=="Rural",.(PovertyLineMean,NewArea_Name)]
     x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PovertyLineMean)])
     ggplot(x2, aes(x = x2$NewArea, y = x2$PovertyLineMean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
     

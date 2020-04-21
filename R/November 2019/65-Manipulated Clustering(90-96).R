@@ -21,81 +21,81 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",Settings$baseyear,"BigFoodPrice.
 MD<-merge(MD,BigFoodPrice,by=c("NewArea","Region"),all=TRUE)
 
 #####Clustering#####
-dt2Urban<-MD[Region=="Urban",.(NewArea,NewArea2,Region,HHID)]
-dt2Rural<-MD[Region=="Rural",.(NewArea,NewArea2,Region,HHID)]
+dt2Urban<-MD[Region=="Urban",.(NewArea,NewArea_Name,Region,HHID)]
+dt2Rural<-MD[Region=="Rural",.(NewArea,NewArea_Name,Region,HHID)]
 
 #####Urban#####
-dt2Urban<-dt2Urban[NewArea2=="Sh_Tehran",cluster3:=1]
-dt2Urban<-dt2Urban[NewArea2=="Sh_Shiraz" | NewArea2=="Sh_Esfahan" |
-                     NewArea2=="Sh_Bandarabas" |
-                     NewArea2=="Sh_Karaj" ,
+dt2Urban<-dt2Urban[NewArea_Name=="Sh_Tehran",cluster3:=1]
+dt2Urban<-dt2Urban[NewArea_Name=="Sh_Shiraz" | NewArea_Name=="Sh_Esfahan" |
+                     NewArea_Name=="Sh_Bandarabas" |
+                     NewArea_Name=="Sh_Karaj" ,
                    cluster3:=2]
-dt2Urban<-dt2Urban[NewArea2=="Gilan" | NewArea2=="Alborz" |
-                     NewArea2=="Kohkilooye" | NewArea2=="Sh_Rasht" ,
+dt2Urban<-dt2Urban[NewArea_Name=="Gilan" | NewArea_Name=="Alborz" |
+                     NewArea_Name=="Kohkilooye" | NewArea_Name=="Sh_Rasht" ,
                    cluster3:=3]
-dt2Urban<-dt2Urban[NewArea2=="Mazandaran"  | 
-                     NewArea2=="Sh_Ahvaz" | NewArea2=="Tehran" |
-                     NewArea2=="Yazd" | NewArea2=="Sh_Tabriz" |
-                     NewArea2=="Sh_Mashhad" | NewArea2=="Ghom" |
-                     NewArea2=="Sh_Kerman" | NewArea2=="Sh_Arak" |
-                     NewArea2=="Sh_Yazd" |   NewArea2=="Sh_Hamedan" |
-                     NewArea2=="Chaharmahal" |
-                     NewArea2=="Zanjan" | NewArea2=="Hamedan" |
-                     NewArea2=="Sh_Mashhad" |  NewArea2=="Sh_Urmia" |
-                     NewArea2=="Sh_Ahvaz" |   NewArea2=="Hormozgan"|
-                     NewArea2=="Booshehr" |
-                     NewArea2=="Semnan" | NewArea2=="Fars",
+dt2Urban<-dt2Urban[NewArea_Name=="Mazandaran"  | 
+                     NewArea_Name=="Sh_Ahvaz" | NewArea_Name=="Tehran" |
+                     NewArea_Name=="Yazd" | NewArea_Name=="Sh_Tabriz" |
+                     NewArea_Name=="Sh_Mashhad" | NewArea_Name=="Ghom" |
+                     NewArea_Name=="Sh_Kerman" | NewArea_Name=="Sh_Arak" |
+                     NewArea_Name=="Sh_Yazd" |   NewArea_Name=="Sh_Hamedan" |
+                     NewArea_Name=="Chaharmahal" |
+                     NewArea_Name=="Zanjan" | NewArea_Name=="Hamedan" |
+                     NewArea_Name=="Sh_Mashhad" |  NewArea_Name=="Sh_Urmia" |
+                     NewArea_Name=="Sh_Ahvaz" |   NewArea_Name=="Hormozgan"|
+                     NewArea_Name=="Booshehr" |
+                     NewArea_Name=="Semnan" | NewArea_Name=="Fars",
                    cluster3:=4]
-dt2Urban<-dt2Urban[ NewArea2=="Sh_Kermanshah" | NewArea2== "Az_Sharghi" |
-                      NewArea2=="Kerman" | 
-                      NewArea2=="Ardebil" |
-                      NewArea2=="Ilam" | NewArea2=="Lorestan",
+dt2Urban<-dt2Urban[ NewArea_Name=="Sh_Kermanshah" | NewArea_Name== "Az_Sharghi" |
+                      NewArea_Name=="Kerman" | 
+                      NewArea_Name=="Ardebil" |
+                      NewArea_Name=="Ilam" | NewArea_Name=="Lorestan",
                     cluster3:=5]
-dt2Urban<-dt2Urban[NewArea2=="Khoozestan" | NewArea2=="Kordestan" |
-                     NewArea2=="Ghazvin" | NewArea2=="Fars"  | NewArea2=="Markazi"   |
-                     NewArea2=="Esfahan" ,
+dt2Urban<-dt2Urban[NewArea_Name=="Khoozestan" | NewArea_Name=="Kordestan" |
+                     NewArea_Name=="Ghazvin" | NewArea_Name=="Fars"  | NewArea_Name=="Markazi"   |
+                     NewArea_Name=="Esfahan" ,
                    cluster3:=4]
-dt2Urban<-dt2Urban[NewArea2=="Az_Sharghi" |
-                     NewArea2=="Semnan" | NewArea2=="Hamedan" |  
-                     NewArea2=="Kerman" | NewArea2=="Zanjan" |
-                     NewArea2=="Hormozgan"|
-                     NewArea2=="Booshehr" | NewArea2=="Kordestan" |
-                     NewArea2=="Ardebil" | NewArea2=="Chaharmahal" |
-                     NewArea2=="Sh_Urmia",
+dt2Urban<-dt2Urban[NewArea_Name=="Az_Sharghi" |
+                     NewArea_Name=="Semnan" | NewArea_Name=="Hamedan" |  
+                     NewArea_Name=="Kerman" | NewArea_Name=="Zanjan" |
+                     NewArea_Name=="Hormozgan"|
+                     NewArea_Name=="Booshehr" | NewArea_Name=="Kordestan" |
+                     NewArea_Name=="Ardebil" | NewArea_Name=="Chaharmahal" |
+                     NewArea_Name=="Sh_Urmia",
                    cluster3:=5]
-dt2Urban<-dt2Urban[NewArea2=="Khoozestan" |NewArea2=="Ilam" |
-                     NewArea2=="Khorasan_Razavi" | 
-                     NewArea2=="Khorasan_Jonoobi" | NewArea2=="Az_Gharbi" |
-                     NewArea2=="Kermanshah" | NewArea2=="Lorestan" |
-                     NewArea2=="Sh_Kermanshah" | 
-                     NewArea2=="Khorasan_Shomali" | NewArea2=="Golestan",
+dt2Urban<-dt2Urban[NewArea_Name=="Khoozestan" |NewArea_Name=="Ilam" |
+                     NewArea_Name=="Khorasan_Razavi" | 
+                     NewArea_Name=="Khorasan_Jonoobi" | NewArea_Name=="Az_Gharbi" |
+                     NewArea_Name=="Kermanshah" | NewArea_Name=="Lorestan" |
+                     NewArea_Name=="Sh_Kermanshah" | 
+                     NewArea_Name=="Khorasan_Shomali" | NewArea_Name=="Golestan",
                    cluster3:=6]
-dt2Urban<-dt2Urban[NewArea2=="Sistan" | NewArea2=="Sh_Zahedan",
+dt2Urban<-dt2Urban[NewArea_Name=="Sistan" | NewArea_Name=="Sh_Zahedan",
                    cluster3:=7]
 save(dt2Urban,file ="dt2Urban.rda")
 #####Rural#####
-dt2Rural<-dt2Rural[ NewArea2=="Tehran" | NewArea2=="Alborz",
+dt2Rural<-dt2Rural[ NewArea_Name=="Tehran" | NewArea_Name=="Alborz",
                     cluster3:=1]
-dt2Rural<-dt2Rural[NewArea2=="Esfahan" | NewArea2=="Mazandaran" |
-                     NewArea2=="Kohkilooye" | NewArea2=="Booshehr",
+dt2Rural<-dt2Rural[NewArea_Name=="Esfahan" | NewArea_Name=="Mazandaran" |
+                     NewArea_Name=="Kohkilooye" | NewArea_Name=="Booshehr",
                    cluster3:=2]
-dt2Rural<-dt2Rural[ NewArea2=="Yazd"  |
-                      NewArea2=="Gilan" | NewArea2=="Zanjan" |
-                      NewArea2=="Chaharmahal"| NewArea2=="Hormozgan" | NewArea2=="Az_Sharghi" | 
-                      NewArea2=="Ghom" | 
-                      NewArea2=="Fars" | NewArea2=="Ghazvin" | 
-                      NewArea2=="Markazi" |  NewArea2=="Semnan"|
-                      NewArea2=="Ardebil" | NewArea2=="Ilam",
+dt2Rural<-dt2Rural[ NewArea_Name=="Yazd"  |
+                      NewArea_Name=="Gilan" | NewArea_Name=="Zanjan" |
+                      NewArea_Name=="Chaharmahal"| NewArea_Name=="Hormozgan" | NewArea_Name=="Az_Sharghi" | 
+                      NewArea_Name=="Ghom" | 
+                      NewArea_Name=="Fars" | NewArea_Name=="Ghazvin" | 
+                      NewArea_Name=="Markazi" |  NewArea_Name=="Semnan"|
+                      NewArea_Name=="Ardebil" | NewArea_Name=="Ilam",
                     cluster3:=3]
-dt2Rural<-dt2Rural[  NewArea2=="Hamedan" |
-                       NewArea2=="Az_Gharbi" |  NewArea2=="Kermanshah" |
-                       NewArea2=="Kerman" | NewArea2=="Golestan" |
-                       NewArea2=="Khorasan_Jonoobi" | NewArea2=="Lorestan" |
-                       NewArea2=="Kordestan"|
-                       NewArea2=="Khoozestan",
+dt2Rural<-dt2Rural[  NewArea_Name=="Hamedan" |
+                       NewArea_Name=="Az_Gharbi" |  NewArea_Name=="Kermanshah" |
+                       NewArea_Name=="Kerman" | NewArea_Name=="Golestan" |
+                       NewArea_Name=="Khorasan_Jonoobi" | NewArea_Name=="Lorestan" |
+                       NewArea_Name=="Kordestan"|
+                       NewArea_Name=="Khoozestan",
                      cluster3:=4]
-dt2Rural<-dt2Rural[ NewArea2=="Khorasan_Shomali" | NewArea2=="Khorasan_Razavi" |
-                      NewArea2=="Sistan" ,
+dt2Rural<-dt2Rural[ NewArea_Name=="Khorasan_Shomali" | NewArea_Name=="Khorasan_Razavi" |
+                      NewArea_Name=="Sistan" ,
                     cluster3:=5]
 
 save(dt2Rural,file ="dt2Rural.rda")
@@ -109,7 +109,7 @@ dt2total<-distinct(dt2total)
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  MD<-merge(MD,dt2total,by=c("NewArea","NewArea2","Region"))
+  MD<-merge(MD,dt2total,by=c("NewArea","NewArea_Name","Region"))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 }
 

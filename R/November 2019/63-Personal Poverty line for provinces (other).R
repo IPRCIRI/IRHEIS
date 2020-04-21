@@ -24,7 +24,7 @@ MDH <- TD[ TFoodExpenditure_Per>0.8*FPLine & TFoodExpenditure_Per<1.2*FPLine]
 
 
 PPH <- MDH[ ,.(.N,PPLine=weighted.mean(PersonalPLine,Weight),
-               FPLine=mean(FPLine),EngelPersonal=mean(EngelPersonal)),by=.(Region,NewArea2)]
+               FPLine=mean(FPLine),EngelPersonal=mean(EngelPersonal)),by=.(Region,NewArea_Name)]
 
 if (year==90) {
   PPH90<-PPH[,PPLine9096:=PPLine*1.305*1.347*1.156*1.119*1.09*1.096]
@@ -69,32 +69,32 @@ if (year==96) {
   PPH96[,EngelPersonal:=NULL]
   PPH96[,FPLine:=NULL]
   PPH96[,PPLine:=NULL]
-  PPH<-merge(PPH96,PPH95,by=c("Region","NewArea2"),all=TRUE)
+  PPH<-merge(PPH96,PPH95,by=c("Region","NewArea_Name"),all=TRUE)
   PPH[,N:=NULL]
   PPH[,EngelPersonal:=NULL]
   PPH[,FPLine:=NULL]
   PPH[,PPLine:=NULL]
-  PPH<-merge(PPH,PPH94,by=c("Region","NewArea2"),all=TRUE)
+  PPH<-merge(PPH,PPH94,by=c("Region","NewArea_Name"),all=TRUE)
   PPH[,N:=NULL]
   PPH[,EngelPersonal:=NULL]
   PPH[,FPLine:=NULL]
   PPH[,PPLine:=NULL]
-  PPH<-merge(PPH,PPH93,by=c("Region","NewArea2"),all=TRUE)
+  PPH<-merge(PPH,PPH93,by=c("Region","NewArea_Name"),all=TRUE)
   PPH[,N:=NULL]
   PPH[,EngelPersonal:=NULL]
   PPH[,FPLine:=NULL]
   PPH[,PPLine:=NULL]
-  PPH<-merge(PPH,PPH92,by=c("Region","NewArea2"),all=TRUE)
+  PPH<-merge(PPH,PPH92,by=c("Region","NewArea_Name"),all=TRUE)
   PPH[,N:=NULL]
   PPH[,EngelPersonal:=NULL]
   PPH[,FPLine:=NULL]
   PPH[,PPLine:=NULL]
-  PPH<-merge(PPH,PPH91,by=c("Region","NewArea2"),all=TRUE)
+  PPH<-merge(PPH,PPH91,by=c("Region","NewArea_Name"),all=TRUE)
   PPH[,N:=NULL]
   PPH[,EngelPersonal:=NULL]
   PPH[,FPLine:=NULL]
   PPH[,PPLine:=NULL]
-  PPH<-merge(PPH,PPH90,by=c("Region","NewArea2"),all=TRUE)
+  PPH<-merge(PPH,PPH90,by=c("Region","NewArea_Name"),all=TRUE)
   PPH[,N:=NULL]
   PPH[,EngelPersonal:=NULL]
   PPH[,FPLine:=NULL]
@@ -106,18 +106,18 @@ if (year==96) {
           "PPLine9096")
   
   PPH[, PPLineSum := Reduce(`+`, .SD), .SDcols=w]
-  PPH[, PPLineMean :=ifelse((NewArea2=="Chaharmahal" & Region=="Rural") |
-                       (NewArea2=="Khorasan_Jonoobi" & Region=="Rural"),
-                       PPLineSum/6,ifelse(NewArea2=="Khorasan_Jonoobi" & Region=="Urban",
+  PPH[, PPLineMean :=ifelse((NewArea_Name=="Chaharmahal" & Region=="Rural") |
+                       (NewArea_Name=="Khorasan_Jonoobi" & Region=="Rural"),
+                       PPLineSum/6,ifelse(NewArea_Name=="Khorasan_Jonoobi" & Region=="Urban",
                                           PPLineSum/5,PPLineSum/7))]
   
   
-  y2<-PPH[Region=="Urban",.(PPLineMean,NewArea2)]
+  y2<-PPH[Region=="Urban",.(PPLineMean,NewArea_Name)]
   y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$PPLineMean)])
   ggplot(y2, aes(x = y2$NewArea, y = y2$PPLineMean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
   
   
-  x2<-PPH[Region=="Rural",.(PPLineMean,NewArea2)]
+  x2<-PPH[Region=="Rural",.(PPLineMean,NewArea_Name)]
   x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$PPLineMean)])
   ggplot(x2, aes(x = x2$NewArea, y = x2$PPLineMean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
   
