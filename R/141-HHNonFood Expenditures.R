@@ -517,7 +517,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TC),c("HHID","Code","BuyingMethod","Durable_Exp","Durable_Sale"))
   TC <- TC[,pcols,with=FALSE]
 
-  if(year %in% 84:96){
+  if(year %in% 84:97){
     TC[,Durable_Exp:=as.numeric(Durable_Exp)]
     TC[,Durable_Sale:=as.numeric(Durable_Sale)]
   }
