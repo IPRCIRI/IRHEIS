@@ -79,11 +79,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   HighEngle<-merge(HighEngle,HighEngle3)
   HighEngle<-merge(HighEngle,HighEngle4)
   
-  #MD<-MD[,Durable_Exp_mean:=weighted.mean(Durable_Exp,Weight),by=.(Region,NewArea2)]
-  #MD<-MD[,Durable_Exp_median:=weighted.median(Durable_Exp,Weight),by=.(Region,NewArea2)]
-  #MD<-MD[,Durable_Exp_mean_Per:=weighted.mean(Durable_Exp/EqSizeOECD,Weight),by=.(Region,NewArea2)]
-  #MD<-MD[,Durable_Exp_median_Per:=weighted.median(Durable_Exp/EqSizeOECD,Weight),by=.(Region,NewArea2)]
-  #MD[,mean(Durable_Exp_median_Per),by=.(Region,NewArea2)][order(Region,V1)]
+  #MD<-MD[,Durable_Exp_mean:=weighted.mean(Durable_Exp,Weight),by=.(Region,NewArea_Name)]
+  #MD<-MD[,Durable_Exp_median:=weighted.median(Durable_Exp,Weight),by=.(Region,NewArea_Name)]
+  #MD<-MD[,Durable_Exp_mean_Per:=weighted.mean(Durable_Exp/EqSizeOECD,Weight),by=.(Region,NewArea_Name)]
+  #MD<-MD[,Durable_Exp_median_Per:=weighted.median(Durable_Exp/EqSizeOECD,Weight),by=.(Region,NewArea_Name)]
+  #MD[,mean(Durable_Exp_median_Per),by=.(Region,NewArea_Name)][order(Region,V1)]
   #EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
    #              TOriginalFoodExpenditure_Per<1.2*FPLine,
    #            .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),

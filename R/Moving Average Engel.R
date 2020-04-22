@@ -135,10 +135,10 @@ X1[,Year:=year]
   
   FinalProvinceResults<- rbind(FinalProvinceResults,X1) 
   FinalProvinceResults<-FinalProvinceResults[order(ProvinceCode)]
-  M<-MD[NewArea<=30,.(ProvinceCode,NewArea2)]
+  M<-MD[NewArea<=30,.(ProvinceCode,NewArea_Name)]
   M<-M[,ProvinceCode:=as.integer(ProvinceCode)]
   M<-distinct(M)
-  M<-M[NewArea2!="Sh_Arak"]
+  M<-M[NewArea_Name!="Sh_Arak"]
  #FinalProvinceResults<-merge(FinalProvinceResults,M,by="ProvinceCode")
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)])
   #cat(MD[TOriginalFoodExpenditure_Per>0.8*FPLine &
