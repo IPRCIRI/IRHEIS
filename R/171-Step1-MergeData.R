@@ -101,7 +101,7 @@ for(year in (Settings$startyear:Settings$endyear)){
           "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
           "Transportation_Exp", "Other_Exp"
           ,"Out_from_Durable"
-          )
+  )
   w <- c(nw, "Medical_Exp", "Remain_Durable")
   # w <- c(nw, "Medical_Exp", "NonFreeDurable_Exp")
   #w <- c(nw, "Medical_Exp", "Durable_Pure_Exp")
@@ -113,9 +113,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,weighted.mean(Total_Exp_Month,Weight)]
   MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
-
-  save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
   
+  save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
 }
 
 
