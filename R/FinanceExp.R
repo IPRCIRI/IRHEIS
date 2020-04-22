@@ -49,7 +49,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[is.na(TC)] <- 0
   FinanceData <- TC[,lapply(.SD,sum),by=HHID]
   save(FinanceData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Finances.rda"))
-}
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoors.rda"))
+  
+  MD<-merge(MD,FinanceData,by="HHID",all.x=TRUE)
+  MD[is.na(MD)] <- 0
+  
+  MD[,Decile_Pop:=sum(Weight),by=Decile]
+  MD[Finance_Exp>0,having_vam_Pop:=sum(Weight),by=Decile]
+  MD[,having_vam:=ifelse(Finance_Exp>0,1,0)]
+  MD[,weighted.mean(having_vam,Weight),by=Decile][order(Decile)]
+  MD[Finance_Exp>0,weighted.mean(Finance_Exp*12/Total_Exp_Month,Weight),by=Decile][order(Decile)]
+  
+  MD[,Y:=sum(Weight*Total_Exp_Month)]
+  MD[as.numeric(Percentile)>97,X:=sum(Weight*Total_Exp_Month)]
+  MD[,a:=X/Y]
+  
+  }
 
 
 endtime <- proc.time()
