@@ -197,9 +197,9 @@ load(file="dt2Rural.rda")
 dt2total<-rbind(dt2Urban,dt2Rural)
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-dt2total <- dt2total[,lapply(.SD,sum),by=.(Region, NewArea,NewArea2,cluster3)]
+dt2total <- dt2total[,lapply(.SD,sum),by=.(Region, NewArea,NewArea_Name,cluster3)]
 dt2total[,HHID:=NULL]
-MD<-merge(MD,dt2total,by=c("NewArea","Region","NewArea2"),all.x=TRUE)
+MD<-merge(MD,dt2total,by=c("NewArea","Region","NewArea_Name"),all.x=TRUE)
 
 #Determine Food (Equal 2100 KCal) Bundle
 MD[,NewPoor:=InitialPoor]

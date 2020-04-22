@@ -24,14 +24,14 @@ Total[,weighted.mean(Diet,Weight*Size),by=.(Region)]
 
 
 TotalD <- Total[Diet==1,.(.N,Engle1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-                          FPLine=mean(FPLine)),by=.(Region,NewArea2)]
+                          FPLine=mean(FPLine)),by=.(Region,NewArea_Name)]
 
 Totals<-Total[FinalPoor==1,.(sample2=.N,Engle2=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight)),
-             by=.(Region,NewArea2)]
+             by=.(Region,NewArea_Name)]
 
-Totalt<-merge(TotalD,Totals[,.(Region,NewArea2,Engle2,sample2)])
+Totalt<-merge(TotalD,Totals[,.(Region,NewArea_Name,Engle2,sample2)])
 
 
 
-Totalt<-Totalt[,NewArea2:=NULL]
+Totalt<-Totalt[,NewArea_Name:=NULL]
 Totalt <- Totalt[,lapply(.SD,sum),by=.(Region)]

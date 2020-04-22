@@ -21,7 +21,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD <- MD[,.(HHID,Region,HSex,HEduLevel,Decile,HActivityState,ServiceExp,MetrPrice,
                ServiceExp,FoodExpenditure,Total_Exp_Month,ProvinceCode,car,
-               NewArea,NewArea2,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,Total_Exp_Month_nondurable,
+               NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,Total_Exp_Month_nondurable,
                Weight,MetrPrice,Size,EqSizeOECD)]
   
   

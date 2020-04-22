@@ -102,15 +102,15 @@ t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
 
 ####Engle
 EngleP <- MD[ ,.(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,NewArea2)]
+                 FPLine=mean(FPLine)),by=.(Region,NewArea_Name)]
 
 
-y<-EngleP[Region=="Urban",.(Engel,NewArea2)]
+y<-EngleP[Region=="Urban",.(Engel,NewArea_Name)]
 y$NewArea <- factor(y$NewArea, levels = y$NewArea[order(y$Engel)])
 ggplot(y, aes(x = y$NewArea, y = y$Engel)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
 
-x<-EngleP[Region=="Rural",.(Engel,NewArea2)]
+x<-EngleP[Region=="Rural",.(Engel,NewArea_Name)]
 x$NewArea <- factor(x$NewArea, levels = x$NewArea[order(x$Engel)])
 ggplot(x, aes(x = x$NewArea, y = x$Engel)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
@@ -200,14 +200,14 @@ t.test(a$Engel,b$Engel, var.equal=TRUE, paired=FALSE)
 
 ####Engle
 EngleH <- MDH[ ,.(.N,Engel=weighted.mean(TFoodExpenditure/Total_Exp_Month,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,NewArea2)]
+                 FPLine=mean(FPLine)),by=.(Region,NewArea_Name)]
 
 
-x2<-EngleH[Region=="Rural",.(Engel,NewArea2)]
+x2<-EngleH[Region=="Rural",.(Engel,NewArea_Name)]
 x2$NewArea <- factor(x2$NewArea, levels = x2$NewArea[order(x2$Engel)])
 ggplot(x2, aes(x = x2$NewArea, y = x2$Engel)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
-y2<-EngleH[Region=="Urban",.(Engel,NewArea2)]
+y2<-EngleH[Region=="Urban",.(Engel,NewArea_Name)]
 y2$NewArea <- factor(y2$NewArea, levels = y2$NewArea[order(y2$Engel)])
 ggplot(y2, aes(x = y2$NewArea, y = y2$Engel)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
