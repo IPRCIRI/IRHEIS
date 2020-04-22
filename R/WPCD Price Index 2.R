@@ -57,6 +57,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,PriceIndex:=((exp((V1+V1T)/2))*(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1))*
         ((exp((V2+V2T)/2))*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)) ,by=.(Region,NewArea_Name)]
   
+  SMD<-SMD[NewArea_Name=="Sh_Tehran",PriceIndex:=1]
   
   Compare<-SMD[,.(Old=mean(PriceIndex2),
                   New=mean(PriceIndex)),by=.(Region,NewArea_Name)]
@@ -110,6 +111,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
                              weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
+    
     X[,V:=V1+V2]
     VT<-X[NewArea_Name=="Sh_Tehran"]
     V1T<-VT$V1
@@ -119,6 +121,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     Index <- SMDIterationPoor[,.(PriceIndex=(exp((V1+V1T)/2)*(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1))*
                                    (exp((V2+V2T)/2)*(weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2))) ,by=.(Region,NewArea_Name)]
+    Index<-Index[NewArea_Name=="Sh_Tehran",PriceIndex:=1]
+    
     Index <- Index[,.(PriceIndex=mean(PriceIndex)),by=.(Region,NewArea_Name)]
     
     

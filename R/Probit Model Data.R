@@ -33,11 +33,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   job<-job[,Region:=NULL]
   job<-job[,HActivityState:=NULL]
   
-  MD<-merge(MD,job,by=("HHID"))
-  MD<-merge(MD,Specific,by=c("HHID"))
-  MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea_Name"))
-  MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"))
-  MD<-merge(MD,HHHouseProperties,by=c("HHID"))
+  MD<-merge(MD,job,by=("HHID"),all.x = T)
+  MD<-merge(MD,Specific,by=c("HHID"),all.x = T)
+  MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea_Name"),all.x = T)
+  MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,HHHouseProperties,by=c("HHID"),all.x = T)
   
   MD<-MD[,Ratio_NUniv:=NUniv/Size]
   MD<-MD[,Square_NUniv:=Ratio_NUniv^2]
