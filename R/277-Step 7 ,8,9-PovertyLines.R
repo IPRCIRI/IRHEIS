@@ -119,6 +119,14 @@ MD[,weighted.mean(OriginalFoodExpenditure_Per,Weight)]
 MD[FinalPoor==1,weighted.mean(OriginalFoodExpenditure_Per,Weight),by=.(Region)][order(Region)]
 MD[FinalPoor==1,weighted.mean(OriginalFoodExpenditure_Per,Weight)]
 
+D<-MD[,.(Food=weighted.mean(FoodExpenditure,Weight.x),
+         Total=weighted.mean(Total_Exp_Month,Weight.x))]
+
+D1<-MD[,.(Food=weighted.mean(FoodExpenditure,Weight.x),
+         Total=weighted.mean(Total_Exp_Month,Weight.x)),by=Decile]
+
+D2<-MD[,.(Food=weighted.mean(FoodExpenditure/EqSizeCalory,Weight.x),
+          Total=weighted.mean(Total_Exp_Month_Per,Weight.x)),by=Decile]
 
 load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodCon.rda"))
 MD<-merge(MD,TotalFoodCon,by="HHID")
@@ -129,7 +137,7 @@ MD<-merge(MD,TotalFoodExp,by="HHID")
 
 MD[,weighted.mean(G0111,Weight.x)]
 MD[,weighted.mean(G01181,Weight.x)]
-MD[,weighted.mean(G01121+SheepMeatGram,Weight.x)]
+MD[,weighted.mean(G01121,Weight.x)]
 MD[,weighted.mean(G01176,Weight.x)]
 MD[,weighted.mean(G01131,Weight.x)]
 MD[,weighted.mean(`011164`,Weight.x)]
