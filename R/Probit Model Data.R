@@ -16,7 +16,7 @@ library(data.table)
 library(ggplot2)
 library(stats)
 library(spatstat)
-
+year<-97
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -24,20 +24,89 @@ for(year in (Settings$startyear:Settings$endyear)){
                                         sheet = "Province"))
   I<-inflation[Year==year]
   
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Total_Income.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"demo.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Total_Income.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Specific.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Job.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
+
   job<-job[,Region:=NULL]
   job<-job[,HActivityState:=NULL]
+ # demo[,HHID:=as.numeric(HHID)]
+  #MD[,HHID:=as.numeric(HHID)]
   
-  MD<-merge(MD,job,by=("HHID"),all.x = T)
+  MD<-merge(MD,demo[,.(NEmployed,NLiterate,HHID)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,job,by=c("HHID"),all.x = T)
   MD<-merge(MD,Specific,by=c("HHID"),all.x = T)
   MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea_Name"),all.x = T)
   MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"),all.x = T)
   MD<-merge(MD,HHHouseProperties,by=c("HHID"),all.x = T)
+  
+  MD<-MD[!duplicated(MD$HHID)]
+  MD<-MD[!is.na(FinalPoor)]
+  
+  goosht<-BigFData[FoodType=="Goosht"]
+  goosht<-goosht[,Goosht_Grams:=FGrams]
+  mahi<-BigFData[FoodType=="Mahi"]
+  mahi<-mahi[,Mahi_Grams:=FGrams]
+  morgh<-BigFData[FoodType=="Morgh"]
+  morgh<-morgh[,Morgh_Grams:=FGrams]
+  mive<-BigFData[FoodType=="Mive"]
+  mive<-mive[,Mive_Grams:=FGrams]
+  nan<-BigFData[FoodType=="Nan"]
+  nan<-goosht[,Nan_Grams:=FGrams]
+  sibzamini<-BigFData[FoodType=="Sibzamini"]
+  sibzamini<-sibzamini[,Sibzamini_Grams:=FGrams]
+  makarooni<-BigFData[FoodType=="Makarooni"]
+  makarooni<-makarooni[,Makarooni_Grams:=FGrams]
+  khoshkbar<-BigFData[FoodType=="Khoshkbar"]
+  khoshkbar<-khoshkbar[,Khoshkbar_Grams:=FGrams]
+  
+  MD<-merge(MD,goosht[,.(HHID,Goosht_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,mahi[,.(HHID,Mahi_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,morgh[,.(HHID,Morgh_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,mive[,.(HHID,Mive_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,nan[,.(HHID,Nan_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,sibzamini[,.(HHID,Sibzamini_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,makarooni[,.(HHID,Makarooni_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,khoshkbar[,.(HHID,Khoshkbar_Grams)],by=c("HHID"),all.x = T)
+  
+  
+  
+  for (col in c("Goosht_Grams","Mahi_Grams", "Morgh_Grams", "Mive_Grams", "Nan_Grams", 
+                "Sibzamini_Grams", "Makarooni_Grams", "Khoshkbar_Grams"
+  )) 
+    MD[is.na(get(col)), (col) := 0]
+  
+  MD<-MD[,Goosht_Grams_Per:=Goosht_Grams/EqSizeCalory]
+  MD<-MD[,Morgh_Grams_Per:=Morgh_Grams/EqSizeCalory]
+  MD<-MD[,Mahi_Grams_Per:=Mahi_Grams/EqSizeCalory]
+  MD<-MD[,Mive_Grams_Per:=Mive_Grams/EqSizeCalory]
+  MD<-MD[,Nan_Grams_Per:=Nan_Grams/EqSizeCalory]
+  MD<-MD[,Sibzamini_Grams_Per:=Sibzamini_Grams/EqSizeCalory]
+  MD<-MD[,Makarooni_Grams_Per:=Makarooni_Grams/EqSizeCalory]
+  MD<-MD[,Khoshkbar_Grams_Per:=Khoshkbar_Grams/EqSizeCalory]
+  
+  MD<-MD[,T_Meat_Grams_per:=Goosht_Grams_Per+Morgh_Grams_Per+Mahi_Grams_Per]
+  MD<-MD[,T_Inferior_Grams_Per:=Nan_Grams_Per+Sibzamini_Grams_Per+Makarooni_Grams_Per]
+  
+  MD<-MD[,Ratio_TOriginalFoodExpenditure:=TOriginalFoodExpenditure/Total_Exp_Month]
+  MD<-MD[,Ratio_Amusement_Exp:=Amusement_Exp/Total_Exp_Month]
+  MD<-MD[,Ratio_HouseandEnergy_Exp:=HouseandEnergy_Exp/Total_Exp_Month]
+  MD<-MD[,Ratio_MetrPrice:=MetrPrice/Total_Exp_Month]
+  MD<-MD[,Ratio_Total_Exp_Month_nondurable:=Total_Exp_Month_nondurable/Total_Exp_Month]
+  MD<-MD[,Ratio_Medical_Exp:=Medical_Exp/Total_Exp_Month]
+  MD<-MD[,Ratio_Furniture_Exp:=Furniture_Exp/Total_Exp_Month]
+  MD<-MD[,Ratio_Cloth_Exp:=Cloth_Exp/Total_Exp_Month]
+  MD<-MD[,Ratio_ServiceExp:=ServiceExp/Total_Exp_Month]
+  MD<-MD[,Ratio_Durable_Exp:=Durable_Exp/(Total_Exp_Month_nondurable+Durable_Exp)]
+  MD<-MD[,Ratio_Hygiene_Exp:=Hygiene_Exp/Total_Exp_Month]
+
+  
+  
   
   MD<-MD[,Ratio_NUniv:=NUniv/Size]
   MD<-MD[,Square_NUniv:=Ratio_NUniv^2]
@@ -48,34 +117,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD<-MD[,Square_HAge:=HAge^2]
   
-  MD<-MD[,SheepMeatExpenditure_Per:=SheepMeatExpenditure/EqSizeCalory]
-  MD<-MD[,CowMeatExpenditure_Per:=CowMeatExpenditure/EqSizeCalory]
-  MD<-MD[,CamelMeatExpenditure_Per:=CamelMeatExpenditure/EqSizeCalory]
-  MD<-MD[,RedMeat_Per:=SheepMeatExpenditure_Per+CowMeatExpenditure_Per+CamelMeatExpenditure_Per]
-  MD<-MD[,WhiteMeat_Per:=BirdsMeatExpenditure/EqSizeCalory]
-  MD<-MD[,Meat_Per:=RedMeat_Per+WhiteMeat_Per]
-  
-  MD<-MD[,R_SheepMeatExpenditure_Per:=SheepMeatExpenditure_Per/r_meat]
-  MD<-MD[,R_CowMeatExpenditure_Per:=CowMeatExpenditure_Per/r_meat]
-  MD<-MD[,R_CamelMeatExpenditure_Per:=CamelMeatExpenditure_Per/r_meat]
-  MD<-MD[,R_RedMeat_Per:=RedMeat_Per/r_meat]
-  MD<-MD[,R_WhiteMeat_Per:=WhiteMeat_Per/w_meat]
-  MD<-MD[,R_Meat_Per:=R_RedMeat_Per+R_WhiteMeat_Per]
-  
   MD<-MD[NDabestan!=0,Dabestan_Per:=Enrollment_Dabestan_G+Enrollment_Dabestan_NG/NDabestan]
   MD<-MD[NRahnamayi!=0,Rahnamayi_Per:=Enrollment_Rahnamayi_G+Enrollment_Rahnamayi_NG+Enrollment_Rahnamayi_Shabane/NRahnamayi]
   MD<-MD[NDabirestan!=0,Dabirestan_Per:=Enrollment_Dabirestan_G+Enrollment_Dabirestan_NG+Enrollment_Dabirestan_Shabane/NDabirestan]
   MD<-MD[NPish!=0,Pish_Per:=Enrollment_pish_G+Enrollment_pish_NG+Enrollment_pish_Shabane+KelasKonkoor/NPish]
   MD<-MD[,Education_Per:=Dabestan_Per+Rahnamayi_Per+Dabirestan_Per+Pish_Per]
-  MD<-MD[,Ratio_Education_Per:=Education_Per/Total_Exp_Month_Per+Education_Per]
+  MD<-MD[,Ratio_Education_per:=Education_Per/(Total_Exp_Month_Per+Education_Per)]
   
   MD<-MD[,Visit:=Visit_Omoomi_G+Visit_Omoomi_NG+Visit_Motekhases_G+Visit_Motekhases_NG+Visit_Mama_G+Visit_Mama_NG+
            Visit_Ravanpezeshk_G+Visit_Ravanpezeshk_NG]
   MD<-MD[,Tooth:=tooth_G+tooth_NG+tooth_Jarahi_G+tooth_Jarahi_NG+Ortodensy_G+Ortodensy_NG]
   MD<-MD[,Medicine:=Visit+Tooth+Radiology_G+Radiology_NG+Phisioteraphy_G+Phisioteraphy_NG+Drug+Lab_G+Lab_NG+
            Ambulance_G+Ambulance_NG+Vaksan_G+Vaksan_NG]
-  MD<-MD[,R_Medicine:=Medicine/medicine]
-  MD<-MD[,Ratio_R_Medicine:=R_Medicine/Total_Exp_Month]
+  MD<-MD[,Ratio_Medicine:=Medicine/Total_Exp_Month]
   
   MD<-MD[,Real_Total_Exp_Month:=Total_Exp_Month/total]
   MD<-MD[,Real_FoodExpenditure:=FoodExpenditure/food]
@@ -108,8 +162,52 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-MD[,Ratio_NLiterate:=NLiterate/Size]
   MD<-MD[,Square_NLiterate:=Ratio_NLiterate^2]
   
-  MD<-MD[,RentalHouse:=ifelse(tenure=="Rented",1,0)]
+  MD<-MD[,Rental_House:=ifelse(tenure=="Rented",1,0)]
+  MD<-MD[,Mortgage_House:=ifelse(tenure=="Mortgage",1,0)]
+  MD<-MD[,Own_House:=ifelse(tenure=="OwnLandandBuilding",1,0)]
+  MD<-MD[,Oghafi_House:=ifelse(tenure=="Apartment",1,0)]
+  MD<-MD[,Metal_Skeleton:=ifelse(skeleton=="metal",1,0)]
+  MD<-MD[,Concrete_Skeleton:=ifelse(skeleton=="concrete",1,0)]
+  MD<-MD[,Other_Skeleton:=ifelse(skeleton=="other",1,0)]
+  MD<-MD[,BrickSteel_StoneSteel_constmat:=ifelse(constmat=="BrickSteel_StoneSteel",1,0)]
+  MD<-MD[,Brickwood_Stonewood_constmat:=ifelse(constmat=="Brickwood_Stonewood",1,0)]
+  MD<-MD[,CementBlocks_constmat:=ifelse(constmat=="CementBlocks",1,0)]
+  MD<-MD[,AllBrick_Stone_constmat:=ifelse(constmat=="AllBrick_Stone",1,0)]
+  MD<-MD[,Allwood_constmat:=ifelse(constmat=="Allwood",1,0)]
+  MD<-MD[,SundriedBrickwood_constmat:=ifelse(constmat=="SundriedBrickwood",1,0)]
+  MD<-MD[,SundriedBrickmud_constmat:=ifelse(constmat=="SundriedBrickmud",1,0)]
   MD<-MD[,Phone:=ifelse(phone=="True",1,0)]
+  MD<-MD[,Bike:=ifelse(bike=="True",1,0)]
+  MD<-MD[,Radio:=ifelse(radio=="True",1,0)]
+  MD<-MD[,Cassette:=ifelse(cassette=="True",1,0)]
+  MD<-MD[,Tvbw:=ifelse(tvbw=="True",1,0)]
+  MD<-MD[,Tvcr:=ifelse(tvcr=="True",1,0)]
+  MD<-MD[,Vcr:=ifelse(vcr=="True",1,0)]
+  MD<-MD[,CellPhone:=ifelse(cellphone=="True",1,0)]
+  MD<-MD[,Freezer:=ifelse(freezer=="True",1,0)]
+  MD<-MD[,Refrigerator:=ifelse(refrigerator=="True",1,0)]
+  MD<-MD[,Frez_Refrig:=ifelse(frez_refrig=="True",1,0)]
+  MD<-MD[,Oven:=ifelse(oven=="True",1,0)]
+  MD<-MD[,Vacuum:=ifelse(vacuum=="True",1,0)]
+  MD<-MD[,Washer:=ifelse(washer=="True",1,0)]
+  MD<-MD[,Sewing:=ifelse(sewing=="True",1,0)]
+  MD<-MD[,Fan:=ifelse(fan=="True",1,0)]
+  MD<-MD[,Cooler_Water_Movable:=ifelse(pipewater=="True",1,0)]
+  MD<-MD[,Cooler_Gas_Movable:=ifelse(cooler_gas_movable=="True",1,0)]
+  MD<-MD[,Dishwasher:=ifelse(dishwasher=="True",1,0)]
+  MD<-MD[,Microwave:=ifelse(Microwave=="True",1,0)]
+  MD<-MD[,None:=ifelse(none=="True",1,0)]
+  MD<-MD[,Pipewater:=ifelse(pipewater=="True",1,0)]
+  MD<-MD[,Electricity:=ifelse(electricity=="True",1,0)]
+  MD<-MD[,Pipegas:=ifelse(pipegas=="True",1,0)]
+  MD<-MD[,Kitchen:=ifelse(kitchen=="True",1,0)]
+  MD<-MD[,Cooler:=ifelse(cooler=="True",1,0)]
+  MD<-MD[,CentralCooler:=ifelse(centralcooler=="True",1,0)]
+  MD<-MD[,CentralHeat:=ifelse(centralheat=="True",1,0)]
+  MD<-MD[,Pakage:=ifelse(pakage=="True",1,0)]
+  MD<-MD[,Cooler_Gas:=ifelse(cooler_gas=="True",1,0)]
+  #MD<-MD[,UnexpectedEvent_Month:=ifelse(party_month=="True" | ceremony_month=="True" | homerepaire_month=="True" | bastari_month=="True" | operation_month=="True",1,0) ]
+  
   MD<-MD[,Car:=ifelse(car=="True",1,0)]
   MD<-MD[,Bathroom:=ifelse(bathroom=="True",1,0)]
   MD<-MD[,Computer:=ifelse(computer=="True",1,0)]
@@ -121,6 +219,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-MD[,KarosineCook:=ifelse(cookfuel=="karosine",1,0)]
   MD<-MD[,KarosineHeat:=ifelse(heatfuel=="karosine",1,0)]
   MD<-MD[,GasHeat:=ifelse(heatfuel=="gas",1,0)]
+  MD<-MD[,Pipedgas_CookFuel:=ifelse(cookfuel=="pipedgas",1,0)]
+  MD<-MD[,Pipedgas_HeatFuel:=ifelse(heatfuel=="pipedgas",1,0)]
+  MD<-MD[,Pipedgas_HotWater:=ifelse(hotwater=="pipedgas",1,0)]
   
   MD[ProvinceCode==0,ProvinceName:="Markazi"]
   MD[ProvinceCode==1,ProvinceName:="Gilan"]
@@ -155,15 +256,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[ProvinceCode==30,ProvinceName:="Alborz"]
   
   Data<-MD[,.(HHID,Region,cluster3,NewArea,NewArea_Name,Year,ProvinceName,HSex,HAge,Square_HAge,NKids,HActivityState,HEduYears,
-              Size,Weight,NUniv,Ratio_NUniv,Square_NUniv,EqSizeOECD,EqSizeCalory,FoodKCaloriesHH_Per,FoodProtein_Per,TOriginalFoodExpenditure_Per,
-              TFoodKCaloriesHH_Per,Rooms,Area,Area_Per,Log_Area_Per,Square_Area_Per,Amusement_Exp,HouseandEnergy_Exp,MetrPrice,Hygiene_Exp,
-              Total_Exp_Month_Per_nondurable,NetIncome,Medical_Exp,Furniture_Exp,Cloth_Exp,HouseandEnergy_Exp,ServiceExp,NonFreeDurable_Exp,Decile,
-              Decile_Nominal,Percentile,Percentile_Nominal,InitialPoor,FinalPoor,FPLine,PovertyLine,Engel,HHEngle,RedMeat_Per,WhiteMeat_Per,Meat_Per,
-              R_RedMeat_Per,R_WhiteMeat_Per,R_Meat_Per,Dabestan_Per,Rahnamayi_Per,Dabirestan_Per,Pish_Per,Education_Per,Ratio_Education_Per,Visit,
-              Tooth,Medicine,R_Medicine,Ratio_R_Medicine,Real_Total_Exp_Month,Real_FoodExpenditure,Real_Durable_Exp,Pub_Employee,Prv_Employee,
-              Cooperative_Employee,Simple_Jobs_Staff,Opreators_machinery_equipment,Craftsman,Skilled_staff_agriculture_forestr_fishing,
-              Staff_service_sales,Office_staff,Technician,Expert,Manager,Aid,Aid_Per,Ratio_Aid_Per,HFemale,NEmployed,Ratio_NEmployed,Square_NEmployed,
-              NLiterate,Ratio_NLiterate,Square_NLiterate,RentalHouse,Car,Bathroom,Computer,Motorcycle,Water,Gas,Sewage,KarosineCook,KarosineHeat,GasHeat)]
+              Size,Weight,NUniv,Ratio_NUniv,Square_NUniv,EqSizeOECD,EqSizeCalory,FoodKCaloriesHH_Per,FoodProtein_Per,Ratio_TOriginalFoodExpenditure,
+              TFoodKCaloriesHH_Per,Rooms,Area,Area_Per,Log_Area_Per,Square_Area_Per,Ratio_Amusement_Exp,Ratio_MetrPrice,Ratio_Hygiene_Exp,
+              Ratio_Total_Exp_Month_nondurable,Ratio_Medical_Exp,Ratio_Furniture_Exp,Ratio_Cloth_Exp,Ratio_HouseandEnergy_Exp,Ratio_ServiceExp,
+              Ratio_Durable_Exp,Ratio_Education_per,Ratio_Medicine,Decile,Decile_Nominal,Percentile,Percentile_Nominal,InitialPoor,FinalPoor,
+              FPLine,PovertyLine,Engel,HHEngle,Total_Exp_Month_Per_nondurable,Goosht_Grams_Per,Morgh_Grams_Per,
+              Mahi_Grams_Per,Mive_Grams_Per,Nan_Grams_Per,Sibzamini_Grams_Per,Makarooni_Grams_Per,Khoshkbar_Grams_Per,T_Meat_Grams_per,
+              T_Inferior_Grams_Per,Pub_Employee,Prv_Employee,Cooperative_Employee,Simple_Jobs_Staff,Opreators_machinery_equipment,Craftsman,
+              Skilled_staff_agriculture_forestr_fishing,Staff_service_sales,Office_staff,Technician,Expert,Manager,Ratio_Aid_Per,HFemale,
+              NEmployed,Ratio_NEmployed,Square_NEmployed,NLiterate,Ratio_NLiterate,Square_NLiterate,Rental_House,Mortgage_House,Own_House,
+              Oghafi_House,Metal_Skeleton,Concrete_Skeleton,Other_Skeleton,BrickSteel_StoneSteel_constmat,Brickwood_Stonewood_constmat,
+              CementBlocks_constmat,AllBrick_Stone_constmat,Allwood_constmat,SundriedBrickwood_constmat,SundriedBrickmud_constmat,Car,Bike,
+              Radio,Bathroom,Computer,Internet,Motorcycle,Cassette,Tvbw,Tvcr,Vcr,CellPhone,Freezer,Refrigerator,Frez_Refrig,Oven,Vacuum,Washer,
+              Sewing,Fan,Cooler_Water_Movable,Cooler_Gas_Movable,Dishwasher,Microwave,None,Pipewater,Electricity,Pipegas,Kitchen,Cooler,
+              CentralCooler,CentralHeat,Pakage,Cooler_Gas,Water,Gas,Sewage,KarosineCook,KarosineHeat,GasHeat,Pipedgas_CookFuel,Pipedgas_HeatFuel,Pipedgas_HotWater)]
   save(Data, file=paste0(Settings$HEISProcessedPath,"Y",year,"Data.rda"))
 }
 
