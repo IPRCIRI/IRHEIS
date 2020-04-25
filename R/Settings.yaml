@@ -8,7 +8,7 @@ HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 97.0
+startyear: 77.0
 endyear: 97.0
 baseyear: 95.0
 OS: Windows
@@ -50,6 +50,10 @@ MDS_Transportation: TransportationTables
 MDS_Benzin: BenzinTables
 MDS_Bargh: BarghTables
 MDS_Gaz: GazTables
+MDS_Gazz: GazzTables
+MDS_Barghh: BarghhTables
+MDS_Sookht: SookhtTables
+MDS_Ab: AbTables
 MDS_NaftSefid: NaftSefidTables
 MDS_Communication: CommunicationTables
 MDS_Amusement: AmusementTables
