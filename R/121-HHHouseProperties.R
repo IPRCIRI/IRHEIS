@@ -1069,61 +1069,69 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   HighShare <- rbind(HighShare,X1)
   
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+A1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+A2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (Auto2_rani>0 | Auto1_Khareji>0 | 
                       Auto2_Khareji>0 | Auto1_Irani>0),weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani,Weight)]
-  
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+
+B1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+B2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (TV_Rangi_Irani>0 | TV_Rangi_Khareji>0),weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+C1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(freezer2,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+C2<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (freezer2>0),weighted.mean(freezer2,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+D1<-   HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(OjaghGaz,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+D2<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (OjaghGaz>0),weighted.mean(OjaghGaz,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+E1<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(Mashin_Lebasshooyi,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+E2<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (Mashin_Lebasshooyi>0),weighted.mean(Mashin_Lebasshooyi,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+F1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(Mobile,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+F2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (Mobile>0),weighted.mean(Mobile,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+G1<- HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(Cooler_Gaz,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+G2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (Cooler_Gaz>0),weighted.mean(Cooler_Gaz,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+H1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(PC,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+H2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (PC>0),weighted.mean(PC,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+I1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(Lastik_Mashin,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+I2<- HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (Lastik_Mashin>0),weighted.mean(Lastik_Mashin,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+J1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(Motor_Machin,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+J2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (Motor_Machin>0),weighted.mean(Motor_Machin,Weight)]
   
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+K1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
                     weighted.mean(Tamirat_Asasi,Weight)]
-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+K2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                       (Tamirat_Asasi>0),weighted.mean(Tamirat_Asasi,Weight)]
+
+Value<-HHHouseProperties[,.(HHID,Auto2_rani,Auto1_Khareji,Auto2_Khareji,Auto1_Irani,
+                            TV_Rangi_Irani,TV_Rangi_Khareji,freezer2,OjaghGaz,
+                            Mashin_Lebasshooyi,Mobile,Cooler_Gaz,PC,
+                            Lastik_Mashin,Motor_Machin,Tamirat_Asasi)]
+  
+save(Value, file=paste0(Settings$HEISProcessedPath,"Y",year,"Value.rda"))
+
   }
 
 ggplot(M_Buyers)+

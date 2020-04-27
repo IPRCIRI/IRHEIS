@@ -29,17 +29,7 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
-FinalClusterDiff <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
-                                  House_Share=NA_real_,Food_Share=NA_real_,Durable_Share=NA_real_,
-                                  SampleSize=NA_integer_,Clusterdiff=NA_integer_,
-                                  Engle=NA_integer_,FPLine=NA_integer_,FoodKCaloriesHH_Per=NA_real_,
-                                  Total_Exp_Month_Per_nondurable=NA_real_,
-                                  Total_Exp_Month_Per=NA_real_,
-                                  PovertyLine=NA_real_,PovertyHCR=NA_real_,
-                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
-HighEngles<-data.table(Year=NA_integer_,Region=NA_integer_,cluster3=NA_real_,N40=NA_real_,
-                    N45=NA_real_,N50=NA_real_,N=NA_real_)[0]
 
 
 
@@ -48,61 +38,118 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Value.rda"))
   
-  #MD<-MD[Region=="Rural"]
-  #MD<-MD[cluster3==13]
-  MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
+  MD<-merge(MD,Value,by="HHID")
   
-  HighEngle1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine &
-                  (TOriginalFoodExpenditure/Total_Exp_Month) > 0.4,
-                .(.N),by=.(Region,cluster3)]
-  names(HighEngle1)<-c("Region", "cluster3","N40")
+  A1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani,Weight),by=cluster3]
+  A2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                            (Auto2_rani>0 | Auto1_Khareji>0 | 
+                               Auto2_Khareji>0 | Auto1_Irani>0),
+           weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani,Weight)]
   
-  HighEngle2 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                      TOriginalFoodExpenditure_Per<1.2*FPLine &
-                      (TOriginalFoodExpenditure/Total_Exp_Month) > 0.45,
-                    .(.N),by=.(Region,cluster3)]
-  names(HighEngle2)<-c("Region", "cluster3","N45")
+  B1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight),by=cluster3]
+  B2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                            (TV_Rangi_Irani>0 | TV_Rangi_Khareji>0),weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
   
-  HighEngle3 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                      TOriginalFoodExpenditure_Per<1.2*FPLine &
-                      (TOriginalFoodExpenditure/Total_Exp_Month) > 0.5,
-                    .(.N),by=.(Region,cluster3)]
-  names(HighEngle3)<-c("Region", "cluster3","N50")
+  C1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(freezer2,Weight),by=cluster3]
+  C2<-    MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                              (freezer2>0),weighted.mean(freezer2,Weight)]
   
-  HighEngle4 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                      TOriginalFoodExpenditure_Per<1.2*FPLine,
-                    .(.N),by=.(Region,cluster3)]
+  D1<-   MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                           weighted.mean(OjaghGaz,Weight),by=cluster3]
+  D2<-    MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                              (OjaghGaz>0),weighted.mean(OjaghGaz,Weight)]
   
-  HighEngle<-merge(HighEngle1,HighEngle2)
-  HighEngle<-merge(HighEngle,HighEngle3)
-  HighEngle<-merge(HighEngle,HighEngle4)
+  E1<-    MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                            weighted.mean(Mashin_Lebasshooyi,Weight),by=cluster3]
+  E2<-    MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                              (Mashin_Lebasshooyi>0),weighted.mean(Mashin_Lebasshooyi,Weight)]
+  
+  F1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(Mobile,Weight),by=cluster3]
+  F2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                            (Mobile>0),weighted.mean(Mobile,Weight)]
+  
+  G1<- MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                         weighted.mean(Cooler_Gaz,Weight),by=cluster3]
+  G2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                            (Cooler_Gaz>0),weighted.mean(Cooler_Gaz,Weight)]
+  
+  H1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(PC,Weight),by=cluster3]
+  H2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                            (PC>0),weighted.mean(PC,Weight)]
+  
+  I1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(Lastik_Mashin,Weight),by=cluster3]
+  I2<- MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                           (Lastik_Mashin>0),weighted.mean(Lastik_Mashin,Weight)]
+  
+  J1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(Motor_Machin,Weight),by=cluster3]
+  J2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                            (Motor_Machin>0),weighted.mean(Motor_Machin,Weight)]
+  
+  K1<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                          weighted.mean(Tamirat_Asasi,Weight),by=cluster3]
+  K2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                            (Tamirat_Asasi>0),weighted.mean(Tamirat_Asasi,Weight)]
+  
+  names(A1)<-c("cluster3","A1")
+  names(B1)<-c("cluster3","B1")
+  names(C1)<-c("cluster3","C1")
+  names(D1)<-c("cluster3","D1")
+  names(E1)<-c("cluster3","E1")
+  names(F1)<-c("cluster3","F1")
+  names(G1)<-c("cluster3","G1")
+  names(H1)<-c("cluster3","H1")
+  names(I1)<-c("cluster3","I1")
+  names(J1)<-c("cluster3","J1")
+  names(K1)<-c("cluster3","K1")
+  
+  
+V<-merge(A1,B1,by="cluster3")
+V<-merge(V,C1,by="cluster3")
+V<-merge(V,D1,by="cluster3")
+V<-merge(V,E1,by="cluster3")
+V<-merge(V,F1,by="cluster3")
+V<-merge(V,G1,by="cluster3")
+V<-merge(V,H1,by="cluster3")
+V<-merge(V,I1,by="cluster3")
+V<-merge(V,J1,by="cluster3")
+V<-merge(V,K1,by="cluster3")
+V[,Added:=A1+B1+C1+D1+E1+F1+G1+H1+I1+J1+H1+K1]
+MD<-merge(MD,V,by="cluster3")
 
   EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                   TOriginalFoodExpenditure_Per<1.2*FPLine,
                .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
+                 FPLine=mean(FPLine),
+                 Added=mean(Added)),by=.(Region,cluster3)]
 
 
   
   EngleD[,PovertyLine:=FPLine/Engel]
-  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
+  EngleD[,PovertyLine2:=PovertyLine+Added]
+  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
+  MD[,weighted.mean(Added,Weight)]
+  MD[,weighted.mean(Added,Weight),by=Region]
+  
+  MD[,weighted.mean(PovertyLine2,Weight)]
+  MD[,weighted.mean(PovertyLine2,Weight),by=Region]
 
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
   
-  ################High Engle##################
-  
-  X1 <- HighEngle
 
-  X1[,Year:=year]
-
-  HighEngles <- rbind(HighEngles,X1)
   
   ################Country##################
 
@@ -153,59 +200,8 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
-  
-  Poors<-MD[FinalPoor==1]
-  
-  a<-MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-        TOriginalFoodExpenditure_Per<1.2*FPLine &
-        cluster3==7,
-        .(x=TOriginalFoodExpenditure/Total_Exp_Month)]
-  
 
-    MD[as.numeric(Decile)<2,weighted.mean(FinalPoor,Weight)]
-    
-    MD5<-MD[ProvinceCode!=11]
-    MD5<-MD5[,Group:=ifelse(FinalPoor==0 & FinalFoodPoor==0,"NoPoor",
-                          ifelse(FinalPoor==1 & FinalFoodPoor==0,"OnlyFinalPoor",
-                           ifelse(FinalPoor==0 & FinalFoodPoor==1,"OnlyFoodPoor","Both")))]
-    a<-ggplot(MD5,aes(x=HHEngle, fill=factor(Group))) +
-      geom_density(alpha=0.25)+
-      xlim(0,1)+ylim(0,5)+
-      ggtitle(year)
-    plot(a)
-
-    
-    
-    MDD<-MD[,.(Population=sum(Weight*Size)), by=.(Decile,ProvinceName)][order(ProvinceName,Decile)]
-      ggplot(MDD, aes(fill=factor(Decile), y=Population, x=ProvinceName)) + 
-      geom_bar(position="fill", stat="identity") + theme_bw() +
-        theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
-
-    
-    
-    Decile1<-MD[as.numeric(Decile)<2,.(HHID,Region,ProvinceName,NewArea_Name,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
-    Decile1Poors<-Decile1[,.(Decile1Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
-    ggplot(Decile1Poors, aes( y=Decile1Poors, x=ProvinceName)) + 
-      geom_bar(position="dodge", stat="identity") + theme_bw() +
-      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
-    
-    Decile2<-MD[as.numeric(Decile)<3,.(HHID,Region,ProvinceName,NewArea_Name,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
-    Decile2Poors<-Decile2[,.(Decile2Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
-    ggplot(Decile2Poors, aes( y=Decile2Poors, x=ProvinceName)) + 
-      geom_bar(position="dodge", stat="identity") + theme_bw() +
-      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
-    
-    Decile5<-MD[as.numeric(Decile)>3,.(HHID,Region,ProvinceName,NewArea_Name,Weight,FinalFoodPoor,FinalPoor,Durable_Exp)]
-    Decile5Poors<-Decile5[,.(Decile5Poors=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")][order(ProvinceName)]
-    ggplot(Decile5Poors, aes( y=Decile5Poors, x=ProvinceName)) + 
-      geom_bar(position="dodge", stat="identity") + theme_bw() +
-      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
-    
-    MDP<-MD[FinalPoor==1,.(Population=sum(Weight*Size)), by=.(Decile,cluster3)][order(cluster3,Decile)]
-    ggplot(MDP, aes(fill=factor(Decile), y=Population, x=cluster3)) + 
-      geom_bar(position="fill", stat="identity") + theme_bw() +
-      theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
-    
+   
 
     MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
 }
@@ -219,22 +215,13 @@ MD[,sum(Weight*Size)]
 FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
 save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
 
-ggplot(HighEngles)+
-  geom_line(mapping = aes(x=Year,y=N50/N,col=factor(cluster3)))
+#ggplot(HighEngles)+
+#  geom_line(mapping = aes(x=Year,y=N50/N,col=factor(cluster3)))
 
-ggplot(FinalClusterResults)+
-  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
+#ggplot(FinalClusterResults)+
+#  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
 
 #write.csv(FinalClusterResults,file = FinalClusterResults.csv)
-
-
-Job<-MD[FinalPoor==1,weighted.mean(HActivityState=="Employed",Weight),by=ProvinceCode]
-IncomeWithoutWork<-MD[FinalPoor==1,weighted.mean(HActivityState=="Income without Work",Weight),by=ProvinceCode]
-
-Widow<-MD[FinalPoor==1,weighted.mean(HSex=="Female",Weight),by=ProvinceCode]
-Widow2<-MD[HSex=="Female",weighted.mean(FinalPoor,Weight),by=ProvinceCode]
-
-MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
 
 
 endtime <- proc.time()
