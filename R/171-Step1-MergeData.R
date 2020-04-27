@@ -39,7 +39,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
              "Durables", "Education", "Furnitures","HotelRestaurants",
              "HouseandEnergys","House", "Medicals","Hygienes","Transportations","Others",
-             "Resturants"
+             "Resturants","Durablele_Detail"
   )){
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
     load(file = paste0(Settings$HEISProcessedPath,"Y",year,"NonFreeDurableData.rda"))
@@ -80,29 +80,32 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,NonFreeDurableData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ResturantData,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,Durablele_Detail,by =c("HHID"),all=TRUE)
   #MD<-merge(MD,InvestmentData,by =c("HHID"),all=TRUE)
   for (col in c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
                 "Communication_Exp", "Education_Exp", "HouseandEnergy_Exp", 
                 "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", "Transportation_Exp",
                 "Other_Exp", "Medical_Exp", "NonFreeDurable_Exp",
-                "Resturant_Exp","ServiceExp"
+                "Resturant_Exp","ServiceExp","Add_to_NonDurable","Durable_Dep",
+                "Durable_NoDep","Durable_Emergency"
   )) 
     MD[is.na(get(col)), (col) := 0]
   #  MD<-MD[,Yaraneh:=416000*Size]
   
   MD<-merge(MD,Calorie_Need)
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durablele_Detail.rda"))
-  MD<-merge(MD,Durablele_Detail)
+  #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durablele_Detail.rda"))
+  #MD<-merge(MD,Durablele_Detail)
   
   #Calculate Monthly Total Expenditures 
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
           "Amusement_Exp", "Communication_Exp", 
           "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
           "Transportation_Exp", "Other_Exp"
-          ,"Out_from_Durable"
+          ,"Add_to_NonDurable"
   )
-  w <- c(nw, "Medical_Exp", "Remain_Durable")
+  w <- c(nw, "Medical_Exp","Durable_Dep",
+         "Durable_NoDep","Durable_Emergency")
   # w <- c(nw, "Medical_Exp", "NonFreeDurable_Exp")
   #w <- c(nw, "Medical_Exp", "Durable_Pure_Exp")
   # pw <- c(nw, "Added_Food_Exp_Month")
