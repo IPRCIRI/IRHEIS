@@ -167,6 +167,9 @@ for(year in (Settings$startyear:Settings$endyear)){
           "71211",
           "71311",
           "71312",
+          "72111",
+          "72118",
+          "72119",
           "82111",
           "82113",
           "91111",
@@ -175,6 +178,7 @@ for(year in (Settings$startyear:Settings$endyear)){
           "91128",
           "91129",
           "91311")
+  
   g3 <- c("31231",
           "31243",
           "31315",
@@ -249,11 +253,8 @@ for(year in (Settings$startyear:Settings$endyear)){
           "55111",
           "55112",
           "71314",
-          "72111",
           "72113",
           "72117",
-          "72118",
-          "72119",
           "72122",
           "72123",
           "72127",
@@ -352,6 +353,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(Durablele_Detail, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durablele_Detail.rda"))
   a<-data.table(duplicated(Durablele_Detail$HHID))
+  
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
+  
+  Durablele_Detail<-merge(Durablele_Detail,MD[,.(HHID,FoodExpenditure,Durable_Exp,Size)],by="HHID")
   
   }
 
