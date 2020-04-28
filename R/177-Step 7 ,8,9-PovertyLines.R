@@ -99,6 +99,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   K2<-  MD[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
                             (Tamirat_Asasi>0),weighted.mean(Tamirat_Asasi,Weight)]
   
+  MD[,Added_Dep:=0.1*(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani)+
+       0.033*(TV_Rangi_Irani>0 | TV_Rangi_Khareji>0)+
+       0.033*(freezer2)+
+       0.033*(OjaghGaz)+
+       0.033*(Mashin_Lebasshooyi)+
+       0.11*(Mobile)+
+       0.05*(Cooler_Gaz)+
+       0.06*(PC)+
+       0.5*(Lastik_Mashin)+
+       0.033*(Motor_Machin)+
+       0.05*(Tamirat_Asasi) ]
+  
+  
   names(A1)<-c("cluster3","A1")
   names(B1)<-c("cluster3","B1")
   names(C1)<-c("cluster3","C1")
@@ -136,7 +149,7 @@ MD<-merge(MD,V,by="cluster3")
   EngleD[,PovertyLine:=FPLine/Engel]
   EngleD[,PovertyLine2:=PovertyLine+Added]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
-  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
+  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable+Added_Dep < PovertyLine2,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
@@ -194,7 +207,7 @@ MD<-merge(MD,V,by="cluster3")
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(PovertyLine2,Weight*Size)],"\t")
   cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
   cat(MD[, sum(Weight*Size)],"\t")
 
