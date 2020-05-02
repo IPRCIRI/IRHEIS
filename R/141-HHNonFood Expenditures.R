@@ -518,16 +518,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC <- TC[,pcols,with=FALSE]
 
   if(year %in% 84:97){
-    TC[,Durable_Exp:=as.numeric(Durable_Exp)]
-   # TC[,Durable_Sale:=as.numeric(Durable_Sale)]
+    TC[,Durable_Exp:=as.numeric(Durable_Exp)/12]
+   TC[,Durable_Sale:=as.numeric(Durable_Sale)/12]
   }
-  TC<-TC[BuyingMethod==1]
-  TC$Durable_Exp<-TC$Durable_Exp/12
-  #TC$Durable_Sale<-TC$Durable_Sale/12
+  #TC<-TC[BuyingMethod==1]
+  TC$Durable_Exp<-TC$Durable_Exp
+  TC$Durable_Sale<-TC$Durable_Sale
   TC[,Code:=NULL]
   TC[,BuyingMethod:=NULL]
   TC[is.na(TC)] <- 0
-  #TC[,Durable_Pure_Exp:=Durable_Exp-Durable_Sale]
+  TC[,Durable_Pure_Exp:=Durable_Exp-Durable_Sale]
   DurableData <- TC[,lapply(.SD,sum),by=HHID]
   save(DurableData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
 }
