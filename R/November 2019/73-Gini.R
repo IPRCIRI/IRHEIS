@@ -36,13 +36,13 @@ for(year in (Settings$startyear:Settings$endyear)){
  X1[,Year:=year]
 
  Gini <- rbind(Gini,X1)
- Gini<-Gini[,.(Gini=mean(as.numeric(Gini))),by=.(ProvinceCode,Year)]
+ Gini<-Gini[,.(Gini=mean(as.numeric(Gini))),by=.(Year)]
  
  X2 <- MD[,.(Pop=sum(Size*Weight)),by=ProvinceCode]
  X2[,Year:=year]
  Pop <- rbind(Pop,X2)
  
- write.csv(Pop,file = "Pop.csv")
+ #write.csv(Pop,file = "Pop.csv")
 }
 
 #Final_Dataset <- read_excel("C:/Users/pc1/Desktop/MRC fall 98/Dataset/Final Dataset.xlsx", sheet = "Sheet4")
