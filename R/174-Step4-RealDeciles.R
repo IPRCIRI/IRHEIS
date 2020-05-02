@@ -177,6 +177,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,sum(Weight*Size), by=.(Decile_Nominal,Region)][order(Region,Decile_Nominal)]
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+  
+  ########################################
+  ########################################
+  ########################################
+  
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"AidWage.rda"))
   MD<-merge(MD,AidWageData,all.x = TRUE)
   for (col in c("aid")) MD[is.na(get(col)), (col) := 0]

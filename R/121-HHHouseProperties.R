@@ -363,7 +363,7 @@ Name<-data.table(HHID=NA_real_,
                  Weight=NA_real_,
                  Decile=NA_real_)[0]
 
-Dep<-data.table(Year=NA_integer_, Buy=NA_real_,Use=NA_real_)[0]
+Dep<-data.table(Year=NA_integer_, Buy=NA_real_,Use=NA_real_,share=NA_real_)[0]
 
 M_Buyers <- data.table(Year=NA_integer_,cluster3=NA_real_,Mobile_Buyers_Exp=NA_real_)[0]
 
@@ -661,8 +661,26 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   HHHouseProperties[,weighted.mean(cellphone=="True",Weight)]
   HHHouseProperties[,weighted.mean(Mobile>0 ,Weight)]
-  X1 <- HHHouseProperties[,.(Use=weighted.mean(cellphone=="True",Weight),
-                             Buy=weighted.mean(Mobile>0  ,Weight))]
+ # X1 <- HHHouseProperties[,.(Use=weighted.mean(cellphone=="True",Weight),
+ #                            Buy=weighted.mean(Mobile>0  ,Weight))]
+#  X1[,Year:=year]
+#  Dep <- rbind(Dep,X1)
+  
+#  X1 <- HHHouseProperties[,.(Use=weighted.mean(cooler_gas=="True",Weight),
+#                             Buy=weighted.mean(Cooler_Gaz>0  ,Weight))]
+#  X1[,share:=Use/Buy]
+#  X1[,Year:=year]
+#  Dep <- rbind(Dep,X1)
+  
+#  X1 <- HHHouseProperties[,.(Use=weighted.mean(computer=="True",Weight),
+#                             Buy=weighted.mean(PC>0  ,Weight))]
+#  X1[,share:=Use/Buy]
+#  X1[,Year:=year]
+#  Dep <- rbind(Dep,X1)
+  
+  X1 <- HHHouseProperties[,.(Use=weighted.mean(car=="True",Weight),
+                             Buy=weighted.mean(Tamirat_Asasi>0  ,Weight))]
+  X1[,share:=Use/Buy]
   X1[,Year:=year]
   Dep <- rbind(Dep,X1)
   
@@ -1049,6 +1067,71 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   X1[,Year:=year]
   HighShare <- rbind(HighShare,X1)
+  
+  
+A1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani,Weight)]
+A2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (Auto2_rani>0 | Auto1_Khareji>0 | 
+                      Auto2_Khareji>0 | Auto1_Irani>0),weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani,Weight)]
+
+B1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
+B2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (TV_Rangi_Irani>0 | TV_Rangi_Khareji>0),weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
+  
+C1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(freezer2,Weight)]
+C2<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (freezer2>0),weighted.mean(freezer2,Weight)]
+  
+D1<-   HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(OjaghGaz,Weight)]
+D2<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (OjaghGaz>0),weighted.mean(OjaghGaz,Weight)]
+  
+E1<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(Mashin_Lebasshooyi,Weight)]
+E2<-    HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (Mashin_Lebasshooyi>0),weighted.mean(Mashin_Lebasshooyi,Weight)]
+  
+F1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(Mobile,Weight)]
+F2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (Mobile>0),weighted.mean(Mobile,Weight)]
+  
+G1<- HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(Cooler_Gaz,Weight)]
+G2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (Cooler_Gaz>0),weighted.mean(Cooler_Gaz,Weight)]
+  
+H1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(PC,Weight)]
+H2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (PC>0),weighted.mean(PC,Weight)]
+  
+I1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(Lastik_Mashin,Weight)]
+I2<- HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (Lastik_Mashin>0),weighted.mean(Lastik_Mashin,Weight)]
+  
+J1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(Motor_Machin,Weight)]
+J2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (Motor_Machin>0),weighted.mean(Motor_Machin,Weight)]
+  
+K1<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4,
+                    weighted.mean(Tamirat_Asasi,Weight)]
+K2<-  HHHouseProperties[as.numeric(Decile)>1 & as.numeric(Decile)<4 &
+                      (Tamirat_Asasi>0),weighted.mean(Tamirat_Asasi,Weight)]
+
+Value<-HHHouseProperties[,.(HHID,Auto2_rani,Auto1_Khareji,Auto2_Khareji,Auto1_Irani,
+                            TV_Rangi_Irani,TV_Rangi_Khareji,freezer2,OjaghGaz,
+                            Mashin_Lebasshooyi,Mobile,Cooler_Gaz,PC,
+                            Lastik_Mashin,Motor_Machin,Tamirat_Asasi)]
+  
+save(Value, file=paste0(Settings$HEISProcessedPath,"Y",year,"Value.rda"))
+
   }
 
 ggplot(M_Buyers)+
@@ -1072,14 +1155,14 @@ ggplot(m, aes(fill=factor(Region), y=Share, x=factor(FinalPoor))) +
 ########################################################
 
 TotalDurable<-merge(TotalDurable,HHHouseProperties[,.(HHID,Weight,Decile)],by="HHID")
-z1 <-TotalDurable[, {lapply(.SD, function(x) sum(x*Weight)/sum(Weight))}][]
-z2 <-TotalDurable[, {lapply(.SD, function(x) sum(x*Weight)/sum(G13*Weight))}][]
+#z1 <-TotalDurable[, {lapply(.SD, function(x) sum(x*Weight)/sum(Weight))}][]
+#z2 <-TotalDurable[, {lapply(.SD, function(x) sum(x*Weight)/sum(G13*Weight))}][]
 
 #write.csv(z1,"z1.csv")
 #write.csv(z2,"z2.csv")
 
-s1 <-TotalDurable[as.numeric(Decile)>1 & as.numeric(Decile)<4, {lapply(.SD, function(x) sum(x*Weight)/sum(Weight))}][]
-s2 <-TotalDurable[as.numeric(Decile)>1 & as.numeric(Decile)<4, {lapply(.SD, function(x) sum(x*Weight)/sum(G13*Weight))}][]
+#s1 <-TotalDurable[as.numeric(Decile)>1 & as.numeric(Decile)<4, {lapply(.SD, function(x) sum(x*Weight)/sum(Weight))}][]
+#s2 <-TotalDurable[as.numeric(Decile)>1 & as.numeric(Decile)<4, {lapply(.SD, function(x) sum(x*Weight)/sum(G13*Weight))}][]
 #s2[,Year:=year]
 #Name <- rbind(Name,s2)
 
