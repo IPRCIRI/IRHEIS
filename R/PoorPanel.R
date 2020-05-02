@@ -13,6 +13,7 @@ library(data.table)
 library(ggplot2)
 library(stats)
 library(spatstat)
+year<-97
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
@@ -26,6 +27,116 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Specific.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Job.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Data.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+MD<-merge(BigFData,MD,by=c("HHID"),all.x = T)
+MD<-MD[FinalPoor=1]
+Calory<-MD[,weighted.mean(FoodKCaloriesHH_Per,Weight*Size),by=c("ProvinceCode")]
+MD<-merge(MD,FoodNames,by=c("FoodType"),all.x = T)
+base<-MD[,weighted.mean(FGrams/EqSizeCalory*KCalories,Weight*Size),by=c("ProvinceName","FoodType")]
+
+base<-MD[,fcalory:=FGrams*KCalories/EqSizeCalory]
+base<-base[,weighted.mean(V1,Weight*Size),by=c("ProvinceName","FoodType")]
+s<-base[,sum(V1),by=c("ProvinceName")]
+
+MD<-MD[,foodpoor:=ifelse(FoodKCaloriesHH<Calorie_Need2,1,0)]
+foodpoor<-MD[,weighted.mean(foodpoor,Weight*Size),by=c("ProvinceName","FinalPoor")]
+MD3<-MD[,weighted.mean(FoodKCaloriesHH_Per,Weight*Size),by=c("ProvinceCode")]
+
+MD<-MD[,foodpoorW:=ifelse(FoodKCaloriesHH<Calorie_Need1,1,0)]
+foodpoorW<-MD[,weighted.mean(foodpoorW,Weight*Size),by=c("ProvinceName","FinalPoor")]
+
+Calory<-MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Calory_Decile_Poor<-MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("Decile","FinalPoor")]
+Calory_Decile<-MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("Decile")]
+
+Decile123<-MD[Decile==1 | Decile==2 | Decile==3]
+Calory_Decile123<-as.data.table(Decile123[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size)])
+Calory_Decile123_Poor<-as.data.table(Decile123[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("FinalPoor")])
+
+
+Decile8910<-MD[Decile==8 | Decile==9 | Decile==10]
+Calory_Decile18910<-as.data.table(Decile8910[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size)])
+Calory_Decile18910_<-as.data.table(Decile8910[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("FinalPoor")])
+
+Protein<-MD[,weighted.mean(FoodProtein_Per,Weight*Size),by=c("ProvinceName","FinalPoor")]
+Protein_Decile_Poor<-MD[,weighted.mean(FoodProtein_Per,Weight*Size),by=c("Decile","FinalPoor")]
+Protein_Decile<-MD[,weighted.mean(FoodProtein_Per,Weight*Size),by=c("Decile")]
+
+Decile123<-MD[Decile==1 | Decile==2 | Decile==3]
+Protein_Decile123<-as.data.table(Decile123[,weighted.mean(FoodProtein_Per,Weight*Size)])
+Protein_Decile123_Poor<-as.data.table(Decile123[,weighted.mean(FoodProtein_Per,Weight*Size),by=c("FinalPoor")])
+
+
+Decile8910<-MD[Decile==8 | Decile==9 | Decile==10]
+Protein_Decile18910<-as.data.table(Decile8910[,weighted.mean(FoodProtein_Per,Weight*Size)])
+Protein_Decile18910_<-as.data.table(Decile8910[,weighted.mean(FoodProtein_Per,Weight*Size),by=c("FinalPoor")])
+
+goosht<-BigFData[FoodType=="Goosht"]
+goosht<-goosht[,Goosht_Grams:=FGrams]
+mahi<-BigFData[FoodType=="Mahi"]
+mahi<-mahi[,Mahi_Grams:=FGrams]
+morgh<-BigFData[FoodType=="Morgh"]
+morgh<-morgh[,Morgh_Grams:=FGrams]
+mive<-BigFData[FoodType=="Mive"]
+mive<-mive[,Mive_Grams:=FGrams]
+nan<-BigFData[FoodType=="Nan"]
+nan<-goosht[,Nan_Grams:=FGrams]
+sibzamini<-BigFData[FoodType=="Sibzamini"]
+sibzamini<-sibzamini[,Sibzamini_Grams:=FGrams]
+makarooni<-BigFData[FoodType=="Makarooni"]
+makarooni<-makarooni[,Makarooni_Grams:=FGrams]
+khoshkbar<-BigFData[FoodType=="Khoshkbar"]
+khoshkbar<-khoshkbar[,Khoshkbar_Grams:=FGrams]
+
+berenj<-BigFData[FoodType=="Berenj"]
+berenj<-berenj[,Berenj_Grams:=FGrams]
+ghand<-BigFData[FoodType=="Ghand"]
+ghand<-ghand[,Ghand_Grams:=FGrams]
+hoboobat<-BigFData[FoodType=="Hoboobat"]
+hoboobat<-hoboobat[,Hoboobat_Grams:=FGrams]
+mast<-BigFData[FoodType=="Mast"]
+mast<-berenj[,Mast_Grams:=FGrams]
+panir<-BigFData[FoodType=="Panir"]
+panir<-panir[,Panir_Grams:=FGrams]
+roghan<-BigFData[FoodType=="Roghan"]
+roghan<-roghan[,Roghan_Grams:=FGrams]
+sabzi<-BigFData[FoodType=="Sabzi"]
+sabzi<-sabzi[,Sabzi_Grams:=FGrams]
+shir<-BigFData[FoodType=="Shir"]
+shir<-shir[,Shir_Grams:=FGrams]
+tokhmemorgh<-BigFData[FoodType=="Tokhmemorgh"]
+tokhmemorgh<-tokhmemorgh[,Tokhmemorgh_Grams:=FGrams]
+
+
+
+MD<-merge(MD,goosht[,.(HHID,Goosht_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,mahi[,.(HHID,Mahi_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,morgh[,.(HHID,Morgh_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,mive[,.(HHID,Mive_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,nan[,.(HHID,Nan_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,sibzamini[,.(HHID,Sibzamini_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,makarooni[,.(HHID,Makarooni_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,khoshkbar[,.(HHID,Khoshkbar_Grams)],by=c("HHID"),all.x = T)
+
+MD<-merge(MD,berenj[,.(HHID,Berenj_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,ghand[,.(HHID,Ghand_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,hoboobat[,.(HHID,Hoboobat_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,mast[,.(HHID,Mast_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,panir[,.(HHID,Panir_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,roghan[,.(HHID,Roghan_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,sabzi[,.(HHID,Sabzi_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,shir[,.(HHID,Shir_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,tokhmemorgh[,.(HHID,Tokhmemorgh_Grams)],by=c("HHID"),all.x = T)
+
+
+for (col in c("Goosht_Grams","Mahi_Grams", "Morgh_Grams", "Mive_Grams", "Nan_Grams", 
+              "Sibzamini_Grams", "Makarooni_Grams", "Khoshkbar_Grams","Berenj_Grams",
+              "Ghand_Grams","Hoboobat_Grams","Mast_Grams","Panir_Grams","Roghan_Grams",
+              "Sabzi_Grams","Shir_Grams","Tokhmemorgh_Grams"
+)) 
+  MD[is.na(get(col)), (col) := 0]
+
+
 
 MD<-merge(MD,job,by=("HHID"))
 MD<-merge(MD,Specific,by=c("HHID"))
