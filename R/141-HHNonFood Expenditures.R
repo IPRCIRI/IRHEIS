@@ -524,6 +524,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   #TC<-TC[BuyingMethod==1]
   TC$Durable_Exp<-TC$Durable_Exp
   TC$Durable_Sale<-TC$Durable_Sale
+  DurableDataCodes<-TC
+  save(DurableDataCodes, file = paste0(Settings$HEISProcessedPath,"Y",year,"DurableDataCodes.rda"))
+  
   TC[,Code:=NULL]
   TC[,BuyingMethod:=NULL]
   TC[is.na(TC)] <- 0
