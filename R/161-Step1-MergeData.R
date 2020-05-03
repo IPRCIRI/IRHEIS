@@ -28,11 +28,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Value.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+  
   
   load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
   HHWeights<- as.data.table(HHWeights)
   HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
   HHWeights[,Year:=NULL]
+  
+  Value<-merge(Value,HHHouseProperties)
+  Value<-merge(Value,HHWeights)
   
   Value[,Auto2_rani:=0.1*Auto2_rani]
   Value[,Auto1_Khareji:=0.1*Auto1_Khareji]
@@ -50,13 +55,48 @@ for(year in (Settings$startyear:Settings$endyear)){
   Value[,Motor_Machin:=0.033*Motor_Machin]
   Value[,Tamirat_Asasi:=0.05*Tamirat_Asasi]
   
+  A1<- Value[Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0,
+        weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
+                                            Auto1_Irani,Weight)]
+  A2<-Value[TV_Rangi_Irani+TV_Rangi_Khareji>0,weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
+  A3<-Value[freezer2>0,weighted.mean(freezer2,Weight)]
+  A4<-Value[OjaghGaz>0,weighted.mean(OjaghGaz,Weight)]
+  A5<-Value[Mashin_Lebasshooyi>0,weighted.mean(Mashin_Lebasshooyi,Weight)]
+  A6<-Value[Mobile>0,weighted.mean(Mobile,Weight)]
+  A7<-Value[Cooler_Gaz>0,weighted.mean(Cooler_Gaz,Weight)]
+  A8<-Value[PC>0,weighted.mean(PC,Weight)]
+  A9<-Value[Lastik_Mashin>0,weighted.mean(Lastik_Mashin,Weight)]
+  A10<-Value[Motor_Machin>0,weighted.mean(Motor_Machin,Weight)]
+  A11<-Value[Tamirat_Asasi>0,weighted.mean(Tamirat_Asasi,Weight)]
+  
+  Value[car=="True",Added1:=A1]
+  Value[tvcr=="True",Added2:=A2]
+  Value[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
+        Added3:=A3]
+  Value[oven=="True",Added4:=A4]
+  Value[washer=="True",Added5:=A5]
+  Value[cellphone=="True",Added6:=A6]
+  Value[cooler_gas=="True",Added7:=A7]
+  Value[computer=="True",Added8:=A8]
+  Value[car=="True",Added9:=A9]
+  Value[car=="True",Added10:=A10]
+  Value[car=="True",Added11:=A11]
+  
+  
+
+
+  
+  Value[,Weight:=NULL]
   dep <- c( "Auto2_rani", "Auto1_Khareji","Auto2_Khareji", "Auto1_Irani",
            "TV_Rangi_Irani", "TV_Rangi_Khareji","freezer2", "OjaghGaz",
            "Mashin_Lebasshooyi", "Mobile","Cooler_Gaz", "PC",
            "Lastik_Mashin", "Motor_Machin","Tamirat_Asasi")
   
   Value[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
+  Value[is.na(Value)] <- 0
   
+  Value[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+          Added7+Added8+Added9+Added10+Added11]
   
   #load Expenditures
   
@@ -127,8 +167,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
           "Amusement_Exp", "Communication_Exp", 
           "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
-          "Transportation_Exp", "Other_Exp"
-          #,"Add_to_NonDurable","Total_Depreciated_Durable"
+          "Transportation_Exp", "Other_Exp","Add_to_NonDurable","Added"
+         #, "Total_Depreciated_Durable"
   )
   w <- c(nw, "Medical_Exp",
          "Durable_NoDep","Durable_Emergency")
