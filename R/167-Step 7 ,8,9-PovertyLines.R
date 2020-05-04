@@ -30,15 +30,12 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
 
-
-
-
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
-
+  #MD<-MD[Region=="Urban"]
 
   EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                   TOriginalFoodExpenditure_Per<1.2*FPLine,
@@ -133,6 +130,8 @@ save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal
 #  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
 
 #write.csv(FinalClusterResults,file = FinalClusterResults.csv)
+
+MD[,weighted.mean(FinalPoor,Weight),by=car]
 
 
 endtime <- proc.time()

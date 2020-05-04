@@ -148,25 +148,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
     
     SMD[,weighted.mean(Size,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
- #   NewDecile<-SMD[,.(HHID,Decile)]
- #   names(NewDecile)<-c("HHID","NewDecile")
- #   save(NewDecile,file=paste0(Settings$HEISProcessedPath,"Y",year,"NewDecile.rda"))
-    
-   #    OldDecile<-SMD[,.(HHID,Decile)]
-    #   names(OldDecile)<-c("HHID","OldDecile")
-     #  save(OldDecile,file=paste0(Settings$HEISProcessedPath,"Y",year,"OldDecile.rda"))
-    
+
   }
-  
-  #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"NewDecile.rda"))
-  #DecileCompare<-merge(as.data.table(OldDecile),NewDecile,by="HHID")
-  #DecileCompare[,Diff:=as.numeric(NewDecile)-as.numeric(OldDecile)]
-  #DecileCompare2<- DecileCompare[,.(.N),by=Diff]
-  
-  #ggplot(DecileCompare2, aes(fill=factor(Diff), y=N, x=factor(Diff))) + 
-  #  geom_bar(position="dodge", stat="identity") + theme_bw() +
-  #  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1)) +
-  #  geom_text(aes(label=N), position=position_dodge(width=0.9), vjust=-0.25)
+
   
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
   setnames(MD,"NewPoor","InitialPoor")
@@ -176,87 +160,85 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,sum(Weight*Size), by=.(Decile,Region)][order(Region,Decile)]
   MD[,sum(Weight*Size), by=.(Decile_Nominal,Region)][order(Region,Decile_Nominal)]
   
-  save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  
-  ########################################
-  ########################################
-  ########################################
-  
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"AidWage.rda"))
-  MD<-merge(MD,AidWageData,all.x = TRUE)
-  for (col in c("aid")) MD[is.na(get(col)), (col) := 0]
-  MD[,PositiveAid:=ifelse(aid>0,1,0)]
-  MD[,weighted.mean(PositiveAid,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
-  MD[,weighted.mean(PositiveAid,Weight*Size),by=.(Decile)][order(Decile)]
-  
-  
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
-  MD<-merge(MD,SubsidyWageData,all.x = TRUE)
-  for (col in c("Subsidy")) MD[is.na(get(col)), (col) := 0]
-  MD[,PositiveSubsidy:=ifelse(Subsidy>0,1,0)]
-  MD[,weighted.mean(PositiveSubsidy,Weight*Size),by=.(Region,Decile)][order(Region,Decile)]
-  MD[,weighted.mean(PositiveSubsidy,Weight*Size),by=.(Decile)][order(Decile)]
-  
-  
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"UTSubsidyW.rda"))
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"RTSubsidyW.rda"))
-  
-  TSubsidy<-rbind(UTSubsidyW,RTSubsidyW)
-  TSubsidy<-TSubsidy[,HHID:=Address]
-  MD<-merge(MD,TSubsidy[,.(HHID,check1)],all.x = TRUE)
-  MD[,Subsidy3:=ifelse(check1>800000,1,0)]
-  y<-MD[Subsidy3==1,.(HHID,Decile,Region)]
-  MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Region,Decile)][order(Region,Decile)]
-  MD[,weighted.mean(Subsidy3,Weight*Size,na.rm = TRUE),by=.(Decile)][order(Decile)]
-  
-  MD[,TotalAid:=(Subsidy+aid)/12]
-  MD_Ok<- MD[TotalAid>0]
-  MD_Ok[,ratio:=TotalAid/Total_Exp_Month]
-  MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
-  MD_Ok[,.(weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Decile)][order(Decile)]
-  
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadExp.rda"))
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadCon.rda"))
-  SMD<-merge(SMD,BreadData,by="HHID")
-  SMD<-merge(SMD,BreadConsumption,by="HHID")
-  
-  SMD[is.na(SMD)] <- 0
-  
-  SMD[,weighted.mean(G01114+G01115,Weight),by=.(Region,Decile)][order(Region,Decile)]
-  SMD[,weighted.mean(G01114+G01115,Weight),by=.(Decile)][order(Decile)]
-  
-  SMD[,weighted.mean(BreadGrams,Weight),by=.(Region,Decile)][order(Region,Decile)]
-  SMD[,weighted.mean(BreadGrams,Weight),by=.(Decile)][order(Decile)]
 
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"DrugsExp.rda"))
-  SMD<-merge(SMD,DrugsExp,all.x = TRUE)
-  SMD[is.na(SMD)] <- 0
-  
-  SMD[,weighted.mean(DrugsExp,Weight),by=.(Region,Decile)][order(Region,Decile)]
-  SMD[,weighted.mean(DrugsExp,Weight),by=.(Decile)][order(Decile)]
-  
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
-  TotalFoodExp<-merge(TotalFoodExp,SMD[,.(HHID,Decile)])
-  
-  TotalFoodExp[,weighted.mean(`011211`+`011212`+`011213`+
-                                `011214`,Weight),by=.(Decile)][order(Decile)]
-  
-  TotalFoodExp[,weighted.mean(`011117`+`011118`,Weight),by=.(Decile)][order(Decile)]
-  
-  TotalFoodExp[,weighted.mean(`011231`+`011232`,Weight),by=.(Decile)][order(Decile)]
-  
-  TotalFoodExp[,weighted.mean(`011411`+`011412`+`011413`+`011414`+
-                                `011421`+`011422`+`011423`+`011424`+
-                                `011425`+`011426`+`011427`+`011428`+
-                                `011429`+`011431`+`011432`+`011433`,Weight),by=.(Decile)][order(Decile)]
-  
-  TotalFoodExp[,weighted.mean(`011441`+`011442`+`011443`,Weight),by=.(Decile)][order(Decile)]
-  
-  TotalFoodExp[,weighted.mean(`011531`+`011532`+`011533`,Weight),by=.(Decile)][order(Decile)]
-  
-  TotalFoodExp[,weighted.mean(`011812`,Weight),by=.(Decile)][order(Decile)]
-  
-  }
+
+#############################################
+A1<- MD[(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0) &
+          (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+           weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
+                           Auto1_Irani,Weight)]
+A2<-MD[(TV_Rangi_Irani+TV_Rangi_Khareji>0)
+       & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
+A3<-MD[freezer2>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(freezer2,Weight)]
+A4<-MD[OjaghGaz>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(OjaghGaz,Weight)]
+A5<-MD[Mashin_Lebasshooyi>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(Mashin_Lebasshooyi,Weight)]
+A6<-MD[Mobile>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(Mobile,Weight)]
+A7<-MD[Cooler_Gaz>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(Cooler_Gaz,Weight)]
+A8<-MD[PC>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(PC,Weight)]
+A9<-MD[Lastik_Mashin>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+       weighted.mean(Lastik_Mashin,Weight)]
+A10<-MD[Motor_Machin>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+        weighted.mean(Motor_Machin,Weight)]
+A11<-MD[Tamirat_Asasi>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
+        weighted.mean(Tamirat_Asasi,Weight)]
+
+MD[car=="True",Added1:=A1]
+MD[tvcr=="True",Added2:=A2]
+MD[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
+      Added3:=A3]
+MD[oven=="True",Added4:=A4]
+MD[washer=="True",Added5:=A5]
+MD[cellphone=="True",Added6:=A6]
+MD[cooler_gas=="True",Added7:=A7]
+MD[computer=="True",Added8:=A8]
+MD[car=="True",Added9:=A9]
+MD[car=="True",Added10:=A10]
+MD[car=="True",Added11:=A11]
+
+dep <- c( "Auto2_rani", "Auto1_Khareji","Auto2_Khareji", "Auto1_Irani",
+          "TV_Rangi_Irani", "TV_Rangi_Khareji","freezer2", "OjaghGaz",
+          "Mashin_Lebasshooyi", "Mobile","Cooler_Gaz", "PC",
+          "Lastik_Mashin", "Motor_Machin","Tamirat_Asasi")
+
+MD[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
+MD[is.na(MD)] <- 0
+
+MD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+        Added7+Added8+Added9+Added10+Added11]
+
+#Calculate Monthly Total Expenditures 
+nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
+        "Amusement_Exp", "Communication_Exp", 
+        "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
+        "Transportation_Exp", "Other_Exp"
+        #,"Add_to_NonDurable"
+        #,"Added"
+        #, "Total_Depreciated_Durable"
+)
+w <- c(nw, "Medical_Exp",
+       "Durable_NoDep","Durable_Emergency")
+
+
+MD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
+MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
+
+MD[,weighted.mean(Total_Exp_Month,Weight)]
+MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
+
+MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
+
+save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+
+}
+
 
 
 endtime <- proc.time()
