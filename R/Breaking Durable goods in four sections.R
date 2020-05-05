@@ -356,9 +356,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
-  
   Durablele_Detail<-merge(Durablele_Detail,MD[,.(HHID,FoodExpenditure,Durable_Exp,Size)],by="HHID")
   
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+  Durablele_Detail<-merge(Durablele_Detail,MD[,.(HHID,Decile,Weight)])
+  Durablele_Detail[,weighted.mean(Durable_NoDep,Weight),by=Decile][order(Decile)]
+  Durablele_Detail[,weighted.mean(Durable_Emergency,Weight),by=Decile][order(Decile)]
   }
 
 

@@ -168,7 +168,7 @@ for(year in (Settings$startyear:Settings$endyear)){
           "Amusement_Exp", "Communication_Exp", 
           "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
           "Transportation_Exp", "Other_Exp"
-          #,"Add_to_NonDurable"
+          ,"Add_to_NonDurable"
           #,"Added"
          #, "Total_Depreciated_Durable"
   )
