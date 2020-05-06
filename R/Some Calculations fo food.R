@@ -59,3 +59,6 @@ x<-MD[,.(weighted.mean(MacaroniGram,Weight),
       weighted.mean(PiazGram,Weight)),by=Decile][order(Decile)]
 
 MD[,weighted.mean(Size,Weight),by=Decile][order(Decile)]
+MD[,weighted.mean(FoodKCaloriesHH_Per,Weight),by=Decile][order(Decile)]
+
+
