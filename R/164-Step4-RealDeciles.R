@@ -163,31 +163,32 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 
 #############################################
-A1<- MD[(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0) &
-          (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-           weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
-                           Auto1_Irani,Weight)]
-A2<-MD[(TV_Rangi_Irani+TV_Rangi_Khareji>0)
-       & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
-A3<-MD[freezer2>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(freezer2,Weight)]
-A4<-MD[OjaghGaz>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(OjaghGaz,Weight)]
-A5<-MD[Mashin_Lebasshooyi>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(Mashin_Lebasshooyi,Weight)]
-A6<-MD[Mobile>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(Mobile,Weight)]
-A7<-MD[Cooler_Gaz>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(Cooler_Gaz,Weight)]
-A8<-MD[PC>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(PC,Weight)]
-A9<-MD[Lastik_Mashin>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-       weighted.mean(Lastik_Mashin,Weight)]
-A10<-MD[Motor_Machin>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-        weighted.mean(Motor_Machin,Weight)]
-A11<-MD[Tamirat_Asasi>0 & (as.numeric(Decile)==2 | as.numeric(Decile)==3),
-        weighted.mean(Tamirat_Asasi,Weight)]
+A1<-MD[(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0),
+      .(A1=weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
+                           Auto1_Irani,Weight)),by=Decile]
+  A2<-MD[(TV_Rangi_Irani+TV_Rangi_Khareji>0),
+   .(A2=weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)),by=Decile]
+  A3<-MD[freezer2>0 ,.(A3=weighted.mean(freezer2,Weight)),by=Decile]
+  A4<-MD[OjaghGaz>0 , .(A4=weighted.mean(OjaghGaz,Weight)),by=Decile]
+  A5<-MD[Mashin_Lebasshooyi>0 ,.(A5=weighted.mean(Mashin_Lebasshooyi,Weight)),by=Decile]
+  A6<-MD[Mobile>0, .(A6=weighted.mean(Mobile,Weight)),by=Decile]
+  A7<-MD[Cooler_Gaz>0,.(A7=weighted.mean(Cooler_Gaz,Weight)),by=Decile]
+  A8<-MD[PC>0 ,.(A8= weighted.mean(PC,Weight)),by=Decile]
+  A9<-MD[Lastik_Mashin>0,.(A9=weighted.mean(Lastik_Mashin,Weight)),by=Decile]
+  A10<-MD[Motor_Machin>0 ,.(A10=weighted.mean(Motor_Machin,Weight)),by=Decile]
+  A11<-MD[Tamirat_Asasi>0 ,.(A11=weighted.mean(Tamirat_Asasi,Weight)),by=Decile]
+  
+  MD<-merge(MD,A1,by="Decile")
+  MD<-merge(MD,A2,by="Decile")
+  MD<-merge(MD,A3,by="Decile")
+  MD<-merge(MD,A4,by="Decile")
+  MD<-merge(MD,A5,by="Decile")
+  MD<-merge(MD,A6,by="Decile")
+  MD<-merge(MD,A7,by="Decile")
+  MD<-merge(MD,A8,by="Decile")
+  MD<-merge(MD,A9,by="Decile")
+  MD<-merge(MD,A10,by="Decile")
+  MD<-merge(MD,A11,by="Decile")
 
 MD[car=="True",Added1:=A1]
 MD[tvcr=="True",Added2:=A2]
@@ -201,6 +202,8 @@ MD[computer=="True",Added8:=A8]
 MD[car=="True",Added9:=A9]
 MD[car=="True",Added10:=A10]
 MD[car=="True",Added11:=A11]
+
+x<-MD[,.(HHID,Decile,car,Added1)]
 
 dep <- c( "Auto2_rani", "Auto1_Khareji","Auto2_Khareji", "Auto1_Irani",
           "TV_Rangi_Irani", "TV_Rangi_Khareji","freezer2", "OjaghGaz",
