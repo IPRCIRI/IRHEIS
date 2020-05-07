@@ -110,8 +110,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[, weighted.mean(FinalPoor,Weight*Size)]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=Region]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=cluster3]
-
-    MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
+  MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
+    
+    
+  DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
+                   Total_Exp_Month_Per_nondurable<1.2*PovertyLine,
+               .(.N,Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight),
+                 PovertyLine=mean(PovertyLine)),
+               by=.(Region,cluster3)]
+  
+  DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
+  MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
+  
+  
 }
 
 MD[,sum(Weight),by=Decile][order(Decile)]
@@ -123,15 +134,8 @@ MD[,sum(Weight*Size)]
 FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
 save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
 
-#ggplot(HighEngles)+
-#  geom_line(mapping = aes(x=Year,y=N50/N,col=factor(cluster3)))
-
-#ggplot(FinalClusterResults)+
-#  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
-
-#write.csv(FinalClusterResults,file = FinalClusterResults.csv)
-
 MD[,weighted.mean(FinalPoor,Weight),by=car]
+
 
 
 endtime <- proc.time()
