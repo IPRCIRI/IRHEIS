@@ -7,128 +7,182 @@ cat("\n\n================ Classification Models ================================
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
-
+options(java.parameters = "-Xmx5g")
 library(readxl)
 library(data.table)
 library(stringr)
 library(janitor)
 library(dplyr)
+library(Hmisc)
 library(caret)
+library(caretEnsemble)
 library(gbm)
 library(pROC)
 library(glmnet)
+library(parallel)
+library(doParallel)
 
-for(year in 97){
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Data4ClassifactionModels.rda"))
-  Data <- Data[,-39,with=FALSE]
-  # Data <- Data[,Percentile:=as.numeric(paste0(Percentile))]
-  # Data <- Data[,Percentile_Nominal:=as.numeric(paste0(Percentile_Nominal))]
-  D <- Data[,ProvinceName:=NULL]
-  D <- D[,Percentile:=NULL]
-  D <- D[,Percentile_Nominal:=NULL]
-  D <- D[,Decile:=NULL]
-  D <- D[,Decile_Nominal:=NULL]
-  D <- D[,NewArea:=NULL]
-  D <- D[,cluster3:=as.factor(cluster3)]
-  remnames <- c("Total_Exp_Month_Per_nondurable","PovertyLine","TOriginalFoodExpenditure_Per",
-                "Engel","InitialPoor","FPLine","HHID","Real_Total_Exp_Month","Weight","Year","NetIncome",
-                "Real_FoodExpenditure","Real_Durable_Exp","NewArea2","cluster3")
-  D <- D[,SIS := ifelse(NewArea2 %in% c("Sh_Zahedan","Sistan"),1,0)]
-  
-  dm <- dummyVars("~.",data = D[,setdiff(names(D),remnames),with=FALSE], fullRank = FALSE)
-  D2 <- as.data.table(predict(dm,D))
-  prop.table(table(D2$FinalPoor))
-  
-  outcomename <- "FinalPoor"
-  predictornames <- names(D2)[! names(D2) %in% c(outcomename,"SIS")]
-  
-  D2 <- D2[,FP:=as.factor(ifelse(FinalPoor==1,"Poor","NotPoor"))]
-  outcomename <- "FP"
-  
-  SISD <- D2[SIS > 0,]
-  D3 <- D2[SIS == 0,]
-  splitIndex <- createDataPartition(D3[[outcomename]],p=.75,list = FALSE,times = 1)
-  trainD <- D3[splitIndex,]
-  testD <- D3[-splitIndex,]
-  
-  objControl <- trainControl(method='cv', number=3, returnResamp='none',
-                             summaryFunction = twoClassSummary, classProbs = TRUE)
-  
-  objModel <- train(trainD[,predictornames,with=FALSE],trainD[[outcomename]],
-                    method = "gbm",
-                    trControl = objControl,
-                    metric = "ROC",
-                    preProcess = c("center","scale"))
-  head(summary(objModel,plot=FALSE),10)
-  plot(varImp(objModel,scale = FALSE))
-  #print(objModel)
-  cat("\n=================== Test ========================\n")
-  predictions <- predict(object = objModel, testD[,predictornames,with=FALSE], type="raw")
-  print(table(data.table(pred=predictions, obs=as.factor(testD[[outcomename]]))))
-  print(postResample(pred=predictions, obs=as.factor(testD[[outcomename]])))
-  predictions <- predict(object=objModel,  testD[,predictornames,with=FALSE], type='prob')
-  #head(predictions)
-  auc <- roc(ifelse(testD[[outcomename]]=="Poor",1,0), predictions[[2]])
-  print(auc$auc)
-  
-  
-  cat("\n=================== Check Sistan  ========================\n")
-  check <- predict(object = objModel, SISD[,predictornames,with=FALSE], type="raw")
-  print(table(data.table(pred=check, obs=as.factor(SISD[[outcomename]]))))
-  print(table(Data[NewArea2 %in% c("Sh_Zahedan","Sistan"),FinalPoor]))
-  print(postResample(pred=check, obs=as.factor(SISD[[outcomename]])))
-  check <- predict(object=objModel,  SISD[,predictornames,with=FALSE], type='prob')
-  #head(check)
-  auc <- roc(ifelse(SISD[[outcomename]]=="Poor",1,0), check[[2]])
-  print(auc$auc)
-  
-  
-  
-  dontrun <- function(){
-  
-  outcomename <- "FinalPoor"
-  prednames <- setdiff(predictornames,c("RedMeat_Per"                              
-                                         , "WhiteMeat_Per"                            
-                                         , "Meat_Per"                                 
-                                         , "R_RedMeat_Per"                            
-                                         , "R_WhiteMeat_Per"                          
-                                         , "R_Meat_Per"                               
-                                         , "Dabestan_Per"                             
-                                         , "Rahnamayi_Per"                            
-                                         , "Dabirestan_Per"                           
-                                         , "Pish_Per"                                 
-                                         , "Education_Per"                            
-                                         , "Ratio_Education_Per"                      
-                                         , "Visit"                                    
-                                         , "Tooth"                                    
-                                         , "Medicine"                                 
-                                         , "R_Medicine"                               
-                                         , "Ratio_R_Medicine"                         
-                                         , "Pub_Employee"                             
-                                         , "Prv_Employee"                             
-                                         , "Cooperative_Employee"                     
-                                         , "Simple_Jobs_Staff"                        
-                                         , "Opreators_machinery_equipment"            
-                                         , "Craftsman"                                
-                                         , "Skilled_staff_agriculture_forestr_fishing"
-                                         , "Staff_service_sales"                      
-                                         , "Office_staff"                             
-                                         , "Technician"                               
-                                         , "Expert"                                   
-                                         , "Manager"                                  
-                                         , "Aid"                                      
-                                         , "Aid_Per"                                  
-                                         , "Ratio_Aid_Per"                            
-                                         , "HFemale"))
-  objControl <- trainControl(method='cv', number=3, returnResamp='none')
-  objModel <- train(trainD[,prednames,with=FALSE], trainD[[outcomename]], 
-                    method='glmnet',  
-                    metric = "RMSE", 
-                    trControl=objControl)
-  predictions <- predict(object=objModel, testD[,prednames,with=FALSE])
-  auc <- roc(testD[[outcomename]], predictions)
-  print(auc$auc)
-  
-  #plot(varImp(objModel,scale = FALSE))
-  }
-}  
+# upl <- c("adaptDA","CHAID","sparesdiscrim","elmNN","gpls","logicFS","FCNN4R","mxnet","vbmp")
+# modellist <- getModelInfo()
+# ns <- names(modellist)
+# acml <- NULL
+# acmpl <- NULL
+# for(mname in ns){
+#   mdl <- modellist[[mname]]
+#   if("Classification" %in% mdl$type){
+#     if(length(intersect(mdl$library,upl))){
+#       cat("\nModel",mname,"unavailable as package",intersect(mdl$library,upl),"unavailable for R 4.0")
+#     }else{
+#       acml <- c(acml,mname)
+#       acmpl <- c(acmpl,mdl$library)
+#     }
+#   }
+# }
+# dput(acml)
+# acmpl <- unique(acmpl)
+# dput(acmpl)
+acml <- c("gbm","nnet")#,"rknn","svmPoly","svmRadial","rf")
+  c("ada", "AdaBag", 
+          #"AdaBoost.M1", "adaboost",
+          #"avNNet", "awnb", 
+          #"awtan", "bag", "bagEarth", "bagEarthGCV", "bagFDA", "bagFDAGCV", 
+          "bam", "bartMachine", "bayesglm", "binda", "blackboost", "BstLm", 
+          "bstSm", "bstTree", "C5.0", "C5.0Cost", "C5.0Rules", "C5.0Tree", 
+          "cforest", "CSimca", "ctree", "ctree2", "dda", "deepboost", "dnn", 
+          "dwdLinear", "dwdPoly", "dwdRadial", "earth", "evtree", "extraTrees", 
+          "fda", "FH.GBML", "FRBCS.CHI", "FRBCS.W", "gam", "gamboost", 
+          "gamLoess", "gamSpline", "gaussprLinear", "gaussprPoly", "gaussprRadial", 
+          "gbm_h2o", "gbm", "gcvEarth", "glm", "glmboost", "glmnet_h2o", 
+          "glmnet", "glmStepAIC", "hda", "hdda", "hdrda", "J48", "JRip", 
+          "kernelpls", "kknn", "knn", "lda", "lda2", "Linda", "LMT", "loclda", 
+          "LogitBoost", "logreg", "lssvmLinear", "lssvmPoly", "lssvmRadial", 
+          "lvq", "manb", "mda", "Mlda", "mlp", "mlpKerasDecay", "mlpKerasDecayCost", 
+          "mlpKerasDropout", "mlpKerasDropoutCost", "mlpML", "mlpWeightDecay", 
+          "mlpWeightDecayML", "monmlp", "msaenet", "multinom", "naive_bayes", 
+          "nb", "nbDiscrete", "nbSearch", "nnet", "nodeHarvest", "null", 
+          "OneR", "ordinalNet", "ordinalRF", "ORFlog", "ORFpls", "ORFridge", 
+          "ORFsvm", "ownn", "pam", "parRF", "PART", "partDSA", "pcaNNet", 
+          "pda", "pda2", "PenalizedLDA", "plr", "pls", "plsRglm", "polr", 
+          "PRIM", "protoclass", "qda", "QdaCov", "randomGLM", "ranger", 
+          "rbf", "rbfDDA", "Rborist", "rda", "regLogistic", "rf", "rFerns", 
+          "RFlda", "rfRules", "rlda", "rmda", "rocc", "rotationForest", 
+          "rotationForestCp", "rpart", "rpart1SE", "rpart2", "rpartCost", 
+          "rpartScore", "RRF", "RRFglobal", "rrlda", "RSimca", "sda", "sdwd", 
+          "simpls", "SLAVE", "slda", "smda", "snn", "sparseLDA", "spls", 
+          "stepLDA", "stepQDA", "svmBoundrangeString", "svmExpoString", 
+          "svmLinear", "svmLinear2", "svmLinear3", "svmLinearWeights", 
+          "svmLinearWeights2", "svmPoly", "svmRadial", "svmRadialCost", 
+          "svmRadialSigma", "svmRadialWeights", "svmSpectrumString", "tan", 
+          "tanSearch", "treebag", "vglmAdjCat", "vglmContRatio", "vglmCumulative", 
+          "widekernelpls", "wsrf", "xgbDART", "xgbLinear", "xgbTree", "xyf"
+)
+
+year <- 97
+
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Data4ClassifactionModels.rda"))
+#Data <- Data[,-39,with=FALSE]
+# Data <- Data[,Percentile:=as.numeric(paste0(Percentile))]
+# Data <- Data[,Percentile_Nominal:=as.numeric(paste0(Percentile_Nominal))]
+D <- Data[,ProvinceName:=NULL]
+D <- D[,Percentile:=NULL]
+D <- D[,Percentile_Nominal:=NULL]
+D <- D[,Decile:=NULL]
+D <- D[,Decile_Nominal:=NULL]
+D <- D[,NewArea:=NULL]
+D <- D[,cluster3:=as.factor(cluster3)]
+remnames <- c("Total_Exp_Month_Per_nondurable","PovertyLine","TOriginalFoodExpenditure_Per",
+              "Engel","InitialPoor","FPLine","HHID","Real_Total_Exp_Month","Weight","Year","NetIncome",
+              "Real_FoodExpenditure","Real_Durable_Exp","NewArea_Name","cluster3")
+D <- D[,SIS := ifelse(NewArea_Name %in% c("Sh_Zahedan","Sistan"),1,0)]
+
+dm <- dummyVars("~.",data = D[,setdiff(names(D),remnames),with=FALSE], fullRank = FALSE)
+D2 <- as.data.table(predict(dm,D))
+prop.table(table(D2$FinalPoor))
+
+outcomename <- "FinalPoor"
+predictornames <- names(D2)[! names(D2) %in% c(outcomename,"SIS")]
+
+D2 <- D2[,FP:=as.factor(ifelse(FinalPoor==1,"Poor","NotPoor"))]
+outcomename <- "FP"
+
+SISD <- D2[SIS > 0,]
+D3 <- D2[SIS == 0,]
+splitIndex <- createDataPartition(D3[[outcomename]],p=.75,list = FALSE,times = 1)
+trainD <- D3[splitIndex,]
+testD <- D3[-splitIndex,]
+
+
+registerDoParallel(6)
+getDoParWorkers()
+
+
+X_train <- trainD[,predictornames,with=FALSE]
+X_train[is.na(X_train)] <- 0
+y_train <- trainD[[outcomename]]
+
+X_test <- testD[,predictornames,with=FALSE]
+X_test[is.na(X_test)] <- 0
+y_test <- testD[[outcomename]]
+
+X_SIS <- SISD[,predictornames,with=FALSE]
+X_SIS[is.na(X_SIS)] <- 0
+y_SIS <- SISD[[outcomename]]
+
+
+
+describe(X_train)
+# featurePlot(x = X_test,y = y_test,
+#             between=list(x=1,y=1),
+#             type=c("g","p","smooth"))
+
+myctl <- trainControl(method = "cv",
+                      number = 5,
+                      savePredictions = "final",
+                      allowParallel = TRUE,
+                      classProbs = TRUE)
+
+
+
+t0 <- Sys.time()
+Results <- c()
+SISRes <- c()
+for(mdl in acml){
+  try({
+    cat("\n",mdl," ... ")
+    objModel <- caret::train(X_train,y_train,
+                             method = mdl,
+                             trControl = myctl,
+                             #    metric = "ROC",
+                             preProcess = c("center","scale"))
+    predictions_test <- predict(object = objModel, X_test, type="raw")
+    t1 <- Sys.time()
+    cat(as.character(t1),"\t[",as.character(t1-t0),"]")
+    Results[mdl] <- postResample(pred=as.factor(predictions_test), obs=as.factor(y_test))[1]
+    cat("\tAccuracy:",Results[mdl])
+    
+    predictions_SIS <- predict(object = objModel, X_SIS, type="raw")
+    cat(as.character(t1),"\t[",as.character(t1-t0),"]")
+    SISRes[mdl] <- postResample(pred=as.factor(predictions_SIS), obs=as.factor(y_SIS))[1]
+    
+    t0 <- t1
+  })
+}
+
+glmdata <- cbind(y=y_train,X_train)
+glmmodel <- glm(glmdata,formula = "y ~ .",family =  binomial(link = "probit"))
+confint(glmmodel)
+
+
+
+glmpredit <- predict(glmmodel,type = "response",newdata = X_test)
+glmpredictP <- as.factor(ifelse(glmpredit>.6,"Poor","NotPoor"))
+TBL <- table(glmpredictP,y_test)
+Results["probit"] <- (TBL[1,1]+TBL[2,2])/sum(TBL)
+
+glmpreditSIS <- predict(glmmodel,type = "response",newdata = X_SIS)
+glmpreditSISP <- as.factor(ifelse(glmpreditSIS>.6,"Poor","NotPoor"))
+TBLSIS <- table(glmpreditSISP,y_SIS)
+SISRes["probit"] <- (TBLSIS[1,1]+TBLSIS[2,2])/sum(TBLSIS)
+
+print(Results)
+print(SISRes)
