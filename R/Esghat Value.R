@@ -56,7 +56,7 @@ tamirat<-DurableDataCodes[Code==72319]
 Motormashin<-DurableDataCodes[Code==72118]
 Auto<-DurableDataCodes[Code==71111 | Code==71112 | Code==71116 | Code==71117]
 PC<-DurableDataCodes[Code==91311]
-
+Auto<-DurableDataCodes[Code==71117]
 
 
 X1<-yakhchal[Durable_Exp>0,.(yakhchal_Exp=weighted.mean(Durable_Exp,Weight))]
@@ -138,10 +138,12 @@ X <- merge(X,X21,by=c("Year"))
 X <- merge(X,X22,by=c("Year"))
 
 Exp <- rbind(Exp,X)
+
+
  
 }
 
-
+Exp<-Exp[,.(Year,Auto_Exp,Auto_Sale)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
