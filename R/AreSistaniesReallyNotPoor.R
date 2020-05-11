@@ -41,11 +41,11 @@ library(doParallel)
 # dput(acml)
 # acmpl <- unique(acmpl)
 # dput(acmpl)
-acml <- c("gbm","nnet")#,"rknn","svmPoly","svmRadial","rf")
+acml <- c("gbm","nnet","glm")#,"rknn","svmPoly","svmRadial","rf")
   c("ada", "AdaBag", 
-          #"AdaBoost.M1", "adaboost",
-          #"avNNet", "awnb", 
-          #"awtan", "bag", "bagEarth", "bagEarthGCV", "bagFDA", "bagFDAGCV", 
+          "AdaBoost.M1", "adaboost",
+          "avNNet", "awnb",
+          "awtan", "bag", "bagEarth", "bagEarthGCV", "bagFDA", "bagFDAGCV",
           "bam", "bartMachine", "bayesglm", "binda", "blackboost", "BstLm", 
           "bstSm", "bstTree", "C5.0", "C5.0Cost", "C5.0Rules", "C5.0Tree", 
           "cforest", "CSimca", "ctree", "ctree2", "dda", "deepboost", "dnn", 
@@ -152,6 +152,7 @@ for(mdl in acml){
     objModel <- caret::train(X_train,y_train,
                              method = mdl,
                              trControl = myctl,
+                             family = "binomial",
                              #    metric = "ROC",
                              preProcess = c("center","scale"))
     predictions_test <- predict(object = objModel, X_test, type="raw")
@@ -167,22 +168,6 @@ for(mdl in acml){
     t0 <- t1
   })
 }
-
-glmdata <- cbind(y=y_train,X_train)
-glmmodel <- glm(glmdata,formula = "y ~ .",family =  binomial(link = "probit"))
-confint(glmmodel)
-
-
-
-glmpredit <- predict(glmmodel,type = "response",newdata = X_test)
-glmpredictP <- as.factor(ifelse(glmpredit>.6,"Poor","NotPoor"))
-TBL <- table(glmpredictP,y_test)
-Results["probit"] <- (TBL[1,1]+TBL[2,2])/sum(TBL)
-
-glmpreditSIS <- predict(glmmodel,type = "response",newdata = X_SIS)
-glmpreditSISP <- as.factor(ifelse(glmpreditSIS>.6,"Poor","NotPoor"))
-TBLSIS <- table(glmpreditSISP,y_SIS)
-SISRes["probit"] <- (TBLSIS[1,1]+TBLSIS[2,2])/sum(TBLSIS)
 
 print(Results)
 print(SISRes)
