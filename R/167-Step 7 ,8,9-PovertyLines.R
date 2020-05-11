@@ -35,7 +35,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
-  #MD<-MD[Region=="Urban"]
+  #MD<-MD[Region=="Rural"]
 
   EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                   TOriginalFoodExpenditure_Per<1.2*FPLine,
@@ -122,7 +122,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
   MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
   
-  
+  cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
 }
 
 MD[,sum(Weight),by=Decile][order(Decile)]

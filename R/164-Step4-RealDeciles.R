@@ -553,6 +553,18 @@ setnames(MD,"NewPoor","InitialPoor")
 ######################################################################
 save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
+A<-merge(A3,A2)
+A<-merge(A,A1)
+A<-merge(A,A4)
+A<-merge(A,A5)
+A<-merge(A,A6)
+A<-merge(A,A7)
+A<-merge(A,A8)
+A<-merge(A,A9)
+A<-merge(A,A10)
+A<-merge(A,A11)
+
+
 }
 
 
