@@ -9,8 +9,17 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(ggplot2)
-year<-97
+#year<-97
 
+TS <- data.table(Year=NA_integer_,Berenj=NA_real_,
+                                  Gav=NA_real_,Goosfand=NA_real_,
+                 Shir=NA_real_,Panir=NA_real_,
+                 Tokhmemorgh=NA_real_,
+                                  Morgh=NA_real_,Decile=NA_real_)[0]
+
+
+for (year in (Settings$startyear:Settings$endyear)){
+   cat(paste0("\n------------------------------\nYear:", year, "\n"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Total2.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoors.rda"))
 
@@ -19,7 +28,9 @@ MD<-merge(MD,Total[,.(HHID,`011164`,MacaroniGram,`011231`,`011232`,PoultryMeat_M
                        Cheese_PasturizedGram,Cheese_NonPasturizedGram,
                        `011921`,Rob_GojeGram,`011441`,`011442`,Egg_MashinGram,
                        Egg_NonMashinGram,`011731`,SibzaminiGram,
-                       `011732`,PiazGram)],by="HHID")
+                       `011732`,PiazGram,`011211`,`011212`,
+                      CowMeatGram,SheepMeatGram,
+                      Rice_TaromGram,Rice_DomsiahGram)],by="HHID")
 
 m<-MD[,.(weighted.mean(`011164`/Total_Exp_Month_nondurable,Weight),
          weighted.mean((`011231`+`011232`)/Total_Exp_Month_nondurable,Weight),
@@ -56,9 +67,29 @@ x<-MD[,.(weighted.mean(MacaroniGram,Weight),
       weighted.mean(Rob_GojeGram,Weight),
       weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight),
       weighted.mean(SibzaminiGram,Weight),
-      weighted.mean(PiazGram,Weight)),by=Decile][order(Decile)]
+      weighted.mean(PiazGram,Weight),
+      weighted.mean(CowMeatGram,Weight),
+      weighted.mean(SheepMeatGram,Weight)),by=Decile][order(Decile)]
 
 MD[,weighted.mean(Size,Weight),by=Decile][order(Decile)]
 MD[,weighted.mean(FoodKCaloriesHH_Per,Weight),by=Decile][order(Decile)]
 
 
+A<-MD[,.(Morgh=weighted.mean(PoultryMeat_MGram,Weight),
+         Shir= weighted.mean(MilkGrams,Weight),
+         Panir=weighted.mean(Cheese_PasturizedGram,Weight),
+         Tokhmemorgh=weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight),
+         Berenj=weighted.mean(Rice_TaromGram+Rice_DomsiahGram,Weight),
+         Gav=weighted.mean(CowMeatGram,Weight),
+         Goosfand=weighted.mean(SheepMeatGram,Weight)),by=Decile][order(Decile)]
+A[,Year:=year]
+TS <- rbind(TS,A)
+
+
+}
+
+TS<-TS[as.numeric(Decile)<7]
+
+ggplot(TS, aes( y=Morgh, x=Year,fill=Decile)) + 
+   geom_bar(position="dodge", stat="identity") + theme_bw() +
+   theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
