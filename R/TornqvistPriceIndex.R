@@ -10,14 +10,15 @@ cat("\n\n================ Nominal to Real =====================================\
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
-
+# Settings$InitialPoorPercentile <- 1:22
+# Settings$startyear <- 77
 #library(readxl)
 library(data.table)
 #library(ggplot2)
 
 # Function Defs ---------------------------------------------------------------------------------
 CalcTornqvistIndex <- function(DataTable){
-    X <- DataTable[,.(wi1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+    X <- DataTable[,.(N=.N,wi1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
               wi2=weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE),
               pi1=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
               pi2=weighted.mean(MetrPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea2)]
@@ -36,6 +37,11 @@ CalcTornqvistIndex <- function(DataTable){
   
   X[,TornqvistIndex:= exp(   (wk1+wi1)/2 * log(pi1/pk1) + (wk2+wi2)/2 * log(pi2/pk2)  )      ]
   
+  
+  # print(X[Region=="Rural" & NewArea2=="Semnan",])
+  # if("Percentile" %in% names(DataTable))
+  #   print(DataTable[Region=="Rural" & NewArea2=="Semnan",.(min=min(as.integer(Percentile)),max=max(as.integer(Percentile))),by=.(Region,NewArea2)])
+  
   return(X[,.(Region,NewArea2,PriceIndex=TornqvistIndex)])
 }
 
@@ -49,7 +55,11 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   
   
   DataTable <- DataTable[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
-  
+
+  DataTable <- DataTable[order(Total_Exp_Month_Per_nondurable_Real)]
+  DataTable <- DataTable[,xr25th:=.SD[25,Total_Exp_Month_Per_nondurable_Real],by=.(Region,NewArea2)]
+  DataTable <- DataTable[,First25:=ifelse(Total_Exp_Month_Per_nondurable_Real<=xr25th,1,0)]
+    
   DataTable <- DataTable[order(Total_Exp_Month_Per_nondurable_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
   DataTable <- DataTable[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
   
@@ -96,7 +106,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     i <- i+1
     SMD[,InitialPoorBasedOnPercentileLastIteration:=InitialPoorBasedOnPercentile]
     
-    SMDIterationPoor <- SMD[InitialPoorBasedOnPercentileLastIteration==1]
+    SMDIterationPoor <- SMD[InitialPoorBasedOnPercentileLastIteration==1 | First25==1 ]
     
     if(nrow(SMDIterationPoor[,.N,by=.(Region,NewArea2)])<78)
       stop("HERE Some Area goes missing!")
@@ -104,6 +114,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       stop("HERE Some Area goes missing!")
     
     PriceDTBasedOnThisIterationPoor <- CalcTornqvistIndex(SMDIterationPoor)
+ #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea2=="Semnan",])
     SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
     
     cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
