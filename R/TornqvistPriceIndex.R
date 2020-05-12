@@ -92,11 +92,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD[,InitialPoorBasedOnPercentileLastIteration:=1]
   i <- 0
-  while(SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)]>0.002*nrow(SMD) & i <=50){
+  while(SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)]>0.001*nrow(SMD) & i <=50){
     i <- i+1
     SMD[,InitialPoorBasedOnPercentileLastIteration:=InitialPoorBasedOnPercentile]
     
-    SMDIterationPoor<-SMD[InitialPoorBasedOnPercentileLastIteration==1]
+    SMDIterationPoor <- SMD[InitialPoorBasedOnPercentileLastIteration==1]
     
     if(nrow(SMDIterationPoor[,.N,by=.(Region,NewArea2)])<78)
       stop("HERE Some Area goes missing!")
