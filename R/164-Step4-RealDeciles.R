@@ -15,17 +15,73 @@ Settings <- yaml.load_file("Settings.yaml")
 library(data.table)
 library(ggplot2)
 
+# Function Defs ---------------------------------------------------------------------------------
+CalcTornqvistIndex <- function(DataTable){
+  X <- DataTable[,.(N=.N,wi1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+                    wi2=weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE),
+                    pi1=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
+                    pi2=weighted.mean(MetrPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
+  
+  X[,wi:=wi1+wi2]
+  X[,wi1:=wi1/wi]
+  X[,wi2:=wi2/wi]
+  XTeh<-X[NewArea_Name=="Sh_Tehran"]
+  wk1<-XTeh$wi1   # k == Sh_Tehran
+  wk2<-XTeh$wi2
+  pk1<-XTeh$pi1
+  pk2<-XTeh$pi2
+  
+  X[,SimpleIndex:= .5 * pi1/pk1 + .5 * pi2/pk2]
+  X[,AnotherIndex:= wi1 * pi1/pk1 + wi2 * pi2/pk2]
+  
+  X[,TornqvistIndex:= exp(   (wk1+wi1)/2 * log(pi1/pk1) + (wk2+wi2)/2 * log(pi2/pk2)  )      ]
+  
+  
+  # print(X[Region=="Rural" & NewArea_Name=="Semnan",])
+  # if("Percentile" %in% names(DataTable))
+  #   print(DataTable[Region=="Rural" & NewArea_Name=="Semnan",.(min=min(as.integer(Percentile)),max=max(as.integer(Percentile))),by=.(Region,NewArea_Name)])
+  
+  return(X[,.(Region,NewArea_Name,PriceIndex=TornqvistIndex)])
+}
+
+
+DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
+  
+  if("PriceIndex" %in% names(DataTable)){
+    DataTable <- DataTable[,PriceIndex:=NULL]
+  }
+  DataTable <- merge(DataTable,PriceIndexDT,by=c("Region","NewArea_Name"))
+  
+  
+  DataTable <- DataTable[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
+  
+  DataTable <- DataTable[order(Total_Exp_Month_Per_nondurable_Real)]
+  DataTable <- DataTable[,xr25th:=.SD[25,Total_Exp_Month_Per_nondurable_Real],by=.(Region,NewArea_Name)]
+  DataTable <- DataTable[,First25:=ifelse(Total_Exp_Month_Per_nondurable_Real<=xr25th,1,0)]
+  
+  DataTable <- DataTable[order(Total_Exp_Month_Per_nondurable_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
+  DataTable <- DataTable[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  
+  #Calculate deciles by weights
+  DataTable <- DataTable[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  DataTable <- DataTable[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  DataTable <- DataTable[,InitialPoorBasedOnPercentile:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
+  
+  return(DataTable)
+}
+
+#year<-97
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   
-  SMD <- MD[,.(HHID,Region,ProvinceCode,
+  SMD <- MD[,.(HHID,Region,
                ServiceExp,FoodExpenditure,Total_Exp_Month,
                NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
                # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-               Durable_Exp,
                TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
                Weight,MetrPrice,Size,EqSizeOECD)]
   
@@ -38,105 +94,34 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
   
-  #Real Prices.
-  
-  T_Bundle_Value <- SMD[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
-  TBV1 <- T_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
-  TBV2 <- T_Bundle_Value[,weighted.mean(MetrPrice,Weight,na.rm = TRUE)]
-  
-  SMD[,PriceIndex2:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1
-                    +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)/2
-      ,by=.(Region,NewArea_Name)]
-  
-  X <- SMD[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-             weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea_Name)]
-  X[,V:=V1+V2]
-
-  SMD <- merge(SMD,X,by=c("Region","NewArea_Name"))
-  
-  SMD[,PriceIndex:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1*V1
-                    +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2*V2)/V
-      ,by=.(Region,NewArea_Name)]
-  
-  Compare1<-SMD[,.(Old=mean(PriceIndex2),
-                  New=mean(PriceIndex)),by=.(Region,NewArea_Name)]
-
-  SMD[,V1:=NULL]
-  SMD[,V2:=NULL]
-  SMD[,V:=NULL]
+  PriceDT <- CalcTornqvistIndex(SMD)
+  SMD <- DoDeciling_SetInitialPoor(SMD,PriceDT)
   
   
-  SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
   
-  ###Real- Country
-  SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
-  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
-  ###Nominal- Country
-  SMD<- SMD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
-  SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
-  SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
-  
-  SMD[,NewPoor:=1]
-  SMD[,ThisIterationPoor:=0]
+  SMD[,InitialPoorBasedOnPercentileLastIteration:=1]
   i <- 0
-  while(sum(SMD[,(ThisIterationPoor-NewPoor)^2])>=0.002*nrow(SMD) & i <=50){
+  while(SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)]>0.001*nrow(SMD) & i <=50){
     i <- i+1
-    SMD[,pold:=Percentile]
-    SMD[,ThisIterationPoor:=ifelse(pold %in% Settings$InitialPoorPercentile,1,0)]
-    SMDIterationPoor<-SMD[ThisIterationPoor==TRUE]
-    SMDIterationPoor[,sum(ThisIterationPoor),by=.(Region,NewArea_Name)][order(Region,NewArea_Name)]
+    SMD[,InitialPoorBasedOnPercentileLastIteration:=InitialPoorBasedOnPercentile]
     
-    T_P_Bundle_Value <- SMDIterationPoor[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
-    TPBV1 <- T_P_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
-    TPBV2 <- T_P_Bundle_Value[,weighted.mean(MetrPrice,Weight,na.rm = TRUE)]
+    SMDIterationPoor <- SMD[InitialPoorBasedOnPercentileLastIteration==1 | First25==1 ]
     
-   
-    X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-                weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea_Name)]
-    X[,V:=V1+V2]
+    if(nrow(SMDIterationPoor[,.N,by=.(Region,NewArea_Name)])<78)
+      stop("HERE Some Area goes missing!")
+    if(min(SMDIterationPoor[,.N,by=.(Region,NewArea_Name)]$N)==0)
+      stop("HERE Some Area goes missing!")
     
-    SMDIterationPoor <- merge(SMDIterationPoor,X,by=c("Region","NewArea_Name"))
-    SMDIterationPoor[,PriceIndex:=NULL]  
+    PriceDTBasedOnThisIterationPoor <- CalcTornqvistIndex(SMDIterationPoor)
+    #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
+    SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
     
-    Index <- SMDIterationPoor[,.(PriceIndex=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1*V1+
-                      weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2*V2)/V)
-        ,by=.(Region,NewArea_Name)]
-    Index <- Index[,.(PriceIndex=mean(PriceIndex)),by=.(Region,NewArea_Name)]
-    
-    
-    SMD[,PriceIndex:=NULL]  
-    SMD <- merge(SMD,Index,by=c("Region","NewArea_Name"))
-    
-    SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
-    
-    ###Real- Country
-    SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
-    SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-    SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-    SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-    
-    SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
-    save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
-    
-    #cat("\n",sum(SMD[ProvinceCode==2,.N]))
-    cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
-    SMD[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
-    SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
-    
-    SMD[,weighted.mean(Size,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
-
+    cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
   }
 
-    MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
-  setnames(MD,"NewPoor","InitialPoor")
+  MD <- merge(MD,SMD[,.(HHID,Bundle_Value,InitialPoorBasedOnPercentile,Decile,Percentile)],by="HHID")
+  setnames(MD,"InitialPoorBasedOnPercentile","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
   
-  MD[,weighted.mean(InitialPoor,Weight), by=.(NewArea_Name,Region)]
-  MD[,sum(Weight*Size), by=.(Decile,Region)][order(Region,Decile)]
-  MD[,sum(Weight*Size), by=.(Decile_Nominal,Region)][order(Region,Decile_Nominal)]
   
 
 #############################################
@@ -217,11 +202,10 @@ MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
 
 ###################################################################
 
-SMD <- MD[,.(HHID,Region,ProvinceCode,
+SMD <- MD[,.(HHID,Region,
              ServiceExp,FoodExpenditure,Total_Exp_Month,
              NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
              # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-             Durable_Exp,
              TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
              Weight,MetrPrice,Size,EqSizeOECD)]
 
@@ -234,105 +218,41 @@ SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCal
 
 SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
 
-#Real Prices.
-
-T_Bundle_Value <- SMD[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
-TBV1 <- T_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
-TBV2 <- T_Bundle_Value[,weighted.mean(MetrPrice,Weight,na.rm = TRUE)]
-
-SMD[,PriceIndex2:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1
-                   +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)/2
-    ,by=.(Region,NewArea_Name)]
-
-X <- SMD[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-            weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea_Name)]
-X[,V:=V1+V2]
-
-SMD <- merge(SMD,X,by=c("Region","NewArea_Name"))
-
-SMD[,PriceIndex:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1*V1
-                  +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2*V2)/V
-    ,by=.(Region,NewArea_Name)]
-
-Compare1<-SMD[,.(Old=mean(PriceIndex2),
-                 New=mean(PriceIndex)),by=.(Region,NewArea_Name)]
-
-SMD[,V1:=NULL]
-SMD[,V2:=NULL]
-SMD[,V:=NULL]
+PriceDT <- CalcTornqvistIndex(SMD)
+SMD <- DoDeciling_SetInitialPoor(SMD,PriceDT)
 
 
-SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
 
-###Real- Country
-SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
-SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-
-###Nominal- Country
-SMD<- SMD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
-SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
-SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
-
-SMD[,NewPoor:=1]
-SMD[,ThisIterationPoor:=0]
+SMD[,InitialPoorBasedOnPercentileLastIteration:=1]
 i <- 0
-while(sum(SMD[,(ThisIterationPoor-NewPoor)^2])>=0.002*nrow(SMD) & i <=50){
+while(SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)]>0.001*nrow(SMD) & i <=50){
   i <- i+1
-  SMD[,pold:=Percentile]
-  SMD[,ThisIterationPoor:=ifelse(pold %in% Settings$InitialPoorPercentile,1,0)]
-  SMDIterationPoor<-SMD[ThisIterationPoor==TRUE]
-  SMDIterationPoor[,sum(ThisIterationPoor),by=.(Region,NewArea_Name)][order(Region,NewArea_Name)]
+  SMD[,InitialPoorBasedOnPercentileLastIteration:=InitialPoorBasedOnPercentile]
   
-  T_P_Bundle_Value <- SMDIterationPoor[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
-  TPBV1 <- T_P_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
-  TPBV2 <- T_P_Bundle_Value[,weighted.mean(MetrPrice,Weight,na.rm = TRUE)]
+  SMDIterationPoor <- SMD[InitialPoorBasedOnPercentileLastIteration==1 | First25==1 ]
   
+  if(nrow(SMDIterationPoor[,.N,by=.(Region,NewArea_Name)])<78)
+    stop("HERE Some Area goes missing!")
+  if(min(SMDIterationPoor[,.N,by=.(Region,NewArea_Name)]$N)==0)
+    stop("HERE Some Area goes missing!")
   
-  X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-                           weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea_Name)]
-  X[,V:=V1+V2]
+  PriceDTBasedOnThisIterationPoor <- CalcTornqvistIndex(SMDIterationPoor)
+  #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
+  SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
   
-  SMDIterationPoor <- merge(SMDIterationPoor,X,by=c("Region","NewArea_Name"))
-  SMDIterationPoor[,PriceIndex:=NULL]  
-  
-  Index <- SMDIterationPoor[,.(PriceIndex=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1*V1+
-                                             weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2*V2)/V)
-                            ,by=.(Region,NewArea_Name)]
-  Index <- Index[,.(PriceIndex=mean(PriceIndex)),by=.(Region,NewArea_Name)]
-  
-  
-  SMD[,PriceIndex:=NULL]  
-  SMD <- merge(SMD,Index,by=c("Region","NewArea_Name"))
-  
-  SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
-  
-  ###Real- Country
-  SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
-  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
-  SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
-  save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
-  
-  #cat("\n",sum(SMD[ProvinceCode==2,.N]))
-  cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
-  SMD[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
-  SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
-  
-  SMD[,weighted.mean(Size,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
-  
+  cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
 }
 
 MD[,Bundle_Value:=NULL]
-MD[,NewPoor:=NULL]
 MD[,Decile:=NULL]
 MD[,Percentile:=NULL]
-MD[,Decile_Nominal:=NULL]
-MD[,Percentile_Nominal:=NULL]
+MD[,InitialPoor:=NULL]
+
+MD <- merge(MD,SMD[,.(HHID,Bundle_Value,InitialPoorBasedOnPercentile,Decile,Percentile)],by="HHID")
+setnames(MD,"InitialPoorBasedOnPercentile","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
+
+
+
 MD[,A1:=NULL]
 MD[,A2:=NULL]
 MD[,A3:=NULL]
@@ -344,11 +264,8 @@ MD[,A8:=NULL]
 MD[,A9:=NULL]
 MD[,A10:=NULL]
 MD[,A11:=NULL]
-MD[,InitialPoor:=NULL]
 
 
-MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
-setnames(MD,"NewPoor","InitialPoor")
 
 ######################################################################
 A1<-MD[(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0),
@@ -428,11 +345,10 @@ MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
 
 ###################################################################
 
-SMD <- MD[,.(HHID,Region,ProvinceCode,
+SMD <- MD[,.(HHID,Region,
              ServiceExp,FoodExpenditure,Total_Exp_Month,
              NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
              # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-             Durable_Exp,
              TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
              Weight,MetrPrice,Size,EqSizeOECD)]
 
@@ -445,110 +361,40 @@ SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCal
 
 SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
 
-#Real Prices.
-
-T_Bundle_Value <- SMD[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
-TBV1 <- T_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
-TBV2 <- T_Bundle_Value[,weighted.mean(MetrPrice,Weight,na.rm = TRUE)]
-
-SMD[,PriceIndex2:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1
-                   +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2)/2
-    ,by=.(Region,NewArea_Name)]
-
-X <- SMD[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-            weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea_Name)]
-X[,V:=V1+V2]
-
-SMD <- merge(SMD,X,by=c("Region","NewArea_Name"))
-
-SMD[,PriceIndex:=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TBV1*V1
-                  +weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TBV2*V2)/V
-    ,by=.(Region,NewArea_Name)]
-
-Compare1<-SMD[,.(Old=mean(PriceIndex2),
-                 New=mean(PriceIndex)),by=.(Region,NewArea_Name)]
-
-SMD[,V1:=NULL]
-SMD[,V2:=NULL]
-SMD[,V:=NULL]
+PriceDT <- CalcTornqvistIndex(SMD)
+SMD <- DoDeciling_SetInitialPoor(SMD,PriceDT)
 
 
-SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
 
-###Real- Country
-SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
-SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-
-###Nominal- Country
-SMD<- SMD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
-SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
-SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
-
-SMD[,NewPoor:=1]
-SMD[,ThisIterationPoor:=0]
+SMD[,InitialPoorBasedOnPercentileLastIteration:=1]
 i <- 0
-while(sum(SMD[,(ThisIterationPoor-NewPoor)^2])>=0.002*nrow(SMD) & i <=50){
+while(SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)]>0.001*nrow(SMD) & i <=50){
   i <- i+1
-  SMD[,pold:=Percentile]
-  SMD[,ThisIterationPoor:=ifelse(pold %in% Settings$InitialPoorPercentile,1,0)]
-  SMDIterationPoor<-SMD[ThisIterationPoor==TRUE]
-  SMDIterationPoor[,sum(ThisIterationPoor),by=.(Region,NewArea_Name)][order(Region,NewArea_Name)]
+  SMD[,InitialPoorBasedOnPercentileLastIteration:=InitialPoorBasedOnPercentile]
   
-  T_P_Bundle_Value <- SMDIterationPoor[NewArea==2301, .(Bundle_Value,MetrPrice,Weight)]
-  TPBV1 <- T_P_Bundle_Value[,weighted.mean(Bundle_Value,Weight,na.rm = TRUE)]
-  TPBV2 <- T_P_Bundle_Value[,weighted.mean(MetrPrice,Weight,na.rm = TRUE)]
+  SMDIterationPoor <- SMD[InitialPoorBasedOnPercentileLastIteration==1 | First25==1 ]
   
+  if(nrow(SMDIterationPoor[,.N,by=.(Region,NewArea_Name)])<78)
+    stop("HERE Some Area goes missing!")
+  if(min(SMDIterationPoor[,.N,by=.(Region,NewArea_Name)]$N)==0)
+    stop("HERE Some Area goes missing!")
   
-  X <- SMDIterationPoor[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight),
-                           weighted.mean(ServiceExp/Total_Exp_Month,Weight)),by=.(Region,NewArea_Name)]
-  X[,V:=V1+V2]
+  PriceDTBasedOnThisIterationPoor <- CalcTornqvistIndex(SMDIterationPoor)
+  #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
+  SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
   
-  SMDIterationPoor <- merge(SMDIterationPoor,X,by=c("Region","NewArea_Name"))
-  SMDIterationPoor[,PriceIndex:=NULL]  
-  
-  Index <- SMDIterationPoor[,.(PriceIndex=(weighted.mean(Bundle_Value,Weight,na.rm = TRUE)/TPBV1*V1+
-                                             weighted.mean(MetrPrice,Weight,na.rm = TRUE)/TPBV2*V2)/V)
-                            ,by=.(Region,NewArea_Name)]
-  Index <- Index[,.(PriceIndex=mean(PriceIndex)),by=.(Region,NewArea_Name)]
-  
-  
-  SMD[,PriceIndex:=NULL]  
-  SMD <- merge(SMD,Index,by=c("Region","NewArea_Name"))
-  
-  SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
-  
-  ###Real- Country
-  SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
-  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
-  SMD[,NewPoor:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
-  save(SMD,file=paste0(Settings$HEISProcessedPath,"Y",year,"SMD.rda"))
-  
-  #cat("\n",sum(SMD[ProvinceCode==2,.N]))
-  cat("\n",sum(SMD[,(ThisIterationPoor-NewPoor)^2]))
-  SMD[,weighted.mean(Size,Weight),by=.(Region)][order(Region)]
-  SMD[,sum(Size*Weight),by=.(Region,Decile)][order(Region,Decile)]
-  
-  SMD[,weighted.mean(Size,Weight,na.rm = TRUE),by=.(Decile)][order(Decile)]
-  
+  cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
 }
 
 MD[,Bundle_Value:=NULL]
-MD[,NewPoor:=NULL]
 MD[,Decile:=NULL]
 MD[,Percentile:=NULL]
-MD[,Decile_Nominal:=NULL]
-MD[,Percentile_Nominal:=NULL]
 MD[,InitialPoor:=NULL]
 
+MD <- merge(MD,SMD[,.(HHID,Bundle_Value,InitialPoorBasedOnPercentile,Decile,Percentile)],by="HHID")
+setnames(MD,"InitialPoorBasedOnPercentile","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
 
-MD <- merge(MD,SMD[,.(HHID,Bundle_Value,NewPoor,Decile,Percentile,Decile_Nominal,Percentile_Nominal)],by="HHID")
-setnames(MD,"NewPoor","InitialPoor")
+
 
 ######################################################################
 save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
