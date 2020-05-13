@@ -186,6 +186,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
+  
+  cat(MD[,weighted.mean(Added1,Weight,na.rm = TRUE)],"\n")
 }
 
 
