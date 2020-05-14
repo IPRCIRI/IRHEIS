@@ -35,12 +35,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS_Engle.rda"))
+  
   #MD<-MD[Region=="Rural"]
 
-  EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine,
-               .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),
-                 FPLine=mean(FPLine)),by=.(Region,cluster3)]
+ # EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+ #               TOriginalFoodExpenditure_Per<1.2*FPLine,
+ #              .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),
+  #               FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
 
   
