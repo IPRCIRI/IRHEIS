@@ -37,7 +37,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS_Engle.rda"))
   
-  #MD<-MD[Region=="Rural"]
+ # MD<-MD[Region=="Urban"]
 
  # EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
  #               TOriginalFoodExpenditure_Per<1.2*FPLine,
@@ -46,7 +46,8 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 
   
-  EngleD[,PovertyLine:=FPLine/Engel]
+  EngleD[,PovertyLine:=FPLine/EngleFinal]
+  EngleD[,PovertyLine2:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]

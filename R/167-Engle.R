@@ -160,8 +160,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleD.rda"))
   EngleD  <- EngleD[,.(Region,cluster3,N,FPLine,Year)]
   
-  EngleMD <- EngleMD[,Engel:=Engelm]
-  EngleDD <- EngleMD[,.(cluster3,Engel,Region)]
+  EngleMD <- EngleMD[,EngleFinal:=Engelm]
+  EngleDD <- EngleMD[,.(cluster3,EngleFinal,Engel,Region)]
 
   
   EngleD<-merge(EngleD,EngleDD,by=c("cluster3","Region"))
