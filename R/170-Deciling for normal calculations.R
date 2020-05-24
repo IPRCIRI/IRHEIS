@@ -21,6 +21,93 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   
+  ###Nominal- Country
+  MD<- MD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
+  MD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  MD[,Decile:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
+  MD[,Percentile:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
+  
+  
+  A1<-MD[(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0),
+         .(A1=weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
+                              Auto1_Irani,Weight)),by=Decile]
+  A2<-MD[(TV_Rangi_Irani+TV_Rangi_Khareji>0),
+         .(A2=weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)),by=Decile]
+  A3<-MD[freezer2>0 ,.(A3=weighted.mean(freezer2,Weight)),by=Decile]
+  A4<-MD[OjaghGaz>0 , .(A4=weighted.mean(OjaghGaz,Weight)),by=Decile]
+  A5<-MD[Mashin_Lebasshooyi>0 ,.(A5=weighted.mean(Mashin_Lebasshooyi,Weight)),by=Decile]
+  A6<-MD[Mobile>0, .(A6=weighted.mean(Mobile,Weight)),by=Decile]
+  A7<-MD[Cooler_Gaz>0,.(A7=weighted.mean(Cooler_Gaz,Weight)),by=Decile]
+  A8<-MD[PC>0 ,.(A8= weighted.mean(PC,Weight)),by=Decile]
+  A9<-MD[Lastik_Mashin>0,.(A9=weighted.mean(Lastik_Mashin,Weight)),by=Decile]
+  A10<-MD[Motor_Machin>0 ,.(A10=weighted.mean(Motor_Machin,Weight)),by=Decile]
+  A11<-MD[Tamirat_Asasi>0 ,.(A11=weighted.mean(Tamirat_Asasi,Weight)),by=Decile]
+  
+  MD<-merge(MD,A1,by="Decile")
+  MD<-merge(MD,A2,by="Decile")
+  MD<-merge(MD,A3,by="Decile")
+  MD<-merge(MD,A4,by="Decile")
+  MD<-merge(MD,A5,by="Decile")
+  MD<-merge(MD,A6,by="Decile")
+  MD<-merge(MD,A7,by="Decile")
+  MD<-merge(MD,A8,by="Decile")
+  MD<-merge(MD,A9,by="Decile")
+  MD<-merge(MD,A10,by="Decile")
+  MD<-merge(MD,A11,by="Decile")
+  
+  MD[car=="True",Added1:=A1]
+  MD[tvcr=="True",Added2:=A2]
+  MD[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
+     Added3:=A3]
+  MD[oven=="True",Added4:=A4]
+  MD[washer=="True",Added5:=A5]
+  MD[cellphone=="True",Added6:=A6]
+  MD[cooler_gas=="True",Added7:=A7]
+  MD[computer=="True",Added8:=A8]
+  MD[car=="True",Added9:=A9]
+  MD[car=="True",Added10:=A10]
+  MD[car=="True",Added11:=A11]
+  
+  x<-MD[,.(HHID,Decile,car,Added1)]
+  
+  dep <- c( "Auto2_rani", "Auto1_Khareji","Auto2_Khareji", "Auto1_Irani",
+            "TV_Rangi_Irani", "TV_Rangi_Khareji","freezer2", "OjaghGaz",
+            "Mashin_Lebasshooyi", "Mobile","Cooler_Gaz", "PC",
+            "Lastik_Mashin", "Motor_Machin","Tamirat_Asasi")
+  
+  MD[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
+  MD[is.na(MD)] <- 0
+  
+  MD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+       Added7+Added8+Added9+Added10+Added11]
+  
+  #Calculate Monthly Total Expenditures 
+  nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
+          "Amusement_Exp", "Communication_Exp", 
+          "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
+          "Transportation_Exp", "Other_Exp"
+          ,"Add_to_NonDurable"
+          ,"Added"
+          #, "Total_Depreciated_Durable"
+  )
+  w <- c(nw, "Medical_Exp",
+         "Durable_NoDep","Durable_Emergency")
+  
+  
+  MD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
+  MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
+  
+  MD[,weighted.mean(Total_Exp_Month,Weight)]
+  MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
+  
+  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
+  
+  ###################################################################
+  
+  
+  
+  
   SMD <- MD[,.(HHID,Region,ProvinceCode,
                ServiceExp,FoodExpenditure,Total_Exp_Month,
                NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
@@ -70,11 +157,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
   
  
-  ###Nominal- Country
-  SMD<- SMD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
-  SMD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  SMD[,Decile_Nominal:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
-  SMD[,Percentile_Nominal:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
+
   
   Deciles<-SMD[,.(HHID,Decile,Percentile)]
   
