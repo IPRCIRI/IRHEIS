@@ -113,7 +113,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[, weighted.mean(FinalPoor,Weight*Size)]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=Region]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=cluster3]
-  MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode][order(ProvinceCode)]
+  MD[Region=="Rural",weighted.mean(FinalPoor,Weight),by=ProvinceName][order(ProvinceName)]
     
     
   DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
@@ -139,7 +139,12 @@ save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal
 
 MD[,weighted.mean(FinalPoor,Weight),by=car]
 
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
+names(Deciles)<-c("HHID","Decile2","Percentile2")
 
+c<-merge(MD[,.(HHID,FinalPoor,Weight,ProvinceName,Region,Decile)],Deciles)
+c[,weighted.mean(FinalPoor,Weight),by=Decile][order(Decile)]
+c[,weighted.mean(FinalPoor,Weight),by=Decile2][order(Decile2)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
