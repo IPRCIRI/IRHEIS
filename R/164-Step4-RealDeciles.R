@@ -67,20 +67,20 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable <- DataTable[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
   
   #############################################
-  A1<-DataTable[(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0),
-         .(A1=weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
-                              Auto1_Irani,Weight)),by=Decile]
-  A2<-DataTable[(TV_Rangi_Irani+TV_Rangi_Khareji>0),
-         .(A2=weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)),by=Decile]
-  A3<-DataTable[freezer2>0 ,.(A3=weighted.mean(freezer2,Weight)),by=Decile]
-  A4<-DataTable[OjaghGaz>0 , .(A4=weighted.mean(OjaghGaz,Weight)),by=Decile]
-  A5<-DataTable[Mashin_Lebasshooyi>0 ,.(A5=weighted.mean(Mashin_Lebasshooyi,Weight)),by=Decile]
-  A6<-DataTable[Mobile>0, .(A6=weighted.mean(Mobile,Weight)),by=Decile]
-  A7<-DataTable[Cooler_Gaz>0,.(A7=weighted.mean(Cooler_Gaz,Weight)),by=Decile]
-  A8<-DataTable[PC>0 ,.(A8= weighted.mean(PC,Weight)),by=Decile]
-  A9<-DataTable[Lastik_Mashin>0,.(A9=weighted.mean(Lastik_Mashin,Weight)),by=Decile]
-  A10<-DataTable[Motor_Machin>0 ,.(A10=weighted.mean(Motor_Machin,Weight)),by=Decile]
-  A11<-DataTable[Tamirat_Asasi>0 ,.(A11=weighted.mean(Tamirat_Asasi,Weight)),by=Decile]
+  A1<-DataTable[(`71111`+`71112`+`71116`+`71117`>0),
+         .(A1=weighted.mean(`71111`+`71112`+`71116`+
+                              `71117`,Weight)),by=Decile]
+  A2<-DataTable[(`91128`+`91129`>0),
+         .(A2=weighted.mean(`91128`+`91129`,Weight)),by=Decile]
+  A3<-DataTable[`53112`>0 ,.(A3=weighted.mean(`53112`,Weight)),by=Decile]
+  A4<-DataTable[`53116`>0 , .(A4=weighted.mean(`53116`,Weight)),by=Decile]
+  A5<-DataTable[`53113`>0 ,.(A5=weighted.mean(`53113`,Weight)),by=Decile]
+  A6<-DataTable[`82113`>0, .(A6=weighted.mean(`82113`,Weight)),by=Decile]
+  A7<-DataTable[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by=Decile]
+  A8<-DataTable[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by=Decile]
+  A9<-DataTable[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by=Decile]
+  A10<-DataTable[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
+  A11<-DataTable[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by=Decile]
   
   DataTable[,A1:=NULL]
   DataTable[,A2:=NULL]
@@ -120,10 +120,10 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable[car=="True",Added11:=A11]
   
   
-  dep <- c( "Auto2_rani", "Auto1_Khareji","Auto2_Khareji", "Auto1_Irani",
-            "TV_Rangi_Irani", "TV_Rangi_Khareji","freezer2", "OjaghGaz",
-            "Mashin_Lebasshooyi", "Mobile","Cooler_Gaz", "PC",
-            "Lastik_Mashin", "Motor_Machin","Tamirat_Asasi")
+  dep <- c( "71111", "71112","71116", "71117",
+            "91128", "91129","53112", "53116",
+            "53113", "82113","53125", "91311",
+            "72111", "72118","72319")
   
   DataTable[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
   DataTable[is.na(DataTable)] <- 0
@@ -174,7 +174,7 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   return(DataTable)
 }
 
-year<-97
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -187,10 +187,10 @@ for(year in (Settings$startyear:Settings$endyear)){
                # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
                TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
                Weight,MetrPrice,Size,EqSizeOECD
-               ,Auto2_rani,Auto1_Irani,Auto1_Khareji,Auto2_Khareji,
-               TV_Rangi_Irani,TV_Rangi_Khareji,freezer2,OjaghGaz,
-               Mashin_Lebasshooyi,Mobile,Cooler_Gaz,PC,
-               Lastik_Mashin,Motor_Machin,Tamirat_Asasi
+               ,`71111`,`71117`,`71112`,`71116`,
+               `91128`,`91129`,`53112`,`53116`,
+               `53113`,`82113`,`53125`,`91311`,
+               `72111`,`72118`,`72319`
                ,car,tvcr,freezer,frez_refrig,refrigerator,oven,
                washer,cellphone,cooler_gas,computer
                ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,

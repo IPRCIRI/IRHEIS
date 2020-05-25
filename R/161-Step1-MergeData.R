@@ -39,35 +39,35 @@ for(year in (Settings$startyear:Settings$endyear)){
   Value<-merge(Value,HHHouseProperties)
   Value<-merge(Value,HHWeights)
   
-  Value[,Auto2_rani:=0.1*Auto2_rani]
-  Value[,Auto1_Khareji:=0.1*Auto1_Khareji]
-  Value[,Auto2_Khareji:=0.1*Auto2_Khareji]
-  Value[,Auto1_Irani:=0.1*Auto1_Irani]
-  Value[,TV_Rangi_Irani:=0.033*TV_Rangi_Irani]
-  Value[,TV_Rangi_Khareji:=0.033*TV_Rangi_Khareji]
-  Value[,freezer2:=0.033*freezer2]
-  Value[,OjaghGaz:=0.033*OjaghGaz]
-  Value[,Mashin_Lebasshooyi:=0.033*Mashin_Lebasshooyi]
-  Value[,Mobile:=0.11*Mobile]
-  Value[,Cooler_Gaz:=0.05*Cooler_Gaz]
-  Value[,PC:=0.06*PC]
-  Value[,Lastik_Mashin:=0.5*Lastik_Mashin]
-  Value[,Motor_Machin:=0.033*Motor_Machin]
-  Value[,Tamirat_Asasi:=0.05*Tamirat_Asasi]
+  Value[,`71111`:=0.1*`71111`]
+  Value[,`71112`:=0.1*`71112`]
+  Value[,`71116`:=0.1*`71116`]
+  Value[,`71117`:=0.1*`71117`]
+  Value[,`91128`:=0.033*`91128`]
+  Value[,`91129`:=0.033*`91129`]
+  Value[,`53112`:=0.033*`53112`]
+  Value[,`53116`:=0.033*`53116`]
+  Value[,`53113`:=0.033*`53113`]
+  Value[,`82113`:=0.11*`82113`]
+  Value[,`53125`:=0.05*`53125`]
+  Value[,`91311`:=0.06*`91311`]
+  Value[,`72111`:=0.5*`72111`]
+  Value[,`72118`:=0.033*`72118`]
+  Value[,`72319`:=0.05*`72319`]
   
-  A1<- Value[Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0,
-        weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
-                                            Auto1_Irani,Weight)]
-  A2<-Value[TV_Rangi_Irani+TV_Rangi_Khareji>0,weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)]
-  A3<-Value[freezer2>0,weighted.mean(freezer2,Weight)]
-  A4<-Value[OjaghGaz>0,weighted.mean(OjaghGaz,Weight)]
-  A5<-Value[Mashin_Lebasshooyi>0,weighted.mean(Mashin_Lebasshooyi,Weight)]
-  A6<-Value[Mobile>0,weighted.mean(Mobile,Weight)]
-  A7<-Value[Cooler_Gaz>0,weighted.mean(Cooler_Gaz,Weight)]
-  A8<-Value[PC>0,weighted.mean(PC,Weight)]
-  A9<-Value[Lastik_Mashin>0,weighted.mean(Lastik_Mashin,Weight)]
-  A10<-Value[Motor_Machin>0,weighted.mean(Motor_Machin,Weight)]
-  A11<-Value[Tamirat_Asasi>0,weighted.mean(Tamirat_Asasi,Weight)]
+  A1<- Value[`71111`+`71112`+`71116`+`71117`>0,
+        weighted.mean(`71111`+`71112`+`71116`+
+                                            `71117`,Weight)]
+  A2<-Value[`91128`+`91129`>0,weighted.mean(`91128`+`91129`,Weight)]
+  A3<-Value[`53112`>0,weighted.mean(`53112`,Weight)]
+  A4<-Value[`53116`>0,weighted.mean(`53116`,Weight)]
+  A5<-Value[`53113`>0,weighted.mean(`53113`,Weight)]
+  A6<-Value[`82113`>0,weighted.mean(`82113`,Weight)]
+  A7<-Value[`53125`>0,weighted.mean(`53125`,Weight)]
+  A8<-Value[`91311`>0,weighted.mean(`91311`,Weight)]
+  A9<-Value[`72111`>0,weighted.mean(`72111`,Weight)]
+  A10<-Value[`72118`>0,weighted.mean(`72118`,Weight)]
+  A11<-Value[`72319`>0,weighted.mean(`72319`,Weight)]
   
   Value[car=="True",Added1:=A1]
   Value[tvcr=="True",Added2:=A2]
@@ -87,10 +87,10 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   
   Value[,Weight:=NULL]
-  dep <- c( "Auto2_rani", "Auto1_Khareji","Auto2_Khareji", "Auto1_Irani",
-           "TV_Rangi_Irani", "TV_Rangi_Khareji","freezer2", "OjaghGaz",
-           "Mashin_Lebasshooyi", "Mobile","Cooler_Gaz", "PC",
-           "Lastik_Mashin", "Motor_Machin","Tamirat_Asasi")
+  dep <- c( "71111", "71112","71116", "71117",
+           "91128", "91129","53112", "53116",
+           "53113", "82113","53125", "91311",
+           "72111", "72118","72319")
   
   Value[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
   Value[is.na(Value)] <- 0

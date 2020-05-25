@@ -22,6 +22,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #load Demos+FoodPrices+Weights
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurableDetails.rda"))
+  
 
   if (year==97 | year==96){
     g1 <- c("43222",

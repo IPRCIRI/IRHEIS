@@ -48,8 +48,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   EngleD[,PovertyLine:=FPLine/EngleFinal]
   EngleD[,PovertyLine2:=FPLine/Engel]
-  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
+  MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
+  MD[,FinalPoor2:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine2,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
@@ -103,9 +104,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(FinalPoor2,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
   cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
-  cat(MD[, sum(Weight*Size)],"\t")
+  #cat(MD[, sum(Weight*Size)],"\t")
 
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
