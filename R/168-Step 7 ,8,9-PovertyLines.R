@@ -128,7 +128,30 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
   
   cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
+  MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
+  MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
+  
+
 }
+
+
+MD[,weighted.mean(FinalPoor,Weight)]
+a<-MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode]
+
+
+MD[,weighted.mean(PovertyLine,Weight)]
+MD[,weighted.mean(FoodKCaloriesHH_Per,Weight)]
+MD[FinalPoor==1,weighted.mean(FoodKCaloriesHH_Per,Weight)]
+MD[,weighted.mean(Total_Exp_Month_Per,Weight)]
+MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
+
+
+a<-MD[,.(weighted.mean(PovertyLine,Weight),
+         weighted.mean(FoodKCaloriesHH_Per,Weight),
+         weighted.mean(Total_Exp_Month_Per,Weight)),by=ProvinceCode]
+
+b<-MD[FinalPoor==1,.(weighted.mean(FoodKCaloriesHH_Per,Weight),
+         weighted.mean(Total_Exp_Month_Per,Weight)),by=ProvinceCode]
 
 MD[,sum(Weight),by=Decile][order(Decile)]
 MD[,sum(Weight),by=.(Region,Decile)][order(Region,Decile)]
