@@ -19,7 +19,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor98.rda"))
-
+  MD<-MD[CountyCode==2301]
   #load(file = "CPI.rda")
   #CPI<-as.data.table(CPI)
   #CPI<-CPI[,Decile:=as.character(Decile)]
