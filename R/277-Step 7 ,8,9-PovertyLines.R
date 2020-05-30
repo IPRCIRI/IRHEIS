@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #MD<-MD[Region=="Rural"]
   #MD<-MD[cluster3==13]
-
+MD<-MD[CountyCode==2301]
   
  
   EngleD<- MD[TOriginalFoodExpenditure_Per>0.8*FPLine &
