@@ -1,4 +1,4 @@
-# 143-Durables Depreciation.R
+# 144-Durables Services Value.R
 # Builds the House Properties data.table for households
 #
 # Copyright © 2019:Arin Shahbazian
@@ -7,7 +7,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Durables Depreciation =====================================\n")
+cat("\n\n================ Durables Services Value =====================================\n")
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
@@ -27,13 +27,12 @@ for(year in (Settings$startyear:Settings$endyear)){
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurable.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-#load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+
 load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
 HHWeights<- as.data.table(HHWeights)
 HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
 HHHouseProperties<-merge(HHHouseProperties,HHWeights)
 HHHouseProperties<-merge(HHHouseProperties,HHBase)
-#HHHouseProperties<-merge(HHHouseProperties,MD[,.(HHID,Decile,FinalPoor,Total_Exp_Month,cluster3)])
 HHHouseProperties<-merge(HHHouseProperties,TotalDurable)
 
 
