@@ -1,4 +1,4 @@
-# 177- Step 7,8,9-Poverty Line.R
+# 168- Step 8,9-Poverty Line.R
 # 
 # Copyright © 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -134,42 +134,6 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 }
 
-
-MD[,weighted.mean(FinalPoor,Weight)]
-a<-MD[,weighted.mean(FinalPoor,Weight),by=ProvinceCode]
-
-
-MD[,weighted.mean(PovertyLine,Weight)]
-MD[,weighted.mean(FoodKCaloriesHH_Per,Weight)]
-MD[FinalPoor==1,weighted.mean(FoodKCaloriesHH_Per,Weight)]
-MD[,weighted.mean(Total_Exp_Month_Per,Weight)]
-MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
-
-
-a<-MD[,.(weighted.mean(PovertyLine,Weight),
-         weighted.mean(FoodKCaloriesHH_Per,Weight),
-         weighted.mean(Total_Exp_Month_Per,Weight)),by=ProvinceCode]
-
-b<-MD[FinalPoor==1,.(weighted.mean(FoodKCaloriesHH_Per,Weight),
-         weighted.mean(Total_Exp_Month_Per,Weight)),by=ProvinceCode]
-
-MD[,sum(Weight),by=Decile][order(Decile)]
-MD[,sum(Weight),by=.(Region,Decile)][order(Region,Decile)]
-MD[,sum(Weight)]
-MD[,sum(Weight*Size)]
-
-# compare Engle & Engle_prime in 178
-FinalClusterEngel <- FinalClusterResults[,.(Year,cluster3,FPLine,PovertyHCR)]
-save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal.rda"))
-
-MD[,weighted.mean(FinalPoor,Weight),by=car]
-
-load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
-names(Deciles)<-c("HHID","Decile2","Percentile2")
-
-c<-merge(MD[,.(HHID,FinalPoor,Weight,ProvinceName,Region,Decile)],Deciles)
-c[,weighted.mean(FinalPoor,Weight),by=Decile][order(Decile)]
-c[,weighted.mean(FinalPoor,Weight),by=Decile2][order(Decile2)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
