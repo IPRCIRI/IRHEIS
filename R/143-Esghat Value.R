@@ -1,4 +1,4 @@
-#142-Esghat Value
+#143-Esghat Value
 # 
 # Copyright © 2020:  Arin Shahbazian
 # Licence: GPL-3
@@ -143,7 +143,7 @@ Exp <- rbind(Exp,X)
  
 }
 
-Exp<-Exp[,.(Year,Auto_Exp,Auto_Sale)]
+#Exp<-Exp[,.(Year,Auto_Exp,Auto_Sale)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
