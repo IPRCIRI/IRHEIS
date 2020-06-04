@@ -28,13 +28,15 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurable.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 
+
+
 load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
 HHWeights<- as.data.table(HHWeights)
 HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
 HHHouseProperties<-merge(HHHouseProperties,HHWeights)
 HHHouseProperties<-merge(HHHouseProperties,HHBase)
 HHHouseProperties<-merge(HHHouseProperties,TotalDurable)
-
+HHHouseProperties<-merge(HHHouseProperties,Esghat_Value)
 
 
 A1<-  HHHouseProperties[ ,weighted.mean(`71116`+`71117`+`71111`+`71112`,Weight)]

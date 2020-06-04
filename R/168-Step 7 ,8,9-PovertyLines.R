@@ -131,7 +131,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
   
-
 }
 
 

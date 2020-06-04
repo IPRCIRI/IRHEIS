@@ -137,8 +137,9 @@ X <- merge(X,X20,by=c("Year"))
 X <- merge(X,X21,by=c("Year"))
 X <- merge(X,X22,by=c("Year"))
 
-Exp <- rbind(Exp,X)
+Esghat_Value <- rbind(Exp,X)
 
+save(Esghat_Value, file=paste0(Settings$HEISProcessedPath,"Y",year,"Esghat_Value.rda"))
 
  
 }
