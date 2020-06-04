@@ -1,6 +1,5 @@
 # 167-Revising Engle
 # 
-# Copyright © 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -33,7 +32,7 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
 
 
 
-for(year in (90:Settings$endyear)){
+for(year in (88:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------

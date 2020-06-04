@@ -110,18 +110,18 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   }
   DataTable<-merge(DataTable,A11,by="Decile")
   
-  DataTable[car=="True",Added1:=A1]
-  DataTable[tvcr=="True",Added2:=A2]
+  DataTable[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
+  DataTable[tvcr=="True",Added2:=A2-0.033*TV_Sale]
   DataTable[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-     Added3:=A3]
-  DataTable[oven=="True",Added4:=A4]
-  DataTable[washer=="True",Added5:=A5]
-  DataTable[cellphone=="True",Added6:=A6]
-  DataTable[cooler_gas=="True",Added7:=A7]
-  DataTable[computer=="True",Added8:=A8]
-  DataTable[car=="True",Added9:=A9]
-  if (year!=92){ 
-  DataTable[car=="True",Added10:=A10]
+        Added3:=A3-0.033*yakhchal_Sale]
+  DataTable[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
+  DataTable[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
+  DataTable[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
+  DataTable[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
+  DataTable[computer=="True",Added8:=0.06*A8-PC_Sale]
+  DataTable[car=="True",Added9:=A9-0.5*lastik_Sale]
+  if (year!=92){
+    DataTable[car=="True",Added10:=A10]
   }
   DataTable[car=="True",Added11:=A11]
   
@@ -212,6 +212,9 @@ for(year in (Settings$startyear:Settings$endyear)){
                `91128`,`91129`,`53112`,`53116`,
                `53113`,`82113`,`53125`,`91311`,
                `72111`,`72118`,`72319`
+               ,Auto_Sale,TV_Sale,Mobile_Sale,PC_Sale,
+               yakhchal_Sale,ojaghgaz_Sale,lebasshooyi_Sale,
+               Coolergazi_Sale,lastik_Sale
                ,car,tvcr,freezer,frez_refrig,refrigerator,oven,
                washer,cellphone,cooler_gas,computer
                ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
@@ -232,6 +235,9 @@ for(year in (Settings$startyear:Settings$endyear)){
                  `91128`,`91129`,`53112`,`53116`,
                  `53113`,`82113`,`53125`,`91311`,
                  `72111`,`72319`
+                 ,Auto_Sale,TV_Sale,Mobile_Sale,PC_Sale,
+                 yakhchal_Sale,ojaghgaz_Sale,lebasshooyi_Sale,
+                 Coolergazi_Sale,lastik_Sale
                  ,car,tvcr,freezer,frez_refrig,refrigerator,oven,
                  washer,cellphone,cooler_gas,computer
                  ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
