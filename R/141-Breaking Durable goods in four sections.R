@@ -16,13 +16,14 @@ library(stringr)
 library(data.table)
 library(ggplot2)
 library(spatstat)
+library(dplyr)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   #load Demos+FoodPrices+Weights
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurableDetails.rda"))
-  
+  TotalDurable[is.na(TotalDurable)] <- 0
 
   if (year==97 | year==96){
     g1 <- c("43222",
@@ -1601,6 +1602,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   TotalDurable[, Durable_Dep := Reduce(`+`, .SD), .SDcols=g2]
   TotalDurable[, Durable_NoDep := Reduce(`+`, .SD), .SDcols=g3]
   TotalDurable[, Durable_Emergency := Reduce(`+`, .SD), .SDcols=g4]
+  
+  #TotalDurable <- mutate_(TotalDurable, Add_to_NonDurable2 = paste(g1, collapse = "+"))
+ # TotalDurable<-as.data.table(TotalDurable)
+  
+ #  x<-TotalDurable[,.("HHID","Add_to_NonDurable","Add_to_NonDurable2")]
+  
   
   
   Durablele_Detail<-TotalDurable[,.(HHID,Add_to_NonDurable,Durable_Dep,
