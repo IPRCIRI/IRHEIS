@@ -22,7 +22,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   
   SMD <- MD[,.(HHID,Region,
-               ServiceExp,FoodExpenditure,Total_Exp_Month,
+               ServiceExp,FoodExpenditure,Total_Exp_Month,ProvinceName,
                NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
                # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
                TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
@@ -47,7 +47,7 @@ for(year in (Settings$startyear:Settings$endyear)){
       ,by=.(Region,NewArea_Name)]
   
   X <- SMD[,.(weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
-              weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
+              weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE)),by=.(ProvinceName)]
   X[,V:=V1+V2]
   VT<-X[NewArea_Name=="Sh_Tehran"]
   V1T<-VT$V1
