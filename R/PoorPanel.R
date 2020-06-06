@@ -47,7 +47,7 @@ foodpoorW<-MD[,weighted.mean(foodpoorW,Weight*Size),by=c("ProvinceName","FinalPo
 
 Calory<-MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("ProvinceName","FinalPoor")]
 Calory_Decile_Poor<-MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("Decile","FinalPoor")]
-Calory_Decile<-MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("Decile")]
+Calory_Decile<-MD[,weighted.mean(FoodKCaloriesHH_Per,Weight*Size),by=c("Decile")]
 
 Decile123<-MD[Decile==1 | Decile==2 | Decile==3]
 Calory_Decile123<-as.data.table(Decile123[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size)])
