@@ -1,12 +1,11 @@
-# 167-Engle
+# 167-Revising Engle
 # 
-# Copyright © 2018:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Poverty Line =====================================\n")
+cat("\n\n================ Revising Engle =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -33,7 +32,7 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
 
 
 
-for(year in (90:Settings$endyear)){
+for(year in (88:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------
