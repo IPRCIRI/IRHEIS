@@ -1,4 +1,4 @@
-#Breaking Durable goods in two section
+#141-Breaking Durable goods in four section
 # 
 # Copyright © 2020:  Arin Shahbazian
 # Licence: GPL-3
@@ -6,7 +6,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Breaking Durable goods in two section =====================================\n")
+cat("\n\n================ Breaking Durable goods in four section =====================================\n")
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
@@ -16,13 +16,14 @@ library(stringr)
 library(data.table)
 library(ggplot2)
 library(spatstat)
+library(dplyr)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   #load Demos+FoodPrices+Weights
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurableDetails.rda"))
-  
+  TotalDurable[is.na(TotalDurable)] <- 0
 
   if (year==97 | year==96){
     g1 <- c("43222",
@@ -1285,7 +1286,7 @@ for(year in (Settings$startyear:Settings$endyear)){
             "63448")
   }
   
-  if (year==92){
+  if (year==92 | year==91 | year==90){
     g1 <- c("43222",
             "43223",
             "43224",
@@ -1597,27 +1598,37 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
  
-  
   TotalDurable[, Add_to_NonDurable := Reduce(`+`, .SD), .SDcols=g1]
   TotalDurable[, Durable_Dep := Reduce(`+`, .SD), .SDcols=g2]
   TotalDurable[, Durable_NoDep := Reduce(`+`, .SD), .SDcols=g3]
   TotalDurable[, Durable_Emergency := Reduce(`+`, .SD), .SDcols=g4]
   
+  #TotalDurable <- mutate_(TotalDurable, Add_to_NonDurable2 = paste(g1, collapse = "+"))
+ # TotalDurable<-as.data.table(TotalDurable)
+  
+ #  x<-TotalDurable[,.("HHID","Add_to_NonDurable","Add_to_NonDurable2")]
+  
+  
   
   Durablele_Detail<-TotalDurable[,.(HHID,Add_to_NonDurable,Durable_Dep,
                                     Durable_NoDep,Durable_Emergency)]
   
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
+  Durablele_Detail<-merge(Durablele_Detail,DurableData)
+  Durablele_Detail[,diff:=Durable_Exp-(Add_to_NonDurable+Durable_Dep+
+                                       Durable_NoDep+Durable_Emergency)]
+  
   save(Durablele_Detail, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durablele_Detail.rda"))
-  a<-data.table(duplicated(Durablele_Detail$HHID))
+ # a<-data.table(duplicated(Durablele_Detail$HHID))
   
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
-  Durablele_Detail<-merge(Durablele_Detail,MD[,.(HHID,FoodExpenditure,Durable_Exp,Size)],by="HHID")
+ # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
+ # Durablele_Detail<-merge(Durablele_Detail,MD[,.(HHID,FoodExpenditure,Durable_Exp,Size)],by="HHID")
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-  Durablele_Detail<-merge(Durablele_Detail,MD[,.(HHID,Decile,Weight)])
-  Durablele_Detail[,weighted.mean(Durable_NoDep,Weight),by=Decile][order(Decile)]
-  Durablele_Detail[,weighted.mean(Durable_Emergency,Weight),by=Decile][order(Decile)]
+ # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+ # Durablele_Detail<-merge(Durablele_Detail,MD[,.(HHID,Decile,Weight)])
+ # Durablele_Detail[,weighted.mean(Durable_NoDep,Weight),by=Decile][order(Decile)]
+ # Durablele_Detail[,weighted.mean(Durable_Emergency,Weight),by=Decile][order(Decile)]
   }
 
 

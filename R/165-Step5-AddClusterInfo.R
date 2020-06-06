@@ -1,4 +1,4 @@
-#183-Clustering(93-96).R
+#165-Step 5- Clustering.R
 # 
 # Copyright © 2018: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -6,7 +6,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Prepare Data =====================================\n")
+cat("\n\n================ Clustering =====================================\n")
 library(yaml)
 library(dplyr)
 Settings <- yaml.load_file("Settings.yaml")

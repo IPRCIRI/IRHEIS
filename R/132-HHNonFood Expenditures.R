@@ -452,6 +452,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   HotelRestaurantData[,Code:=NULL]
   save(HotelRestaurantData, file = paste0(Settings$HEISProcessedPath,"Y",year,"HotelRestaurants.rda"))
   
+  cat("\n\n================ Restaurant =====================================\n")
+  
   TC<-TC[Code %in% 111111:111146]
   ResturantData <- TC[,lapply(.SD,sum),by=HHID]
   ResturantData[,Code:=NULL]

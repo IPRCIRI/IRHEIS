@@ -1,4 +1,4 @@
-#174-FindInitialPoor.R
+#164-Step 4-FindInitialPoor.R
 # 
 # Copyright © 2020:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -79,7 +79,9 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   A7<-DataTable[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by=Decile]
   A8<-DataTable[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by=Decile]
   A9<-DataTable[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by=Decile]
-  A10<-DataTable[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
+  if (year!=92){
+    A10<-DataTable[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
+  }
   A11<-DataTable[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by=Decile]
   
   DataTable[,A1:=NULL]
@@ -103,33 +105,51 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable<-merge(DataTable,A7,by="Decile")
   DataTable<-merge(DataTable,A8,by="Decile")
   DataTable<-merge(DataTable,A9,by="Decile")
+  if (year!=92){ 
   DataTable<-merge(DataTable,A10,by="Decile")
+  }
   DataTable<-merge(DataTable,A11,by="Decile")
   
-  DataTable[car=="True",Added1:=A1]
-  DataTable[tvcr=="True",Added2:=A2]
+  DataTable[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
+  DataTable[tvcr=="True",Added2:=A2-0.033*TV_Sale]
   DataTable[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-     Added3:=A3]
-  DataTable[oven=="True",Added4:=A4]
-  DataTable[washer=="True",Added5:=A5]
-  DataTable[cellphone=="True",Added6:=A6]
-  DataTable[cooler_gas=="True",Added7:=A7]
-  DataTable[computer=="True",Added8:=A8]
-  DataTable[car=="True",Added9:=A9]
-  DataTable[car=="True",Added10:=A10]
+        Added3:=A3-0.033*yakhchal_Sale]
+  DataTable[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
+  DataTable[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
+  DataTable[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
+  DataTable[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
+  DataTable[computer=="True",Added8:=0.06*A8-PC_Sale]
+  DataTable[car=="True",Added9:=A9-0.5*lastik_Sale]
+  if (year!=92){
+    DataTable[car=="True",Added10:=A10]
+  }
   DataTable[car=="True",Added11:=A11]
   
-  
+  if (year!=92){  
   dep <- c( "71111", "71112","71116", "71117",
             "91128", "91129","53112", "53116",
             "53113", "82113","53125", "91311",
             "72111", "72118","72319")
+  }
+  
+  if (year==92){  
+    dep <- c( "71111", "71112","71116", "71117",
+              "91128", "91129","53112", "53116",
+              "53113", "82113","53125", "91311",
+              "72111","72319")
+  }
   
   DataTable[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
   DataTable[is.na(DataTable)] <- 0
   
+  if (year!=92){ 
   DataTable[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
        Added7+Added8+Added9+Added10+Added11]
+  }
+  if (year==92){ 
+    DataTable[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+                Added7+Added8+Added9+Added11]
+  }
   
   #Calculate Monthly Total Expenditures 
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
@@ -181,6 +201,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   
+  if (year!=92){  
   SMD <- MD[,.(HHID,Region,
                ServiceExp,FoodExpenditure,Total_Exp_Month,
                NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
@@ -191,6 +212,9 @@ for(year in (Settings$startyear:Settings$endyear)){
                `91128`,`91129`,`53112`,`53116`,
                `53113`,`82113`,`53125`,`91311`,
                `72111`,`72118`,`72319`
+               ,Auto_Sale,TV_Sale,Mobile_Sale,PC_Sale,
+               yakhchal_Sale,ojaghgaz_Sale,lebasshooyi_Sale,
+               Coolergazi_Sale,lastik_Sale
                ,car,tvcr,freezer,frez_refrig,refrigerator,oven,
                washer,cellphone,cooler_gas,computer
                ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
@@ -199,6 +223,30 @@ for(year in (Settings$startyear:Settings$endyear)){
                Transportation_Exp, Other_Exp
                ,Add_to_NonDurable,Medical_Exp,
                Durable_NoDep,Durable_Emergency)]
+  }
+  if (year==92){  
+    SMD <- MD[,.(HHID,Region,
+                 ServiceExp,FoodExpenditure,Total_Exp_Month,
+                 NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
+                 # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
+                 TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
+                 Weight,MetrPrice,Size,EqSizeOECD
+                 ,`71111`,`71117`,`71112`,`71116`,
+                 `91128`,`91129`,`53112`,`53116`,
+                 `53113`,`82113`,`53125`,`91311`,
+                 `72111`,`72319`
+                 ,Auto_Sale,TV_Sale,Mobile_Sale,PC_Sale,
+                 yakhchal_Sale,ojaghgaz_Sale,lebasshooyi_Sale,
+                 Coolergazi_Sale,lastik_Sale
+                 ,car,tvcr,freezer,frez_refrig,refrigerator,oven,
+                 washer,cellphone,cooler_gas,computer
+                 ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
+                 Amusement_Exp, Communication_Exp, 
+                 HouseandEnergy_Exp, Furniture_Exp, HotelRestaurant_Exp, Hygiene_Exp, 
+                 Transportation_Exp, Other_Exp
+                 ,Add_to_NonDurable,Medical_Exp,
+                 Durable_NoDep,Durable_Emergency)]
+  }
   
   #Choose one of these
   SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCaloriesHH_Per]

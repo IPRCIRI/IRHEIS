@@ -1,4 +1,4 @@
-#142-Esghat Value
+#143-Esghat Value
 # 
 # Copyright © 2020:  Arin Shahbazian
 # Licence: GPL-3
@@ -137,13 +137,14 @@ X <- merge(X,X20,by=c("Year"))
 X <- merge(X,X21,by=c("Year"))
 X <- merge(X,X22,by=c("Year"))
 
-Exp <- rbind(Exp,X)
+Esghat_Value <- rbind(Exp,X)
 
+save(Esghat_Value, file=paste0(Settings$HEISProcessedPath,"Y",year,"Esghat_Value.rda"))
 
  
 }
 
-Exp<-Exp[,.(Year,Auto_Exp,Auto_Sale)]
+#Exp<-Exp[,.(Year,Auto_Exp,Auto_Sale)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

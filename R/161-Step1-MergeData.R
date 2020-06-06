@@ -1,4 +1,4 @@
-#171-Step 1.R
+#161-Step 1.R
 # 
 # Copyright © 2018: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -29,7 +29,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFoodPrice.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Value.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
-  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Esghat_Value.rda"))
   
   load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
   HHWeights<- as.data.table(HHWeights)
@@ -38,6 +38,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   Value<-merge(Value,HHHouseProperties)
   Value<-merge(Value,HHWeights)
+  Value[,Year:=year]
+  Value<-merge(Value,Esghat_Value,by="Year")
+  Value[,Year:=NULL]
   
   Value[,`71111`:=0.1*`71111`]
   Value[,`71112`:=0.1*`71112`]
@@ -52,7 +55,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   Value[,`53125`:=0.05*`53125`]
   Value[,`91311`:=0.06*`91311`]
   Value[,`72111`:=0.5*`72111`]
+  if (year!=92){
   Value[,`72118`:=0.033*`72118`]
+  }
   Value[,`72319`:=0.05*`72319`]
   
   A1<- Value[`71111`+`71112`+`71116`+`71117`>0,
@@ -66,20 +71,24 @@ for(year in (Settings$startyear:Settings$endyear)){
   A7<-Value[`53125`>0,weighted.mean(`53125`,Weight)]
   A8<-Value[`91311`>0,weighted.mean(`91311`,Weight)]
   A9<-Value[`72111`>0,weighted.mean(`72111`,Weight)]
+  if (year!=92){
   A10<-Value[`72118`>0,weighted.mean(`72118`,Weight)]
+  }
   A11<-Value[`72319`>0,weighted.mean(`72319`,Weight)]
   
-  Value[car=="True",Added1:=A1]
-  Value[tvcr=="True",Added2:=A2]
+  Value[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
+  Value[tvcr=="True",Added2:=A2-0.033*TV_Sale]
   Value[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-        Added3:=A3]
-  Value[oven=="True",Added4:=A4]
-  Value[washer=="True",Added5:=A5]
-  Value[cellphone=="True",Added6:=A6]
-  Value[cooler_gas=="True",Added7:=A7]
-  Value[computer=="True",Added8:=A8]
-  Value[car=="True",Added9:=A9]
+        Added3:=A3-0.033*yakhchal_Sale]
+  Value[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
+  Value[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
+  Value[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
+  Value[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
+  Value[computer=="True",Added8:=0.06*A8-PC_Sale]
+  Value[car=="True",Added9:=A9-0.5*lastik_Sale]
+  if (year!=92){
   Value[car=="True",Added10:=A10]
+  }
   Value[car=="True",Added11:=A11]
   
   
@@ -87,17 +96,30 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   
   Value[,Weight:=NULL]
+  if (year!=92){
   dep <- c( "71111", "71112","71116", "71117",
            "91128", "91129","53112", "53116",
            "53113", "82113","53125", "91311",
            "72111", "72118","72319")
+  }
+  if (year==92){
+    dep <- c( "71111", "71112","71116", "71117",
+              "91128", "91129","53112", "53116",
+              "53113", "82113","53125", "91311",
+              "72111","72319")
+  }
   
   Value[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
   Value[is.na(Value)] <- 0
   
+  if (year!=92){
   Value[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
           Added7+Added8+Added9+Added10+Added11]
-  
+  }
+  if (year==92){
+  Value[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+          Added7+Added8+Added9+Added11]
+  }
   #load Expenditures
   
   for(G in c("Foods","Cigars","Cloths","Amusements","Communications",
@@ -107,8 +129,7 @@ for(year in (Settings$startyear:Settings$endyear)){
              ,"Durablele_Detail"
   )){
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
-    load(file = paste0(Settings$HEISProcessedPath,"Y",year,"NonFreeDurableData.rda"))
-    
+
   }
   
   # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Added_Food.rda")) 
@@ -143,7 +164,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #MD<-merge(MD,NaftSefidData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
-  MD<-merge(MD,NonFreeDurableData,by =c("HHID"),all=TRUE)
+ # MD<-merge(MD,NonFreeDurableData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,ResturantData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,Durablele_Detail,by =c("HHID"),all=TRUE)
   MD<-merge(MD,Value,by =c("HHID"),all=TRUE)
@@ -151,7 +172,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for (col in c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp", "Amusement_Exp", 
                 "Communication_Exp", "Education_Exp", "HouseandEnergy_Exp", 
                 "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", "Transportation_Exp",
-                "Other_Exp", "Medical_Exp", "NonFreeDurable_Exp",
+                "Other_Exp", "Medical_Exp", 
                 "Resturant_Exp","ServiceExp"
                 ,"Add_to_NonDurable","Durable_Dep",
                 "Durable_NoDep","Durable_Emergency","Total_Depreciated_Durable"
