@@ -45,18 +45,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   #               FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
 
-  EngleD[,PovertyLine2:=FPLine/Engel]
+  
   EngleD[,PovertyLine:=FPLine/EngleFinal]
-  
-  #if (year==97){
-   # EngleD[,PovertyLine:=ifelse(cluster3==1,PovertyLine*0.787,
-    #                            ifelse(cluster3==7,PovertyLine*1.292,
-     #                                  ifelse(cluster3==12,PovertyLine*1.2826,
-      #                                        ifelse(cluster3==13,PovertyLine*1.532,PovertyLine))))]
-#  }
-
-  
-
+  EngleD[,PovertyLine2:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD[,FinalPoor2:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine2,1,0 )]
@@ -137,7 +128,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
   
   cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
-  MD[, weighted.mean(PovertyLine,Weight*Size),by="cluster3"]
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
   
