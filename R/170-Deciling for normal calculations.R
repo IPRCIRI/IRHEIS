@@ -28,20 +28,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,Percentile:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
   
   
-  A1<-MD[(Auto2_rani+Auto1_Khareji+Auto2_Khareji+Auto1_Irani>0),
-         .(A1=weighted.mean(Auto2_rani+Auto1_Khareji+Auto2_Khareji+
-                              Auto1_Irani,Weight)),by=Decile]
-  A2<-MD[(TV_Rangi_Irani+TV_Rangi_Khareji>0),
-         .(A2=weighted.mean(TV_Rangi_Irani+TV_Rangi_Khareji,Weight)),by=Decile]
-  A3<-MD[freezer2>0 ,.(A3=weighted.mean(freezer2,Weight)),by=Decile]
-  A4<-MD[OjaghGaz>0 , .(A4=weighted.mean(OjaghGaz,Weight)),by=Decile]
-  A5<-MD[Mashin_Lebasshooyi>0 ,.(A5=weighted.mean(Mashin_Lebasshooyi,Weight)),by=Decile]
-  A6<-MD[Mobile>0, .(A6=weighted.mean(Mobile,Weight)),by=Decile]
-  A7<-MD[Cooler_Gaz>0,.(A7=weighted.mean(Cooler_Gaz,Weight)),by=Decile]
-  A8<-MD[PC>0 ,.(A8= weighted.mean(PC,Weight)),by=Decile]
-  A9<-MD[Lastik_Mashin>0,.(A9=weighted.mean(Lastik_Mashin,Weight)),by=Decile]
-  A10<-MD[Motor_Machin>0 ,.(A10=weighted.mean(Motor_Machin,Weight)),by=Decile]
-  A11<-MD[Tamirat_Asasi>0 ,.(A11=weighted.mean(Tamirat_Asasi,Weight)),by=Decile]
+  A1<-MD[(`71111`+`71112`+`71116`+`71117`>0),
+                .(A1=weighted.mean(`71111`+`71112`+`71116`+
+                                     `71117`,Weight)),by=Decile]
+  A2<-MD[(`91128`+`91129`>0),
+                .(A2=weighted.mean(`91128`+`91129`,Weight)),by=Decile]
+  A3<-MD[`53112`>0 ,.(A3=weighted.mean(`53112`,Weight)),by=Decile]
+  A4<-MD[`53116`>0 , .(A4=weighted.mean(`53116`,Weight)),by=Decile]
+  A5<-MD[`53113`>0 ,.(A5=weighted.mean(`53113`,Weight)),by=Decile]
+  A6<-MD[`82113`>0, .(A6=weighted.mean(`82113`,Weight)),by=Decile]
+  A7<-MD[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by=Decile]
+  A8<-MD[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by=Decile]
+  A9<-MD[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by=Decile]
+  A10<-MD[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
+  A11<-MD[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by=Decile]
   
   MD<-merge(MD,A1,by="Decile")
   MD<-merge(MD,A2,by="Decile")
@@ -70,10 +70,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   x<-MD[,.(HHID,Decile,car,Added1)]
   
-  dep <- c( "Auto2_rani", "Auto1_Khareji","Auto2_Khareji", "Auto1_Irani",
-            "TV_Rangi_Irani", "TV_Rangi_Khareji","freezer2", "OjaghGaz",
-            "Mashin_Lebasshooyi", "Mobile","Cooler_Gaz", "PC",
-            "Lastik_Mashin", "Motor_Machin","Tamirat_Asasi")
+  dep <- c( "71111", "71112","71116", "71117",
+            "91128", "91129","53112", "53116",
+            "53113", "82113","53125", "91311",
+            "72111", "72118","72319")
   
   MD[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
   MD[is.na(MD)] <- 0
