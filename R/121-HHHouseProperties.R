@@ -22,9 +22,7 @@ library(scales)
 
 P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
 
-years <- Settings$startyear:Settings$endyear
-
-for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P2Cols
+for(year in Settings$startyear:Settings$endyear){    
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
@@ -42,7 +40,7 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
     ind <- which(!is.na(a))[2:46]
     setnames(P2,names(a[ind]))
     
-  }else if(year %in% 89:95){
+  }else if(year %in% 83:95){
     a <- unlist(P2Cols[P2Cols$Year==year,])
     ind <- which(!is.na(a))[-1]
     setnames(P2,names(a[ind]))
@@ -79,13 +77,13 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
                                  "gas","pipedgas",
                                  "electricity","woodandcharcoal",
                                  "Animalfuel","charcoal","otherFuel","None"))]
-  
+  if(year>=86){
   P2[,hotwater :=factor(hotwater, levels=21:30, 
                         labels=c("karosine","gasoline",
                                  "gas","pipedgas",
                                  "electricity","woodandcharcoal",
                                  "Animalfuel","charcoal","otherFuel","None"))]
-  
+}
   P2[,car := factor(car, levels = 0:1,
                     labels=c("False","True"))]
   
@@ -121,10 +119,10 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   P2[,refrigerator := factor(refrigerator, levels=0:1,
                           labels=c("False","True"))]
-  
+  if(year>=84){
   P2[,frez_refrig := factor(frez_refrig, levels=0:1,
                           labels=c("False","True"))]
-  
+  }
   P2[,oven := factor(oven, levels=0:1,
                             labels=c("False","True"))]
   
@@ -143,14 +141,14 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   P2[,cooler_water_movable := factor(cooler_water_movable,
                                      levels=0:1,
                        labels=c("False","True"))]
-  
+  if(year>=85){
   P2[,cooler_gas_movable := factor(cooler_gas_movable, 
                                    levels=0:1,
                        labels=c("False","True"))]
   
   P2[,dishwasher := factor(dishwasher, levels=0:1,
                        labels=c("False","True"))]
-  
+  }
   if(year %in% 91:97){
   P2[,Microwave := factor(Microwave, levels=0:1,
                            labels=c("False","True"))]
@@ -188,17 +186,18 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
   
   P2[,centralheat := factor(centralheat, levels=0:1,
                         labels=c("False","True"))]
-  
+  if(year>=85){
   P2[,pakage := factor(pakage, levels=0:1,
                         labels=c("False","True"))]
   
   P2[,cooler_gas := factor(cooler_gas, levels=0:1,
                        labels=c("False","True"))]
-  
+  }
+  if(year>=86){
   P2[,ego := factor(ego, levels=0:1,
                        labels=c("False","True"))]
-  
-  if(year %in% 89:95){
+  }
+  if(year %in% 84:95){
     P2[,party_month := factor(party_month, levels=0:1,
                             labels=c("False","True"))]
     
@@ -229,19 +228,24 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
     P2[,frtrip_year := factor(frtrip_year, levels=0:2,
                             labels=c("False","none","True"))]
     
-    P2[,bastari_month := factor(bastari_month, levels=0:1,
-                            labels=c("False","True"))]
+  #  P2[,bastari_month := factor(bastari_month, levels=0:1,
+ #                           labels=c("False","True"))]
     
-    P2[,bastari_year := factor(bastari_year, levels=0:2,
-                            labels=c("False","none","True"))]
+   # P2[,bastari_year := factor(bastari_year, levels=0:2,
+    #                        labels=c("False","none","True"))]
     
     P2[,operation_month := factor(operation_month, levels=0:1,
                             labels=c("False","True"))]
     
+    
     if(year %in% 91:95){
     P2[,operation_year := factor(operation_year, levels=0:2,
                             labels=c("False","none","True"))]
+   
     }
+    
+    P2[,other_month := factor(other_month, levels=0:1,
+                             labels=c("False","True"))]
     
     P2[,other_year := factor(other_year, levels=0:1,
                             labels=c("False","True"))]
@@ -249,7 +253,10 @@ for(year in setdiff(years,63:88)){    # TODO: Add the metadata for 63 to 88 in P
     P2[,noceremony := factor(noceremony, levels=0:1,
                             labels=c("False","True"))]
   }
-  
+  if(year==84){
+  P2[,noceremony_year := factor(noceremony_year, levels=0:1,
+                           labels=c("False","True"))]
+  }
   HHHouseProperties<-P2
   save(HHHouseProperties, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
