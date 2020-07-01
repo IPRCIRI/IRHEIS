@@ -47,7 +47,8 @@ pkglist <- c("yaml","RODBC","readxl","tools","foreign","data.table",
              #"vbmp",
              "VGAM", 
              "wsrf", "xgboost", "kohonen",
-             "pROC","glmnet")
+             "pROC","glmnet",
+             "factoextra")
 
 for(pkg in pkglist){
   if((eval(parse(text = paste0("require(",pkg,")")))==FALSE))
