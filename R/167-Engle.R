@@ -46,10 +46,18 @@ for(year in (88:Settings$endyear)){
   
   
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                   TOriginalFoodExpenditure_Per<1.2*FPLine,
+                   TOriginalFoodExpenditure_Per<1.2*FPLine
+                #& FoodProtein_Per>50 & MD$Area>15*Size
+                ,
                  .(.N,Engel=weighted.mean(EngleH,Weight),
                    FPLine=mean(FPLine)),by=.(Region,cluster3)]
   
+  x <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                  TOriginalFoodExpenditure_Per<1.2*FPLine &
+             cluster3==7]
+  
+  a<-x$EngleH
+  hist(a)
 
   EngleD<-EngleD[,Year:=year]
   EngleDD <- EngleD

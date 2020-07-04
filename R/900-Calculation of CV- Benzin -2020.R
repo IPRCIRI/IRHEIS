@@ -124,7 +124,8 @@ Total<-Total[,Other_Exp:=Total_Exp_Month-Benzin_Exp-Transportation_Exp]
 Total<-Total[,Benzin_Exp_Add:=ifelse(Benzin_Exp<600000,0,Benzin_Exp-600000)]
 
 Total<-Total[Decile %in% 1:10]
-
+d<-Total[,sum(Weight),by=c("Region","Decile")]
+e<-Total[,sum(Weight*Size),by=c("Region","Decile")]
 
 #Price Indexes
 load(file="Index98.rda")
@@ -139,7 +140,6 @@ Total<-Total[,Yaraneh:=ifelse(Decile>7,0,Yaraneh2)]
 #Total<-Total[,Yaraneh:=Yaraneh2]
 Total[is.na(Total)] <- 0
 #Total<-Total[Benzin_Exp==0]
-
 
 ############New Prices###########
 Total[,BenzinP1:=Benzin_Exp]
