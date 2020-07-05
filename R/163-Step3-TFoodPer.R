@@ -44,6 +44,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 cat(MD[,weighted.mean(TOriginalFoodExpenditure_Per,Weight)],"\n")
 cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
 cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
+cat(MD[,weighted.mean(EqSizeCalory,Weight,na.rm = TRUE)],"\n")
   ##############################################################
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))

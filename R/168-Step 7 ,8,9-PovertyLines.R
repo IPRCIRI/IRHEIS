@@ -45,7 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #               FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
 
-  
+  EngleD[,EngleFinal:=mean(EngleFinal)]
   EngleD[,PovertyLine:=FPLine/EngleFinal]
   EngleD[,PovertyLine2:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
