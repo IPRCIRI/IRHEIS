@@ -14,6 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 #library(readxl)
 library(data.table)
 library(ggplot2)
+library(compare)
 
 # Function Defs ---------------------------------------------------------------------------------
 CalcTornqvistIndex <- function(DataTable){
@@ -79,7 +80,7 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   A7<-DataTable[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by=Decile]
   A8<-DataTable[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by=Decile]
   A9<-DataTable[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by=Decile]
-  if (year!=92){
+  if (year!=90 & year!=92 & year!=93 & year!=95){
     A10<-DataTable[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
   }
   A11<-DataTable[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by=Decile]
@@ -105,7 +106,7 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable<-merge(DataTable,A7,by="Decile")
   DataTable<-merge(DataTable,A8,by="Decile")
   DataTable<-merge(DataTable,A9,by="Decile")
-  if (year!=92){ 
+  if (year!=90 & year!=92 & year!=93 & year!=95){
   DataTable<-merge(DataTable,A10,by="Decile")
   }
   DataTable<-merge(DataTable,A11,by="Decile")
@@ -120,19 +121,19 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
   DataTable[computer=="True",Added8:=0.06*A8-PC_Sale]
   DataTable[car=="True",Added9:=A9-0.5*lastik_Sale]
-  if (year!=92){
+  if (year!=90 & year!=92 & year!=93 & year!=95){
     DataTable[car=="True",Added10:=A10]
   }
   DataTable[car=="True",Added11:=A11]
   
-  if (year!=92){  
+  if (year!=90 & year!=92 & year!=93 & year!=95){ 
   dep <- c( "71111", "71112","71116", "71117",
             "91128", "91129","53112", "53116",
             "53113", "82113","53125", "91311",
             "72111", "72118","72319")
   }
   
-  if (year==92){  
+  if (year==90 | year==92 | year==93 | year==95){
     dep <- c( "71111", "71112","71116", "71117",
               "91128", "91129","53112", "53116",
               "53113", "82113","53125", "91311",
@@ -142,11 +143,11 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
   DataTable[is.na(DataTable)] <- 0
   
-  if (year!=92){ 
+  if (year!=90 & year!=92 & year!=93 & year!=95){
   DataTable[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
        Added7+Added8+Added9+Added10+Added11]
   }
-  if (year==92){ 
+  if (year==90 | year==92 | year==93 | year==95){
     DataTable[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
                 Added7+Added8+Added9+Added11]
   }
@@ -201,7 +202,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   
-  if (year!=92){  
+  if (year!=90 & year!=92 & year!=93 & year!=95){ 
   SMD <- MD[,.(HHID,Region,
                ServiceExp,FoodExpenditure,Total_Exp_Month,
                NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
@@ -224,7 +225,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                ,Add_to_NonDurable,Medical_Exp,
                Durable_NoDep,Durable_Emergency)]
   }
-  if (year==92){  
+  if (year==90 | year==92 | year==93 | year==95){
     SMD <- MD[,.(HHID,Region,
                  ServiceExp,FoodExpenditure,Total_Exp_Month,
                  NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
@@ -257,10 +258,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
   
+  S1<-SMD[,.(HHID,Region,NewArea_Name,TFoodKCaloriesHH_Per,Bundle_Value)]
+
+  
   PriceDT <- CalcTornqvistIndex(SMD)
   SMD <- DoDeciling_SetInitialPoor(SMD,PriceDT)
+  S2<-SMD[,.(HHID,Region,NewArea_Name,TFoodKCaloriesHH_Per,Bundle_Value)]
+
   
-  
+  #comparison <- compare(S1,S2,"row")
+  comparison <- setdiff(S1$HHID,S2$HHID)
+  x<-S1[HHID %in% comparison]
   
   SMD[,InitialPoorBasedOnPercentileLastIteration:=1]
   i <- 0
