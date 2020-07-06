@@ -44,7 +44,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 #    print(MDP)
     #x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
-    print(table(MD[,.(ThisIterationPoor,NewPoor)]))
+#    print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
   }
 
@@ -68,6 +68,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   # 
   MD[,weighted.mean(FinalFoodPoor,Weight),by=c("Region","ProvinceCode")][order(Region,ProvinceCode)]
   MD[,weighted.mean(FinalFoodPoor,Weight),by=cluster3][order(cluster3)]
+#  cat(MD[,weighted.mean(FPLine,Weight)])
+ # cat(MD[cluster3==13,weighted.mean(Calory_Price,Weight)])
+  #cat(MD[cluster3==1,weighted.mean(TOriginalFoodExpenditure_Per,Weight)])
+  x<-MD[,weighted.mean(OriginalFoodExpenditure,Weight),by="cluster3"]
+  
+  
+  cat(MD[,weighted.mean(TOriginalFoodExpenditure_Per,Weight)],"\n")
+  cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
+  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
+  cat(MD[,weighted.mean(EqSizeCalory,Weight,na.rm = TRUE)],"\n")
 }
 
 endtime <- proc.time()
