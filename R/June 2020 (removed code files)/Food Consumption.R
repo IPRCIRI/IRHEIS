@@ -35,6 +35,21 @@ MD<-merge(MD,Total[,.(HHID,`011164`,MacaroniGram,`011231`,`011232`,PoultryMeat_M
                       CowMeatGram,SheepMeatGram,
                       Rice_TaromGram,Rice_DomsiahGram)],by="HHID")
 
+A<-MD[,.(Morgh=weighted.mean(PoultryMeat_MGram,Weight),
+         Shir= weighted.mean(MilkGrams,Weight),
+         Panir=weighted.mean(Cheese_PasturizedGram,Weight),
+         Tokhmemorgh=weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight),
+         Berenj=weighted.mean(Rice_TaromGram+Rice_DomsiahGram,Weight),
+         Gav=weighted.mean(CowMeatGram,Weight),
+         Goosfand=weighted.mean(SheepMeatGram,Weight),
+         Rob_GojeGram=weighted.mean(Rob_GojeGram,Weight),
+         SibzaminiGram=weighted.mean(SibzaminiGram,Weight),
+         PiazGram=weighted.mean(PiazGram,Weight),
+         MacaroniGram=weighted.mean(MacaroniGram,Weight)),by=Decile][order(Decile)]
+A[,Year:=year]
+TS <- rbind(TS,A)
+
+
 m<-MD[,.(weighted.mean(`011164`/Total_Exp_Month_nondurable,Weight),
          weighted.mean((`011231`+`011232`)/Total_Exp_Month_nondurable,Weight),
          weighted.mean(`011411`/Total_Exp_Month_nondurable,Weight),
@@ -78,19 +93,6 @@ MD[,weighted.mean(Size,Weight),by=Decile][order(Decile)]
 MD[,weighted.mean(FoodKCaloriesHH_Per,Weight),by=Decile][order(Decile)]
 
 
-A<-MD[,.(Morgh=weighted.mean(PoultryMeat_MGram,Weight),
-         Shir= weighted.mean(MilkGrams,Weight),
-         Panir=weighted.mean(Cheese_PasturizedGram,Weight),
-         Tokhmemorgh=weighted.mean(Egg_MashinGram+Egg_NonMashinGram,Weight),
-         Berenj=weighted.mean(Rice_TaromGram+Rice_DomsiahGram,Weight),
-         Gav=weighted.mean(CowMeatGram,Weight),
-         Goosfand=weighted.mean(SheepMeatGram,Weight),
-         Rob_GojeGram=weighted.mean(Rob_GojeGram,Weight),
-         SibzaminiGram=weighted.mean(SibzaminiGram,Weight),
-         PiazGram=weighted.mean(PiazGram,Weight),
-         MacaroniGram=weighted.mean(MacaroniGram,Weight)),by=Decile][order(Decile)]
-A[,Year:=year]
-TS <- rbind(TS,A)
 
 
 }
