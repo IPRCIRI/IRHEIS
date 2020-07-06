@@ -16,7 +16,7 @@ library(data.table)
 library(ggplot2)
 library(stats)
 library(spatstat)
-year<-97
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -57,7 +57,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   mive<-BigFData[FoodType=="Mive"]
   mive<-mive[,Mive_Grams:=FGrams]
   nan<-BigFData[FoodType=="Nan"]
-  nan<-goosht[,Nan_Grams:=FGrams]
+  nan<-nan[,Nan_Grams:=FGrams]
   sibzamini<-BigFData[FoodType=="Sibzamini"]
   sibzamini<-sibzamini[,Sibzamini_Grams:=FGrams]
   makarooni<-BigFData[FoodType=="Makarooni"]
@@ -89,7 +89,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-MD[,Sibzamini_Grams_Per:=Sibzamini_Grams/EqSizeCalory]
   MD<-MD[,Makarooni_Grams_Per:=Makarooni_Grams/EqSizeCalory]
   MD<-MD[,Khoshkbar_Grams_Per:=Khoshkbar_Grams/EqSizeCalory]
-  
+  M<-MD[,weighted.mean(Goosht_Grams_Per,Weight*Size),]
   MD<-MD[,T_Meat_Grams_per:=Goosht_Grams_Per+Morgh_Grams_Per+Mahi_Grams_Per]
   MD<-MD[,T_Inferior_Grams_Per:=Nan_Grams_Per+Sibzamini_Grams_Per+Makarooni_Grams_Per]
   
