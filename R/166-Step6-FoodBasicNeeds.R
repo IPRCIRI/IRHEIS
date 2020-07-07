@@ -74,10 +74,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   x<-MD[,weighted.mean(OriginalFoodExpenditure,Weight),by="cluster3"]
   
   
-  cat(MD[,weighted.mean(TOriginalFoodExpenditure_Per,Weight)],"\n")
-  cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
-  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
-  cat(MD[,weighted.mean(EqSizeCalory,Weight,na.rm = TRUE)],"\n")
+#cat(MD[,weighted.mean(TOriginalFoodExpenditure_Per,Weight)],"\n")
+#  cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
+#  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
+#  cat(MD[,weighted.mean(EqSizeCalory,Weight,na.rm = TRUE)],"\n")
+  
+  cat(MD[cluster3==1,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
+  
+  #cat(MD[FinalFoodPoor==1 & cluster3==7,weighted.mean(Calorie_Need_WorldBank,Weight)],"\n")
+  #cat(MD[FinalFoodPoor==1 & cluster3==7,weighted.mean(TFoodKCaloriesHH_Per,Weight)],"\n")
+  #cat(MD[FinalFoodPoor==1 & cluster3==7,weighted.mean(Bundle_Value,Weight)],"\n")
 }
 
 endtime <- proc.time()
