@@ -133,6 +133,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 }
 
+#ggplot(FinalClusterResults)+
+ # geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3),linetype=factor(cluster3)))
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
