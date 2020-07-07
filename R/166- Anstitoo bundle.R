@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[,ThisIterationPoor:=NewPoor]
     MD[,FPLine:=NULL]    
     MDP <- MD[ThisIterationPoor==1,
-              .(FPLine=0.001*30*(310*weighted.mean(LavashPrice,Weight,na.rm = TRUE)+
+              .(FPLine=0.001*30*0.81*(310*weighted.mean(LavashPrice,Weight,na.rm = TRUE)+
                   95*weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)+
                   20*weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)+
                   26*weighted.mean(AdasPrice,Weight,na.rm = TRUE)+
@@ -89,7 +89,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 #  cat(MD[,weighted.mean(TOriginalFoodExpenditure_Per,Weight)],"\n")
 #  cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
 #  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
-  cat(MD[,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
+  cat(MD[cluster3==1,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
 }
 
 endtime <- proc.time()
