@@ -38,7 +38,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
-MD<-MD[CountyCode==2301]
+#MD<-MD[CountyCode==2301]
 
   EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                   TOriginalFoodExpenditure_Per<1.2*FPLine,
