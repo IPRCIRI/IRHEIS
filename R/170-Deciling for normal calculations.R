@@ -40,7 +40,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   A7<-MD[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by=Decile]
   A8<-MD[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by=Decile]
   A9<-MD[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by=Decile]
-  A10<-MD[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    A10<-MD[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
+  }
   A11<-MD[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by=Decile]
   
   MD<-merge(MD,A1,by="Decile")
@@ -52,7 +54,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,A7,by="Decile")
   MD<-merge(MD,A8,by="Decile")
   MD<-merge(MD,A9,by="Decile")
-  MD<-merge(MD,A10,by="Decile")
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    MD<-merge(MD,A10,by="Decile")
+  }
   MD<-merge(MD,A11,by="Decile")
   
   MD[car=="True",Added1:=A1]
@@ -65,21 +69,38 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[cooler_gas=="True",Added7:=A7]
   MD[computer=="True",Added8:=A8]
   MD[car=="True",Added9:=A9]
-  MD[car=="True",Added10:=A10]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    MD[car=="True",Added10:=A10]
+  }
   MD[car=="True",Added11:=A11]
   
   x<-MD[,.(HHID,Decile,car,Added1)]
   
-  dep <- c( "71111", "71112","71116", "71117",
-            "91128", "91129","53112", "53116",
-            "53113", "82113","53125", "91311",
-            "72111", "72118","72319")
+  if (year!=90 & year!=92 & year!=93 & year!=95){ 
+    dep <- c( "71111", "71112","71116", "71117",
+              "91128", "91129","53112", "53116",
+              "53113", "82113","53125", "91311",
+              "72111", "72118","72319")
+  }
+  
+  if (year==90 | year==92 | year==93 | year==95){
+    dep <- c( "71111", "71112","71116", "71117",
+              "91128", "91129","53112", "53116",
+              "53113", "82113","53125", "91311",
+              "72111","72319")
+  }
   
   MD[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
   MD[is.na(MD)] <- 0
   
-  MD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
-       Added7+Added8+Added9+Added10+Added11]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    MD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+                Added7+Added8+Added9+Added10+Added11]
+  }
+  if (year==90 | year==92 | year==93 | year==95){
+    MD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+                Added7+Added8+Added9+Added11]
+  }
   
   #Calculate Monthly Total Expenditures 
   nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
