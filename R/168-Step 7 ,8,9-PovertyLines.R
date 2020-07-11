@@ -115,7 +115,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[, weighted.mean(FinalPoor,Weight*Size)]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=Region]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=cluster3]
-  MD[Region=="Rural",weighted.mean(FinalPoor,Weight),by=ProvinceName][order(ProvinceName)]
+  MD[,weighted.mean(FinalPoor,Weight),by=ProvinceName][order(ProvinceName)]
     
     
   DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
