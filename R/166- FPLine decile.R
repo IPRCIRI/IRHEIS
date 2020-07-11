@@ -20,9 +20,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPrices.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodGrams.rda"))
   
   MD<-merge(MD,FoodPrices,all.x=TRUE,by="HHID")
-
+  MD<-merge(MD,FoodGrams,all.x=TRUE,by="HHID")
+  
+  # y<-MD[,weighted.mean(FoodKCaloriesHH_Per,Weight),by=c("Region","Decile")]
+  
   
   MD[,NewPoor:=InitialPoor]
   MD[,OldPoor:=1]
@@ -32,21 +36,24 @@ for(year in (Settings$startyear:Settings$endyear)){
     #    cat(nrow(MD[NewPoor==1]))
     i <- i + 1
     MD[,ThisIterationPoor:=NewPoor]
-    MD[,FPLine:=NULL]    
-    MDP <- MD[ThisIterationPoor==1,
-              .(FPLine=0.001*30*0.5*(310*weighted.mean(LavashPrice,Weight,na.rm = TRUE)+
-                  95*weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)+
-                  20*weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)+
-                  26*weighted.mean(AdasPrice,Weight,na.rm = TRUE)+
-                  70*weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)+
-                  300*weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)+
-                  280*weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)+
-                  38*weighted.mean(CowMeatPrice,Weight,na.rm = TRUE)+
-                  64*weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)+
-                  35*weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)+
-                  250*weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)+
-                  35*weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE)+
-                  40*weighted.mean(GhandPrice,Weight,na.rm = TRUE))),
+    MD[,FPLine:=NULL]
+    MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
+                                 (Region=="Rural" & Decile==2),1,0)]
+    MDP <- MD[Selected_Group==1,
+              .(FPLine=0.001*
+                  (weighted.mean(LavashPrice,Weight,na.rm = TRUE)*weighted.mean(BreadGrams,Weight,na.rm = TRUE)+
+                     weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)*weighted.mean(GrainGrams,Weight,na.rm = TRUE)+
+                     weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*weighted.mean(MacaroniGram,Weight,na.rm = TRUE)+
+                     weighted.mean(AdasPrice,Weight,na.rm = TRUE)*weighted.mean(AdasGram+Loobia_ChitiGram+NokhodGram,Weight,na.rm = TRUE)+
+                     weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*weighted.mean(SibzaminiGram,Weight,na.rm = TRUE)+
+                     weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)*weighted.mean(VegetableShrubsGrams,Weight,na.rm = TRUE)+
+                     weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)*weighted.mean(TreeFruitsGrams,Weight,na.rm = TRUE)+
+                     weighted.mean(LivestockGrams,Weight,na.rm = TRUE)*weighted.mean(LivestockGrams,Weight,na.rm = TRUE)+
+                     weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*weighted.mean(PoultryMeat_MGram,Weight,na.rm = TRUE)+
+                     weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*weighted.mean(Egg_MashinGram,Weight,na.rm = TRUE)+
+                     weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)*weighted.mean(MilkproductsGrams+MilkGrams,Weight,na.rm = TRUE)+
+                     weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE)*weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE)+
+                     weighted.mean(GhandPrice,Weight,na.rm = TRUE)*weighted.mean(GhandGram,Weight,na.rm = TRUE))),
               by=.(cluster3,Region)]
     MDP[is.na(MDP)] <- 0
     min<-MDP[FPLine>0,min(FPLine)]
@@ -83,13 +90,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   #  cat(MD[,weighted.mean(FPLine,Weight)])
   # cat(MD[cluster3==13,weighted.mean(Calory_Price,Weight)])
   #cat(MD[cluster3==1,weighted.mean(TOriginalFoodExpenditure_Per,Weight)])
-  x<-MD[,weighted.mean(OriginalFoodExpenditure,Weight),by="cluster3"]
+  x<-MD[,weighted.mean(FPLine,Weight),by="cluster3"]
   
   
-#  cat(MD[,weighted.mean(TOriginalFoodExpenditure_Per,Weight)],"\n")
-#  cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
-#  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
-  cat(MD[cluster3==1,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
+  #  cat(MD[,weighted.mean(TOriginalFoodExpenditure_Per,Weight)],"\n")
+  #  cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
+  #  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
+  # cat(MD[cluster3==1,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
+  cat(MD[,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
 }
 
 endtime <- proc.time()
