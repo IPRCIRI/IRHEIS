@@ -32,7 +32,8 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
 
 
 
-for(year in (88:Settings$endyear)){
+for(year in (97:Settings$endyear)){
+  #year=90
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------
@@ -44,19 +45,21 @@ for(year in (88:Settings$endyear)){
   MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   MD<-MD[,EngleH:=(TOriginalFoodExpenditure/Total_Exp_Month)]
   
-  
   EngleD <- MD[ TOriginalFoodExpenditure_Per>0.7*FPLine &
-                   TOriginalFoodExpenditure_Per<1.3*FPLine
-               # & FoodProtein_Per>50 & MD$Area>15*Size
-                ,
-                 .(.N,Engel=weighted.mean(EngleH,Weight),
-                   FPLine=mean(FPLine))
-               ,by=.(Region,cluster3)
-               ]
-  
-  x <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine &
-             cluster3==7]
+                  TOriginalFoodExpenditure_Per<1.3*FPLine
+                &FoodProtein_Per>50& MD$Area>15*Size,
+                .(.N,FPLine=mean(FPLine)),by=.(Region,cluster3)]
+ # EngleD1 <- MD[ TOriginalFoodExpenditure_Per>0.7*FPLine &
+ #                  TOriginalFoodExpenditure_Per<1.3*FPLine
+  #               &FoodProtein_Per>50& MD$Area>15*Size,
+#                 .(Engel=weighted.mean(EngleH,Weight),cluster3),by=.(Region)]
+ # EngleD1 <- unique(EngleD1)
+  #EngleD <- merge(EngleD,EngleD1, by=c("Region","cluster3"))
+
+
+  x <- MD[ TOriginalFoodExpenditure_Per>0.7*FPLine &
+             TOriginalFoodExpenditure_Per<1.3*FPLine
+           &FoodProtein_Per>50& MD$Area>15*Size]
   
   a<-x$EngleH
   hist(a)
