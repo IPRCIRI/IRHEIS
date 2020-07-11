@@ -45,8 +45,8 @@ for(year in (88:Settings$endyear)){
   MD<-MD[,EngleH:=(TOriginalFoodExpenditure/Total_Exp_Month)]
   
   
-  EngleD <- MD[ TOriginalFoodExpenditure_Per>0.7*FPLine &
-                   TOriginalFoodExpenditure_Per<1.3*FPLine
+  EngleD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                   TOriginalFoodExpenditure_Per<1.2*FPLine
                # & FoodProtein_Per>50 & MD$Area>15*Size
                 ,
                  .(.N,Engel=weighted.mean(EngleH,Weight),
