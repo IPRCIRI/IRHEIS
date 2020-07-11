@@ -287,9 +287,16 @@ for(year in (Settings$startyear:Settings$endyear)){
     #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
     SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
     
-    cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
-  }
+   # cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
 
+    
+    
+    }
+
+  cat(SMD[,weighted.mean(Calorie_Need_WorldBank,Weight)],"\n")
+  cat(SMD[,weighted.mean(TFoodKCaloriesHH_Per,Weight)],"\n")
+  cat(SMD[,weighted.mean(Bundle_Value,Weight)],"\n")
+  
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,InitialPoorBasedOnPercentile,Decile,Percentile)],by="HHID")
   setnames(MD,"InitialPoorBasedOnPercentile","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
   

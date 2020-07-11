@@ -45,7 +45,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #               FPLine=mean(FPLine)),by=.(Region,cluster3)]
 
 
-  EngleD[,EngleFinal:=mean(EngleFinal)]
+ # EngleD[,EngleFinal:=mean(EngleFinal)]
   EngleD[,PovertyLine:=FPLine/EngleFinal]
   EngleD[,PovertyLine2:=FPLine/Engel]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
@@ -115,7 +115,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[, weighted.mean(FinalPoor,Weight*Size)]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=Region]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=cluster3]
-  MD[Region=="Rural",weighted.mean(FinalPoor,Weight),by=ProvinceName][order(ProvinceName)]
+  MD[,weighted.mean(FinalPoor,Weight),by=ProvinceName][order(ProvinceName)]
     
     
   DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
@@ -132,6 +132,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
   
 }
+
+#ggplot(FinalClusterResults)+
+ # geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3),linetype=factor(cluster3)))
 
 
 endtime <- proc.time()
