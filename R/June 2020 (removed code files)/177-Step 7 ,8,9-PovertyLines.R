@@ -15,7 +15,7 @@ library(data.table)
 library(ggplot2)
 library(stats)
 library(spatstat)
-
+library(writexl)
 FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,
                                   Engle=NA_real_,Bundle_Value=NA_real_,
                                   Total_Exp_Month_Per=NA_real_,PovertyHCR=NA_real_,
@@ -48,7 +48,12 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   
   EngleD[,PovertyLine:=FPLine/Engel]
+
+  
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,Engel)],by=c("Region","cluster3"))
+MD<-MD[,FPLine1:=weighted.mean(FPLine,Weight)]
+MD<-MD[,PovertyLine:=FPLine1/Engel]
+
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per < PovertyLine,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
@@ -133,7 +138,10 @@ save(FinalClusterEngel,file=paste0(Settings$HEISProcessedPath,"FINALPOORS_normal
 #  geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3)))
 
 #write.csv(FinalClusterResults,file = FinalClusterResults.csv)
-
+FinalClusterResults<-FinalClusterResults[,cluster3:=as.factor(cluster3)]
+FinalClusterResults<-FinalClusterResults[,Year:=as.factor(Year)]
+ggplot(data=FinalClusterResults,aes(x=Year, y=PovertyHCR, group=cluster3, colour=cluster3))+geom_line()
+write_xlsx(FinalClusterResults,path="FinalClusterResults.xlsx",col_names=T)
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
