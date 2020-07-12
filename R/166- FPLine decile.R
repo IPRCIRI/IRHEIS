@@ -59,6 +59,23 @@ for(year in (Settings$startyear:Settings$endyear)){
     min<-MDP[FPLine>0,min(FPLine)]
     MDP[,FPLine:=ifelse(FPLine==0,min,FPLine)]
     
+    Bundle <- MD[Selected_Group==1,
+              .( BreadGrams=weighted.mean(BreadGrams,Weight,na.rm = TRUE),
+                  BerenjKhareji= weighted.mean(Rice_Khareji1Gram+Rice_Khareji2Gram,Weight,na.rm = TRUE),
+                  MacaroniGram=  weighted.mean(MacaroniGram,Weight,na.rm = TRUE),
+                   HoboobatGram= weighted.mean(AdasGram+Loobia_ChitiGram+NokhodGram,Weight,na.rm = TRUE),
+                SibzaminiGram=  weighted.mean(SibzaminiGram,Weight,na.rm = TRUE),
+                VegetableShrubsGrams= weighted.mean(VegetableShrubsGrams,Weight,na.rm = TRUE),
+                TreeFruitsGrams=   weighted.mean(TreeFruitsGrams,Weight,na.rm = TRUE),
+                CowMeatGram= weighted.mean(CowMeatGram,Weight,na.rm = TRUE),
+                SheepGrams= weighted.mean(SheepMeatGram,Weight,na.rm = TRUE),
+                PoultryMeat_MGram=  weighted.mean(PoultryMeat_MGram,Weight,na.rm = TRUE),
+                Egg_MashinGram=  weighted.mean(Egg_MashinGram,Weight,na.rm = TRUE),
+                MilkproductsGrams=  weighted.mean(MilkproductsGrams+MilkGrams,Weight,na.rm = TRUE),
+                Oil_NabatiGram=  weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE),
+                GhandGram= weighted.mean(GhandGram,Weight,na.rm = TRUE)),
+              by=.(Region)]
+    
     MD <- merge(MD,MDP,by=c("Region","cluster3"))
     #    print(MDP)
     #x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
