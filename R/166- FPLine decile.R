@@ -41,20 +41,51 @@ for(year in (Settings$startyear:Settings$endyear)){
                                  (Region=="Rural" & Decile==2),1,0)]
     MDP <- MD[Selected_Group==1,
               .(FPLine=0.001*
-                  (weighted.mean(LavashPrice,Weight,na.rm = TRUE)*weighted.mean(BreadGrams,Weight,na.rm = TRUE)+
-                     weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)*weighted.mean(GrainGrams,Weight,na.rm = TRUE)+
-                     weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*weighted.mean(MacaroniGram,Weight,na.rm = TRUE)+
-                     weighted.mean(AdasPrice,Weight,na.rm = TRUE)*weighted.mean(AdasGram+Loobia_ChitiGram+NokhodGram,Weight,na.rm = TRUE)+
-                     weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*weighted.mean(SibzaminiGram,Weight,na.rm = TRUE)+
-                     weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)*weighted.mean(VegetableShrubsGrams,Weight,na.rm = TRUE)+
-                     weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)*weighted.mean(TreeFruitsGrams,Weight,na.rm = TRUE)+
-                     weighted.mean(LivestockGrams,Weight,na.rm = TRUE)*weighted.mean(LivestockGrams,Weight,na.rm = TRUE)+
-                     weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*weighted.mean(PoultryMeat_MGram,Weight,na.rm = TRUE)+
-                     weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*weighted.mean(Egg_MashinGram,Weight,na.rm = TRUE)+
-                     weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)*weighted.mean(MilkproductsGrams+MilkGrams,Weight,na.rm = TRUE)+
-                     weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE)*weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE)+
-                     weighted.mean(GhandPrice,Weight,na.rm = TRUE)*weighted.mean(GhandGram,Weight,na.rm = TRUE))),
+                  (weighted.mean(LavashPrice,Weight,na.rm = TRUE)*weighted.mean(BreadGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)*weighted.mean(GrainGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*weighted.mean(MacaroniGram/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(AdasPrice,Weight,na.rm = TRUE)*weighted.mean((AdasGram+Loobia_ChitiGram+NokhodGram)/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*weighted.mean(SibzaminiGram/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)*weighted.mean(VegetableShrubsGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)*weighted.mean(TreeFruitsGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(LivestockGrams,Weight,na.rm = TRUE)*weighted.mean(LivestockGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*weighted.mean(PoultryMeat_MGram/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*weighted.mean(Egg_MashinGram/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)*weighted.mean((MilkproductsGrams+MilkGrams)/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE)*weighted.mean(Oil_NabatiGram/(EqSizeCalory),Weight*Size,na.rm = TRUE)+
+                     weighted.mean(GhandPrice,Weight,na.rm = TRUE)*weighted.mean(GhandGram/(EqSizeCalory),Weight*Size,na.rm = TRUE))),
               by=.(cluster3,Region)]
+   price<- MD[Selected_Group==1,
+       .(LavashPrice=weighted.mean(LavashPrice,Weight,na.rm = TRUE),
+         Rice_TaromPrice=weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE),
+         MacaroniPrice=weighted.mean(MacaroniPrice,Weight,na.rm = TRUE),
+         HobubatPrice=weighted.mean(AdasPrice,Weight,na.rm = TRUE),
+         SibzaminiPrice=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),
+         Sabzi_KhordanPrice=weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE),
+         Banana_CoconutPrice=weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE),
+         LivestockGrams=weighted.mean(LivestockGrams,Weight,na.rm = TRUE),
+         PoultryMeat_MPrice=weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE),
+         Egg_MashinPrice=weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE),
+         Milk_PasteurizedPrice=weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),
+         Oil_NabatiPrice=weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),
+         GhandPrice=weighted.mean(GhandPrice,Weight,na.rm = TRUE))]
+       #by=.(cluster3,Region)]
+   gram <- MD[Selected_Group==1,
+             .(BreadGrams=weighted.mean(BreadGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               GrainGrams=weighted.mean(GrainGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               MacaroniGram=weighted.mean(MacaroniGram/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               HobubatGrams=weighted.mean((AdasGram+Loobia_ChitiGram+NokhodGram)/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               SibzaminiGram=weighted.mean(SibzaminiGram/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               VegetableShrubsGrams=weighted.mean(VegetableShrubsGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               TreeFruitsGrams=weighted.mean(TreeFruitsGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               LivestockGrams=weighted.mean(LivestockGrams/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               PoultryMeat_MGram=weighted.mean(PoultryMeat_MGram/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               Egg_MashinGram=weighted.mean(Egg_MashinGram/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               MilkproductsGrams=weighted.mean((MilkproductsGrams+MilkGrams)/(EqSizeCalory),Weight*Size,na.rm = TRUE),
+               Oil_NabatiGram=weighted.mean(Oil_NabatiGram/(EqSizeCalory),Weight,na.rm = TRUE),
+               GhandGram=weighted.mean(GhandGram/(EqSizeCalory),Weight*Size,na.rm = TRUE))]
+            # by=.(cluster3,Region)]
+   gram<-t(gram)
     MDP[is.na(MDP)] <- 0
     min<-MDP[FPLine>0,min(FPLine)]
     MDP[,FPLine:=ifelse(FPLine==0,min,FPLine)]

@@ -58,8 +58,8 @@ for(year in (88:Settings$endyear)){
                   TOriginalFoodExpenditure_Per<1.2*FPLine &
              cluster3==7]
   
-  a<-x$EngleH
-  hist(a)
+#  a<-x$EngleH
+ # hist(a)
 
   EngleD<-EngleD[,Year:=year]
   EngleDD <- EngleD
