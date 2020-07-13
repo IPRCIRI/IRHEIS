@@ -17,7 +17,7 @@ library(stringr)
 library(readxl)
 library(spatstat)
 library(writexl)
-
+year<-97
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -42,6 +42,48 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,NewPoor:=InitialPoor]
   MD[,OldPoor:=1]
+  load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+  goosht<-BigFData[FoodType=="Goosht"]
+  goosht<-goosht[,Goosht_Grams:=FGrams*30]
+  morgh<-BigFData[FoodType=="Morgh"]
+  morgh<-morgh[,Morgh_Grams:=FGrams*30]
+  mive<-BigFData[FoodType=="Mive"]
+  mive<-mive[,Mive_Grams:=FGrams*30]
+  nan<-BigFData[FoodType=="Nan"]
+  nan<-nan[,Nan_Grams:=FGrams*30]
+  sibzamini<-BigFData[FoodType=="Sibzamini"]
+  sibzamini<-sibzamini[,Sibzamini_Grams:=FGrams*30]
+  makarooni<-BigFData[FoodType=="Makarooni"]
+  makarooni<-makarooni[,Makarooni_Grams:=FGrams*30]
+  berenj<-BigFData[FoodType=="Berenj"]
+  berenj<-berenj[,Berenj_Grams:=FGrams*30]
+  hoboobat<-BigFData[FoodType=="Hoboobat"]
+  hoboobat<-hoboobat[,Hoboobat_Grams:=FGrams*30]
+  sabzi<-BigFData[FoodType=="Sabzi"]
+  sabzi<-sabzi[,Sabzi_Grams:=FGrams*30]
+  roghan<-BigFData[FoodType=="Roghan"]
+  roghan<-roghan[,Roghan_Grams:=FGrams*30]
+  ghand<-BigFData[FoodType=="Ghand"]
+  ghand<-ghand[,Ghand_Grams:=FGrams*30]
+  labaniat<-BigFData[FoodType=="Shir" | FoodType=="Mast" | FoodType=="Panir"]
+  labaniat<-labaniat[,.(HHID,FGrams)]
+  labaniat<-labaniat[,lapply(.SD,sum),by=c("HHID")]
+  labaniat<-labaniat[,Labaniat_Grams:=FGrams*30]
+  tokhmemorgh<-BigFData[FoodType=="Tokhmemorgh"]
+  tokhmemorgh<-tokhmemorgh[,Tokhmemorgh_Grams:=FGrams*30]
+  MD<-merge(MD,goosht[,.(HHID,Goosht_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,morgh[,.(HHID,Morgh_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,mive[,.(HHID,Mive_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,nan[,.(HHID,Nan_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,sibzamini[,.(HHID,Sibzamini_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,makarooni[,.(HHID,Makarooni_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,berenj[,.(HHID,Berenj_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,hoboobat[,.(HHID,Hoboobat_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,sabzi[,.(HHID,Sabzi_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,roghan[,.(HHID,Roghan_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,ghand[,.(HHID,Ghand_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,labaniat[,.(HHID,Labaniat_Grams)],by=c("HHID"),all.x = T)
+  MD<-merge(MD,tokhmemorgh[,.(HHID,Tokhmemorgh_Grams)],by=c("HHID"),all.x = T)
   
   i <- 0
   while(MD[(NewPoor-OldPoor)!=0,.N]>0.001*nrow(MD[NewPoor==1])  & i <=15){
@@ -51,59 +93,22 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[,FPLine:=NULL]
     MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
                                  (Region=="Rural" & Decile==2),1,0)]
-    load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
-    MD<-MD[Selected_Group==1]
-    goosht<-BigFData[FoodType=="Goosht"]
-    goosht<-goosht[,Goosht_Grams:=FGrams]
-    morgh<-BigFData[FoodType=="Morgh"]
-    morgh<-morgh[,Morgh_Grams:=FGrams]
-    mive<-BigFData[FoodType=="Mive"]
-    mive<-mive[,Mive_Grams:=FGrams]
-    nan<-BigFData[FoodType=="Nan"]
-    nan<-nan[,Nan_Grams:=FGrams]
-    sibzamini<-BigFData[FoodType=="Sibzamini"]
-    sibzamini<-sibzamini[,Sibzamini_Grams:=FGrams]
-    makarooni<-BigFData[FoodType=="Makarooni"]
-    makarooni<-makarooni[,Makarooni_Grams:=FGrams]
-    berenj<-BigFData[FoodType=="Berenj"]
-    berenj<-berenj[,Berenj_Grams:=FGrams]
-    hoboobat<-BigFData[FoodType=="Hoboobat"]
-    hoboobat<-hoboobat[,Hoboobat_Grams:=FGrams]
-    sabzi<-BigFData[FoodType=="Sabzi"]
-    sabzi<-sabzi[,Sabzi_Grams:=FGrams]
-    roghan<-BigFData[FoodType=="Roghan"]
-    roghan<-roghan[,Roghan_Grams:=FGrams]
-    ghand<-BigFData[FoodType=="Ghand"]
-    ghand<-ghand[,Ghand_Grams:=FGrams]
-    labaniat<-BigFData[FoodType=="Shir" | FoodType=="Mast" | FoodType=="Panir"]
-    makarooni<-makarooni[,Makarooni_Grams:=FGrams]
     
-    MD<-merge(MD,goosht[,.(HHID,Goosht_Grams)],by=c("HHID"),all.x = T)
-    MD<-merge(MD,morgh[,.(HHID,Morgh_Grams)],by=c("HHID"),all.x = T)
-    MD<-merge(MD,mive[,.(HHID,Mive_Grams)],by=c("HHID"),all.x = T)
-    MD<-merge(MD,nan[,.(HHID,Nan_Grams)],by=c("HHID"),all.x = T)
-    MD<-merge(MD,sibzamini[,.(HHID,Sibzamini_Grams)],by=c("HHID"),all.x = T)
-    MD<-merge(MD,makarooni[,.(HHID,Makarooni_Grams)],by=c("HHID"),all.x = T)
-
-    Base<-Base[,FGrams_Per:=FGrams/EqSizeCalory]
-    Base1<-Base[,weighted.mean(FGrams_Per,Weight*Size),by=c("FoodType","cluster3","Region")]
-    Base1<-Base1[,Grams:=V1*30]
-    MDP <- MD[Selected_Group==1,
+    MDP <- MD [Selected_Group==1,
               .(FPLine=0.001*
-                  ((weighted.mean(LavashPrice,Weight,na.rm = TRUE)*(weighted.mean(FGrams_Per,Weight*Size),na.rm=TRUE)
-[FoodType=="Nan"]$Grams))+
-                     (weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Berenj"]$Grams))+
-                     (weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Makarooni"]$Grams))+
-                     (weighted.mean(AdasPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Hoboobat"]$Grams))+
-                     (weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Sibzamini"]$Grams))+
-                     (weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Sabzi"]$Grams))+
-                     (weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Mive"]$Grams))+
-                     (weighted.mean(LivestockGrams,Weight,na.rm = TRUE)*(Base1[FoodType=="Goosht"]$Grams))+
-                     (weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Morgh"]$Grams))+
-                     (weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Tokhmemorgh"]$Grams))+
-                     (weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)*((Base1[FoodType=="Shir"]$Grams)+(Base1[FoodType=="Mast"]$Grams)+(Base1[FoodType=="Panir"]$Grams)))+
-                     (weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Roghan"]$Grams))+
-                     (weighted.mean(GhandPrice,Weight,na.rm = TRUE)*(Base1[FoodType=="Ghand"]$Grams)))),
+                  (weighted.mean(LavashPrice,Weight,na.rm = TRUE)*weighted.mean(Nan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)*weighted.mean(Berenj_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*weighted.mean(Makarooni_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(AdasPrice,Weight,na.rm = TRUE)*weighted.mean(Hoboobat_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*weighted.mean(Sibzamini_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)*weighted.mean(Sabzi_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)*weighted.mean(Mive_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(LivestockGrams,Weight,na.rm = TRUE)*weighted.mean(Goosht_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*weighted.mean(Morgh_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*weighted.mean(Tokhmemorgh_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)*weighted.mean(Labaniat_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE)*weighted.mean(Roghan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)+
+                     weighted.mean(GhandPrice,Weight,na.rm = TRUE)*weighted.mean(Ghand_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE))),
               by=.(cluster3,Region)]
     MDP<-MDP[,lapply(.SD,sum),by=c("cluster3","Region")]
     price<- MD[Selected_Group==1,
