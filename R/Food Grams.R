@@ -48,7 +48,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                                      #Cheese_PasturizedPrice,
                                      Oil_NabatiGram,
                                      #Oil_AnimalPrice,
-                                     GhandGram)]
+                                     GhandGram,
+                                    ShekarGram)]
   
   #FoodGrams[FoodGrams == 0] <- NA
   
