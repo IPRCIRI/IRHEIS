@@ -140,14 +140,38 @@ Data67 <- data.table(Year=NA_integer_,FPLine=NA_real_,PovertyLine=NA_real_,
                      HSex=NA_character_)[0]
 Data68 <- data.table(Year=NA_integer_,FPLine=NA_real_,PovertyLine=NA_real_,
                      FinalFoodPoor=NA_real_,FinalPoor=NA_real_)[0]
-
+Data71 <- data.table(Year=NA_integer_,Oil_NabatiGram=NA_real_,
+                     Decile=NA_real_)[0]
+Data72 <- data.table(Year=NA_integer_,BreadGrams=NA_real_,
+                     Decile=NA_real_)[0]
+Data73 <- data.table(Year=NA_integer_,SibzaminiGram=NA_real_,
+                     Decile=NA_real_)[0]
+Data81 <- data.table(Year=NA_integer_,x=NA_real_,
+                     Decile=NA_real_)[0]
+Data82 <- data.table(Year=NA_integer_,x=NA_real_,
+                     Decile=NA_real_)[0]
+Data83 <- data.table(Year=NA_integer_,x=NA_real_,
+                     Decile=NA_real_)[0]
+Data84 <- data.table(Year=NA_integer_,x=NA_real_,
+                     Decile=NA_real_)[0]
+Data85 <- data.table(Year=NA_integer_,x=NA_real_,
+                     Decile=NA_real_)[0]
+Data86 <- data.table(Year=NA_integer_,x=NA_real_,
+                     Decile=NA_real_)[0]
+Data87 <- data.table(Year=NA_integer_,x=NA_real_,
+                     Decile=NA_real_)[0]
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodCon.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
+  #load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurable.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
   
+  MD[,Durable_Exp:=NULL]
+  MD[,Durable_Sale:=NULL]
   
   if (year >= 90){
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
@@ -157,8 +181,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   MD<-merge(MD,TotalFoodCon,by="HHID")
-  
-  #cat(MD[,weighted.mean(FPLine*Size,Weight,na.rm = TRUE)],"\t")
+  MD<-merge(MD,TotalFoodExp[,.(HHID,G01111,G01114,G01121,G01123,G0114,G01153,`011731`)],by="HHID")
+  MD<-merge(MD,DurableData,by="HHID")
+    #cat(MD[,weighted.mean(FPLine*Size,Weight,na.rm = TRUE)],"\t")
   #cat(MD[,weighted.mean(PovertyLine*Size,Weight,na.rm = TRUE)],"\t")
   #cat(MD[,weighted.mean(FinalFoodPoor,Weight,na.rm = TRUE)],"\t")
   #cat(MD[,weighted.mean(FinalPoor,Weight,na.rm = TRUE)],"\t")
@@ -319,22 +344,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   Data30 <- rbind(Data30,X)
   write.csv(Data30,file="Data30.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)),by=c("Region","HSex","Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("Region","HSex","Decile")]
   X[,Year:=year]
   Data31 <- rbind(Data31,X)
   write.csv(Data31,file="Data31.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)),by=c("HSex","Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("HSex","Decile")]
   X[,Year:=year]
   Data32 <- rbind(Data32,X)
   write.csv(Data32,file="Data32.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)),by=c("Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("Decile")]
   X[,Year:=year]
   Data33 <- rbind(Data33,X)
   write.csv(Data33,file="Data33.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)),by=c("Region","Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("Region","Decile")]
   X[,Year:=year]
   Data34 <- rbind(Data34,X)
   write.csv(Data34,file="Data34.csv")
@@ -522,6 +547,58 @@ for(year in (Settings$startyear:Settings$endyear)){
   X[,Year:=year]
   Data68 <- rbind(Data68,X)
   write.csv(Data68,file="Data68.csv")
+  
+  
+  X <- MD[,.(Oil_NabatiGram=weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data71 <- rbind(Data71,X)
+  write.csv(Data71,file="Data71.csv")
+  
+  X <- MD[,.(BreadGrams=weighted.mean(BreadGrams,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data72 <- rbind(Data72,X)
+  write.csv(Data72,file="Data72.csv")
+  
+  X <- MD[,.(SibzaminiGram=weighted.mean(SibzaminiGram,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data73 <- rbind(Data73,X)
+  write.csv(Data73,file="Data73.csv")
+  
+  
+  X <- MD[,.(x=weighted.mean(G01111/FoodExpenditure,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data81 <- rbind(Data81,X)
+  write.csv(Data81,file="Data81.csv")
+  
+  X <- MD[,.(x=weighted.mean(G01114/FoodExpenditure,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data82 <- rbind(Data82,X)
+  write.csv(Data82,file="Data82.csv")
+  
+  X <- MD[,.(x=weighted.mean(G01121/FoodExpenditure,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data83 <- rbind(Data83,X)
+  write.csv(Data83,file="Data83.csv")
+  
+  X <- MD[,.(x=weighted.mean(G01123/FoodExpenditure,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data84 <- rbind(Data84,X)
+  write.csv(Data84,file="Data84.csv")
+  
+  X <- MD[,.(x=weighted.mean(G0114/FoodExpenditure,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data85 <- rbind(Data85,X)
+  write.csv(Data85,file="Data85.csv")
+  
+  X <- MD[,.(x=weighted.mean(G01153/FoodExpenditure,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data86 <- rbind(Data86,X)
+  write.csv(Data86,file="Data86.csv")
+  
+  X <- MD[,.(x=weighted.mean(`011731`/FoodExpenditure,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data87 <- rbind(Data87,X)
+  write.csv(Data87,file="Data87.csv")
 }
 
 

@@ -26,6 +26,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   FoodGrams<-TotalFoodNonDurable[,.(HHID,BreadGrams,
                                      #BarbariPrice,
                                      GrainGrams,
+                                    Rice_Khareji1Gram,
+                                    Rice_Khareji2Gram,
                                      #Rice_DomsiahPrice,
                                      MacaroniGram,
                                      AdasGram,Loobia_ChitiGram,NokhodGram,
@@ -36,6 +38,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                                      TreeFruitsGrams,
                                      #CherryPrice,
                                      LivestockGrams,
+                                    CowMeatGram,
+                                    SheepMeatGram,
                                      #SheepMeatPrice,
                                      PoultryMeat_MGram,
                                      #Fish_North_FreshPrice,
@@ -44,7 +48,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                                      #Cheese_PasturizedPrice,
                                      Oil_NabatiGram,
                                      #Oil_AnimalPrice,
-                                     GhandGram)]
+                                     GhandGram,
+                                    ShekarGram)]
   
   #FoodGrams[FoodGrams == 0] <- NA
   
