@@ -17,11 +17,13 @@ library(stats)
 library(spatstat)
 
 FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,
-                                  Engle=NA_real_,Bundle_Value=NA_real_,
+                                  Engle=NA_real_,FPLine=NA_real_,
                                   Total_Exp_Month_Per=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
-                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+                                 Engle=NA_real_,FPLine=NA_real_,
+                                 Total_Exp_Month_Per=NA_real_,
+                                 PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
                                   House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
                                   SampleSize=NA_integer_,
@@ -29,7 +31,7 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
-year<-95
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -66,7 +68,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
               Engle=weighted.mean(HHEngle,Weight),
-              Bundle_Value=weighted.mean(Bundle_Value,Weight),
+              FPLine=weighted.mean(FPLine,Weight),
               Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight))]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
                           PovertyDepth=weighted.mean(FGT2M,Weight*Size))]
@@ -77,7 +79,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   ################Region##################
   X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by=Region]
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Engle=weighted.mean(HHEngle,Weight),
+              FPLine=weighted.mean(FPLine,Weight),
+              Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight)),by=Region]
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
                           PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by=Region]
   X1[,Year:=year]
@@ -133,9 +138,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 }
 
+write.csv(FinalClusterResults,file = "FinalClusterResults.csv")
+
 #ggplot(FinalClusterResults)+
  # geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3),linetype=factor(cluster3)))
-write.csv(FinalClusterResults,file = "FinalClusterResults.csv")
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
