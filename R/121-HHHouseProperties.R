@@ -40,12 +40,13 @@ for(year in Settings$startyear:Settings$endyear){
     ind <- which(!is.na(a))[2:46]
     setnames(P2,names(a[ind]))
     
-  }else if(year %in% 83:95){
+  }else if(year %in% 77:95){
     a <- unlist(P2Cols[P2Cols$Year==year,])
     ind <- which(!is.na(a))[-1]
     setnames(P2,names(a[ind]))
+    
   }
-  
+    
 
   f <- function(x){as.numeric(str_trim(x))}
   P2 <- P2[, lapply(.SD, f)] 
@@ -134,13 +135,14 @@ for(year in Settings$startyear:Settings$endyear){
   
   P2[,sewing := factor(sewing, levels=0:1,
                             labels=c("False","True"))]
-  
+  if(year>=81){
   P2[,fan := factor(fan, levels=0:1,
                        labels=c("False","True"))]
   
   P2[,cooler_water_movable := factor(cooler_water_movable,
                                      levels=0:1,
                        labels=c("False","True"))]
+  }
   if(year>=85){
   P2[,cooler_gas_movable := factor(cooler_gas_movable, 
                                    levels=0:1,
@@ -153,10 +155,10 @@ for(year in Settings$startyear:Settings$endyear){
   P2[,Microwave := factor(Microwave, levels=0:1,
                            labels=c("False","True"))]
   }
-  
+  if(year %in% 83:97){
   P2[,none := factor(none, levels=0:1,
                            labels=c("False","True"))]
-
+}
   P2[,pipewater := factor(pipewater, levels=0:1,
                      labels=c("False","True"))]
   
@@ -168,10 +170,10 @@ for(year in Settings$startyear:Settings$endyear){
   
   P2[,phone := factor(phone, levels=0:1,
                         labels=c("False","True"))]
-  
+  if(year>=81){
   P2[,internet := factor(internet, levels=0:1,
                         labels=c("False","True"))]
-  
+  }
   P2[,bathroom := factor(bathroom, levels=0:1,
                         labels=c("False","True"))]
   
@@ -180,10 +182,10 @@ for(year in Settings$startyear:Settings$endyear){
   
   P2[,cooler := factor(cooler, levels=0:1,
                         labels=c("False","True"))]
-  
+  if(year>=81){
   P2[,centralcooler := factor(centralcooler, levels=0:1,
                         labels=c("False","True"))]
-  
+  }
   P2[,centralheat := factor(centralheat, levels=0:1,
                         labels=c("False","True"))]
   if(year>=85){
