@@ -57,7 +57,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
 
-
+  MD[,Old:=ifelse(HAge>59,1,0)]
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
   
@@ -108,10 +108,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
-  cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(FinalPoor2,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
+ # cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
+  #cat(MD[, weighted.mean(FinalFoodPoor,Weight*Size)],"\t")
+  #cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
+  #cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
   #cat(MD[, sum(Weight*Size)],"\t")
 
   MD1<-MD[,.(HHID,FinalPoor)]
@@ -119,10 +119,14 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   MD[, weighted.mean(FinalPoor,Weight*Size)]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=Region]
+  MD[, weighted.mean(FinalPoor,Weight*Size),by=Old]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=cluster3]
   MD[,weighted.mean(FinalPoor,Weight),by=ProvinceName][order(ProvinceName)]
     
-    
+  cat(MD[, weighted.mean(FinalFoodPoor,Weight*Size)],"\t")
+  cat(MD[Old==1, weighted.mean(FinalFoodPoor,Weight*Size)],"\t")
+  cat(MD[Old==0, weighted.mean(FinalFoodPoor,Weight*Size)],"\t")
+  
   DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
                    Total_Exp_Month_Per_nondurable<1.2*PovertyLine,
                .(.N,Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight),
@@ -132,7 +136,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
   MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
   
-  cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
+  #cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
   
