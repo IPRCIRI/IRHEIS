@@ -165,7 +165,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                               ifelse(Yearpp==93,Engelpp*0.9919,
                               ifelse(Yearpp==94,Engelpp*0.9999,
                               ifelse(Yearpp==95,Engelpp*0.9639,
-                              ifelse(Yearpp==95,Engelpp*1,0)))))))))))))))]
+                              ifelse(Yearpp==96,Engelpp*1,0)))))))))))))))]
   
   EngleMD[,Engelm:=(Engel+Engelp+Engelpp)/3]
   
