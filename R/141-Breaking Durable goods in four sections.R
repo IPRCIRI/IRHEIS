@@ -25,7 +25,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalDurableDetails.rda"))
   TotalDurable[is.na(TotalDurable)] <- 0
 
-  if (year==97 | year==96){
+  if (year==97 | year==96 | year==98){
     g1 <- c("43222",
             "43223",
             "43224",

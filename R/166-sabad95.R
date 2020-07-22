@@ -63,7 +63,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                       weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*mean(Sibzamini_Grams)+
                       weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)*mean(Sabzi_Grams)+
                       weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)*mean(Mive_Grams)+
-                      weighted.mean(LivestockGrams,Weight,na.rm = TRUE)*mean(Goosht_Grams)+
+                      weighted.mean(CowMeatPrice,Weight,na.rm = TRUE)*mean(Goosht_Grams)+
                       weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*mean(Morgh_Grams)+
                       weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*mean(Tokhmemorgh_Grams)+
                       weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)*mean(Labaniat_Grams)+
@@ -79,12 +79,15 @@ for(year in (Settings$startyear:Settings$endyear)){
                  SibzaminiPrice=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),
                  Sabzi_KhordanPrice=weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE),
                  Banana_CoconutPrice=weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE),
-                 LivestockGrams=weighted.mean(LivestockGrams,Weight,na.rm = TRUE),
+                 CowMeatPrice=weighted.mean(CowMeatPrice,Weight,na.rm = TRUE),
                  PoultryMeat_MPrice=weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE),
                  Egg_MashinPrice=weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE),
                  Milk_PasteurizedPrice=weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),
                  Oil_NabatiPrice=weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),
-                 GhandPrice=weighted.mean(GhandPrice,Weight,na.rm = TRUE))]
+                 GhandPrice=weighted.mean(GhandPrice,Weight,na.rm = TRUE),
+                 number=.N),
+               by=.(cluster3,Region)]
+    
     #by=.(cluster3,Region)]
     gram <-MD [Selected_Group==1,
                .(Nan_Grams= weighted.mean(Nan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
@@ -99,7 +102,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                  Tokhmemorgh_Grams=weighted.mean(Tokhmemorgh_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
                  Labaniat_Grams=weighted.mean(Labaniat_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
                  Roghan_Grams=weighted.mean(Roghan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
-                 Ghand_Grams=weighted.mean(Ghand_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE)),
+                 Ghand_Grams=weighted.mean(Ghand_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
+                 number=.N),
                by=.(cluster3,Region)]
     
     MDP[is.na(MDP)] <- 0
