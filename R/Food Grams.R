@@ -28,6 +28,12 @@ for(year in (Settings$startyear:Settings$endyear)){
                                      GrainGrams,
                                     Rice_Khareji1Gram,
                                     Rice_Khareji2Gram,
+                                    Rice_TaromGram,
+                                    Rice_AshGram,
+                                    Rice_NonameGram,
+                                    Rice_MahaliGram,
+                                    Rice_DomsiahGram,
+                                    Rice_KhoordeGram,
                                      #Rice_DomsiahPrice,
                                      MacaroniGram,
                                      AdasGram,Loobia_ChitiGram,NokhodGram,
@@ -48,7 +54,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                                      #Cheese_PasturizedPrice,
                                      Oil_NabatiGram,
                                      #Oil_AnimalPrice,
-                                     GhandGram,
+                                     GhandGram,Oil_OliveGram,Oil_Nabati_OtherGram,
                                     ShekarGram)]
   
   #FoodGrams[FoodGrams == 0] <- NA
