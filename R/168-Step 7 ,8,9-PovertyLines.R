@@ -103,10 +103,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
   
- # cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
- # cat(MD[, weighted.mean(FinalPoor2,Weight*Size)],"\t")
- # cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
-#  cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(FinalPoor2,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
   #cat(MD[, sum(Weight*Size)],"\t")
 
   MD1<-MD[,.(HHID,FinalPoor)]
@@ -131,8 +131,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
   
-  cat(MD[Decile==3, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
-  cat(MD[Decile==2, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
+ # cat(MD[Decile==3, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
+ # cat(MD[Decile==2, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
 }
 
 #ggplot(FinalClusterResults)+

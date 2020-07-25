@@ -69,10 +69,10 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   
   #############################################
   A1<-DataTable[(`71111`+`71112`+`71116`+`71117`>0),
-         .(A1=weighted.mean(`71111`+`71112`+`71116`+
-                              `71117`,Weight)),by=Decile]
+                .(A1=weighted.mean(`71111`+`71112`+`71116`+
+                                     `71117`,Weight)),by=Decile]
   A2<-DataTable[(`91128`+`91129`>0),
-         .(A2=weighted.mean(`91128`+`91129`,Weight)),by=Decile]
+                .(A2=weighted.mean(`91128`+`91129`,Weight)),by=Decile]
   A3<-DataTable[`53112`>0 ,.(A3=weighted.mean(`53112`,Weight)),by=Decile]
   A4<-DataTable[`53116`>0 , .(A4=weighted.mean(`53116`,Weight)),by=Decile]
   A5<-DataTable[`53113`>0 ,.(A5=weighted.mean(`53113`,Weight)),by=Decile]
@@ -104,28 +104,22 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable<-merge(DataTable,A5,by="Decile")
   DataTable<-merge(DataTable,A6,by="Decile")
   DataTable<-merge(DataTable,A7,by="Decile")
-  if (year==98){
-    A88<-data.table("3","200000")
-    names(A88)<-c("Decile","A8")
-    A8 <- rbind(A8, A88)
-  }
-  DataTable<-merge(DataTable,A8,by="Decile",allow.cartesian=TRUE)
-  DataTable[,A8:=as.numeric(A8)]
+  DataTable<-merge(DataTable,A8,by="Decile")
   DataTable<-merge(DataTable,A9,by="Decile")
   if (year!=90 & year!=92 & year!=93 & year!=95){
-  DataTable<-merge(DataTable,A10,by="Decile")
+    DataTable<-merge(DataTable,A10,by="Decile")
   }
   DataTable<-merge(DataTable,A11,by="Decile")
   
   DataTable[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
   DataTable[tvcr=="True",Added2:=A2-0.033*TV_Sale]
   DataTable[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-        Added3:=A3-0.033*yakhchal_Sale]
+            Added3:=A3-0.033*yakhchal_Sale]
   DataTable[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
   DataTable[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
   DataTable[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
   DataTable[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
-  DataTable[computer=="True",Added8:=A8-0.06*PC_Sale]
+  DataTable[computer=="True",Added8:=0.06*A8-PC_Sale]
   DataTable[car=="True",Added9:=A9-0.5*lastik_Sale]
   if (year!=90 & year!=92 & year!=93 & year!=95){
     DataTable[car=="True",Added10:=A10]
@@ -133,10 +127,10 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable[car=="True",Added11:=A11]
   
   if (year!=90 & year!=92 & year!=93 & year!=95){ 
-  dep <- c( "71111", "71112","71116", "71117",
-            "91128", "91129","53112", "53116",
-            "53113", "82113","53125", "91311",
-            "72111", "72118","72319")
+    dep <- c( "71111", "71112","71116", "71117",
+              "91128", "91129","53112", "53116",
+              "53113", "82113","53125", "91311",
+              "72111", "72118","72319")
   }
   
   if (year==90 | year==92 | year==93 | year==95){
@@ -150,8 +144,8 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   DataTable[is.na(DataTable)] <- 0
   
   if (year!=90 & year!=92 & year!=93 & year!=95){
-  DataTable[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
-       Added7+Added8+Added9+Added10+Added11]
+    DataTable[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+                Added7+Added8+Added9+Added10+Added11]
   }
   if (year==90 | year==92 | year==93 | year==95){
     DataTable[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
@@ -209,27 +203,27 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   
   if (year!=90 & year!=92 & year!=93 & year!=95){ 
-  SMD <- MD[,.(HHID,Region,
-               ServiceExp,FoodExpenditure,Total_Exp_Month,
-               NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
-               # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-               TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
-               Weight,MetrPrice,Size,EqSizeOECD
-               ,`71111`,`71117`,`71112`,`71116`,
-               `91128`,`91129`,`53112`,`53116`,
-               `53113`,`82113`,`53125`,`91311`,
-               `72111`,`72118`,`72319`
-               ,Auto_Sale,TV_Sale,Mobile_Sale,PC_Sale,
-               yakhchal_Sale,ojaghgaz_Sale,lebasshooyi_Sale,
-               Coolergazi_Sale,lastik_Sale
-               ,car,tvcr,freezer,frez_refrig,refrigerator,oven,
-               washer,cellphone,cooler_gas,computer
-               ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
-               Amusement_Exp, Communication_Exp, 
-               HouseandEnergy_Exp, Furniture_Exp, HotelRestaurant_Exp, Hygiene_Exp, 
-               Transportation_Exp, Other_Exp
-               ,Add_to_NonDurable,Medical_Exp,
-               Durable_NoDep,Durable_Emergency)]
+    SMD <- MD[,.(HHID,Region,
+                 ServiceExp,FoodExpenditure,Total_Exp_Month,
+                 NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
+                 # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
+                 TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
+                 Weight,MetrPrice,Size,EqSizeOECD
+                 ,`71111`,`71117`,`71112`,`71116`,
+                 `91128`,`91129`,`53112`,`53116`,
+                 `53113`,`82113`,`53125`,`91311`,
+                 `72111`,`72118`,`72319`
+                 ,Auto_Sale,TV_Sale,Mobile_Sale,PC_Sale,
+                 yakhchal_Sale,ojaghgaz_Sale,lebasshooyi_Sale,
+                 Coolergazi_Sale,lastik_Sale
+                 ,car,tvcr,freezer,frez_refrig,refrigerator,oven,
+                 washer,cellphone,cooler_gas,computer
+                 ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
+                 Amusement_Exp, Communication_Exp, 
+                 HouseandEnergy_Exp, Furniture_Exp, HotelRestaurant_Exp, Hygiene_Exp, 
+                 Transportation_Exp, Other_Exp
+                 ,Add_to_NonDurable,Medical_Exp,
+                 Durable_NoDep,Durable_Emergency)]
   }
   if (year==90 | year==92 | year==93 | year==95){
     SMD <- MD[,.(HHID,Region,
@@ -265,12 +259,164 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
   
   S1<-SMD[,.(HHID,Region,NewArea_Name,TFoodKCaloriesHH_Per,Bundle_Value)]
-
+  
   
   PriceDT <- CalcTornqvistIndex(SMD)
-  SMD <- DoDeciling_SetInitialPoor(SMD,PriceDT)
-  S2<-SMD[,.(HHID,Region,NewArea_Name,TFoodKCaloriesHH_Per,Bundle_Value)]
 
+  if("PriceIndex" %in% names(SMD)){
+    SMD <- SMD[,PriceIndex:=NULL]
+  }
+  SMD <- merge(SMD,PriceDT,by=c("Region","NewArea_Name"))
+  
+  
+  SMD <- SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
+  
+  SMD <- SMD[order(Total_Exp_Month_Per_nondurable_Real)]
+  SMD <- SMD[,xr25th:=.SD[25,Total_Exp_Month_Per_nondurable_Real],by=.(Region,NewArea_Name)]
+  SMD <- SMD[,First25:=ifelse(Total_Exp_Month_Per_nondurable_Real<=xr25th,1,0)]
+  
+  SMD <- SMD[order(Total_Exp_Month_Per_nondurable_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
+  SMD <- SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  
+  #Calculate deciles by weights
+  SMD <- SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  SMD <- SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  #############################################
+  A1<-SMD[(`71111`+`71112`+`71116`+`71117`>0),
+                .(A1=weighted.mean(`71111`+`71112`+`71116`+
+                                     `71117`,Weight)),by=Decile]
+  A2<-SMD[(`91128`+`91129`>0),
+                .(A2=weighted.mean(`91128`+`91129`,Weight)),by=Decile]
+  A3<-SMD[`53112`>0 ,.(A3=weighted.mean(`53112`,Weight)),by=Decile]
+  A4<-SMD[`53116`>0 , .(A4=weighted.mean(`53116`,Weight)),by=Decile]
+  A5<-SMD[`53113`>0 ,.(A5=weighted.mean(`53113`,Weight)),by=Decile]
+  A6<-SMD[`82113`>0, .(A6=weighted.mean(`82113`,Weight)),by=Decile]
+  A7<-SMD[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by=Decile]
+  A8<-SMD[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by=Decile]
+  A9<-SMD[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by=Decile]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    A10<-SMD[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
+  }
+  A11<-SMD[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by=Decile]
+  
+  SMD[,A1:=NULL]
+  SMD[,A2:=NULL]
+  SMD[,A3:=NULL]
+  SMD[,A4:=NULL]
+  SMD[,A5:=NULL]
+  SMD[,A6:=NULL]
+  SMD[,A7:=NULL]
+  SMD[,A8:=NULL]
+  SMD[,A9:=NULL]
+  SMD[,A10:=NULL]
+  SMD[,A11:=NULL]
+  
+  SMD<-merge(SMD,A1,by="Decile")
+  SMD<-merge(SMD,A2,by="Decile")
+  SMD<-merge(SMD,A3,by="Decile")
+  SMD<-merge(SMD,A4,by="Decile")
+  SMD<-merge(SMD,A5,by="Decile")
+  SMD<-merge(SMD,A6,by="Decile")
+  SMD<-merge(SMD,A7,by="Decile")
+  if (year==98){
+    A88<-data.table("3","200000")
+    names(A88)<-c("Decile","A8")
+    A8 <- rbind(A8, A88)
+  }
+   SMD<-merge(SMD,A8,by="Decile")
+   SMD[,A8:=as.numeric(A8)]
+  SMD<-merge(SMD,A9,by="Decile")
+  
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    SMD<-merge(SMD,A10,by="Decile")
+  }
+  SMD<-merge(SMD,A11,by="Decile")
+  
+  SMD[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
+  SMD[tvcr=="True",Added2:=A2-0.033*TV_Sale]
+  SMD[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
+            Added3:=A3-0.033*yakhchal_Sale]
+  SMD[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
+  SMD[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
+  SMD[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
+  SMD[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
+  SMD[computer=="True",Added8:=0.06*A8-PC_Sale]
+  SMD[car=="True",Added9:=A9-0.5*lastik_Sale]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    SMD[car=="True",Added10:=A10]
+  }
+  SMD[car=="True",Added11:=A11]
+  
+  if (year!=90 & year!=92 & year!=93 & year!=95){ 
+    dep <- c( "71111", "71112","71116", "71117",
+              "91128", "91129","53112", "53116",
+              "53113", "82113","53125", "91311",
+              "72111", "72118","72319")
+  }
+  
+  if (year==90 | year==92 | year==93 | year==95){
+    dep <- c( "71111", "71112","71116", "71117",
+              "91128", "91129","53112", "53116",
+              "53113", "82113","53125", "91311",
+              "72111","72319")
+  }
+  
+  SMD[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
+  SMD[is.na(SMD)] <- 0
+  
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    SMD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+                Added7+Added8+Added9+Added10+Added11]
+  }
+  if (year==90 | year==92 | year==93 | year==95){
+    SMD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
+                Added7+Added8+Added9+Added11]
+  }
+  
+  #Calculate Monthly Total Expenditures 
+  nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
+          "Amusement_Exp", "Communication_Exp", 
+          "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
+          "Transportation_Exp", "Other_Exp"
+          ,"Add_to_NonDurable"
+          ,"Added"
+          #, "Total_Depreciated_Durable"
+  )
+  w <- c(nw, "Medical_Exp",
+         "Durable_NoDep","Durable_Emergency")
+  
+  
+  SMD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
+  SMD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
+  
+  SMD[,weighted.mean(Total_Exp_Month,Weight)]
+  SMD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
+  
+  SMD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+  SMD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
+  
+  ###################################################################
+  
+  SMD <- SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
+  
+  SMD <- SMD[order(Total_Exp_Month_Per_nondurable_Real)]
+  SMD <- SMD[,xr25th:=.SD[25,Total_Exp_Month_Per_nondurable_Real],by=.(Region,NewArea_Name)]
+  SMD <- SMD[,First25:=ifelse(Total_Exp_Month_Per_nondurable_Real<=xr25th,1,0)]
+  
+  SMD <- SMD[order(Total_Exp_Month_Per_nondurable_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
+  SMD <- SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  
+  #Calculate deciles by weights
+  SMD <- SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  SMD <- SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  
+  SMD <- SMD[,InitialPoorBasedOnPercentile:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
+  
+  
+  S2<-SMD[,.(HHID,Region,NewArea_Name,TFoodKCaloriesHH_Per,Bundle_Value)]
+  
   
   #comparison <- compare(S1,S2,"row")
   comparison <- setdiff(S1$HHID,S2$HHID)
@@ -293,12 +439,12 @@ for(year in (Settings$startyear:Settings$endyear)){
     #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
     SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
     
-   # cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
-
+    # cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
     
     
-    }
-
+    
+  }
+  
   cat(SMD[,weighted.mean(Calorie_Need_WorldBank,Weight)],"\n")
   cat(SMD[,weighted.mean(TFoodKCaloriesHH_Per,Weight)],"\n")
   cat(SMD[,weighted.mean(Bundle_Value,Weight)],"\n")
@@ -306,22 +452,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,InitialPoorBasedOnPercentile,Decile,Percentile)],by="HHID")
   setnames(MD,"InitialPoorBasedOnPercentile","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
   
-
-######################################################################
-save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
-
-#A<-merge(A3,A2)
-#A<-merge(A,A1)
-#A<-merge(A,A4)
-#A<-merge(A,A5)
-#A<-merge(A,A6)
-#A<-merge(A,A7)
-#A<-merge(A,A8)
-#A<-merge(A,A9)
-#A<-merge(A,A10)
-#A<-merge(A,A11)
-
-
+  
+  ######################################################################
+  save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
+  
+  #A<-merge(A3,A2)
+  #A<-merge(A,A1)
+  #A<-merge(A,A4)
+  #A<-merge(A,A5)
+  #A<-merge(A,A6)
+  #A<-merge(A,A7)
+  #A<-merge(A,A8)
+  #A<-merge(A,A9)
+  #A<-merge(A,A10)
+  #A<-merge(A,A11)
+  
+  
 }
 
 
