@@ -52,7 +52,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,A5,by="Decile")
   MD<-merge(MD,A6,by="Decile")
   MD<-merge(MD,A7,by="Decile")
+
+  if (year==98){
+    A88<-data.table("5","200000")
+    names(A88)<-c("Decile","A8")
+    A8 <- rbind(A8, A88)
+  }
   MD<-merge(MD,A8,by="Decile")
+  MD[,A8:=as.numeric(A8)]
   MD<-merge(MD,A9,by="Decile")
   if (year!=90 & year!=92 & year!=93 & year!=95){
     MD<-merge(MD,A10,by="Decile")

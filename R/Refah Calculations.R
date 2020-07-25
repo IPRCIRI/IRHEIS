@@ -180,9 +180,12 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD<-merge(MD,Deciles,by="HHID")
   }
   
-  MD<-merge(MD,TotalFoodCon,by="HHID")
-  MD<-merge(MD,TotalFoodExp[,.(HHID,G01111,G01114,G01121,G01123,G0114,G01153,`011731`)],by="HHID")
-  MD<-merge(MD,DurableData,by="HHID")
+  if (year < 90){
+  MD<-merge(MD,TotalFoodCon,by="HHID",all.x=TRUE)
+  }
+  
+  MD<-merge(MD,TotalFoodExp[,.(HHID,G01111,G01114,G01121,G01123,G0114,G01153,`011731`)],by="HHID",all.x=TRUE)
+  MD<-merge(MD,DurableData,by="HHID",all.x=TRUE)
     #cat(MD[,weighted.mean(FPLine*Size,Weight,na.rm = TRUE)],"\t")
   #cat(MD[,weighted.mean(PovertyLine*Size,Weight,na.rm = TRUE)],"\t")
   #cat(MD[,weighted.mean(FinalFoodPoor,Weight,na.rm = TRUE)],"\t")
@@ -344,22 +347,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   Data30 <- rbind(Data30,X)
   write.csv(Data30,file="Data30.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("Region","HSex","Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)/weighted.mean(Durable_Exp,Weight,na.rm = TRUE)),by=c("Region","HSex","Decile")]
   X[,Year:=year]
   Data31 <- rbind(Data31,X)
   write.csv(Data31,file="Data31.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("HSex","Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)/weighted.mean(Durable_Exp,Weight,na.rm = TRUE)),by=c("HSex","Decile")]
   X[,Year:=year]
   Data32 <- rbind(Data32,X)
   write.csv(Data32,file="Data32.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)/weighted.mean(Durable_Exp,Weight,na.rm = TRUE)),by=c("Decile")]
   X[,Year:=year]
   Data33 <- rbind(Data33,X)
   write.csv(Data33,file="Data33.csv")
   
-  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Exp-Durable_Sale,Weight,na.rm = TRUE)),by=c("Region","Decile")]
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Durable_Sale,Weight,na.rm = TRUE)/weighted.mean(Durable_Exp,Weight,na.rm = TRUE)),by=c("Region","Decile")]
   X[,Year:=year]
   Data34 <- rbind(Data34,X)
   write.csv(Data34,file="Data34.csv")

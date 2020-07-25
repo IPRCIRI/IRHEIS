@@ -521,7 +521,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
  # TC <- TC[Code %in% ct$StartCode:ct$EndCode]
 
-  if(year %in% 84:97){
+  if(year %in% 84:98){
     TC[,Durable_Exp:=as.numeric(Durable_Exp)/12]
    TC[,Durable_Sale:=as.numeric(Durable_Sale)/12]
   }
