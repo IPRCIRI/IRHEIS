@@ -26,6 +26,7 @@ for(year in (Settings$startyear:Settings$endyear)){
  FoodPrices<-TotalFoodNonDurable[,.(HHID,LavashPrice,
                                     #BarbariPrice,
                                     Rice_TaromPrice,
+                                    Rice_Khareji2Price,
                                     #Rice_DomsiahPrice,
                                     MacaroniPrice,
                                     AdasPrice,
