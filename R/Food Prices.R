@@ -23,29 +23,25 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodNonDurable.rda"))
 
- FoodPrices<-TotalFoodNonDurable[,.(HHID,LavashPrice,
-                                    #BarbariPrice,
-                                    Rice_TaromPrice,
-                                    Rice_Khareji2Price,
-                                    #Rice_DomsiahPrice,
+ FoodPrices<-TotalFoodNonDurable[,.(HHID,
+                                    LavashPrice,BarbariPrice,TaftoonPrice, Bread_FantasyPrice,
+                                    Rice_TaromPrice,Rice_Khareji2Price,Rice_DomsiahPrice, Rice_AshPrice,
                                     MacaroniPrice,
-                                    AdasPrice,
-                                    #Loobia_ChitiPrice,
+                                    AdasPrice, Loobia_ChitiPrice,  Loobia_GhermezPrice, NokhodPrice,
                                     SibzaminiPrice,
-                                    Sabzi_KhordanPrice,
-                                    #KhiarPrice,
-                                    Banana_CoconutPrice,
-                                    #CherryPrice,
-                                    CowMeatPrice,
-                                    #SheepMeatPrice,
+                                    Sabzi_KhordanPrice, Sabzi_AshPrice,  KahooPrice,KhiarPrice,
+                                    Banana_CoconutPrice,CherryPrice,ApplePrice,OrangePrice,
+                                    CowMeatPrice,SheepMeatPrice,
                                     PoultryMeat_MPrice,
-                                    #Fish_North_FreshPrice,
+                                    Fish_North_FreshPrice,Fish_South_FreshPrice,Fish_ConservedPrice,
                                     Egg_MashinPrice,
-                                    Milk_PasteurizedPrice,
-                                    #Cheese_PasturizedPrice,
-                                    Oil_NabatiPrice,
-                                    #Oil_AnimalPrice,
-                                    GhandPrice)]
+                                    Milk_PasteurizedPrice, Yogurt_PasturizedPrice,CreamPrice,
+                                    Cheese_PasturizedPrice,Cheese_NonPasturizedPrice,
+                                    Oil_NabatiPrice,Oil_AnimalPrice,ButterGrams,Butter_NonAnimalPrice,
+                                    GhandPrice,ShekarPrice,
+                                    PoultryMeat_MPrice,
+                                    KeshmeshPrice,TokhmePrice,NokhodchiPrice,PistachioPrice
+                                    )]
 
  FoodPrices[FoodPrices == 0] <- NA
  
