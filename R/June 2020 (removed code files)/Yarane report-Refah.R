@@ -57,6 +57,10 @@ MD_Ok<- MD[TotalAid>0]
 MD_Ok[,ratio:=TotalAid/Total_Exp_Month]
 MD_Ok[,.(.N,weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
 MD_Ok[,.(weighted.mean(ratio,Weight*Size,na.rm = TRUE)),by=.(Decile)][order(Decile)]
+MD_Ok[,.(.N,weighted.mean(Total_Exp_Month,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
+MD_Ok[,.(weighted.mean(Total_Exp_Month,Weight*Size,na.rm = TRUE)),by=.(Decile)][order(Decile)]
+MD_Ok[,.(.N,weighted.mean(Total_Exp_Month/EqSizeOECD,Weight*Size,na.rm = TRUE)),by=.(Region,Decile)][order(Region,Decile)]
+MD_Ok[,.(weighted.mean(Total_Exp_Month/EqSizeOECD,Weight*Size,na.rm = TRUE)),by=.(Decile)][order(Decile)]
 
 load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadExp.rda"))
 load(file = paste0(Settings$HEISProcessedPath,"Y",year,"BreadCon.rda"))
@@ -67,6 +71,9 @@ MD[is.na(MD)] <- 0
 
 MD[,weighted.mean(G01114+G01115,Weight),by=.(Region,Decile)][order(Region,Decile)]
 MD[,weighted.mean(G01114+G01115,Weight),by=.(Decile)][order(Decile)]
+
+MD[,weighted.mean(Size,Weight),by=.(Decile)][order(Decile)]
+MD[,weighted.mean(Size,Weight),by=.(Region,Decile)][order(Region,Decile)]
 
 MD[,weighted.mean(BreadGrams,Weight),by=.(Region,Decile)][order(Region,Decile)]
 MD[,weighted.mean(BreadGrams,Weight),by=.(Decile)][order(Decile)]
