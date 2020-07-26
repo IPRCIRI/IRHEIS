@@ -17,6 +17,7 @@ library(stringr)
 library(readxl)
 library(spatstat)
 library(writexl)
+library(tidyr)
 
 year<-95
 
@@ -24,35 +25,39 @@ load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
 #load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
 
 goosht<-BigFData[FoodType=="Goosht"]
-goosht<-goosht[,Goosht_Grams:=FGrams ]
+goosht<-goosht[,Goosht_Grams:=FGrams*30 ]
 morgh<-BigFData[FoodType=="Morgh"]
-morgh<-morgh[,Morgh_Grams:=FGrams ]
+morgh<-morgh[,Morgh_Grams:=FGrams*30 ]
 mive<-BigFData[FoodType=="Mive"]
-mive<-mive[,Mive_Grams:=FGrams ]
+mive<-mive[,Mive_Grams:=FGrams*30 ]
 nan<-BigFData[FoodType=="Nan"]
-nan<-nan[,Nan_Grams:=FGrams ]
+nan<-nan[,Nan_Grams:=FGrams*30 ]
 sibzamini<-BigFData[FoodType=="Sibzamini"]
-sibzamini<-sibzamini[,Sibzamini_Grams:=FGrams ]
+sibzamini<-sibzamini[,Sibzamini_Grams:=FGrams*30 ]
 makarooni<-BigFData[FoodType=="Makarooni"]
-makarooni<-makarooni[,Makarooni_Grams:=FGrams ]
+makarooni<-makarooni[,Makarooni_Grams:=FGrams*30 ]
 berenj<-BigFData[FoodType=="Berenj"]
-berenj<-berenj[,Berenj_Grams:=FGrams ]
+berenj<-berenj[,Berenj_Grams:=FGrams*30 ]
 hoboobat<-BigFData[FoodType=="Hoboobat"]
-hoboobat<-hoboobat[,Hoboobat_Grams:=FGrams ]
+hoboobat<-hoboobat[,Hoboobat_Grams:=FGrams*30 ]
 sabzi<-BigFData[FoodType=="Sabzi"]
-sabzi<-sabzi[,Sabzi_Grams:=FGrams ]
+sabzi<-sabzi[,Sabzi_Grams:=FGrams*30 ]
 roghan<-BigFData[FoodType=="Roghan"]
-roghan<-roghan[,Roghan_Grams:=FGrams ]
+roghan<-roghan[,Roghan_Grams:=FGrams*30 ]
 ghand<-BigFData[FoodType=="Ghand"]
-ghand<-ghand[,Ghand_Grams:=FGrams ]
+ghand<-ghand[,Ghand_Grams:=FGrams*30 ]
 shir<-BigFData[FoodType=="Shir"]
-shir<-shir[,Shir_Grams:=FGrams]
+shir<-shir[,Shir_Grams:=FGrams*30]
 panir<-BigFData[FoodType=="Panir"]
-panir<-shir[,Panir_Grams:=FGrams]
+panir<-panir[,Panir_Grams:=FGrams*30]
 mast<-BigFData[FoodType=="Mast"]
-mast<-mast[,Mast_Grams:=FGrams]
+mast<-mast[,Mast_Grams:=FGrams*30]
 tokhmemorgh<-BigFData[FoodType=="Tokhmemorgh"]
-tokhmemorgh<-tokhmemorgh[,Tokhmemorgh_Grams:=FGrams ]
+tokhmemorgh<-tokhmemorgh[,Tokhmemorgh_Grams:=FGrams*30 ]
+mahi<-BigFData[FoodType=="Mahi"]
+mahi<-mahi[,Mahi_Grams:=FGrams*30 ]
+khoshkbar<-BigFData[FoodType=="Khoshkbar"]
+khoshkbar<-khoshkbar[,Khoshkbar_Grams:=FGrams*30 ]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 
@@ -71,7 +76,10 @@ MD<-merge(MD,shir[,.(HHID,Shir_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,panir[,.(HHID,Panir_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,mast[,.(HHID,Mast_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,tokhmemorgh[,.(HHID,Tokhmemorgh_Grams)],by=c("HHID"),all.x = T)
-MD<-MD[,Labaniat_Grams:=Shir_Grams+Panir_Grams+Mast_Grams]
+MD<-merge(MD,khoshkbar[,.(HHID,Khoshkbar_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,mahi[,.(HHID,Mahi_Grams)],by=c("HHID"),all.x = T)
+
+MD<-MD[,Labaniat_Grams:=Shir_Grams+Mast_Grams]
 MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
                              (Region=="Rural" & Decile==2),1,0)]
 
@@ -89,7 +97,11 @@ gram <-MD [Selected_Group==1,
              Labaniat_Grams=weighted.mean(Labaniat_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Roghan_Grams=weighted.mean(Roghan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Ghand_Grams=weighted.mean(Ghand_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
-             number=.N)]
+             Khoshkbar_Grams=weighted.mean(Khoshkbar_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
+             Mahi_Grams=weighted.mean(Mahi_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
+             Panir_Grams=weighted.mean(Panir_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE))]
+             
+
 
 
 for(year in (Settings$startyear:Settings$endyear)){
@@ -128,22 +140,45 @@ for(year in (Settings$startyear:Settings$endyear)){
     MD[,FPLine:=NULL]
     MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
                                  (Region=="Rural" & Decile==2),1,0)]
+    MDP <- MD [Selected_Group==1,
+                   .(Nan_Price=min(weighted.mean(LavashPrice,Weight,na.rm = TRUE),weighted.mean(BarbariPrice,Weight,na.rm = TRUE),weighted.mean(TaftoonPrice,Weight,na.rm = TRUE),weighted.mean(Bread_FantasyPrice,Weight,na.rm = TRUE)),
+                      Berenj_Price=min(weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE),weighted.mean(Rice_AshPrice,Weight,na.rm = TRUE),weighted.mean(Rice_Khareji2Price,Weight,na.rm = TRUE),weighted.mean(Rice_DomsiahPrice,Weight,na.rm = TRUE)),
+                      Makarooni_Price=weighted.mean(MacaroniPrice,Weight,na.rm = TRUE),
+                      Hoboobat_Price=min(weighted.mean(AdasPrice,Weight,na.rm = TRUE),weighted.mean(Loobia_ChitiPrice,Weight,na.rm = TRUE),weighted.mean(Loobia_GhermezPrice,Weight,na.rm = TRUE),weighted.mean(NokhodPrice,Weight,na.rm = TRUE)),
+                      Sabzi_Price=min(weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE),weighted.mean(Sabzi_AshPrice,Weight,na.rm = TRUE),weighted.mean(KahooPrice,Weight,na.rm = TRUE),weighted.mean(KhiarPrice,Weight,na.rm = TRUE)),
+                      Sibzamini_Price=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),
+                      Mive_Price=min(weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE),weighted.mean(CherryPrice,Weight,na.rm = TRUE),weighted.mean(OrangePrice,Weight,na.rm = TRUE),weighted.mean(ApplePrice,Weight,na.rm = TRUE)),
+                      Goosht_Price=min(weighted.mean(CowMeatPrice,Weight,na.rm = TRUE),weighted.mean(SheepMeatPrice,Weight,na.rm = TRUE)),
+                      Morgh_Price=weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE),
+                      Mahi_Price=min(weighted.mean(Fish_North_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_South_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_ConservedPrice,Weight,na.rm = TRUE)),
+                      weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE),
+                      ShirMast_Price=min(weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),weighted.mean(Yogurt_PasturizedPrice,Weight,na.rm = TRUE)),
+                      Roghan_Price=min(weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),weighted.mean(Oil_AnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_NonAnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_Animal_PasturizedPrice,Weight,na.rm = TRUE)),
+                      Ghand_Price=min(weighted.mean(GhandPrice,Weight,na.rm = TRUE),weighted.mean(ShekarPrice,Weight,na.rm = TRUE))),
+               by=.(cluster3,Region)]
+    for (col in c("Berenj_Price")) 
+      MDP[is.na(get(col)),(col):=min(col)]
+    
       MDP <- MD [Selected_Group==1,
                .(FPLine=0.001*
-                   (weighted.mean(LavashPrice,Weight,na.rm = TRUE)*mean(Nan_Grams,na.rm = TRUE)+
-                      weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE)*mean(Berenj_Grams)+
-                      weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*mean(Makarooni_Grams)+
-                      weighted.mean(AdasPrice,Weight,na.rm = TRUE)*mean(Hoboobat_Grams)+
-                      weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*mean(Sibzamini_Grams)+
-                      weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE)*mean(Sabzi_Grams)+
-                      weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE)*mean(Mive_Grams)+
-                      weighted.mean(CowMeatPrice,Weight,na.rm = TRUE)*mean(Goosht_Grams)+
-                      weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*mean(Morgh_Grams)+
-                      weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*mean(Tokhmemorgh_Grams)+
-                      weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE)*mean(Labaniat_Grams)+
-                      weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE)*mean(Roghan_Grams)+
-                      weighted.mean(GhandPrice,Weight,na.rm = TRUE)*mean(Ghand_Grams))),
+                    (min(weighted.mean(LavashPrice,Weight,na.rm = TRUE),weighted.mean(BarbariPrice,Weight,na.rm = TRUE),weighted.mean(TaftoonPrice,Weight,na.rm = TRUE),weighted.mean(Bread_FantasyPrice,Weight,na.rm = TRUE))*gram$Nan_Grams+
+                    min(weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE),weighted.mean(Rice_AshPrice,Weight,na.rm = TRUE),weighted.mean(Rice_Khareji2Price,Weight,na.rm = TRUE),weighted.mean(Rice_DomsiahPrice,Weight,na.rm = TRUE))*gram$Berenj_Grams+
+                      weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*gram$Makarooni_Grams+
+                    min(weighted.mean(AdasPrice,Weight,na.rm = TRUE),weighted.mean(Loobia_ChitiPrice,Weight,na.rm = TRUE),weighted.mean(Loobia_GhermezPrice,Weight,na.rm = TRUE),weighted.mean(NokhodPrice,Weight,na.rm = TRUE))*gram$Hoboobat_Grams+
+                    min(weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE),weighted.mean(Sabzi_AshPrice,Weight,na.rm = TRUE),weighted.mean(KahooPrice,Weight,na.rm = TRUE),weighted.mean(KhiarPrice,Weight,na.rm = TRUE))*gram$Sabzi_Grams+
+                      weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*gram$Sibzamini_Grams+
+                    min(weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE),weighted.mean(CherryPrice,Weight,na.rm = TRUE),weighted.mean(OrangePrice,Weight,na.rm = TRUE),weighted.mean(ApplePrice,Weight,na.rm = TRUE))*gram$Mive_Grams+
+                    min(weighted.mean(CowMeatPrice,Weight,na.rm = TRUE),weighted.mean(SheepMeatPrice,Weight,na.rm = TRUE))*(gram$Goosht_Grams)+
+                      weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*gram$Morgh_Grams+
+                    min(weighted.mean(Fish_North_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_South_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_ConservedPrice,Weight,na.rm = TRUE))*gram$Mahi_Grams+
+                      weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*gram$Tokhmemorgh_Grams+
+                    min(weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),weighted.mean(Yogurt_PasturizedPrice,Weight,na.rm = TRUE))*(gram$Labaniat_Grams)+
+                    min(weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),weighted.mean(Oil_AnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_NonAnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_Animal_PasturizedPrice,Weight,na.rm = TRUE))*gram$Roghan_Grams+
+                    min(weighted.mean(GhandPrice,Weight,na.rm = TRUE),weighted.mean(ShekarPrice,Weight,na.rm = TRUE))*gram$Ghand_Grams+
+                    min(weighted.mean(KeshmeshPrice,Weight,na.rm = TRUE),weighted.mean(NokhodchiPrice,Weight,na.rm = TRUE),weighted.mean(TokhmePrice,Weight,na.rm = TRUE),weighted.mean(GhandPrice,PistachioPrice,na.rm = TRUE))*gram$Khoshkbar_Grams)),
                by=.(cluster3,Region)]
+
+
     MDP<-MDP[,lapply(.SD,sum),by=c("cluster3","Region")]
     price<- MD[Selected_Group==1,
                .(LavashPrice=weighted.mean(LavashPrice,Weight,na.rm = TRUE),
@@ -159,8 +194,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                  Milk_PasteurizedPrice=weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),
                  Oil_NabatiPrice=weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),
                  GhandPrice=weighted.mean(GhandPrice,Weight,na.rm = TRUE),
-                 number=.N),
-               by=.(cluster3,Region)]
+                 number=.N)]
+               #by=.(cluster3,Region)]
     
      
     MDP[is.na(MDP)] <- 0
