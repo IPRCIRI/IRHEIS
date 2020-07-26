@@ -131,8 +131,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                               ifelse(Year==94,Engel*1.0006,
                               ifelse(Year==95,Engel*0.9996,
                               ifelse(Year==96,Engel*1.0000,
-                              ifelse(Year==97,Engel*1.0379,
-                              ifelse(Year==98,Engel*1.1275,0)))))))))))))))]
+                              ifelse(Year==97,Engel*1.0110,
+                              ifelse(Year==98,Engel*1.10624,0)))))))))))))))]
   
   EngleMD[,Engelp:=    ifelse(Yearp==83,Engelp*1.0063,
                               ifelse(Yearp==84,Engelp*1.0125,
@@ -147,8 +147,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                               ifelse(Yearp==93,Engelp*0.9915,
                               ifelse(Yearp==94,Engelp*0.9999,
                               ifelse(Yearp==95,Engelp*1.0004,
-                              ifelse(Yearp==96,Engelp*0.9635,
-                              ifelse(Yearp==97,Engelp*0.8546,0)))))))))))))))]
+                              ifelse(Yearp==96,Engelp*0.9891,
+                              ifelse(Yearp==97,Engelp*0.9310,0)))))))))))))))]
   
 
   EngleMD[,Engelpp:=   ifelse(Yearpp==82,Engelpp*1.0063,
@@ -165,7 +165,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                               ifelse(Yearpp==93,Engelpp*0.9919,
                               ifelse(Yearpp==94,Engelpp*0.9999,
                               ifelse(Yearpp==95,Engelpp*0.9639,
-                              ifelse(Yearpp==96,Engelpp*0.8546,0)))))))))))))))]
+                              ifelse(Yearpp==96,Engelpp*0.9310,0)))))))))))))))]
   
   EngleMD[,Engelm:=(Engel+Engelp+Engelpp)/3]
   
