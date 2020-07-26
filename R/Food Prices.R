@@ -37,9 +37,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                                     Egg_MashinPrice,
                                     Milk_PasteurizedPrice, Yogurt_PasturizedPrice,CreamPrice,
                                     Cheese_PasturizedPrice,Cheese_NonPasturizedPrice,
-                                    Oil_NabatiPrice,Oil_AnimalPrice,ButterGrams,Butter_NonAnimalPrice,
+                                    Oil_NabatiPrice,Oil_AnimalPrice,Butter_Animal_PasturizedPrice,Butter_NonAnimalPrice,
                                     GhandPrice,ShekarPrice,
-                                    PoultryMeat_MPrice,
                                     KeshmeshPrice,TokhmePrice,NokhodchiPrice,PistachioPrice
                                     )]
 
