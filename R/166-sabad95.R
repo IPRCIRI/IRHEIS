@@ -11,7 +11,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(ggplot2)
-
+library(dplyr)
 library(data.table)
 library(stringr)
 library(readxl)
@@ -97,10 +97,9 @@ gram <-MD [Selected_Group==1,
              Labaniat_Grams=weighted.mean(Labaniat_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Roghan_Grams=weighted.mean(Roghan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Ghand_Grams=weighted.mean(Ghand_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
-             Khoshkbar_Grams=weighted.mean(Khoshkbar_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
              Mahi_Grams=weighted.mean(Mahi_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
-             Panir_Grams=weighted.mean(Panir_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE))]
-             
+             Panir_Grams=weighted.mean(Panir_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
+             Labaniat_Grams=weighted.mean(Labaniat_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE))]
 
 
 
@@ -128,9 +127,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,NewPoor:=InitialPoor]
   MD[,OldPoor:=1]
-  load(file=paste0(Settings$HEISProcessedPath,"Gram.rda"))
-  MD<- merge(MD,gram, by=c("cluster3","Region"),all.x = TRUE)
-  
+
   
   i <- 0
   while(MD[(NewPoor-OldPoor)!=0,.N]>0.001*nrow(MD[NewPoor==1])  & i <=15){
@@ -151,58 +148,51 @@ for(year in (Settings$startyear:Settings$endyear)){
                       Goosht_Price=min(weighted.mean(CowMeatPrice,Weight,na.rm = TRUE),weighted.mean(SheepMeatPrice,Weight,na.rm = TRUE)),
                       Morgh_Price=weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE),
                       Mahi_Price=min(weighted.mean(Fish_North_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_South_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_ConservedPrice,Weight,na.rm = TRUE)),
-                      weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE),
-                      ShirMast_Price=min(weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),weighted.mean(Yogurt_PasturizedPrice,Weight,na.rm = TRUE)),
+                      Tokhmemorgh_Price=weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE),
+                      Labaniat_Price=min(weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),weighted.mean(Yogurt_PasturizedPrice,Weight,na.rm = TRUE)),
                       Roghan_Price=min(weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),weighted.mean(Oil_AnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_NonAnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_Animal_PasturizedPrice,Weight,na.rm = TRUE)),
                       Ghand_Price=min(weighted.mean(GhandPrice,Weight,na.rm = TRUE),weighted.mean(ShekarPrice,Weight,na.rm = TRUE))),
                by=.(cluster3,Region)]
-    for (col in c("Berenj_Price")) 
-      MDP[is.na(get(col)),(col):=min(col)]
-    
-      MDP <- MD [Selected_Group==1,
-               .(FPLine=0.001*
-                    (min(weighted.mean(LavashPrice,Weight,na.rm = TRUE),weighted.mean(BarbariPrice,Weight,na.rm = TRUE),weighted.mean(TaftoonPrice,Weight,na.rm = TRUE),weighted.mean(Bread_FantasyPrice,Weight,na.rm = TRUE))*gram$Nan_Grams+
-                    min(weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE),weighted.mean(Rice_AshPrice,Weight,na.rm = TRUE),weighted.mean(Rice_Khareji2Price,Weight,na.rm = TRUE),weighted.mean(Rice_DomsiahPrice,Weight,na.rm = TRUE))*gram$Berenj_Grams+
-                      weighted.mean(MacaroniPrice,Weight,na.rm = TRUE)*gram$Makarooni_Grams+
-                    min(weighted.mean(AdasPrice,Weight,na.rm = TRUE),weighted.mean(Loobia_ChitiPrice,Weight,na.rm = TRUE),weighted.mean(Loobia_GhermezPrice,Weight,na.rm = TRUE),weighted.mean(NokhodPrice,Weight,na.rm = TRUE))*gram$Hoboobat_Grams+
-                    min(weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE),weighted.mean(Sabzi_AshPrice,Weight,na.rm = TRUE),weighted.mean(KahooPrice,Weight,na.rm = TRUE),weighted.mean(KhiarPrice,Weight,na.rm = TRUE))*gram$Sabzi_Grams+
-                      weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE)*gram$Sibzamini_Grams+
-                    min(weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE),weighted.mean(CherryPrice,Weight,na.rm = TRUE),weighted.mean(OrangePrice,Weight,na.rm = TRUE),weighted.mean(ApplePrice,Weight,na.rm = TRUE))*gram$Mive_Grams+
-                    min(weighted.mean(CowMeatPrice,Weight,na.rm = TRUE),weighted.mean(SheepMeatPrice,Weight,na.rm = TRUE))*(gram$Goosht_Grams)+
-                      weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE)*gram$Morgh_Grams+
-                    min(weighted.mean(Fish_North_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_South_FreshPrice,Weight,na.rm = TRUE),weighted.mean(Fish_ConservedPrice,Weight,na.rm = TRUE))*gram$Mahi_Grams+
-                      weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE)*gram$Tokhmemorgh_Grams+
-                    min(weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),weighted.mean(Yogurt_PasturizedPrice,Weight,na.rm = TRUE))*(gram$Labaniat_Grams)+
-                    min(weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),weighted.mean(Oil_AnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_NonAnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_Animal_PasturizedPrice,Weight,na.rm = TRUE))*gram$Roghan_Grams+
-                    min(weighted.mean(GhandPrice,Weight,na.rm = TRUE),weighted.mean(ShekarPrice,Weight,na.rm = TRUE))*gram$Ghand_Grams+
-                    min(weighted.mean(KeshmeshPrice,Weight,na.rm = TRUE),weighted.mean(NokhodchiPrice,Weight,na.rm = TRUE),weighted.mean(TokhmePrice,Weight,na.rm = TRUE),weighted.mean(GhandPrice,PistachioPrice,na.rm = TRUE))*gram$Khoshkbar_Grams)),
-               by=.(cluster3,Region)]
+   MDP<- MDP %>% mutate(Nan_Price = ifelse(is.na(Nan_Price), min(Nan_Price, na.rm = T), Nan_Price))
+   MDP<- MDP %>% mutate(Berenj_Price = ifelse(is.na(Berenj_Price), min(Berenj_Price, na.rm = T), Berenj_Price))
+   MDP<- MDP %>% mutate(Makarooni_Price = ifelse(is.na(Makarooni_Price), min(Makarooni_Price, na.rm = T), Makarooni_Price))
+   MDP<- MDP %>% mutate(Hoboobat_Price = ifelse(is.na(Hoboobat_Price), min(Hoboobat_Price, na.rm = T), Hoboobat_Price))
+   MDP<- MDP %>% mutate(Sabzi_Price = ifelse(is.na(Sabzi_Price), min(Sabzi_Price, na.rm = T), Sabzi_Price))
+   MDP<- MDP %>% mutate(Sibzamini_Price = ifelse(is.na(Sibzamini_Price), min(Sibzamini_Price, na.rm = T), Sibzamini_Price))
+   MDP<- MDP %>% mutate(Mive_Price = ifelse(is.na(Mive_Price), min(Mive_Price, na.rm = T), Mive_Price))
+   MDP<- MDP %>% mutate(Goosht_Price = ifelse(is.na(Goosht_Price), min(Goosht_Price, na.rm = T), Goosht_Price))
+   MDP<- MDP %>% mutate(Morgh_Price = ifelse(is.na(Morgh_Price), min(Morgh_Price, na.rm = T), Morgh_Price))
+   MDP<- MDP %>% mutate(Mahi_Price = ifelse(is.na(Mahi_Price), min(Mahi_Price, na.rm = T), Mahi_Price))
+   MDP<- MDP %>% mutate(Tokhmemorgh_Price = ifelse(is.na(Tokhmemorgh_Price), min(Tokhmemorgh_Price, na.rm = T), Tokhmemorgh_Price))
+   MDP<- MDP %>% mutate(Labaniat_Price = ifelse(is.na(Labaniat_Price), min(v, na.rm = T), Labaniat_Price))
+   MDP<- MDP %>% mutate(Roghan_Price = ifelse(is.na(Roghan_Price), min(Roghan_Price, na.rm = T), Roghan_Price))
+   MDP<- MDP %>% mutate(Ghand_Price = ifelse(is.na(Ghand_Price), min(Ghand_Price, na.rm = T), Ghand_Price))
+   MDP<-merge(MDP,gram,all.x=TRUE)
+   MDP<-as.data.table(MDP)
+   MDP <- MDP[,FPLine:=0.001*((Berenj_Price*Berenj_Grams)+
+                                (Nan_Price*Nan_Grams)+
+                                (Makarooni_Price*Makarooni_Grams)+
+                                (Hoboobat_Price*Hoboobat_Grams)+
+                                (Sabzi_Price*Sabzi_Grams)+
+                                (Sibzamini_Price*Sibzamini_Grams)+
+                                (Mive_Price*Mive_Grams)+
+                                (Goosht_Price*Goosht_Grams)+
+                                (Morgh_Price*Morgh_Grams)+
+                                (Mahi_Price*Mahi_Grams)+
+                                (Tokhmemorgh_Price*Tokhmemorgh_Grams)+
+                                (Labaniat_Price*Labaniat_Grams)+
+                                (Roghan_Price*Roghan_Grams)+
+                                (Ghand_Price*Ghand_Grams))]
+                                
 
 
-    MDP<-MDP[,lapply(.SD,sum),by=c("cluster3","Region")]
-    price<- MD[Selected_Group==1,
-               .(LavashPrice=weighted.mean(LavashPrice,Weight,na.rm = TRUE),
-                 Rice_TaromPrice=weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE),
-                 MacaroniPrice=weighted.mean(MacaroniPrice,Weight,na.rm = TRUE),
-                 HobubatPrice=weighted.mean(AdasPrice,Weight,na.rm = TRUE),
-                 SibzaminiPrice=weighted.mean(SibzaminiPrice,Weight,na.rm = TRUE),
-                 Sabzi_KhordanPrice=weighted.mean(Sabzi_KhordanPrice,Weight,na.rm = TRUE),
-                 Banana_CoconutPrice=weighted.mean(Banana_CoconutPrice,Weight,na.rm = TRUE),
-                 CowMeatPrice=weighted.mean(CowMeatPrice,Weight,na.rm = TRUE),
-                 PoultryMeat_MPrice=weighted.mean(PoultryMeat_MPrice,Weight,na.rm = TRUE),
-                 Egg_MashinPrice=weighted.mean(Egg_MashinPrice,Weight,na.rm = TRUE),
-                 Milk_PasteurizedPrice=weighted.mean(Milk_PasteurizedPrice,Weight,na.rm = TRUE),
-                 Oil_NabatiPrice=weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),
-                 GhandPrice=weighted.mean(GhandPrice,Weight,na.rm = TRUE),
-                 number=.N)]
-               #by=.(cluster3,Region)]
     
      
     MDP[is.na(MDP)] <- 0
     min<-MDP[FPLine>0,min(FPLine)]
     MDP[,FPLine:=ifelse(FPLine==0,min,FPLine)]
     
-    MD <- merge(MD,MDP,all.x=TRUE,by=c("Region","cluster3"))
+    MD <- merge(MD,MDP[,.(Region,cluster3,FPLine)],all.x=TRUE,by=c("Region","cluster3"))
     #    print(MDP)
     #x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
