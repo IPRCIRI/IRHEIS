@@ -117,7 +117,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #  EngleMD <- EngleMD[,Engelm:=Engel]
   
   
-  
+  EngleMD[,Engel0:=Engel]
   EngleMD[,Engel:=     ifelse(Year==84,Engel*0.9937,
                               ifelse(Year==85,Engel*0.9938,
                               ifelse(Year==86,Engel*0.9936,
@@ -132,7 +132,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                               ifelse(Year==95,Engel*0.9996,
                               ifelse(Year==96,Engel*1.0000,
                               ifelse(Year==97,Engel*1.0110,
-                              ifelse(Year==98,Engel*1.10624,0)))))))))))))))]
+                              ifelse(Year==98,Engel*1.0624,0)))))))))))))))]
   
   EngleMD[,Engelp:=    ifelse(Yearp==83,Engelp*1.0063,
                               ifelse(Yearp==84,Engelp*1.0125,
@@ -173,7 +173,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngleD  <- EngleD[,.(Region,cluster3,N,FPLine,Year)]
   
   EngleMD <- EngleMD[,EngleFinal:=Engelm]
-  EngleDD <- EngleMD[,.(cluster3,EngleFinal,Engel,Region)]
+  EngleDD <- EngleMD[,.(cluster3,EngleFinal,Engel0,Engel,Region)]
 
   
   EngleD<-merge(EngleD,EngleDD,by=c("cluster3","Region"))

@@ -47,7 +47,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 
  # EngleD[,EngleFinal:=mean(EngleFinal)]
   EngleD[,PovertyLine:=FPLine/EngleFinal]
-  EngleD[,PovertyLine2:=FPLine/Engel]
+  EngleD[,PovertyLine2:=FPLine/Engel0]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD[,FinalPoor2:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine2,1,0 )]
