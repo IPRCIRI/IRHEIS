@@ -11,6 +11,7 @@ HEISCountyCodeFileName: ShCode
 startyear: 90.0
 endyear: 98.0
 baseyear: 95.0
+baseBundleyear: 95.0
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
 MetaDataFilePath: ../Data/MetaData.xlsx
