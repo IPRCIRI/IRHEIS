@@ -23,7 +23,7 @@ Pop <- data.table(Year=NA_integer_,Pop=NA_integer_,ProvinceCode=NA_integer_)[0]
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
- load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN.rda"))
+ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
  m<-c(0:30)
  for(p in m){
@@ -31,16 +31,17 @@ for(year in (Settings$startyear:Settings$endyear)){
    print(MD[,weighted.gini(Total_Exp_Month_Per,Weight)])
 }
  
- X1 <- MD[,.(Gini=weighted.gini(Total_Exp_Month_Per,Weight)),by=ProvinceCode]
+ X1 <- MD[,.(Gini=weighted.gini(Total_Exp_Month_Per,Weight))]
 
  X1[,Year:=year]
-
- Gini <- rbind(Gini,X1)
- Gini<-Gini[,.(Gini=mean(as.numeric(Gini))),by=.(Year)]
+ MD<-MD[!is.na(Weight)]
  
- X2 <- MD[,.(Pop=sum(Size*Weight)),by=ProvinceCode]
- X2[,Year:=year]
- Pop <- rbind(Pop,X2)
+ #Gini <- rbind(Gini,X1)
+ Gini<-X1[,weighted.mean(as.numeric(Gini))]
+ 
+ #X2 <- MD[,.(Pop=sum(Size*Weight)),by=ProvinceCode]
+ #X2[,Year:=year]
+ #Pop <- rbind(Pop,X2)
  
  #write.csv(Pop,file = "Pop.csv")
 }
