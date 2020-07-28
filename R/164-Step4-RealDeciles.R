@@ -324,7 +324,7 @@ save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
 }
 
-
+x<-MD[,weighted.mean(FoodKCaloriesHH_Per,Weight),by=c("Region,Decile")]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

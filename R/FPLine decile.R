@@ -18,12 +18,18 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   # load data --------------------------------------
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+  PD<-MD[,.(HHID,FinalPoor)]
+  
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPrices.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodGrams.rda"))
   
+  
+
   MD<-merge(MD,FoodPrices,all.x=TRUE,by="HHID")
   MD<-merge(MD,FoodGrams,all.x=TRUE,by="HHID")
+  MD<-merge(MD,PD,all.x=TRUE,by="HHID")
   
   # y<-MD[,weighted.mean(FoodKCaloriesHH_Per,Weight),by=c("Region","Decile")]
   
@@ -131,6 +137,27 @@ for(year in (Settings$startyear:Settings$endyear)){
                     GhandGram= weighted.mean((GhandGram+ShekarGram)/EqSizeCalory,Weight,na.rm = TRUE))
                  ,by="Region"
                  ]
+    
+    Bundle3 <- MD[,
+                  .( BreadGrams=weighted.mean(BreadGrams/EqSizeCalory,Weight,na.rm = TRUE),
+                     BerenjKhareji= weighted.mean((Rice_Khareji1Gram+Rice_Khareji2Gram)/EqSizeCalory,Weight,na.rm = TRUE),
+                     BerenjIrani= weighted.mean((Rice_TaromGram+ Rice_AshGram+
+                                                   Rice_NonameGram+ Rice_MahaliGram+Rice_DomsiahGram+
+                                                   Rice_KhoordeGram)/EqSizeCalory,Weight,na.rm = TRUE),
+                     MacaroniGram=  weighted.mean(MacaroniGram/EqSizeCalory,Weight,na.rm = TRUE),
+                     HoboobatGram= weighted.mean((AdasGram+Loobia_ChitiGram+NokhodGram)/EqSizeCalory,Weight,na.rm = TRUE),
+                     SibzaminiGram=  weighted.mean(SibzaminiGram/EqSizeCalory,Weight,na.rm = TRUE),
+                     VegetableShrubsGrams= weighted.mean(VegetableShrubsGrams/EqSizeCalory,Weight,na.rm = TRUE),
+                     TreeFruitsGrams=   weighted.mean(TreeFruitsGrams/EqSizeCalory,Weight,na.rm = TRUE),
+                     CowMeatGram= weighted.mean(CowMeatGram/EqSizeCalory,Weight,na.rm = TRUE),
+                     SheepGrams= weighted.mean(SheepMeatGram/EqSizeCalory,Weight,na.rm = TRUE),
+                     PoultryMeat_MGram=  weighted.mean(PoultryMeat_MGram/EqSizeCalory,Weight,na.rm = TRUE),
+                     Egg_MashinGram=  weighted.mean(Egg_MashinGram/EqSizeCalory,Weight,na.rm = TRUE),
+                     MilkproductsGrams=  weighted.mean((MilkproductsGrams+MilkGrams)/EqSizeCalory,Weight,na.rm = TRUE),
+                     Oil_NabatiGram=  weighted.mean((Oil_NabatiGram+Oil_OliveGram+Oil_Nabati_OtherGram)/EqSizeCalory,Weight,na.rm = TRUE),
+                     GhandGram= weighted.mean((GhandGram+ShekarGram)/EqSizeCalory,Weight,na.rm = TRUE))
+                  ,by="FinalPoor"
+                  ]
     
     MD <- merge(MD,MDP,by=c("Region","cluster3"))
     #    print(MDP)
