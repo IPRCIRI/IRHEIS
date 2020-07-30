@@ -117,20 +117,35 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
   }
   DataTable<-merge(DataTable,A11,by="Decile")
   
-  DataTable[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
-  DataTable[tvcr=="True",Added2:=A2-0.033*TV_Sale]
+  DataTable[car=="True",Added1:=A1] ### We use 0.05 instead of 0.1
+  DataTable[tvcr=="True",Added2:=A2]
   DataTable[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-        Added3:=A3-0.033*yakhchal_Sale]
-  DataTable[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
-  DataTable[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
-  DataTable[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
-  DataTable[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
-  DataTable[computer=="True",Added8:=A8-0.06*PC_Sale]
-  DataTable[car=="True",Added9:=A9-0.5*lastik_Sale]
+        Added3:=A3]
+  DataTable[oven=="True",Added4:=A4]
+  DataTable[washer=="True",Added5:=A5]
+  DataTable[cellphone=="True",Added6:=A6]
+  DataTable[cooler_gas=="True",Added7:=A7]
+  DataTable[computer=="True",Added8:=A8]
+  DataTable[car=="True",Added9:=A9]
   if (year!=90 & year!=92 & year!=93 & year!=95){
     DataTable[car=="True",Added10:=A10]
   }
   DataTable[car=="True",Added11:=A11]
+  
+#  DataTable[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
+  #  DataTable[tvcr=="True",Added2:=A2-0.033*TV_Sale]
+    #  DataTable[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
+  #            Added3:=A3-0.033*yakhchal_Sale]
+  #  DataTable[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
+  #  DataTable[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
+  #  DataTable[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
+  #  DataTable[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
+  #  DataTable[computer=="True",Added8:=A8-0.06*PC_Sale]
+  #DataTable[car=="True",Added9:=A9-0.5*lastik_Sale]
+  #if (year!=90 & year!=92 & year!=93 & year!=95){
+  # DataTable[car=="True",Added10:=A10]
+  #}
+  #DataTable[car=="True",Added11:=A11]
   
   if (year!=90 & year!=92 & year!=93 & year!=95){ 
   dep <- c( "71111", "71112","71116", "71117",
@@ -293,15 +308,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
     SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
     
-   # cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
+    cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
 
     
     
     }
 
-  cat(SMD[,weighted.mean(Calorie_Need_WorldBank,Weight)],"\n")
-  cat(SMD[,weighted.mean(TFoodKCaloriesHH_Per,Weight)],"\n")
-  cat(SMD[,weighted.mean(Bundle_Value,Weight)],"\n")
+#  cat(SMD[,weighted.mean(Calorie_Need_WorldBank,Weight)],"\n")
+#  cat(SMD[,weighted.mean(TFoodKCaloriesHH_Per,Weight)],"\n")
+#  cat(SMD[,weighted.mean(Bundle_Value,Weight)],"\n")
   
   MD <- merge(MD,SMD[,.(HHID,Bundle_Value,InitialPoorBasedOnPercentile,Decile,Percentile)],by="HHID")
   setnames(MD,"InitialPoorBasedOnPercentile","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
