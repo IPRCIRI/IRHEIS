@@ -160,6 +160,30 @@ Data86 <- data.table(Year=NA_integer_,x=NA_real_,
                      Decile=NA_real_)[0]
 Data87 <- data.table(Year=NA_integer_,x=NA_real_,
                      Decile=NA_real_)[0]
+Data91 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,Region=NA_character_,
+                     HSex=NA_character_,Decile=NA_real_)[0]
+Data92 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,
+                     HSex=NA_character_,Decile=NA_real_)[0]
+Data93 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,
+                     Decile=NA_real_)[0]
+Data94 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,Region=NA_character_,
+                    Decile=NA_real_)[0]
+Data191 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,Region=NA_character_,
+                      HSex=NA_character_,Decile=NA_real_)[0]
+Data192 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,
+                      HSex=NA_character_,Decile=NA_real_)[0]
+Data193 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,
+                      Decile=NA_real_)[0]
+Data194 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,Region=NA_character_,
+                      Decile=NA_real_)[0]
+Data291 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,Region=NA_character_,
+                      HSex=NA_character_,Decile=NA_real_)[0]
+Data292 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,
+                      HSex=NA_character_,Decile=NA_real_)[0]
+Data293 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,
+                      Decile=NA_real_)[0]
+Data294 <- data.table(Year=NA_integer_,Total_Exp_Month=NA_real_,Region=NA_character_,
+                     Decile=NA_real_)[0]
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -602,6 +626,66 @@ for(year in (Settings$startyear:Settings$endyear)){
   X[,Year:=year]
   Data87 <- rbind(Data87,X)
   write.csv(Data87,file="Data87.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Egg_MashinGram,Weight,na.rm = TRUE)),by=c("Region","HSex","Decile")]
+  X[,Year:=year]
+  Data91 <- rbind(Data91,X)
+  write.csv(Data91,file="Data91.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Egg_MashinGram,Weight,na.rm = TRUE)),by=c("HSex","Decile")]
+  X[,Year:=year]
+  Data92 <- rbind(Data92,X)
+  write.csv(Data92,file="Data92.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Egg_MashinGram,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data93 <- rbind(Data93,X)
+  write.csv(Data93,file="Data93.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Egg_MashinGram,Weight,na.rm = TRUE)),by=c("Region","Decile")]
+  X[,Year:=year]
+  Data94 <- rbind(Data94,X)
+  write.csv(Data94,file="Data94.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE)),by=c("Region","HSex","Decile")]
+  X[,Year:=year]
+  Data191 <- rbind(Data191,X)
+  write.csv(Data191,file="Data191.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE)),by=c("HSex","Decile")]
+  X[,Year:=year]
+  Data192 <- rbind(Data192,X)
+  write.csv(Data192,file="Data192.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data193 <- rbind(Data193,X)
+  write.csv(Data193,file="Data193.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(Oil_NabatiGram,Weight,na.rm = TRUE)),by=c("Region","Decile")]
+  X[,Year:=year]
+  Data194 <- rbind(Data194,X)
+  write.csv(Data194,file="Data194.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(GhandGram+ShekarGram,Weight,na.rm = TRUE)),by=c("Region","HSex","Decile")]
+  X[,Year:=year]
+  Data291 <- rbind(Data291,X)
+  write.csv(Data291,file="Data291.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(GhandGram+ShekarGram,Weight,na.rm = TRUE)),by=c("HSex","Decile")]
+  X[,Year:=year]
+  Data292 <- rbind(Data292,X)
+  write.csv(Data292,file="Data292.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(GhandGram+ShekarGram,Weight,na.rm = TRUE)),by=c("Decile")]
+  X[,Year:=year]
+  Data293 <- rbind(Data293,X)
+  write.csv(Data293,file="Data293.csv")
+  
+  X <- MD[,.(Total_Exp_Month=weighted.mean(GhandGram+ShekarGram,Weight,na.rm = TRUE)),by=c("Region","Decile")]
+  X[,Year:=year]
+  Data294 <- rbind(Data294,X)
+  write.csv(Data294,file="Data294.csv")
 }
 
 

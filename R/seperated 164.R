@@ -196,7 +196,7 @@ DoDeciling_SetInitialPoor <- function(DataTable,PriceIndexDT){
 }
 
 
-for(year in (Settings$startyear:Settings$endyear)){
+year<-98
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   # load data --------------------------------------
@@ -333,16 +333,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   SMD<-merge(SMD,A11,by="Decile")
   
-  SMD[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
-  SMD[tvcr=="True",Added2:=A2-0.033*TV_Sale]
+  SMD[car=="True",Added1:=A1] ### We use 0.05 instead of 0.1
+  SMD[tvcr=="True",Added2:=A2]
   SMD[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-            Added3:=A3-0.033*yakhchal_Sale]
-  SMD[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
-  SMD[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
-  SMD[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
-  SMD[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
-  SMD[computer=="True",Added8:=0.06*A8-PC_Sale]
-  SMD[car=="True",Added9:=A9-0.5*lastik_Sale]
+            Added3:=A3]
+  SMD[oven=="True",Added4:=A4]
+  SMD[washer=="True",Added5:=A5]
+  SMD[cellphone=="True",Added6:=A6]
+  SMD[cooler_gas=="True",Added7:=A7]
+  SMD[computer=="True",Added8:=A8]
+  SMD[car=="True",Added9:=A9]
   if (year!=90 & year!=92 & year!=93 & year!=95){
     SMD[car=="True",Added10:=A10]
   }
@@ -435,6 +435,28 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(min(SMDIterationPoor[,.N,by=.(Region,NewArea_Name)]$N)==0)
       stop("HERE Some Area goes missing!")
     
+    
+    X <- SMDIterationPoor[,.(N=.N,wi1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+                      wi2=weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE),
+                      pi1=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
+                      pi2=weighted.mean(MetrPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
+    
+    X[,wi:=wi1+wi2]
+    X[,wi1:=wi1/wi]
+    X[,wi2:=wi2/wi]
+    XTeh<-X[NewArea_Name=="Sh_Tehran"]
+    wk1<-XTeh$wi1   # k == Sh_Tehran
+    wk2<-XTeh$wi2
+    pk1<-XTeh$pi1
+    pk2<-XTeh$pi2
+    
+    X[,SimpleIndex:= .5 * pi1/pk1 + .5 * pi2/pk2]
+    X[,AnotherIndex:= wi1 * pi1/pk1 + wi2 * pi2/pk2]
+    
+    X[,TornqvistIndex:= exp(   (wk1+wi1)/2 * log(pi1/pk1) + (wk2+wi2)/2 * log(pi2/pk2)  )      ]
+    
+    
+    
     PriceDTBasedOnThisIterationPoor <- CalcTornqvistIndex(SMDIterationPoor)
     #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
     SMD <- DoDeciling_SetInitialPoor(SMD,PriceDTBasedOnThisIterationPoor)
@@ -468,7 +490,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #A<-merge(A,A11)
   
   
-}
+
 
 
 
