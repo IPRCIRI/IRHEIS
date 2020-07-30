@@ -333,16 +333,16 @@ year<-98
   }
   SMD<-merge(SMD,A11,by="Decile")
   
-  SMD[car=="True",Added1:=A1-0.05*Auto_Sale] ### We use 0.05 instead of 0.1
-  SMD[tvcr=="True",Added2:=A2-0.033*TV_Sale]
+  SMD[car=="True",Added1:=A1] ### We use 0.05 instead of 0.1
+  SMD[tvcr=="True",Added2:=A2]
   SMD[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-            Added3:=A3-0.033*yakhchal_Sale]
-  SMD[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
-  SMD[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
-  SMD[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
-  SMD[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
-  SMD[computer=="True",Added8:=0.06*A8-PC_Sale]
-  SMD[car=="True",Added9:=A9-0.5*lastik_Sale]
+            Added3:=A3]
+  SMD[oven=="True",Added4:=A4]
+  SMD[washer=="True",Added5:=A5]
+  SMD[cellphone=="True",Added6:=A6]
+  SMD[cooler_gas=="True",Added7:=A7]
+  SMD[computer=="True",Added8:=A8]
+  SMD[car=="True",Added9:=A9]
   if (year!=90 & year!=92 & year!=93 & year!=95){
     SMD[car=="True",Added10:=A10]
   }
