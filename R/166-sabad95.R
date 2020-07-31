@@ -152,7 +152,8 @@ for(year in (Settings$startyear:Settings$endyear)){
    MDP<- MDP %>% mutate(Panir_Price = ifelse(is.infinite(Panir_Price), min(v, na.rm = T), Panir_Price))
    MDP<- MDP %>% mutate(Roghan_Price = ifelse(is.infinite(Roghan_Price), min(Roghan_Price, na.rm = T), Roghan_Price))
    MDP<- MDP %>% mutate(Ghand_Price = ifelse(is.infinite(Ghand_Price), min(Ghand_Price, na.rm = T), Ghand_Price))
-   MDP<-merge(MDP,gram,all.x=TRUE)
+   #MDP<-merge(MDP,gram,all.x=TRUE)
+   MDP<-cbind(MDP,gram)
    MDP<-as.data.table(MDP)
    MDP <- MDP[,FPLine:=0.001*((Berenj_Price*Berenj_Grams)+
                                 (Nan_Price*Nan_Grams)+
