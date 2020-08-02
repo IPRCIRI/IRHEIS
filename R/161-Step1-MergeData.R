@@ -84,7 +84,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   Value[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
   Value[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
   Value[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
-  Value[computer=="True",Added8:=0.06*A8-PC_Sale]
+  Value[computer=="True",Added8:=A8-0.06*PC_Sale]
   Value[car=="True",Added9:=A9-0.5*lastik_Sale]
   if (year!=92){
   Value[car=="True",Added10:=A10]
