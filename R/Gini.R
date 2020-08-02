@@ -28,17 +28,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   IncomeTable<-as.data.table(IncomeTable)
   MD<-as.data.table(MD)
   
-  IncomeTable<-merge(IncomeTable,MD[,.(HHID,EqSizeOECD,Weight,Total_Exp_Month_Per,Size)],by=c("HHID"),all.x = TRUE)
+  IncomeTable<-merge(IncomeTable,MD[,.(HHID,EqSizeOECD,Weight,Total_Exp_Month,Size)],by=c("HHID"),all.x = TRUE)
 
   
-  IncomeTable<-IncomeTable[,TotalIncome_Per:=NetIncome/EqSizeOECD]
+  IncomeTable<-IncomeTable[,TotalIncome_Per:=NetIncome]
   IncomeTable<-IncomeTable[!is.na(Weight)]
   g<-IncomeTable[,weighted.gini(TotalIncome_Per,Weight)]
   
     print(IncomeTable[,weighted.gini(TotalIncome_Per,Weight*Size)])
-    print(IncomeTable[,weighted.gini(Total_Exp_Month_Per,Weight*Size)])
+    print(IncomeTable[,weighted.gini(Total_Exp_Month,Weight*Size)])
     X1 <- IncomeTable[,.(Gini_Income=weighted.gini(TotalIncome_Per,Weight*Size),
-                         Gini_Exp=weighted.gini(Total_Exp_Month_Per,Weight*Size))]
+                         Gini_Exp=weighted.gini(Total_Exp_Month,Weight*Size))]
       
     
     X1[,Year:=year]

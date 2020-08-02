@@ -226,7 +226,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #  cat(MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE)],"\n")
   #  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
   # cat(MD[cluster3==1,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
-  cat(MD[,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
+  cat(MD[,weighted.mean(FPLine,Weight*Size,na.rm = TRUE)],"\n")
 }
 
 endtime <- proc.time()
