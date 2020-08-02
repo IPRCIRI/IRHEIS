@@ -28,6 +28,12 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
                                   Engle=NA_integer_,FPLine=NA_integer_,
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+FinalProvinceResults <- data.table(Year=NA_integer_,ProvinceName=NA_integer_,MetrPrice=NA_real_,
+                                  House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
+                                  SampleSize=NA_integer_,
+                                  Engle=NA_integer_,FPLine=NA_integer_,
+                                  PovertyLine=NA_real_,PovertyHCR=NA_real_,
+                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
 year<-95
 for(year in (Settings$startyear:Settings$endyear)){
@@ -103,6 +109,25 @@ for(year in (Settings$startyear:Settings$endyear)){
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
+  
+  ################Province##################
+  X1 <- MD[,.(SampleSize=.N,MetrPrice=weighted.mean(MetrPrice,Weight,na.rm = TRUE),
+              House_Share=weighted.mean(ServiceExp/Total_Exp_Month,Weight),
+              Engle=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
+              FPLine=weighted.mean(FPLine,Weight),
+              FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
+              PovertyLine=weighted.mean(PovertyLine,Weight*Size),
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size)),by="ProvinceName"]
+  X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
+                          PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by="ProvinceName"]
+  
+  
+  X1[,Year:=year]
+  X2[,Year:=year]
+  X <- merge(X1,X2,by=c("Year","ProvinceName"))
+  FinalProvinceResults <- rbind(FinalProvinceResults,X)
+  
+  ####################################################
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
   cat(MD[, weighted.mean(FinalPoor2,Weight*Size)],"\t")
