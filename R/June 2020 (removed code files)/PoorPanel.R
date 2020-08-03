@@ -285,12 +285,12 @@ J<-rbind(J1,J2,J3,J4,J5,J6,J7,J8,J9)
 
 }
 save(PANEL, file=paste0(Settings$HEISProcessedPath,"panelpoor.rda"))
-PANEL<-PANEL[,cluster3:=as.factor(cluster3)]
-PANEL<-PANEL[,Year:=as.factor(Year)]
+FinalClusterResults<-FinalClusterResults[,cluster3:=as.factor(cluster3)]
+FinalClusterResults<-FinalClusterResults[,Year:=as.factor(Year)]
 PANEL<-PANEL[,e:=ServiceExp/Total_Exp_Month]
-ggplot(data=PANEL,aes(x=Year, y=Medical_Exp, group=cluster3, colour=cluster3))+geom_line()
+ggplot(data=FinalClusterResults,aes(x=Year, y=pov, group=cluster3, colour=cluster3))+geom_line()
 
-ggplot(data=PANEL,aes(x=Year, y=poverty_R, group=cluster3, colour=cluster3))+geom_line()
+ggplot(data=FinalClusterResults,aes(x=Year, y=PovertyHCR, group=cluster3, colour=cluster3))+geom_line()
 
 ggplot(data=Real,aes(x=Year, y=d))+geom_line()
 

@@ -118,8 +118,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     i <- i + 1
     MD[,ThisIterationPoor:=NewPoor]
     MD[,FPLine:=NULL]
-    MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
-                                 (Region=="Rural" & Decile==2),1,0)]
+    MD[,Selected_Group:=ifelse((Decile==3) |(Decile==4)|(Decile==5)|
+                                 (Decile==2),1,0)]
     MDP <- MD [Selected_Group==1,
                .(Nan_Price=min(weighted.mean(LavashPrice,Weight,na.rm = TRUE),weighted.mean(BarbariPrice,Weight,na.rm = TRUE),weighted.mean(TaftoonPrice,Weight,na.rm = TRUE),weighted.mean(Bread_FantasyPrice,Weight,na.rm = TRUE),na.rm = TRUE),
                  Berenj_Price=min(weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE),weighted.mean(Rice_AshPrice,Weight,na.rm = TRUE),weighted.mean(Rice_Khareji2Price,Weight,na.rm = TRUE),weighted.mean(Rice_DomsiahPrice,Weight,na.rm = TRUE),na.rm = TRUE),
