@@ -109,7 +109,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD<-merge(MD,dt2total,by=c("NewArea","NewArea_Name","Region"))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
-}
+  cluster<-MD[,.(HHID,cluster3)]
+  save(cluster,file=paste0(Settings$HEISProcessedPath,"Y",year,"cluster.rda"))
+  
+  }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
