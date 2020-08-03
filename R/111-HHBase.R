@@ -520,7 +520,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   HHBase[CountyCode==	1609	,County_Name:="Sirvan"]
   HHBase[CountyCode==	1610	,County_Name:="Badre"]
   HHBase[CountyCode==	1701	,County_Name:="Boyerahmad"]
-  HHBase[CountyCode==	1702	,County_Name:="Kohkilooye"]
+  HHBase[CountyCode==	1702	,County_Name:="Sanandaj"]
   HHBase[CountyCode==	1703	,County_Name:="Gachsaran"]
   HHBase[CountyCode==	1704	,County_Name:="Dena"]
   HHBase[CountyCode==	1705	,County_Name:="Bambai"]

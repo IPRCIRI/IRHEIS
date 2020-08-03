@@ -18,8 +18,10 @@ library(ggplot2)
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
+
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
+
   
   ###Nominal- Country
   MD<- MD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
@@ -194,6 +196,90 @@ for(year in (Settings$startyear:Settings$endyear)){
   DT<-MD[,.(Size=weighted.mean(Size,Weight),
          Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
          Number=sum(Weight)),by=Decile]
+  
+  DT2<-MD[,.(Size=weighted.mean(Size,Weight),
+            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+            Number=sum(Weight)),by=c("Decile","Region")]
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"cluster.rda"))
+ MD<-merge(MD,cluster,by="HHID")
+  
+  DT3<-MD[,.(Size=weighted.mean(Size,Weight),
+             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+             Number=sum(Weight)),by=c("cluster3","Decile")]
+  write.csv(DT3,file = "DT3.csv")
+  
+  DT4<-MD[,.(Size=weighted.mean(Size,Weight),
+             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+             Number=sum(Weight)),by=c("cluster3")]
+  
+  DT5<-MD[,.(Size=weighted.mean(Size,Weight),
+             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+             Number=sum(Weight)),by=c("ProvinceName")]
+  
+  MD[,Markaz_Ostan:=ifelse(County_Name=="Arak" |
+                             County_Name=="Rasht" |
+                             County_Name=="Sari" |
+                             County_Name=="Tabriz" |
+                             County_Name=="Urmia" |
+                             County_Name=="Kermanshah" |
+                             County_Name=="Ahvaz" |
+                             County_Name=="Shiraz" |
+                             County_Name=="Kerman" |
+                             County_Name=="Mashhad" |
+                             County_Name=="Esfahan" |
+                             County_Name=="Zahedan" |
+                             County_Name=="Sanandaj" |
+                             County_Name=="Hamedan" |
+                             County_Name=="Shahrekord" |
+                             County_Name=="Khoramabad" |
+                             County_Name=="Ilam" |
+                             County_Name=="Kohkilooye" |
+                             County_Name=="Booshehr" |
+                             County_Name=="Zanjan" |
+                             County_Name=="Semnan" |
+                             County_Name=="Yazd" |
+                             County_Name=="Bandarabas" |
+                             County_Name=="Tehran" |
+                             County_Name=="Ardebil" |
+                             County_Name=="Ghom" |
+                             County_Name=="Ghazvin" |
+                             County_Name=="Gorgan" |
+                             County_Name=="Bojnoord" |
+                             County_Name=="Birjand" |
+                             County_Name=="Karaj",1,0)]
+  
+  DT6<-MD[,.(Size=weighted.mean(Size,Weight),
+             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+             Number=sum(Weight)),by=c("Markaz_Ostan","ProvinceName","ProvinceCode")]
+
+ MD[,County_Pop:=sum(Weight*Size),by="County_Name"]
+ 
+ DT7<-MD[County_Pop<100000,.(Size=weighted.mean(Size,Weight),
+            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+            Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
+ 
+ DT8<-MD[County_Pop<300000 & County_Pop>100000,.(Size=weighted.mean(Size,Weight),
+                             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+                             Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
+
+ DT9<-MD[County_Pop<1000000 & County_Pop>300000,.(Size=weighted.mean(Size,Weight),
+                                                 Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+                                                 Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
+ 
+ DT10<-MD[ County_Pop>1000000,.(Size=weighted.mean(Size,Weight),
+                                                 Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+                                                 Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
+ 
+ DT11<-MD[,.(Size=weighted.mean(Size,Weight),
+            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+            Number=sum(Weight)),by=c("ProvinceName","Decile")]
+ write.csv(DT11,file = "DT11.csv")
+ 
+ DT12<-MD[,.(Size=weighted.mean(Size,Weight),
+            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+            Number=sum(Weight)),by=c("Markaz_Ostan","Decile")]
+ 
 }
 
 
