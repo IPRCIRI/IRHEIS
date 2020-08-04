@@ -163,7 +163,10 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 #ggplot(FinalClusterResults)+
  # geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3),linetype=factor(cluster3)))
-write.csv(FinalClusterResults,file = "FinalClusterResults.csv")
+#write.csv(FinalClusterResults,file = "FinalClusterResults.csv")
+
+#z2<-MD[,.(HHID,Decile,Added,Added1,Added2,Added3,Added4,Added5,
+#                  Added6,Added7,Added8,computer,Added9,Added10,Added11)]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
