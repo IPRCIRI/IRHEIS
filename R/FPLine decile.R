@@ -189,6 +189,9 @@ for(year in (Settings$startyear:Settings$endyear)){
                      Egg_MashinGram=  weighted.mean((`011441`+`011442`)/Total_Exp_Month,Weight,na.rm = TRUE),
                      Oil_NabatiGram=  weighted.mean(G01153/Total_Exp_Month,Weight,na.rm = TRUE)),by="Decile"]
 
+    Bundle6 <- MD[,.( PoultryMeat_MGram=  weighted.mean((`011231`+`011232`)/Total_Exp_Month,Weight,na.rm = TRUE),
+                      Egg_MashinGram=  weighted.mean((`011441`+`011442`)/Total_Exp_Month,Weight,na.rm = TRUE),
+                      Oil_NabatiGram=  weighted.mean(G01153/Total_Exp_Month,Weight,na.rm = TRUE))]
     
     MD <- merge(MD,MDP,by=c("Region","cluster3"))
     #    print(MDP)
