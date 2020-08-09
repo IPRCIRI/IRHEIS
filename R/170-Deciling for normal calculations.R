@@ -194,7 +194,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(Deciles,file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
   
   DT<-MD[,.(Size=weighted.mean(Size,Weight),
-         Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
+         Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
          Number=sum(Weight)),by=Decile]
   
   DT2<-MD[,.(Size=weighted.mean(Size,Weight),
