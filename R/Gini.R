@@ -15,7 +15,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(data.table)
 library(acid)
 library(DescTools)
-Gini <- data.table(Year=NA_integer_,Gini_Income=NA_integer_,Gini_Exp=NA_integer_)[0]
+Gini <- data.table(Year=NA_integer_,Gini_Income=NA_integer_,Gini_Exp=NA_integer_,Decile=NA_integer_)[0]
 Pop <- data.table(Year=NA_integer_,Pop=NA_integer_,ProvinceCode=NA_integer_)[0]
 
 
@@ -28,24 +28,24 @@ for(year in (Settings$startyear:Settings$endyear)){
   IncomeTable<-as.data.table(IncomeTable)
   MD<-as.data.table(MD)
   
-  IncomeTable<-merge(IncomeTable,MD[,.(HHID,EqSizeOECD,Weight,Total_Exp_Month,Size)],by=c("HHID"),all.x = TRUE)
+  IncomeTable<-merge(IncomeTable,MD[,.(HHID,EqSizeOECD,Weight,Total_Exp_Month_Per,Size,Decile)],by=c("HHID"),all.x = TRUE)
 
   
-  IncomeTable<-IncomeTable[,TotalIncome_Per:=NetIncome]
+  IncomeTable<-IncomeTable[,TotalIncome_Per:=NetIncome/EqSizeOECD]
   IncomeTable<-IncomeTable[!is.na(Weight)]
   g<-IncomeTable[,weighted.gini(TotalIncome_Per,Weight)]
   
     print(IncomeTable[,weighted.gini(TotalIncome_Per,Weight*Size)])
-    print(IncomeTable[,weighted.gini(Total_Exp_Month,Weight*Size)])
+    print(IncomeTable[,weighted.gini(Total_Exp_Month_Per,Weight*Size)])
     X1 <- IncomeTable[,.(Gini_Income=weighted.gini(TotalIncome_Per,Weight*Size),
-                         Gini_Exp=weighted.gini(Total_Exp_Month,Weight*Size))]
+                         Gini_Exp=weighted.gini(Total_Exp_Month_Per,Weight*Size)),by=c("Decile")]
       
     
     X1[,Year:=year]
     
     Gini <- rbind(Gini,X1)
     Gini<-Gini[,.(Gini_Income=mean(as.numeric(Gini_Income)),
-                  Gini_Exp=mean(as.numeric(Gini_Exp))),by=.(Year)]
+                  Gini_Exp=mean(as.numeric(Gini_Exp))),by=.(Year,Decile)]
     
     X2 <- IncomeTable[,.(Pop=sum(Size*Weight))]
     X2[,Year:=year]
