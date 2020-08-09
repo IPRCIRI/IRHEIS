@@ -19,7 +19,7 @@ X1 <- data.table(Year=NA_integer_,HLiterate=NA_real_
                  ,bathroom=NA_real_,ego=NA_real_,pipewater=NA_real_
                  ,cookfuel=NA_real_,heatfuel=NA_real_,hotwater=NA_real_
                  ,G0451=NA_real_,G0452=NA_real_,G0453=NA_real_,G044=NA_real_
-                ,Subsidy=NA_real_)
+                ,Subsidy=NA_real_,Food_Share=NA_real_,room=NA_real_)
 
 X2 <- data.table(Year=NA_integer_,HLiterate=NA_real_,Region=NA_character_
                  ,electricity=NA_real_,tenure=NA_real_,area=NA_real_
@@ -27,7 +27,7 @@ X2 <- data.table(Year=NA_integer_,HLiterate=NA_real_,Region=NA_character_
                  ,bathroom=NA_real_,ego=NA_real_,pipewater=NA_real_
                  ,cookfuel=NA_real_,heatfuel=NA_real_,hotwater=NA_real_
                  ,G0451=NA_real_,G0452=NA_real_,G0453=NA_real_,G044=NA_real_
-                 ,Subsidy=NA_real_)
+                 ,Subsidy=NA_real_,Food_Share=NA_real_,room=NA_real_)
 
 X3 <- data.table(Year=NA_integer_,HLiterate=NA_real_,ProvinceCode=NA_integer_
                  ,electricity=NA_real_,tenure=NA_real_,area=NA_real_
@@ -35,7 +35,7 @@ X3 <- data.table(Year=NA_integer_,HLiterate=NA_real_,ProvinceCode=NA_integer_
                  ,bathroom=NA_real_,ego=NA_real_,pipewater=NA_real_
                  ,cookfuel=NA_real_,heatfuel=NA_real_,hotwater=NA_real_,
                  G0451=NA_real_,G0452=NA_real_,G0453=NA_real_,G044=NA_real_
-                 ,Subsidy=NA_real_)
+                 ,Subsidy=NA_real_,Food_Share=NA_real_,room=NA_real_)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -69,7 +69,9 @@ for(year in (Settings$startyear:Settings$endyear)){
             G0452=weighted.mean(G0452/All,Weight,na.rm=TRUE),
             G0453=weighted.mean((G0453+G0454)/All,Weight,na.rm=TRUE),
             G044=weighted.mean(G044/All,Weight,na.rm=TRUE),
-            Subsidy=weighted.mean((Subsidy/Size)/All,Weight,na.rm=TRUE))]
+            Subsidy=weighted.mean((Subsidy/12)/All,Weight,na.rm=TRUE),
+            Food_Share=weighted.mean(G01/All,Weight,na.rm=TRUE),
+            room=weighted.mean(room/Size,Weight,na.rm=TRUE))]
   
   A2<-MD[,.(HLiterate=weighted.mean(HLiterate==TRUE,Weight,na.rm=TRUE),
             electricity=weighted.mean(electricity=="True",Weight,na.rm=TRUE),
@@ -88,7 +90,9 @@ for(year in (Settings$startyear:Settings$endyear)){
             G0452=weighted.mean(G0452/All,Weight,na.rm=TRUE),
             G0453=weighted.mean((G0453+G0454)/All,Weight,na.rm=TRUE),
             G044=weighted.mean(G044/All,Weight,na.rm=TRUE),
-            Subsidy=weighted.mean((Subsidy/Size)/All,Weight,na.rm=TRUE)),by=Region]
+            Subsidy=weighted.mean((Subsidy/12)/All,Weight,na.rm=TRUE),
+            Food_Share=weighted.mean(G01/All,Weight,na.rm=TRUE),
+            room=weighted.mean(room/Size,Weight,na.rm=TRUE)),by=Region]
   
   A3<-MD[,.(HLiterate=weighted.mean(HLiterate==TRUE,Weight,na.rm=TRUE),
             electricity=weighted.mean(electricity=="True",Weight,na.rm=TRUE),
@@ -107,7 +111,9 @@ for(year in (Settings$startyear:Settings$endyear)){
             G0452=weighted.mean(G0452/All,Weight,na.rm=TRUE),
             G0453=weighted.mean((G0453+G0454)/All,Weight,na.rm=TRUE),
             G044=weighted.mean(G044/All,Weight,na.rm=TRUE),
-            Subsidy=weighted.mean((Subsidy/Size)/All,Weight,na.rm=TRUE)),by=ProvinceCode]
+            Subsidy=weighted.mean((Subsidy/12)/All,Weight,na.rm=TRUE),
+            Food_Share=weighted.mean(G01/All,Weight,na.rm=TRUE),
+            room=weighted.mean(room/Size,Weight,na.rm=TRUE)),by=ProvinceCode]
 
   A1[,Year:=year]
   X1 <- rbind(X1,A1)
