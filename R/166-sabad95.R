@@ -96,7 +96,7 @@ gram <-MD [Selected_Group==1,
              Mahi_Grams=weighted.mean(Mahi_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
              Panir_Grams=weighted.mean(Panir_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE)),by=c("Region")]
 
-year<-98
+year<-90
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -118,8 +118,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     i <- i + 1
     MD[,ThisIterationPoor:=NewPoor]
     MD[,FPLine:=NULL]
-    MD[,Selected_Group:=ifelse((Decile==3) |(Decile==4)|
-                                 (Decile==1) | (Decile==2),1,0)]
+    MD[,Selected_Group:=ifelse((Decile==1) | (Decile==2) | (Decile==3) | (Decile==4),1,0)]
     MDP <- MD [Selected_Group==1,
                .(Nan_Price=min(weighted.mean(LavashPrice,Weight,na.rm = TRUE),weighted.mean(BarbariPrice,Weight,na.rm = TRUE),weighted.mean(TaftoonPrice,Weight,na.rm = TRUE),weighted.mean(Bread_FantasyPrice,Weight,na.rm = TRUE),na.rm = TRUE),
                  Berenj_Price=min(weighted.mean(Rice_TaromPrice,Weight,na.rm = TRUE),weighted.mean(Rice_AshPrice,Weight,na.rm = TRUE),weighted.mean(Rice_Khareji2Price,Weight,na.rm = TRUE),weighted.mean(Rice_DomsiahPrice,Weight,na.rm = TRUE),na.rm = TRUE),
