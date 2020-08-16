@@ -16,7 +16,7 @@ library(data.table)
 library(ggplot2)
 library(stats)
 library(spatstat)
-
+year<-97
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -25,25 +25,27 @@ for(year in (Settings$startyear:Settings$endyear)){
   I<-inflation[Year==year]
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"demo.rda"))
+ # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"demo.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Total_Income.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Specific.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Job.rda"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+ # load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
 
   job<-job[,Region:=NULL]
   job<-job[,HActivityState:=NULL]
+  job<-job[,Decile:=NULL]
+  
  # demo[,HHID:=as.numeric(HHID)]
   #MD[,HHID:=as.numeric(HHID)]
   
-  MD<-merge(MD,demo[,.(NEmployed,NLiterate,HHID)],by=c("HHID"),all.x = T)
+  #MD<-merge(MD,demo[,.(NEmployed,NLiterate,HHID)],by=c("HHID"),all.x = T)
   MD<-merge(MD,job,by=c("HHID"),all.x = T)
   MD<-merge(MD,Specific,by=c("HHID"),all.x = T)
   MD<-merge(MD,I,by=c("ProvinceCode","Year","NewArea_Name"),all.x = T)
   MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"),all.x = T)
-  MD<-merge(MD,HHHouseProperties,by=c("HHID"),all.x = T)
+ # MD<-merge(MD,HHHouseProperties,by=c("HHID"),all.x = T)
   
   MD<-MD[!duplicated(MD$HHID)]
   MD<-MD[!is.na(FinalPoor)]
@@ -133,20 +135,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD<-MD[,Real_Total_Exp_Month:=Total_Exp_Month/total]
   MD<-MD[,Real_FoodExpenditure:=FoodExpenditure/food]
-  MD<-MD[,Real_Durable_Exp:=NonFreeDurable_Exp/durables]
+  MD<-MD[,Real_Durable_Exp:=Durable_Exp/durables]
   
-  MD<-MD[,Pub_Employee:=ifelse(Main_Job_Name_Pub==0,0,1)]
-  MD<-MD[,Prv_Employee:=ifelse(Main_Job_Name_Prv==0,0,1)]
-  MD<-MD[,Cooperative_Employee:=ifelse(Main_Job_Name_Cooperative==0,0,1)]
-  MD<-MD[,Simple_Jobs_Staff:=ifelse(Job_Main_Code_Pub==9 | Job_Main_Code_Prv==9 | Job_Main_Code_Cooperative==9 | Job_Main_Code_Buss==9 | Job_Main_Code_Agri==9,1,0)]
-  MD<-MD[,Opreators_machinery_equipment:=ifelse(Job_Main_Code_Pub==8 | Job_Main_Code_Prv==8 | Job_Main_Code_Cooperative==8 | Job_Main_Code_Buss==8 | Job_Main_Code_Agri==8,1,0)]
-  MD<-MD[,Craftsman:=ifelse(Job_Main_Code_Pub==7 | Job_Main_Code_Prv==7 | Job_Main_Code_Cooperative==7 | Job_Main_Code_Buss==7 | Job_Main_Code_Agri==7,1,0)]
-  MD<-MD[,Skilled_staff_agriculture_forestr_fishing:=ifelse(Job_Main_Code_Pub==6 | Job_Main_Code_Prv==6 | Job_Main_Code_Cooperative==6 | Job_Main_Code_Buss==6 | Job_Main_Code_Agri==6,1,0)]
-  MD<-MD[,Staff_service_sales:=ifelse(Job_Main_Code_Pub==5 | Job_Main_Code_Prv==5 | Job_Main_Code_Cooperative==5 | Job_Main_Code_Buss==5 | Job_Main_Code_Agri==5,1,0)]
-  MD<-MD[,Office_staff:=ifelse(Job_Main_Code_Pub==4 | Job_Main_Code_Prv==4 | Job_Main_Code_Cooperative==4 | Job_Main_Code_Buss==4 | Job_Main_Code_Agri==4,1,0)]
-  MD<-MD[,Technician:=ifelse(Job_Main_Code_Pub==3 | Job_Main_Code_Prv==3 | Job_Main_Code_Cooperative==3 | Job_Main_Code_Buss==3 | Job_Main_Code_Agri==3,1,0)]
-  MD<-MD[,Expert:=ifelse(Job_Main_Code_Pub==2 | Job_Main_Code_Prv==2 | Job_Main_Code_Cooperative==2 | Job_Main_Code_Buss==2 | Job_Main_Code_Agri==2,1,0)]
-  MD<-MD[,Manager:=ifelse(Job_Main_Code_Pub==1 | Job_Main_Code_Prv==1 | Job_Main_Code_Cooperative==1 | Job_Main_Code_Buss==1 | Job_Main_Code_Agri==1,1,0)]
+  MD<-MD[,Pub_Employee:=ifelse(Score_Job1==0,0,1)]
+  MD<-MD[,Prv_Employee:=ifelse(Score_Job2==0,0,1)]
+  MD<-MD[,Cooperative_Employee:=ifelse(Score_Job3==0,0,1)]
+  MD<-MD[,Simple_Jobs_Staff:=ifelse(Score_Job1==9 | Score_Job2==9 | Score_Job3==9 | Score_Job4==9 | Score_Job5==9,1,0)]
+  MD<-MD[,Opreators_machinery_equipment:=ifelse(Score_Job1==8 | Score_Job2==8 | Score_Job3==8 | Score_Job4==8 | Score_Job5==8,1,0)]
+  MD<-MD[,Craftsman:=ifelse(Score_Job1==7 | Score_Job2==7 | Score_Job3==7 | Score_Job4==7 | Score_Job5==7,1,0)]
+  MD<-MD[,Skilled_staff_agriculture_forestr_fishing:=ifelse(Score_Job1==6 | Score_Job2==6 | Score_Job3==6 | Score_Job4==6 | Score_Job5==6,1,0)]
+  MD<-MD[,Staff_service_sales:=ifelse(Score_Job1==5 | Score_Job2==5 | Score_Job3==5 | Score_Job4==5 | Score_Job5==5,1,0)]
+  MD<-MD[,Office_staff:=ifelse(Score_Job1==4 | Score_Job2==4 | Score_Job3==4 | Score_Job4==4 | Score_Job5==4,1,0)]
+  MD<-MD[,Technician:=ifelse(Score_Job1==3 | Score_Job2==3 | Score_Job3==3 | Score_Job4==3 | Score_Job5==3,1,0)]
+  MD<-MD[,Expert:=ifelse(Score_Job1==2 | Score_Job2==2 | Score_Job3==2 | Score_Job4==2 | Score_Job5==2,1,0)]
+  MD<-MD[,Manager:=ifelse(Score_Job1==1 | Score_Job2==1 | Score_Job3==1 | Score_Job4==1 | Score_Job5==1,1,0)]
   
   MD<-MD[,Aid_Per:=Aid/Size]
   MD<-MD[,Ratio_Aid_Per:=Aid_Per/NetIncome]
@@ -259,7 +261,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               Size,Weight,NUniv,Ratio_NUniv,Square_NUniv,EqSizeOECD,EqSizeCalory,FoodKCaloriesHH_Per,FoodProtein_Per,Ratio_TOriginalFoodExpenditure,
               TFoodKCaloriesHH_Per,Rooms,Area,Area_Per,Log_Area_Per,Square_Area_Per,Ratio_Amusement_Exp,Ratio_MetrPrice,Ratio_Hygiene_Exp,
               Ratio_Total_Exp_Month_nondurable,Ratio_Medical_Exp,Ratio_Furniture_Exp,Ratio_Cloth_Exp,Ratio_HouseandEnergy_Exp,Ratio_ServiceExp,
-              Ratio_Durable_Exp,Ratio_Education_per,Ratio_Medicine,Decile,Decile_Nominal,Percentile,Percentile_Nominal,InitialPoor,FinalPoor,
+              Ratio_Durable_Exp,Ratio_Education_per,Ratio_Medicine,Decile,Percentile,InitialPoor,FinalPoor,
               FPLine,PovertyLine,Engel,HHEngle,Total_Exp_Month_Per_nondurable,Goosht_Grams_Per,Morgh_Grams_Per,
               Mahi_Grams_Per,Mive_Grams_Per,Nan_Grams_Per,Sibzamini_Grams_Per,Makarooni_Grams_Per,Khoshkbar_Grams_Per,T_Meat_Grams_per,
               T_Inferior_Grams_Per,Pub_Employee,Prv_Employee,Cooperative_Employee,Simple_Jobs_Staff,Opreators_machinery_equipment,Craftsman,

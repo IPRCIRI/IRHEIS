@@ -29,7 +29,7 @@ load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Job.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Data.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
 MD<-merge(BigFData,MD,by=c("HHID"),all.x = T)
-MD<-MD[FinalPoor=1]
+MD<-MD[FinalPoor==1]
 Calory<-MD[,weighted.mean(TFoodKCaloriesHH_Per,Weight*Size),by=c("ProvinceCode")]
 MD<-merge(MD,FoodNames,by=c("FoodType"),all.x = T)
 base<-MD[,weighted.mean(FGrams/EqSizeCalory*KCalories,Weight*Size),by=c("ProvinceName","FoodType")]

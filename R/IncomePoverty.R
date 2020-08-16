@@ -22,7 +22,7 @@ FinalCountryResults <- data.table(Year=NA_integer_,PovertyLine=NA_real_,
                                   Total_Exp_Month_Per=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalRegionResults <- data.table(Year=NA_integer_,Region=NA_integer_,PovertyLine=NA_real_,PovertyHCR=NA_real_,
-                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+                                 PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPrice=NA_real_,
                                   House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
                                   SampleSize=NA_integer_,
@@ -30,11 +30,11 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 FinalProvinceResults <- data.table(Year=NA_integer_,ProvinceName=NA_integer_,MetrPrice=NA_real_,
-                                  House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
-                                  SampleSize=NA_integer_,
-                                  Engle=NA_integer_,FPLine=NA_integer_,
-                                  PovertyLine=NA_real_,PovertyHCR=NA_real_,
-                                  PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
+                                   House_Share=NA_real_,FoodKCaloriesHH_Per=NA_real_,
+                                   SampleSize=NA_integer_,
+                                   Engle=NA_integer_,FPLine=NA_integer_,
+                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
+                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
 year<-95
 for(year in (Settings$startyear:Settings$endyear)){
@@ -43,34 +43,38 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS_Engle.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Total_Income.rda"))
+  
+  MD<-merge(MD,IncomeTable[,.(HHID,NetIncome)],by=c("HHID"),all.x = TRUE)
+  
 
-
- # MD<-MD[Region=="Urban"]
-
- # EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
- #               TOriginalFoodExpenditure_Per<1.2*FPLine,
- #              .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),
+  # MD<-MD[Region=="Urban"]
+  
+  # EngleD<- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+  #               TOriginalFoodExpenditure_Per<1.2*FPLine,
+  #              .(.N,Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month_nondurable,Weight),
   #               FPLine=mean(FPLine)),by=.(Region,cluster3)]
-
-
- # EngleD[,EngleFinal:=mean(EngleFinal)]
+  
+  
+  # EngleD[,EngleFinal:=mean(EngleFinal)]
   EngleD[,PovertyLine:=FPLine/EngleFinal]
   EngleD[,PovertyLine2:=FPLine/Engel0]
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
-  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
-  MD[,FinalPoor2:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine2,1,0 )]
+MD<-MD[,NetIncome:=NetIncome/(EqSizeOECD*12)]
+    MD[,FinalPoor:=ifelse(NetIncome < PovertyLine,1,0 )]
+  MD[,FinalPoor2:=ifelse(NetIncome < PovertyLine2,1,0 )]
   MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
-
-
+  
+  
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per)/PovertyLine)^2]
   
-
+  
   
   ################Country##################
-
+  
   X1 <- MD[,.(PovertyLine=weighted.mean(PovertyLine,Weight*Size),
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
               Engle=weighted.mean(HHEngle,Weight),
@@ -92,7 +96,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","Region"))
   FinalRegionResults <- rbind(FinalRegionResults,X)
-
+  
   
   ################Cluster##################
   X1 <- MD[,.(SampleSize=.N,MetrPrice=weighted.mean(MetrPrice,Weight,na.rm = TRUE),
@@ -105,7 +109,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X2 <- MD[FinalPoor==1,.(PovertyGap=weighted.mean(FGT1M,Weight*Size),
                           PovertyDepth=weighted.mean(FGT2M,Weight*Size)),by=cluster3]
   
-
+  
   X1[,Year:=year]
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","cluster3"))
@@ -135,41 +139,40 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
   cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
   #cat(MD[, sum(Weight*Size)],"\t")
-
+  
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
-
+  
   MD[, weighted.mean(FinalPoor,Weight*Size)]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=Region]
   MD[, weighted.mean(FinalPoor,Weight*Size),by=cluster3]
   MD[,weighted.mean(FinalPoor,Weight),by=ProvinceName][order(ProvinceName)]
-    
-    
+  
+  
   DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
                    Total_Exp_Month_Per_nondurable<1.2*PovertyLine,
-               .(.N,Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight),
-                 PovertyLine=mean(PovertyLine)),
-               by=.(Region,cluster3)]
+                 .(.N,Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight),
+                   PovertyLine=mean(PovertyLine)),
+                 by=.(Region,cluster3)]
   
   DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
   MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
   
-#  cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
+  #  cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
   
- # cat(MD[Decile==3, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
- # cat(MD[Decile==2, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
+  # cat(MD[Decile==3, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
+  # cat(MD[Decile==2, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
 }
-write_xlsx(FinalClusterResults,path="ClusterResults.xlsx",col_names=T)
-write_xlsx(FinalCountryResults,path="CountryResults.xlsx",col_names=T)
-write_xlsx(FinalRegionResults,path="RegionResults.xlsx",col_names=T)
-write_xlsx(FinalProvinceResults,path="ProvinceResults.xlsx",col_names=T)
+write_xlsx(FinalClusterResults,path="ClusterResultsI.xlsx",col_names=T)
+write_xlsx(FinalCountryResults,path="CountryResultsI.xlsx",col_names=T)
+write_xlsx(FinalRegionResults,path="RegionResultsI.xlsx",col_names=T)
 
 pop<-MD[,sum(.N),by=c("Decile","cluster3")]
 
 #ggplot(FinalClusterResults)+
- # geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3),linetype=factor(cluster3)))
+# geom_line(mapping = aes(x=Year,y=PovertyHCR,col=factor(cluster3),linetype=factor(cluster3)))
 #write.csv(FinalClusterResults,file = "FinalClusterResults.csv")
 
 #z2<-MD[,.(HHID,Decile,Added,Added1,Added2,Added3,Added4,Added5,
