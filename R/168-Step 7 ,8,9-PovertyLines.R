@@ -168,6 +168,17 @@ for(year in (Settings$startyear:Settings$endyear)){
 #z2<-MD[,.(HHID,Decile,Added,Added1,Added2,Added3,Added4,Added5,
 #                  Added6,Added7,Added8,computer,Added9,Added10,Added11)]
 
+a<-MD[tenure=="OwnLandandBuilding" | tenure=="Apartment",
+   weighted.mean(FinalPoor,Weight*Size),by="cluster3"]
+
+b<-MD[FinalPoor==1,
+      weighted.mean(tenure=="OwnLandandBuilding" |
+                      tenure=="Apartment",Weight*Size),by="cluster3"]
+
+c<-MD[,weighted.mean(tenure=="OwnLandandBuilding" | 
+                       tenure=="Apartment",Weight*Size),by="cluster3"]
+
+
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat((endtime-starttime)["elapsed"])
