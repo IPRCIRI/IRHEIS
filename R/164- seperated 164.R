@@ -401,7 +401,9 @@ SMD[Added6<0,Added6:=0]
 SMD[Added7<0,Added7:=0]
 SMD[Added8<0,Added8:=0]
 SMD[Added9<0,Added9:=0]
+if (year!=90 & year!=92 & year!=93 & year!=95){
 SMD[Added10<0,Added10:=0]
+}
 SMD[Added11<0,Added11:=0]
 
  #z1<-SMD[,.(HHID,Decile,Added1,Added2,Added3,Added4,Added5,
@@ -638,7 +640,9 @@ SMD[Added11<0,Added11:=0]
     SMD[Added7<0,Added7:=0]
     SMD[Added8<0,Added8:=0]
     SMD[Added9<0,Added9:=0]
+    if (year!=90 & year!=92 & year!=93 & year!=95){
     SMD[Added10<0,Added10:=0]
+    }
     SMD[Added11<0,Added11:=0]
     
     if (year!=90 & year!=92 & year!=93 & year!=95){ 
@@ -788,7 +792,9 @@ SMD[Added11<0,Added11:=0]
   SMD[Added7<0,Added7:=0]
   SMD[Added8<0,Added8:=0]
   SMD[Added9<0,Added9:=0]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
   SMD[Added10<0,Added10:=0]
+  }
   SMD[Added11<0,Added11:=0]
   
   
@@ -838,8 +844,8 @@ SMD[Added11<0,Added11:=0]
   #A<-merge(A,A10)
   #A<-merge(A,A11)
   
-  z2<-MD[,.(HHID,Decile,Region,Added,Added1,Added2,Added3,Added4,Added5,
-           Added6,Added7,Added8,Added9,Added10,Added11)]
+  #z2<-MD[,.(HHID,Decile,Region,Added,Added1,Added2,Added3,Added4,Added5,
+   #        Added6,Added7,Added8,Added9,Added10,Added11)]
 
 
 
