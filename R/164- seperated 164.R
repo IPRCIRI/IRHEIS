@@ -323,17 +323,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   A11<-SMD[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by="Decile"]
   
-  SMD[,A1:=NULL]
-  SMD[,A2:=NULL]
-  SMD[,A3:=NULL]
-  SMD[,A4:=NULL]
-  SMD[,A5:=NULL]
-  SMD[,A6:=NULL]
-  SMD[,A7:=NULL]
-  SMD[,A8:=NULL]
-  SMD[,A9:=NULL]
-  SMD[,A10:=NULL]
-  SMD[,A11:=NULL]
+  #SMD[,A1:=NULL]
+  #SMD[,A2:=NULL]
+  #SMD[,A3:=NULL]
+  #SMD[,A4:=NULL]
+  #SMD[,A5:=NULL]
+  #SMD[,A6:=NULL]
+  #SMD[,A7:=NULL]
+  #SMD[,A8:=NULL]
+  #SMD[,A9:=NULL]
+  #SMD[,A10:=NULL]
+  #SMD[,A11:=NULL]
   
   SMD<-merge(SMD,A1,by="Decile")
   SMD<-merge(SMD,A2,by="Decile")
@@ -389,8 +389,23 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   SMD[car=="True",Added11:=A11]
   
- # z1<-SMD[,.(HHID,Added1,Added2,Added3,Added4,Added5,
+ # z1<-SMD[,.(HHID,Decile,Added1,Added2,Added3,Added4,Added5,
   #          Added6,Added7,Added8,Added9,Added10,Added11)]
+  
+SMD[Added1<0,Added1:=0]
+SMD[Added2<0,Added2:=0]
+SMD[Added3<0,Added3:=0]
+SMD[Added4<0,Added4:=0]
+SMD[Added5<0,Added5:=0]
+SMD[Added6<0,Added6:=0]
+SMD[Added7<0,Added7:=0]
+SMD[Added8<0,Added8:=0]
+SMD[Added9<0,Added9:=0]
+SMD[Added10<0,Added10:=0]
+SMD[Added11<0,Added11:=0]
+
+ #z1<-SMD[,.(HHID,Decile,Added1,Added2,Added3,Added4,Added5,
+ #         Added6,Added7,Added8,Added9,Added10,Added11)]
   
   if (year!=90 & year!=92 & year!=93 & year!=95){ 
     dep <- c( "71111", "71112","71116", "71117",
@@ -614,6 +629,18 @@ for(year in (Settings$startyear:Settings$endyear)){
   #  z1<-SMD[,.(HHID,Added1,Added2,Added3,Added4,Added5,
    #            Added6,Added7,Added8,Added9,Added10,Added11)]
     
+    SMD[Added1<0,Added1:=0]
+    SMD[Added2<0,Added2:=0]
+    SMD[Added3<0,Added3:=0]
+    SMD[Added4<0,Added4:=0]
+    SMD[Added5<0,Added5:=0]
+    SMD[Added6<0,Added6:=0]
+    SMD[Added7<0,Added7:=0]
+    SMD[Added8<0,Added8:=0]
+    SMD[Added9<0,Added9:=0]
+    SMD[Added10<0,Added10:=0]
+    SMD[Added11<0,Added11:=0]
+    
     if (year!=90 & year!=92 & year!=93 & year!=95){ 
       dep <- c( "71111", "71112","71116", "71117",
                 "91128", "91129","53112", "53116",
@@ -687,8 +714,83 @@ for(year in (Settings$startyear:Settings$endyear)){
      cat("\n",i,":",SMD[,sum((InitialPoorBasedOnPercentile-InitialPoorBasedOnPercentileLastIteration)^2)])
     
     
-    
   }
+  
+  A1<-SMD[(`71111`+`71112`+`71116`+`71117`>0),
+          .(A1=weighted.mean(`71111`+`71112`+`71116`+
+                               `71117`,Weight)),by="Decile"]
+  A2<-SMD[(`91128`+`91129`>0),
+          .(A2=weighted.mean(`91128`+`91129`,Weight)),by="Decile"]
+  A3<-SMD[`53112`>0 ,.(A3=weighted.mean(`53112`,Weight)),by="Decile"]
+  A4<-SMD[`53116`>0 , .(A4=weighted.mean(`53116`,Weight)),by="Decile"]
+  A5<-SMD[`53113`>0 ,.(A5=weighted.mean(`53113`,Weight)),by="Decile"]
+  A6<-SMD[`82113`>0, .(A6=weighted.mean(`82113`,Weight)),by="Decile"]
+  A7<-SMD[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by="Decile"]
+  A8<-SMD[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by="Decile"]
+  A9<-SMD[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by="Decile"]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    A10<-SMD[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by="Decile"]
+  }
+  A11<-SMD[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by="Decile"]
+  
+  SMD[,A1:=NULL]
+  SMD[,A2:=NULL]
+  SMD[,A3:=NULL]
+  SMD[,A4:=NULL]
+  SMD[,A5:=NULL]
+  SMD[,A6:=NULL]
+  SMD[,A7:=NULL]
+  SMD[,A8:=NULL]
+  SMD[,A9:=NULL]
+  SMD[,A10:=NULL]
+  SMD[,A11:=NULL]
+  
+  SMD<-merge(SMD,A1,by="Decile")
+  SMD<-merge(SMD,A2,by="Decile")
+  SMD<-merge(SMD,A3,by="Decile")
+  SMD<-merge(SMD,A4,by="Decile")
+  SMD<-merge(SMD,A5,by="Decile")
+  SMD<-merge(SMD,A6,by="Decile")
+  SMD<-merge(SMD,A7,by="Decile")
+  SMD<-merge(SMD,A8,by="Decile")
+  SMD[,A8:=as.numeric(A8)]
+  SMD<-merge(SMD,A9,by="Decile")
+  
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    SMD<-merge(SMD,A10,by="Decile")
+  }
+  SMD<-merge(SMD,A11,by="Decile")
+  
+  
+  SMD[car=="True",Added1:=A1-0.05*Auto_Sale]  #We use 0.05 instead of 0.1
+  SMD[tvcr=="True",Added2:=A2-0.033*TV_Sale]
+  SMD[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
+      Added3:=A3-0.033*yakhchal_Sale]
+  SMD[oven=="True",Added4:=A4-0.033*ojaghgaz_Sale]
+  SMD[washer=="True",Added5:=A5-0.033*lebasshooyi_Sale]
+  SMD[cellphone=="True",Added6:=A6-0.11*Mobile_Sale]
+  SMD[cooler_gas=="True",Added7:=A7-0.05*Coolergazi_Sale]
+  SMD[computer=="True",Added8:=A8]
+  SMD[computer=="True",Added8:=A8-0.06*PC_Sale]
+  SMD[car=="True",Added9:=A9-0.5*lastik_Sale]
+  if (year!=90 & year!=92 & year!=93 & year!=95){
+    SMD[car=="True",Added10:=A10]
+  }
+  SMD[car=="True",Added11:=A11]
+  
+  
+  SMD[Added1<0,Added1:=0]
+  SMD[Added2<0,Added2:=0]
+  SMD[Added3<0,Added3:=0]
+  SMD[Added4<0,Added4:=0]
+  SMD[Added5<0,Added5:=0]
+  SMD[Added6<0,Added6:=0]
+  SMD[Added7<0,Added7:=0]
+  SMD[Added8<0,Added8:=0]
+  SMD[Added9<0,Added9:=0]
+  SMD[Added10<0,Added10:=0]
+  SMD[Added11<0,Added11:=0]
+  
   
 #  cat(SMD[,weighted.mean(Calorie_Need_WorldBank,Weight)],"\n")
  # cat(SMD[,weighted.mean(TFoodKCaloriesHH_Per,Weight)],"\n")
@@ -736,8 +838,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #A<-merge(A,A10)
   #A<-merge(A,A11)
   
-#  z2<-MD[,.(HHID,Decile,Region,Added,Added1,Added2,Added3,Added4,Added5,
-  #         Added6,Added7,Added8,computer,Added9,Added10,Added11)]
+  z2<-MD[,.(HHID,Decile,Region,Added,Added1,Added2,Added3,Added4,Added5,
+           Added6,Added7,Added8,Added9,Added10,Added11)]
 
 
 

@@ -37,7 +37,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   save(FData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories.rda"))
   save(FDataRural, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Rural.rda"))
   save(FDataUrban, file = paste0(Settings$HEISProcessedPath,"Y",year,"Food_Calories_Urban.rda"))
-}
+cat(FDataUrban[,mean(FoodKCaloriesHH)],"\t")
+cat(FDataRural[,mean(FoodKCaloriesHH)],"\t")
+  }
   
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")

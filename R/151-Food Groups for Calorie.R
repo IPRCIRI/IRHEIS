@@ -21,7 +21,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                          FoodType=NA_character_,FoodKCalories=NA_real_,
                          FoodProtein=NA_real_)[0]
   for(i in 1:nrow(TFoodGroups)){
-    cat(paste0(TFoodGroups[i,SheetName],", "))
+    cat(paste0(TFoodGroups[i,SheetName],", "),"\t")
     
     ThisFoodTypeTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=TFoodGroups[i,SheetName]))
     load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
@@ -75,7 +75,9 @@ for(year in (Settings$startyear:Settings$endyear)){
       
       BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodProtein)])
       save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
-    }
+      cat(BigFData[,mean(FoodKCalories)],"\t")
+      cat(BigFData[,mean(FoodProtein)],"\n")
+      }
     }
 }
 cat("\n\n==============Finish==============\nIt took ")
