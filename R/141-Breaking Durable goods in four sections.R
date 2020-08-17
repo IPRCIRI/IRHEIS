@@ -1603,6 +1603,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   TotalDurable[, Durable_NoDep := Reduce(`+`, .SD), .SDcols=g3]
   TotalDurable[, Durable_Emergency := Reduce(`+`, .SD), .SDcols=g4]
   
+  cat(TotalDurable[,mean(Add_to_NonDurable)],"\t")
+  cat(TotalDurable[,mean(Durable_Dep)],"\t")
+  cat(TotalDurable[,mean(Durable_NoDep)],"\t")
+  cat(TotalDurable[,mean(Durable_Emergency)],"\t")
+  
   #TotalDurable <- mutate_(TotalDurable, Add_to_NonDurable2 = paste(g1, collapse = "+"))
  # TotalDurable<-as.data.table(TotalDurable)
   

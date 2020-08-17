@@ -26,7 +26,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   FoodData[is.na(FoodData)] <- 0
   FoodData[,FoodOtherExpenditure:=FoodExpenditure-OriginalFoodExpenditure]     
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
-  cat(FoodData[,mean(OriginalFoodExpenditure)])
+  cat(FoodData[,mean(OriginalFoodExpenditure)],"\t")
+  cat(FoodData[,mean(FoodExpenditure)],"\t")
+  cat(FoodData[,mean(FoodOtherExpenditure)],"\t")
 }
 
 cat("\n\n==============Finish==============\nIt took ")

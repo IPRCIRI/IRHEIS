@@ -262,6 +262,9 @@ for(year in Settings$startyear:Settings$endyear){
   HHHouseProperties<-P2
   save(HHHouseProperties, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
+  
+  HHHouseProperties[,Sample:=1]
+  cat(HHHouseProperties[,sum(Sample)])
 
 }
 

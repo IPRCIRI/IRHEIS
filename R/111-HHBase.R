@@ -653,6 +653,8 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 
+  HHBase[,Sample:=1]
+  cat(HHBase[,sum(Sample)])
  # rm(HHBase)
 }
 
