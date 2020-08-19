@@ -242,7 +242,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   pcols <- intersect(names(TM),c("HHID","Code","Hygiene_Exp"))
   TM <- TM[,pcols,with=FALSE]
-  #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
+  TM <- TM[Code %in% mt$StartCode:mt$EndCode]
   if(year %in% 84:96){
     TM[,Hygiene_Exp:=as.numeric(Hygiene_Exp)]
   }
@@ -275,7 +275,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
   TM <- TM[,pcols,with=FALSE]
-  #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
+  TM <- TM[Code %in% mt$StartCode:mt$EndCode]
   if(year %in% 84:96){
     TM[,Medical_Exp:=as.numeric(Medical_Exp)]
   }
@@ -285,8 +285,44 @@ for(year in (Settings$startyear:Settings$endyear)){
   MedicalData <- TM[,lapply(.SD,sum),by=HHID]
   save(MedicalData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Medicals.rda"))
   cat(MedicalData[,mean(Medical_Exp)])
-  }
+}
 
+
+cat("\n\n================ Section6-3:Total section 6 =====================================\n")
+
+MedicalTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Medical))
+
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
+  mt <- MedicalTables[Year==year]
+  tab <- mt$Table
+  if(is.na(tab))
+    next
+  UTM <- Tables[[paste0("U",year,tab)]]
+  RTM <- Tables[[paste0("R",year,tab)]]
+  TM <- rbind(UTM,RTM)
+  for(n in names(TM)){
+    x <- which(mt==n)
+    if(length(x)>0)
+      setnames(TM,n,names(mt)[x])
+  }
+  pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
+  TM <- TM[,pcols,with=FALSE]
+  #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
+  if(year %in% 84:96){
+    TM[,Medical_Exp:=as.numeric(Medical_Exp)]
+  }
+  # TM <- TM[Code %in% mt$StartCode:mt$EndCode]
+  TM[,Code:=NULL]
+  TM[is.na(TM)] <- 0
+  section6 <- TM[,lapply(.SD,sum),by=HHID]
+  save(section6, file = paste0(Settings$HEISProcessedPath,"Y",year,"section6.rda"))
+  cat(section6[,mean(Medical_Exp)])
+}
+
+Data<-merge(section6,HygieneData,all.x = TRUE)
+Data<-merge(Data,MedicalData,all.x = TRUE)
 
 cat("\n\n================ Section7:HHTransportation =====================================\n")
 
