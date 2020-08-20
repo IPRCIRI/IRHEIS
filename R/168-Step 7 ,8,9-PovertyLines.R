@@ -36,7 +36,7 @@ FinalProvinceResults <- data.table(Year=NA_integer_,ProvinceName=NA_integer_,Met
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
-year<-95
+year<-98
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -59,7 +59,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD,EngleD[,.(cluster3,Region,PovertyLine,PovertyLine2,Engel)],by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD[,FinalPoor2:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine2,1,0 )]
-  MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight]
+  MD<-MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month,Weight] ###### Foodotehr????    
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
   
 
@@ -151,7 +151,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                  PovertyLine=mean(PovertyLine)),
                by=.(Region,cluster3)]
   
-  DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
+  DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]  
+  ##  Total_Exp_Month/TOriginalFoodExpenditure  * FPLIne *(Total_Exp_Month_nondurable+Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable  )
   MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
   
 #  cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
