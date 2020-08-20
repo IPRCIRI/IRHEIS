@@ -41,7 +41,7 @@ for(year in (88:Settings$endyear)){
   
   #MD<-MD[Region=="Rural"]
   #MD<-MD[cluster3==7]
-  MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
+  #MD<-MD[,Clusterdiff:=ifelse(cluster3==7,1,0)]
   MD<-MD[,EngleH:=(TOriginalFoodExpenditure/Total_Exp_Month)]
   
   
@@ -54,9 +54,9 @@ for(year in (88:Settings$endyear)){
                ,by=.(Region,cluster3)
                ]
   
-  x <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                  TOriginalFoodExpenditure_Per<1.2*FPLine &
-             cluster3==7]
+  #x <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+   #               TOriginalFoodExpenditure_Per<1.2*FPLine &
+    #         cluster3==7]
   
 #  a<-x$EngleH
  # hist(a)
@@ -117,7 +117,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   #  EngleMD <- EngleMD[,Engelm:=Engel]
   
   
-  EngleMD[,Engel0:=Engel]
+  EngleMD[,Engel0:=Engel]  # save initial engle
   EngleMD[,Engel:=     ifelse(Year==84,Engel*0.9937,
                               ifelse(Year==85,Engel*0.9938,
                               ifelse(Year==86,Engel*0.9936,
@@ -167,12 +167,15 @@ for(year in (Settings$startyear:Settings$endyear)){
                               ifelse(Yearpp==95,Engelpp*0.9639,
                               ifelse(Yearpp==96,Engelpp*0.9310,0)))))))))))))))]
   
-  EngleMD[,Engelm:=(Engel+Engelp+Engelpp)/3]
+  EngleMD[,Engelm:=(Engel+Engelp+Engelpp)/3]   # average of adjusted engle
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"EngleD.rda"))
   EngleD  <- EngleD[,.(Region,cluster3,N,FPLine,Year)]
   
-  EngleMD <- EngleMD[,EngleFinal:=Engelm]
+  EngleMD <- EngleMD[,EngleFinal:=Engelm]     # set final engle as average of adjusted engle
+  # set initial engle by name 'Engel0'
+  # set adjusted engle for this year by name 'Engel'
+  # set average of adjusted engles by name 'EngleFinal'
   EngleDD <- EngleMD[,.(cluster3,EngleFinal,Engel0,Engel,Region)]
 
   
