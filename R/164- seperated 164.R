@@ -829,7 +829,8 @@ SMD[Added11<0,Added11:=0]
   }
   setnames(MD,"InitialPoorBasedOnPercentile","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
   
-  
+  #cat(SMD[,.N],"\t")
+  #cat(MD[,.N],"\t")
   ######################################################################
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 }
