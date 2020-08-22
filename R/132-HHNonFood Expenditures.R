@@ -180,7 +180,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   HouseData <- HouseData[!is.na(MetrPrice)]
   save(HouseData, file = paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
   # cat(summary(HouseData[,ServiceExp/Area]))
-  cat(HouseData[,mean(MetrPrice)]/p0-1,"\n")
+ # cat(HouseData[,mean(MetrPrice)]/p0-1,"\n")
 #  cat(HouseData[,median(MetrPrice)],"\n")
 #  cat(HouseData[,mean(ServiceExp)],"\n")
 #  cat(HouseData[,median(ServiceExp)],"\n")

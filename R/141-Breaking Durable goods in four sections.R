@@ -17,7 +17,10 @@ library(data.table)
 library(ggplot2)
 library(spatstat)
 library(dplyr)
-
+###########################################################
+######Copy code files from TotalDurableDetails folder######
+#####################to Data Processed folder##############
+#########################################################
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
