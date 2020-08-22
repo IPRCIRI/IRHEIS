@@ -20,6 +20,11 @@ library(ggplot2)
 library(spatstat)
 library(scales)
 
+###########################################################
+######Copy code files from TotalDurable folder######
+#####################to Data Processed folder##############
+#########################################################
+
 Table<-data.table(Year=NA_integer_,Auto=NA_real_,Mobile=NA_real_,
                   Refrigerator=NA_real_,TV=NA_real_)[0]
 
