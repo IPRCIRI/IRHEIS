@@ -162,10 +162,10 @@ for(year in (Settings$startyear:Settings$endyear)){
  # cat(MD[Decile==3, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
  # cat(MD[Decile==2, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
 }
-write_xlsx(FinalClusterResults,path="ClusterResults.xlsx",col_names=T)
-write_xlsx(FinalCountryResults,path="CountryResults.xlsx",col_names=T)
-write_xlsx(FinalRegionResults,path="RegionResults.xlsx",col_names=T)
-write_xlsx(FinalProvinceResults,path="ProvinceResults.xlsx",col_names=T)
+#write_xlsx(FinalClusterResults,path="ClusterResults.xlsx",col_names=T)
+#write_xlsx(FinalCountryResults,path="CountryResults.xlsx",col_names=T)
+#write_xlsx(FinalRegionResults,path="RegionResults.xlsx",col_names=T)
+#write_xlsx(FinalProvinceResults,path="ProvinceResults.xlsx",col_names=T)
 
 pop<-MD[,sum(.N),by=c("Decile","cluster3")]
 
