@@ -54,12 +54,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,A5,by="Decile")
   MD<-merge(MD,A6,by="Decile")
   MD<-merge(MD,A7,by="Decile")
-
-  if (year==98){
-    A88<-data.table("5","200000")
-    names(A88)<-c("Decile","A8")
-    A8 <- rbind(A8, A88)
-  }
   MD<-merge(MD,A8,by="Decile")
   MD[,A8:=as.numeric(A8)]
   MD<-merge(MD,A9,by="Decile")
@@ -207,7 +201,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   DT3<-MD[,.(Size=weighted.mean(Size,Weight),
              Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
              Number=sum(Weight)),by=c("cluster3","Decile")]
-  write.csv(DT3,file = "DT3.csv")
+  #write.csv(DT3,file = "DT3.csv")
   
   DT4<-MD[,.(Size=weighted.mean(Size,Weight),
              Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
@@ -274,7 +268,7 @@ for(year in (Settings$startyear:Settings$endyear)){
  DT11<-MD[,.(Size=weighted.mean(Size,Weight),
             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
             Number=sum(Weight)),by=c("ProvinceName","Decile")]
- write.csv(DT11,file = "DT11.csv")
+# write.csv(DT11,file = "DT11.csv")
  
  DT12<-MD[,.(Size=weighted.mean(Size,Weight),
             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),

@@ -1625,6 +1625,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   Durablele_Detail<-merge(Durablele_Detail,DurableData)
   Durablele_Detail[,diff:=Durable_Exp-(Add_to_NonDurable+Durable_Dep+
                                        Durable_NoDep+Durable_Emergency)]
+  Durablele_Detail[,Durable_Emergency:=ifelse(diff>10,Durable_Emergency+diff,Durable_Emergency)]
   
   save(Durablele_Detail, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durablele_Detail.rda"))
  # a<-data.table(duplicated(Durablele_Detail$HHID))
