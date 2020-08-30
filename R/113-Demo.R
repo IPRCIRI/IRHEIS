@@ -418,7 +418,7 @@ for(year in years){
   P1[,weighted.mean(GA8,Weight)]
   P1[,weighted.mean(GA9,Weight)]
   
-  P1<-P1[,Calorie_Need_Anstitoo:=
+  P1<-P1[,Calorie_Need_NutritionInstitute:=
            weighted.mean(BA1,Weight)*Settings$KCaloryNeed_A_B1 +
            weighted.mean(GA1,Weight)*Settings$KCaloryNeed_A_G1 +
            weighted.mean(BA2,Weight)*Settings$KCaloryNeed_A_B2 +
@@ -440,7 +440,7 @@ for(year in years){
            weighted.mean(lactating,Weight)*Settings$KCaloryNeed_lactating]
   
   cat(P1[,mean(Calorie_Need_WorldBank)],"\n")
-  cat(P1[,mean(Calorie_Need_Anstitoo)],"\n")
+  cat(P1[,mean(Calorie_Need_NutritionInstitute)],"\n")
   
   HHI <- merge(HHI,HHWeights)
   #cat(HHI[,weighted.mean(Calorie_Need1/Size,Weight)],"\n")
@@ -449,7 +449,7 @@ for(year in years){
 #  rm(HHI)
   
   Calorie_Need<-P1[,.(Calorie_Need_WorldBank=mean(Calorie_Need_WorldBank),
-                      Calorie_Need_Anstitoo=mean(Calorie_Need_Anstitoo)),by="HHID"]
+                      Calorie_Need_NutritionInstitute=mean(Calorie_Need_NutritionInstitute)),by="HHID"]
   
   save(P1,file=paste0(Settings$HEISProcessedPath,"Y",year,"P1.rda"))
   save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
