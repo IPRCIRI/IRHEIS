@@ -208,7 +208,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                  ServiceExp,FoodExpenditure,Total_Exp_Month,
                  NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
                  # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-                 TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
+                 TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_NutritionInstitute,
                  Weight,MetrPrice,Size,EqSizeOECD
                  ,`71111`,`71117`,`71112`,`71116`,
                  `91128`,`91129`,`53112`,`53116`,
@@ -231,7 +231,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                  ServiceExp,FoodExpenditure,Total_Exp_Month,
                  NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
                  # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-                 TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
+                 TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_NutritionInstitute,
                  Weight,MetrPrice,Size,EqSizeOECD
                  ,`71111`,`71117`,`71112`,`71116`,
                  `91128`,`91129`,`53112`,`53116`,
@@ -252,9 +252,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #Choose one of these
   SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_Anstitoo/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_NutritionInstitute/TFoodKCaloriesHH_Per]
   #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_WorldBank/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_Anstitoo/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_NutritionInstitute/TFoodKCaloriesHH_Per]
   
   
   SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
