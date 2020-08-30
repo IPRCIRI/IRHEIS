@@ -5,6 +5,25 @@
 # Copyright © 2015: Majid Einian
 # Licence: GPL-3
 
+
+################################################################################
+################################################################################
+###                                                                          ###
+###                                                                          ###
+###           THIS CODE DOES NOT WORK FOR NOW.                               ###
+###           SCI PROVIDES DATA IN A MARKET.                                 ###
+###           (FOR FREE NOW).                                                ###
+###           I'VE NOT FOUND DIRECT DOWNLOAD LINKS YET.                      ###
+###           PUT YOUR DOWNLAODED COMPRESSED (RAR) FILES                     ###
+###           IN THE HEIS COMPRESSED FILES PATH                              ###
+###           (SPECIFIED ON SETTINGS FILE)                                   ###
+###                                                                          ###
+###                                                                          ###
+################################################################################
+################################################################################
+
+
+
 rm(list=ls())
 
 starttime <- proc.time()
