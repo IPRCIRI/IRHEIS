@@ -137,14 +137,14 @@ for(year in (Settings$startyear:Settings$endyear)){
                NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
                # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
                Durable_Exp,
-               TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_Anstitoo,
+               TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_NutritionInstitute,
                Weight,MetrPrice,Size,EqSizeOECD)]
   
   #Choose one of these
   SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_Anstitoo/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_NutritionInstitute/TFoodKCaloriesHH_Per]
   #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_WorldBank/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_Anstitoo/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_NutritionInstitute/TFoodKCaloriesHH_Per]
   
   
   SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
@@ -211,37 +211,11 @@ for(year in (Settings$startyear:Settings$endyear)){
              Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
              Number=sum(Weight)),by=c("ProvinceName")]
   
-  MD[,Markaz_Ostan:=ifelse(County_Name=="Arak" |
-                             County_Name=="Rasht" |
-                             County_Name=="Sari" |
-                             County_Name=="Tabriz" |
-                             County_Name=="Urmia" |
-                             County_Name=="Kermanshah" |
-                             County_Name=="Ahvaz" |
-                             County_Name=="Shiraz" |
-                             County_Name=="Kerman" |
-                             County_Name=="Mashhad" |
-                             County_Name=="Esfahan" |
-                             County_Name=="Zahedan" |
-                             County_Name=="Sanandaj" |
-                             County_Name=="Hamedan" |
-                             County_Name=="Shahrekord" |
-                             County_Name=="Khoramabad" |
-                             County_Name=="Ilam" |
-                             County_Name=="Kohkilooye" |
-                             County_Name=="Booshehr" |
-                             County_Name=="Zanjan" |
-                             County_Name=="Semnan" |
-                             County_Name=="Yazd" |
-                             County_Name=="Bandarabas" |
-                             County_Name=="Tehran" |
-                             County_Name=="Ardebil" |
-                             County_Name=="Ghom" |
-                             County_Name=="Ghazvin" |
-                             County_Name=="Gorgan" |
-                             County_Name=="Bojnoord" |
-                             County_Name=="Birjand" |
-                             County_Name=="Karaj",1,0)]
+  Geo4 <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_Geo4))
+  Geo4 <- Geo4[,.(CountyCode=as.numeric(Geo4),CapitalCounty)]
+  MD <- merge(MD,Geo4,by="CountyCode")
+  
+  MD[,Markaz_Ostan:=ifelse(CountyCapital=="Yes",1,0)]
   
   DT6<-MD[,.(Size=weighted.mean(Size,Weight),
              Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
