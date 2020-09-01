@@ -36,6 +36,9 @@ FinalProvinceResults <- data.table(Year=NA_integer_,ProvinceName=NA_integer_,Met
                                   PovertyLine=NA_real_,PovertyHCR=NA_real_,
                                   PovertyGap=NA_real_,PovertyDepth=NA_real_)[0]
 
+
+OriginalFoodShare <- data.table(Year=NA_integer_,Share=NA_integer_,FinalPoor=NA_integer_)[0]
+
 year<-98
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
@@ -158,6 +161,13 @@ for(year in (Settings$startyear:Settings$endyear)){
 #  cat(MD[, weighted.mean(PovertyLine_Final,Weight*Size)])
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight)]
   MD[FinalPoor==1,weighted.mean(Total_Exp_Month_Per,Weight),by=Region]
+  
+  
+  
+  X1 <- MD[,.(Share=weighted.mean(TOriginalFoodExpenditure/FoodExpenditure,Weight)),by=FinalPoor]
+  X1[,Year:=year]
+  
+  OriginalFoodShare <- rbind(OriginalFoodShare,X1)
   
  # cat(MD[Decile==3, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])
  # cat(MD[Decile==2, weighted.mean(FoodKCaloriesHH_Per,Weight*Size)])

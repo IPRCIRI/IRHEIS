@@ -19,6 +19,8 @@ library(spatstat)
 library(writexl)
 library(tidyr)
 
+OriginalFoodShare <- data.table(Year=NA_integer_,Share=NA_integer_)[0]
+
 year<-Settings$baseBundleyear
 
 load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
@@ -179,6 +181,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     #    print(MDP)
     #x<-MD[,.(NewArea,Region,FPLine,InitialPoor)]
     MD[,NewPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
+    #MD[,NewPoor:=ifelse(FoodExpenditure_Per < FPLine,1,0)]
+    
     #    print(table(MD[,.(ThisIterationPoor,NewPoor)]))
     MD[,OldPoor:=ThisIterationPoor]
   
@@ -214,6 +218,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   #  cat(MD[,weighted.mean(Calory_Price,Weight,na.rm = TRUE)],"\n")
   # cat(MD[cluster3==1,weighted.mean(FPLine,Weight,na.rm = TRUE)],"\n")
   cat(MD[,weighted.mean(FPLine,Weight*Size,na.rm = TRUE)],"\n")
+  
+  
+  X1 <- MD[,.(Share=weighted.mean(TOriginalFoodExpenditure/FoodExpenditure,Weight))]
+  X1[,Year:=year]
+
+  OriginalFoodShare <- rbind(OriginalFoodShare,X1)
 }
 
 endtime <- proc.time()
