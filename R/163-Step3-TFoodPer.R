@@ -25,6 +25,7 @@ for(year in (Settings$startyear:Settings$endyear)){
  
   #MD[,Relative_Calorie1 :=FoodKCaloriesHH/Calorie_Need1]
   #MD[,Relative_Calorie2 :=FoodKCaloriesHH/Calorie_Need2]
+  MD[,FoodExpenditure_Per :=FoodExpenditure/EqSizeCalory]
   MD[,OriginalFoodExpenditure_Per :=OriginalFoodExpenditure/EqSizeCalory]
   MD[,FoodKCaloriesHH_Per:=FoodKCaloriesHH/EqSizeCalory]
   MD[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]
