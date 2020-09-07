@@ -24,8 +24,6 @@ EduCodesB <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_B))
 EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
 EduCodesD <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_D))
 
-#Educ <- data.table(Year=NA_integer_,Educ=NA_integer_,ProvinceCode=NA_real_)[0]
-
 years <- Settings$startyear:Settings$endyear
 
 for(year in years){
