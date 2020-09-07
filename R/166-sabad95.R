@@ -57,6 +57,8 @@ tokhmemorgh<-BigFData[FoodType=="Tokhmemorgh"]
 tokhmemorgh<-tokhmemorgh[,Tokhmemorgh_Grams:=FGrams*30 ]
 mahi<-BigFData[FoodType=="Mahi"]
 mahi<-mahi[,Mahi_Grams:=FGrams*30 ]
+khoshkbar<-BigFData[FoodType=="Khoshkbar"]
+khoshkbar<-khoshkbar[,Khoshkbar_Grams:=FGrams*30 ]
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 
@@ -76,6 +78,7 @@ MD<-merge(MD,panir[,.(HHID,Panir_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,mast[,.(HHID,Mast_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,tokhmemorgh[,.(HHID,Tokhmemorgh_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,mahi[,.(HHID,Mahi_Grams)],by=c("HHID"),all.x = T)
+MD<-merge(MD,khoshkbar[,.(HHID,Khoshkbar_Grams)],by=c("HHID"),all.x = T)
 
 MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
                              (Region=="Rural" & Decile==2),1,0)]
@@ -96,9 +99,10 @@ gram <-MD [Selected_Group==1,
              Roghan_Grams=weighted.mean(Roghan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Ghand_Grams=weighted.mean(Ghand_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Mahi_Grams=weighted.mean(Mahi_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
+            # Khoshkbar_Grams=weighted.mean(Khoshkbar_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
              Panir_Grams=weighted.mean(Panir_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE)),by=c("Region")]
 
-year<-98
+
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
@@ -137,6 +141,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                  Mast_Price=min(weighted.mean(Yogurt_PasturizedPrice,Weight,na.rm = TRUE),na.rm = TRUE),
                  Panir_Price=min(weighted.mean(Cheese_PasturizedPrice,Weight,na.rm = TRUE),weighted.mean(Cheese_NonPasturizedPrice,Weight,na.rm = TRUE),na.rm = TRUE),
                  Roghan_Price=min(weighted.mean(Oil_NabatiPrice,Weight,na.rm = TRUE),weighted.mean(Oil_AnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_NonAnimalPrice,Weight,na.rm = TRUE),weighted.mean(Butter_Animal_PasturizedPrice,Weight,na.rm = TRUE),na.rm = TRUE),
+                 Khoshkbar_Price=min(weighted.mean(KeshmeshPrice,Weight,na.rm = TRUE),weighted.mean(TokhmePrice,Weight,na.rm = TRUE),weighted.mean(PistachioPrice,Weight,na.rm = TRUE),weighted.mean(NokhodchiPrice,Weight,na.rm = TRUE),na.rm = TRUE),
                  Ghand_Price=min(weighted.mean(GhandPrice,Weight,na.rm = TRUE),weighted.mean(ShekarPrice,Weight,na.rm = TRUE),na.rm = TRUE)),
                by=.(cluster3,Region)]
     
@@ -157,7 +162,8 @@ for(year in (Settings$startyear:Settings$endyear)){
     MDP<- MDP %>% mutate(Panir_Price = ifelse(is.na(Panir_Price), mean(Panir_Price, na.rm = T), Panir_Price))
     MDP<- MDP %>% mutate(Roghan_Price = ifelse(is.na(Roghan_Price), mean(Roghan_Price, na.rm = T), Roghan_Price))
     MDP<- MDP %>% mutate(Ghand_Price = ifelse(is.na(Ghand_Price), mean(Ghand_Price, na.rm = T), Ghand_Price))
-    MDP<-merge(MDP,gram,by=c("Region"),all.x=TRUE)
+    MDP<- MDP %>% mutate(Khoshkbar_Price = ifelse(is.na(Khoshkbar_Price), mean(Khoshkbar_Price, na.rm = T), Khoshkbar_Price))
+     MDP<-merge(MDP,gram,by=c("Region"),all.x=TRUE)
     
     MDP<-as.data.table(MDP)
     MDP <- MDP[,FPLine:=0.001*((Berenj_Price*Berenj_Grams)+
@@ -175,6 +181,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                                  (Mast_Price*Mast_Grams)+
                                  (Panir_Price*Panir_Grams)+
                                  (Roghan_Price*Roghan_Grams)+
+                                # (Khoshkbar_Price*Khoshkbar_Grams)+
                                  (Ghand_Price*Ghand_Grams))]
     
     MD <- merge(MD,MDP[,.(Region,cluster3,FPLine)],all.x=TRUE,by=c("Region","cluster3"))
