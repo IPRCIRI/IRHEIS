@@ -47,6 +47,9 @@ X3 <- data.table(Year=NA_integer_,Decile=NA_integer_
                  FoodKCaloriesHH_Per=NA_real_,No_Insurance=NA_real_,Area_Per=NA_real_
                  ,skeleton=NA_real_,House_High_Share=NA_real_,Tech_low=NA_real_,Equip_low=NA_real_)
 
+Province<-data.table(Year=NA_integer_,ProvinceCode=NA_integer_,Total_Exp_Month_Per=NA_real_)
+  
+  
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -76,9 +79,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,Low_Calorie:=ifelse(FoodKCaloriesHH_Per<2100,1,0)]
   MD[,Low_Protein:=ifelse(FoodProtein_Per<60,1,0)]
   MD[,No_Insurance:=ifelse(G1253==0,1,0)]
-  MD[,House_High_Share:=ifelse(((G041+G042)/All>0.5 & (tenure=="Rented" |
+  MD[,House_High_Share:=ifelse(((G041+G042)/All>0.3 & (tenure=="Rented" |
                                   tenure=="Mortgage") & Region=="Urban") | 
-                                 ((G041+G042)/All>0.4 & (tenure=="Rented" |
+                                 ((G041+G042)/All>0.2 & (tenure=="Rented" |
                                   tenure=="Mortgage") & Region=="Rural"),1,0)]
   MD[,Tech_low:=ifelse((phone=="False" & cellphone=="False" &
                           computer=="False") | 
@@ -104,7 +107,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                           ( tvcr=="False" & oven=="False") |
                           ( tvcr=="False" & Yakhchal=="False") |
                           ( Yakhchal=="False" & oven=="False") ,1,0)]
-
+  
+  A4<-MD[,.(Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight,na.rm=TRUE)),by=ProvinceCode]
   
   A1<-MD[,.(HLiterate=weighted.mean(HLiterate==TRUE,Weight,na.rm=TRUE),
             Knowledge=weighted.mean(Knowledge,Weight,na.rm=TRUE),
@@ -224,6 +228,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   A3[,Year:=year]
   X3 <- rbind(X3,A3)
 
+  A4[,Year:=year]
+  Province <- rbind(Province,A4)
   
 }
 X1<-X1[Year==90 | Year==91 | Year==92 | Year==93 | Year==94 | 
@@ -573,7 +579,7 @@ dev.off()
 #write.csv(X2,file="X2.csv")
 #write.csv(X3,file="X3.csv")
 #write.csv(X4,file="X4.csv")
-
+#write.csv(Province,file="Province.csv")
 
 endtime <- proc.time()
 
