@@ -6,7 +6,7 @@
 
 rm(list=ls())
 
-starttime <- proc.time()
+startTime <- proc.time()
 cat("\n\n================ HHFoods =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
@@ -15,19 +15,16 @@ library(data.table)
 library(stringr)
 library(readxl)
 
-
 FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Food))
-
-
 
 for (year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:", year, "\n"))
-    load(file = paste0(Settings$HEISRawPath, "Y", year, "Raw.rda"))
-    ft <- FoodTables[Year == year]
+  load(file = paste0(Settings$HEISRawPath, "Y", year, "Raw.rda"))
+  ft <- FoodTables[Year == year]
   tab <- ft$Table
   if (is.na(tab))
     next
-    UTF <- Tables[[paste0("U",year,tab)]]
+  UTF <- Tables[[paste0("U",year,tab)]]
   RTF <- Tables[[paste0("R",year,tab)]]
   TF <- rbind(UTF,RTF)
   for(n in names(TF)){
@@ -38,18 +35,16 @@ for (year in (Settings$startyear:Settings$endyear)){
   pcols <- intersect(names(TF),c("HHID","Code","FoodExpenditure","BuyingMethod"))
   TF <- TF[,pcols,with=FALSE]
   TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-  if(year>= 84){
-  TF[,FoodExpenditure:=as.numeric(FoodExpenditure)]
-  }
-  TF[,Code:=NULL]
+  TF <- TF[,FoodExpenditure:=as.numeric(FoodExpenditure)]
+  TF <- TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
-  save(TF, file = paste0(Settings$HEISProcessedPath,"Y",year,"TF.rda"))
+  #save(TF, file = paste0(Settings$HEISProcessedPath,"Y",year,"TF.rda"))
   #TF<-TF[BuyingMethod!=8]
-  FoodData <- TF[,lapply(.SD,sum),by=HHID]
+  FoodData <- TF[,lapply(.SD,sum),by=HHID,.SDcols=c("FoodExpenditure")]
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods2.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
   #FoodData<-merge(FoodData,Final)
-  cat(FoodData[,mean(FoodExpenditure)])
-  }
-endtime <- proc.time()
+  #cat(FoodData[,mean(FoodExpenditure)])
+}
+endTime <- proc.time()
 cat("\n\n============================\nIt took",(endTime-startTime)[3], "seconds.")
