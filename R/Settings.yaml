@@ -8,7 +8,7 @@ HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 98.0
+startyear: 90.0
 endyear: 98.0
 baseBundleyear: 95.0
 OS: Windows
@@ -35,7 +35,8 @@ MDS_Furniture: FurnitureTables
 MDS_Transportation: TransportationTables
 MDS_Communication: CommunicationTables
 MDS_Amusement: AmusementTables
-MDS_HotelRestaurant: HotelRestaurantTables
+MDS_Hotel: HotelTables
+MDS_Restaurant: RestaurantTables
 MDS_Other: OtherTables
 MDS_Durable: DurableTables
 MDS_Finance: FinanceTables
