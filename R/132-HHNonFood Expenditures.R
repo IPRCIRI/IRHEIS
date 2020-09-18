@@ -6,7 +6,7 @@
 
 rm(list=ls())
 
-starttime <- proc.time()
+startTime <- proc.time()
 cat("\n\n================ NonFood Expenditures =====================================\n")
 
 library(yaml)
@@ -16,112 +16,51 @@ library(readxl)
 library(data.table)
 library(stringr)
 
-cat("\n\n================ Section2:HHCigar =====================================\n")
-
-CigarTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Cigar))
+sections_names <- c(#"Cigar","Cloth","Communication","Energy","Furniture",
+                    #"Hygiene","Medical","Transportation","Communication",
+                    #"Amusement","Education",
+  "Hotel","Restaurant")
+                # Other sections have their own code
+for(section in sections_names){
+section_sheet <- eval(parse(text = paste0("Settings$MDS_",section)))
+cat("\n\n================",section,"=====================================\n")
+SectionTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=section_sheet))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- CigarTables[Year==year]
-  tab <- ct$Table
+  st <- SectionTables[Year==year]
+  tab <- st$Table
   if(is.na(tab))
     next
-  UTC <- Tables[[paste0("U",year,tab)]]
-  RTC <- Tables[[paste0("R",year,tab)]]
-  TC <- rbind(UTC,RTC)
-  for(n in names(TC)){
-    x <- which(ct==n)
+  UTS <- Tables[[paste0("U",year,tab)]]
+  RTS <- Tables[[paste0("R",year,tab)]]
+  TS <- rbind(UTS,RTS)
+  for(n in names(TS)){
+    x <- which(st==n)
     if(length(x)>0)
-      setnames(TC,n,names(ct)[x])
+      setnames(TS,n,names(st)[x])
   }
-  pcols <- intersect(names(TC),c("HHID","Code","Cigar_Exp"))
-  TC <- TC[,pcols,with=FALSE]
+  pcols <- intersect(names(TS),c("HHID","Code",paste0(section,"_Exp")))
+  TS <- TS[,pcols,with=FALSE]
+  if(!is.na(st$StartCode)){
+    TS <- TS[Code %in% st$StartCode:st$EndCode]
+  }
   
-  if(year %in% 63:82){
-    TC <- TC[Code %in% ct$StartCode:ct$EndCode]
-  }
+  TS[,(paste0(section,"_Exp")):=as.numeric(get(paste0(section,"_Exp")))]
+
+  TS[,Code:=NULL]
+  TS[is.na(TS)] <- 0
   
-  if(year %in% 84:94){
-    TC[,Cigar_Exp:=as.numeric(Cigar_Exp)]
-  }
-  TC[,Code:=NULL]
-  TC[is.na(TC)] <- 0
-  CigarData <- TC[,lapply(.SD,sum),by=HHID]
-  save(CigarData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Cigars.rda"))
- cat(CigarData[,mean(Cigar_Exp)])
-  }
+  eval(parse(text = paste0(section,"Data <- TS[,lapply(.SD,sum),by=HHID]")))
+  eval(parse(text = paste0("save(",section,"Data, file =paste0(Settings$HEISProcessedPath,\"Y\",year,\"",section,"s.rda\"))")))
+  eval(parse(text = paste0("cat(section,\":\",",section,"Data[,mean(",section,"_Exp)])")))
+}
 
 
-cat("\n\n================ Section3:HHCloth =====================================\n")
+}
 
-ClothTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Cloth))
 
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- ClothTables[Year==year]
-  tab <- ct$Table
-  if(is.na(tab))
-    next
-  UTC <- Tables[[paste0("U",year,tab)]]
-  RTC <- Tables[[paste0("R",year,tab)]]
-  TC <- rbind(UTC,RTC)
-  for(n in names(TC)){
-    x <- which(ct==n)
-    if(length(x)>0)
-      setnames(TC,n,names(ct)[x])
-  }
-  pcols <- intersect(names(TC),c("HHID","Code","Cloth_Exp"))
-  TC <- TC[,pcols,with=FALSE]
-  #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:94){
-    TC[,Cloth_Exp:=as.numeric(Cloth_Exp)]
-  }
-  TC[,Code:=NULL]
-  TC[is.na(TC)] <- 0
-  ClothData <- TC[,lapply(.SD,sum),by=HHID]
-  save(ClothData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Cloths.rda"))
-  cat(ClothData[,mean(Cloth_Exp)])
-  }
-
-cat("\n\n================ Section4:HouseandEnergy =====================================\n")
-
-EnergyTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Energy))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  
-  ty <- EnergyTables[Year==year]
-  tab <- ty$Table
-  
-  UTE <- Tables[[paste0("U",year,tab)]]
-  RTE <- Tables[[paste0("R",year,tab)]]
-  TE <- rbind(UTE,RTE)
-  for(n in names(TE)){
-    x <- which(ty==n)
-    if(length(x)>0)
-      setnames(TE,n,names(ty)[x])
-  }
-  pcols <- intersect(names(TE),c("HHID","Code","Energy_Exp"))
-  TE <- TE[,pcols,with=FALSE]
-  #TE <- TE[Code %in% ty$StartCode:ty$EndCode]
- # if(year %in% 84:94){
- #   TE[,HouseandEnergy_Exp:=as.numeric(HouseandEnergy_Exp)]
- # }
-  #TL[,HouseandEnergy_Exp:=as.numeric(HouseandEnergy_Exp)]
-  TE[,Code:=NULL]
-  
-  
-  TE[,Energy_Exp:=as.integer(Energy_Exp)]
-  TE[is.na(TE)] <- 0
-  EnergyData <- TE[,lapply(.SD,sum),by=HHID]
-  print(nrow(EnergyData))
-  save(EnergyData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Energys.rda"))
-  cat(EnergyData[,mean(Energy_Exp)])
-  }
 
 cat("\n\n================ Section4:HHHouse =====================================\n")
 
@@ -188,327 +127,9 @@ for(year in (Settings$startyear:Settings$endyear)){
 
 }
 
-cat("\n\n================ Section5:HHFurniture =====================================\n")
-
-FurnitureTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Furniture))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- FurnitureTables[Year==year]
-  tab <- ct$Table
-  if(is.na(tab))
-    next
-  UTC <- Tables[[paste0("U",year,tab)]]
-  RTC <- Tables[[paste0("R",year,tab)]]
-  TC <- rbind(UTC,RTC)
-  for(n in names(TC)){
-    x <- which(ct==n)
-    if(length(x)>0)
-      setnames(TC,n,names(ct)[x])
-  }
-  pcols <- intersect(names(TC),c("HHID","Code","Furniture_Exp"))
-  TC <- TC[,pcols,with=FALSE]
-  #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:94){
-    TC[,Furniture_Exp:=as.numeric(Furniture_Exp)]
-  }
-  TC[,Code:=NULL]
-  TC[is.na(TC)] <- 0
-  FurnitureData <- TC[,lapply(.SD,sum),by=HHID]
-  save(FurnitureData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Furnitures.rda"))
-  cat(FurnitureData[,mean(Furniture_Exp)])
-  }
-
-
-cat("\n\n================ Section6-1:HHHygiene =====================================\n")
-
-HygieneTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Hygiene))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  mt <- HygieneTables[Year==year]
-  tab <- mt$Table
-  if(is.na(tab))
-    next
-  UTM <- Tables[[paste0("U",year,tab)]]
-  RTM <- Tables[[paste0("R",year,tab)]]
-  TM <- rbind(UTM,RTM)
-  for(n in names(TM)){
-    x <- which(mt==n)
-    if(length(x)>0)
-      setnames(TM,n,names(mt)[x])
-  }
-  pcols <- intersect(names(TM),c("HHID","Code","Hygiene_Exp"))
-  TM <- TM[,pcols,with=FALSE]
-  TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:96){
-    TM[,Hygiene_Exp:=as.numeric(Hygiene_Exp)]
-  }
-  # TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  TM[,Code:=NULL]
-  TM[is.na(TM)] <- 0
-  HygieneData <- TM[,lapply(.SD,sum),by=HHID]
-  save(HygieneData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Hygienes.rda"))
-  cat(HygieneData[,mean(Hygiene_Exp)])
-  }
-
-cat("\n\n================ Section6-2:HHMedical =====================================\n")
-
-MedicalTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Medical))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  mt <- MedicalTables[Year==year]
-  tab <- mt$Table
-  if(is.na(tab))
-    next
-  UTM <- Tables[[paste0("U",year,tab)]]
-  RTM <- Tables[[paste0("R",year,tab)]]
-  TM <- rbind(UTM,RTM)
-  for(n in names(TM)){
-    x <- which(mt==n)
-    if(length(x)>0)
-      setnames(TM,n,names(mt)[x])
-  }
-  pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
-  TM <- TM[,pcols,with=FALSE]
-  TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:96){
-    TM[,Medical_Exp:=as.numeric(Medical_Exp)]
-  }
-  # TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  TM[,Code:=NULL]
-  TM[is.na(TM)] <- 0
-  MedicalData <- TM[,lapply(.SD,sum),by=HHID]
-  save(MedicalData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Medicals.rda"))
-  cat(MedicalData[,mean(Medical_Exp)])
-}
-
-
-# cat("\n\n================ Section6-3:Total section 6 =====================================\n")
-# 
-# MedicalTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Medical))
-# 
-# for(year in (Settings$startyear:Settings$endyear)){
-#   cat(paste0("\n------------------------------\nYear:",year,"\n"))
-#   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-#   mt <- MedicalTables[Year==year]
-#   tab <- mt$Table
-#   if(is.na(tab))
-#     next
-#   UTM <- Tables[[paste0("U",year,tab)]]
-#   RTM <- Tables[[paste0("R",year,tab)]]
-#   TM <- rbind(UTM,RTM)
-#   for(n in names(TM)){
-#     x <- which(mt==n)
-#     if(length(x)>0)
-#       setnames(TM,n,names(mt)[x])
-#   }
-#   pcols <- intersect(names(TM),c("HHID","Code","Medical_Exp"))
-#   TM <- TM[,pcols,with=FALSE]
-#   #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-#   if(year %in% 84:96){
-#     TM[,Medical_Exp:=as.numeric(Medical_Exp)]
-#   }
-#   # TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-#   TM[,Code:=NULL]
-#   TM[is.na(TM)] <- 0
-#   section6 <- TM[,lapply(.SD,sum),by=HHID]
-#   save(section6, file = paste0(Settings$HEISProcessedPath,"Y",year,"section6.rda"))
-#   cat(section6[,mean(Medical_Exp)])
-# }
-# 
-# Data<-merge(section6,HygieneData,all.x = TRUE)
-# Data<-merge(Data,MedicalData,all.x = TRUE)
-
-cat("\n\n================ Section7:HHTransportation =====================================\n")
-
-TransportationTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Transportation))
-
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- TransportationTables[Year==year]
-  tab <- ct$Table
-  if(is.na(tab))
-    next
-  UTC <- Tables[[paste0("U",year,tab)]]
-  RTC <- Tables[[paste0("R",year,tab)]]
-  TC <- rbind(UTC,RTC)
-  for(n in names(TC)){
-    x <- which(ct==n)
-    if(length(x)>0)
-      setnames(TC,n,names(ct)[x])
-  }
-  pcols <- intersect(names(TC),c("HHID","Code","Transportation_Exp"))
-  TC <- TC[,pcols,with=FALSE]
-  if(year %in% 63:82){
-    TC <- TC[Code %in% ct$StartCode:ct$EndCode]
-  }
-  if(year %in% 84:94){
-    TC[,Transportation_Exp:=as.numeric(Transportation_Exp)]
-  }
-  TC[,Code:=NULL]
-  TC[is.na(TC)] <- 0
-  TransportationData <- TC[,lapply(.SD,sum),by=HHID]
-  save(TransportationData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Transportations.rda"))
-  cat(TransportationData[,mean(Transportation_Exp)])
-  }
-
-cat("\n\n================ Section8:HHCommunication =====================================\n")
-
-CommunicationTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Communication))
-
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- CommunicationTables[Year==year]
-  tab <- ct$Table
-  if(is.na(tab))
-    next
-  UTC <- Tables[[paste0("U",year,tab)]]
-  RTC <- Tables[[paste0("R",year,tab)]]
-  TC <- rbind(UTC,RTC)
-  for(n in names(TC)){
-    x <- which(ct==n)
-    if(length(x)>0)
-      setnames(TC,n,names(ct)[x])
-  }
-  pcols <- intersect(names(TC),c("HHID","Code","Communication_Exp"))
-  TC <- TC[,pcols,with=FALSE]
-  if(year %in% 63:82){
-    TC <- TC[Code %in% ct$StartCode:ct$EndCode]
-  }
-  if(year %in% 84:94){
-    TC[,Communication_Exp:=as.numeric(Communication_Exp)]
-  }
-  TC[,Code:=NULL]
-  TC[is.na(TC)] <- 0
-  CommunicationData <- TC[,lapply(.SD,sum),by=HHID]
-  save(CommunicationData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Communications.rda"))
-  cat(CommunicationData[,mean(Communication_Exp)])
-  }
-
-cat("\n\n================ Section9:HHAmusement =====================================\n")
-AmusementTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Amusement))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- AmusementTables[Year==year]
-  tab <- ct$Table
-  if(is.na(tab))
-    next
-  UTC <- Tables[[paste0("U",year,tab)]]
-  RTC <- Tables[[paste0("R",year,tab)]]
-  TC <- rbind(UTC,RTC)
-  for(n in names(TC)){
-    x <- which(ct==n)
-    if(length(x)>0)
-      setnames(TC,n,names(ct)[x])
-  }
-  pcols <- intersect(names(TC),c("HHID","Code","Amusement_Exp"))
-  TC <- TC[,pcols,with=FALSE]
-  #TM <- TM[Code %in% mt$StartCode:mt$EndCode]
-  if(year %in% 84:94){
-    TC[,Amusement_Exp:=as.numeric(Amusement_Exp)]
-  }
-  TC[,Code:=NULL]
-  TC[is.na(TC)] <- 0
-  AmusementData <- TC[,lapply(.SD,sum),by=HHID]
-  save(AmusementData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Amusements.rda"))
-  cat(AmusementData[,mean(Amusement_Exp)])
-  }
 
 
 
-cat("\n\n================ Section10:HHEducationnExp =====================================\n")
-
-
-EducationTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Education))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  et <- EducationTables[Year==year]
-  tab <- et$Table
-  if(is.na(tab))
-    next
-  UTE <- Tables[[paste0("U",year,tab)]]
-  RTE <- Tables[[paste0("R",year,tab)]]
-  TE <- rbind(UTE,RTE)
-  for(n in names(TE)){
-    x <- which(et==n)
-    if(length(x)>0)
-      setnames(TE,n,names(et)[x])
-  }
-  pcols <- intersect(names(TE),c("HHID","Code","Education_Exp"))
-  TE <- TE[,pcols,with=FALSE]
-  #if(year %in% 89:94){
-  #TE[,Code:=as.numeric(Code)]
-  #}
-  #if(year %in% 84:94){
-  # TF[,Kilos:=as.numeric(Kilos)]
-  TE[,Education_Exp:=as.numeric(Education_Exp)]
-  TE <- TE[Code %in% et$StartCode:et$EndCode]
-  TE$Education_Exp<-TE$Education_Exp/12
-  TE[,Code:=NULL]
-  TE[is.na(TE)] <- 0
-  EducData <- TE[,lapply(.SD,sum),by=HHID]
-  save(EducData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Education.rda"))
-  cat(EducData[,mean(Education_Exp)])
-  }
-
-cat("\n\n================ Section11:HHHotelRestaurant =====================================\n")
-
-HotelRestaurantTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_HotelRestaurant))
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
-  ct <- HotelRestaurantTables[Year==year]
-  tab <- ct$Table
-  if(is.na(tab))
-    next
-  UTC <- Tables[[paste0("U",year,tab)]]
-  RTC <- Tables[[paste0("R",year,tab)]]
-  TC <- rbind(UTC,RTC)
-  for(n in names(TC)){
-    x <- which(ct==n)
-    if(length(x)>0)
-      setnames(TC,n,names(ct)[x])
-  }
-  pcols <- intersect(names(TC),c("HHID","Code","HotelRestaurant_Exp"))
-  TC <- TC[,pcols,with=FALSE]
-  
-  if(year %in% 63:82){
-    TC <- TC[Code %in% ct$StartCode:ct$EndCode]
-  }
-  if(year %in% 84:94){
-    TC[,HotelRestaurant_Exp:=as.numeric(HotelRestaurant_Exp)]
-  }
-  TC[is.na(TC)] <- 0
-  
-  HotelRestaurantData <- TC[,lapply(.SD,sum),by=HHID]
-  HotelRestaurantData[,Code:=NULL]
-  save(HotelRestaurantData, file = paste0(Settings$HEISProcessedPath,"Y",year,"HotelRestaurants.rda"))
-  
-  cat(HotelRestaurantData[,mean(HotelRestaurant_Exp)])
-  
-  cat("\n\n================ Restaurant =====================================\n")
-  
-  TC<-TC[Code %in% 111111:111146]
-  ResturantData <- TC[,lapply(.SD,sum),by=HHID]
-  ResturantData[,Code:=NULL]
-  names(ResturantData)[2]<-paste("Resturant_Exp")
-  save(ResturantData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Resturants.rda"))
-  cat(ResturantData[,mean(Resturant_Exp)])
-  }
 
 cat("\n\n================ Section12:HHOther =====================================\n")
 
@@ -627,5 +248,5 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
 
 
-endtime <- proc.time()
+endTime <- proc.time()
 cat("\n\n============================\nIt took",(endTime-startTime)[3], "seconds.")
