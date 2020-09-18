@@ -52,5 +52,4 @@ for (year in (Settings$startyear:Settings$endyear)){
   cat(FoodData[,mean(FoodExpenditure)])
   }
 endtime <- proc.time()
-cat("\n\n============================\nIt took ")
-cat(endtime-starttime)
+cat("\n\n============================\nIt took",(endTime-startTime)[3], "seconds.")
