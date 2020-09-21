@@ -80,6 +80,7 @@ Settings <- list(HEISPath          =HEISPath,
                  MDS_Restaurant    = "RestaurantTables",
                  MDS_Other         = "OtherTables",
                  MDS_Durable       = "DurableTables",
+                 MDS_DurableGroups = "DurableGroups",
                  MDS_Finance       = "FinanceTables",
                  MDS_Investment    = "InvestmentTables",
                  MDS_Medical       = "MedicalTables",
@@ -103,6 +104,7 @@ Settings <- list(HEISPath          =HEISPath,
                  MDS_Intra         = "IntraTables",
                  MDS_Subsidy       = "SubsidyTable",
                  MDS_Rough_Weights = "RegionWeights",
+                 
                  OutFoodKCXShare      = 0.3, # Share of Kilo-Calory content in Expenses of outdoor food
                  OutFoodKCXShare12    = 0.4, # Share of Kilo-Calory content in Expenses of outdoor food
                  OutFoodKCXShare3456  = 0.2, # Share of Kilo-Calory content in Expenses of outdoor food
