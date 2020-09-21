@@ -39,6 +39,7 @@ MDS_Hotel: HotelTables
 MDS_Restaurant: RestaurantTables
 MDS_Other: OtherTables
 MDS_Durable: DurableTables
+MDS_DurableGroups: DurableGroups
 MDS_Finance: FinanceTables
 MDS_Investment: InvestmentTables
 MDS_Medical: MedicalTables

@@ -134,17 +134,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   DurableDataCodes<-TC
   save(DurableDataCodes, file = paste0(Settings$HEISProcessedPath,"Y",year,"DurableDataCodes.rda"))
-  
-  TC[,Code:=NULL]
-  TC[,BuyingMethod:=NULL]
-  TC[is.na(TC)] <- 0
-  TC[,Durable_Net_Exp:=Durable_Exp-Durable_Sale]
-  DurableData <- TC[,lapply(.SD,sum),by=HHID]
-  save(DurableData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
-  cat(DurableData[,mean(Durable_Exp)],"\t")
-  cat(DurableData[,mean(Durable_Sale)],"\t")
-  cat(DurableData[,mean(Durable_Net_Exp)],"\t")
-  }
+}
 
 endTime <- proc.time()
 cat("\n\n============================\nIt took",(endTime-startTime)[3], "seconds.")
