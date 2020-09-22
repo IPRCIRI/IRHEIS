@@ -14,13 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(stringr)
 library(data.table)
-#library(ggplot2)
-#library(spatstat)
-#library(dplyr)
-###########################################################
-######Copy code files from TotalDurableDetails folder######
-#####################to Data Processed folder##############
-#########################################################
+
 DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_DurableGroups))
 
 mst <- min(DurableGroups$StartYear)
@@ -28,32 +22,31 @@ mst <- min(DurableGroups$StartYear)
 for(year in (max(Settings$startyear,mst):Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
-  #load Demos+FoodPrices+Weights
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableDataCodes.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableData_Detail.rda"))
 
   g1 <- DurableGroups[year >= StartYear & year <= EndYear && Group==1]$Code
   g2 <- DurableGroups[year >= StartYear & year <= EndYear & Group==2]$Code
   g3 <- DurableGroups[year >= StartYear & year <= EndYear & Group==3]$Code
   g4 <- DurableGroups[year >= StartYear & year <= EndYear & Group==4]$Code
   
-  D1 <- DurableDataCodes[Code %in% g1, .(Add_to_NonDurable = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
-  D2 <- DurableDataCodes[Code %in% g2, .(Durable_Dep = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
-  D3 <- DurableDataCodes[Code %in% g3, .(Durable_NoDep = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
-  D4 <- DurableDataCodes[Code %in% g4, .(Durable_Emergency = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
+  D1 <- DurableData_Detail[Code %in% g1, .(Add_to_NonDurable = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
+  D2 <- DurableData_Detail[Code %in% g2, .(Durable_Dep = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
+  D3 <- DurableData_Detail[Code %in% g3, .(Durable_NoDep = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
+  D4 <- DurableData_Detail[Code %in% g4, .(Durable_Emergency = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
   
  
-  Durable_Detail <- merge(D1,D2,all=TRUE)
-  Durable_Detail <- merge(Durable_Detail,D3,all=TRUE)
-  Durable_Detail <- merge(Durable_Detail,D4,all = TRUE)
+  Durable_4Groups <- merge(D1,D2,all=TRUE)
+  Durable_4Groups <- merge(Durable_4Groups,D3,all=TRUE)
+  Durable_4Groups <- merge(Durable_4Groups,D4,all = TRUE)
   
-  Durable_Detail[is.na(Durable_Detail)] <- 0
+  Durable_4Groups[is.na(Durable_4Groups)] <- 0
 
     gunion <- union(union(g1,g2),union(g3,g4))
 
-    Dx <- DurableDataCodes[! (Code %in% gunion),]
+    Dx <- DurableData_Detail[! (Code %in% gunion),]
     if(nrow(Dx)>0) print(table(Dx[,Code]))
 
-  save(Durable_Detail, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durable_Detail.rda"))
+  save(Durable_4Groups, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durable_4Groups.rda"))
 
 }
 
