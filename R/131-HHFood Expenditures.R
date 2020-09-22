@@ -38,13 +38,9 @@ for (year in (Settings$startyear:Settings$endyear)){
   TF <- TF[,FoodExpenditure:=as.numeric(FoodExpenditure)]
   TF <- TF[,Code:=NULL]
   TF[is.na(TF)] <- 0
-  #save(TF, file = paste0(Settings$HEISProcessedPath,"Y",year,"TF.rda"))
-  #TF<-TF[BuyingMethod!=8]
+
   TotalFoodExpData <- TF[,lapply(.SD,sum),by=HHID,.SDcols=c("FoodExpenditure")]
   save(TotalFoodExpData, file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
-  #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
-  #FoodData<-merge(FoodData,Final)
-  #cat(FoodData[,mean(FoodExpenditure)])
 }
 endTime <- proc.time()
 cat("\n\n============================\nIt took",(endTime-startTime)[3], "seconds.")
