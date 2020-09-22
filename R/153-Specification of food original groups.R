@@ -17,12 +17,12 @@ cat("\n\n================ FoodGroups =====================================\n")
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods2.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
   
   BigFData[,OriginalFoodExpenditure:=Expenditure]
   NfoodExp<-BigFData[,.(HHID,OriginalFoodExpenditure)]     
   NfoodExp <- NfoodExp[,lapply(.SD,sum),by=HHID]  
-  FoodData<-merge(FoodData,NfoodExp,all.x = TRUE)
+  FoodData<-merge(TotalFoodExpData,NfoodExp,all.x = TRUE)
   FoodData[is.na(FoodData)] <- 0
   FoodData[,FoodOtherExpenditure:=FoodExpenditure-OriginalFoodExpenditure]     
   save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
