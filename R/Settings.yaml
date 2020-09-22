@@ -41,6 +41,7 @@ MDS_Other: OtherTables
 MDS_Durable: DurableTables
 MDS_DurableGroups: DurableGroups
 MDS_DurableItems: DurableItems
+MDS_DurableItemsDepr: DurableItemsDepr
 MDS_Finance: FinanceTables
 MDS_Investment: InvestmentTables
 MDS_Medical: MedicalTables
