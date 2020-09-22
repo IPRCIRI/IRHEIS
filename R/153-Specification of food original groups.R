@@ -10,7 +10,6 @@ library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
-library(stringr)
 library(readxl)
 
 cat("\n\n================ FoodGroups =====================================\n")
@@ -22,13 +21,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   BigFData[,OriginalFoodExpenditure:=Expenditure]
   NfoodExp<-BigFData[,.(HHID,OriginalFoodExpenditure)]     
   NfoodExp <- NfoodExp[,lapply(.SD,sum),by=HHID]  
-  FoodData<-merge(TotalFoodExpData,NfoodExp,all.x = TRUE)
-  FoodData[is.na(FoodData)] <- 0
-  FoodData[,FoodOtherExpenditure:=FoodExpenditure-OriginalFoodExpenditure]     
-  save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods.rda"))
-  cat(FoodData[,mean(OriginalFoodExpenditure)],"\t")
-  cat(FoodData[,mean(FoodExpenditure)],"\t")
-  cat(FoodData[,mean(FoodOtherExpenditure)],"\t")
+  FoodExpData<-merge(TotalFoodExpData,NfoodExp,all.x = TRUE)
+  FoodExpData[is.na(FoodExpData)] <- 0
+  FoodExpData[,FoodOtherExpenditure:=FoodExpenditure-OriginalFoodExpenditure]     
+  save(FoodExpData, file = paste0(Settings$HEISProcessedPath,"Y",year,"FoodExpData.rda"))
 }
 
 cat("\n\n==============Finish==============\nIt took ")
