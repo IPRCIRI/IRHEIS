@@ -38,22 +38,15 @@ for(year in (Settings$startyear:Settings$endyear)){
         setnames(TF,n,names(ft)[x])
     }
     if(year %in% 63:82){
-    pcols <- intersect(names(TF),c("HHID","Code","Kilos","Expenditure"))
-    TF <- TF[,pcols,with=FALSE]
-    TF <- TF[Code %in% ft$StartCode:ft$EndCode]
-    
-    TF[,Kilos:=as.numeric(Kilos)]
-
-    TF[,Code:=NULL]
-    TF[is.na(TF)] <- 0
-    TF[,FGrams:=(Kilos*1000)/30]
-    FData <- TF[,lapply(.SD,sum),by=HHID]
-    FData[, FoodType:=TFoodGroups[i,FoodType]]
-    FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
-    FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams]
-    
-    BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodProtein)])
-    save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+      pcols <- intersect(names(TF),c("HHID","Code","Kilos","Expenditure"))
+      TF <- TF[,pcols,with=FALSE]
+      TF <- TF[Code %in% ft$StartCode:ft$EndCode]
+      
+      TF[,Kilos:=as.numeric(Kilos)]
+  
+      TF[,Code:=NULL]
+      TF[is.na(TF)] <- 0
+      TF[,FGrams:=(Kilos*1000)/30]
     }
     if(year >= 83){
       pcols <- intersect(names(TF),c("HHID","Code","Grams","Kilos","Expenditure"))
@@ -68,21 +61,19 @@ for(year in (Settings$startyear:Settings$endyear)){
       TF[,Code:=NULL]
       TF[is.na(TF)] <- 0
       TF[,FGrams:=(Kilos*1000+Grams)/30]
-      FData <- TF[,lapply(.SD,sum),by=HHID]
-      FData[, FoodType:=TFoodGroups[i,FoodType]]
-      FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
-      FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams]
-      
-      BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodProtein)])
-      save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
-      cat(BigFData[,mean(FoodKCalories)],"\t")
-      cat(BigFData[,mean(FoodProtein)],"\n")
-      }
+    }
+    
+    FData <- TF[,lapply(.SD,sum),by=HHID]
+    FData[, FoodType:=TFoodGroups[i,FoodType]]
+    FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams]
+    FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams]
+    
+    BigFData <- rbind(BigFData,FData[,.(HHID,FGrams,Expenditure,FoodType,FoodKCalories,FoodProtein)])
+    save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+    cat(BigFData[,mean(FoodKCalories)],"\t")
+    cat(BigFData[,mean(FoodProtein)],"\n")
     }
 }
 cat("\n\n==============Finish==============\nIt took ")
 endtime <- proc.time()
 cat((endtime-starttime)[3],"seconds.")
-
-
-
