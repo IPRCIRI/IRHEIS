@@ -40,8 +40,8 @@ for (year in (Settings$startyear:Settings$endyear)){
   TF[is.na(TF)] <- 0
   #save(TF, file = paste0(Settings$HEISProcessedPath,"Y",year,"TF.rda"))
   #TF<-TF[BuyingMethod!=8]
-  FoodData <- TF[,lapply(.SD,sum),by=HHID,.SDcols=c("FoodExpenditure")]
-  save(FoodData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Foods2.rda"))
+  TotalFoodExpData <- TF[,lapply(.SD,sum),by=HHID,.SDcols=c("FoodExpenditure")]
+  save(TotalFoodExpData, file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
   #load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Final.rda")) 
   #FoodData<-merge(FoodData,Final)
   #cat(FoodData[,mean(FoodExpenditure)])
