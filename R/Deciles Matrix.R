@@ -180,7 +180,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
   SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
   
- 
 
   
   Deciles1<-SMD[,.(HHID,Decile)]
@@ -188,6 +187,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(Deciles1,file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles1.rda"))
 
+  MD[,Decile:=NULL]
+  MD<-merge(MD,Deciles1)
+  a<-MD[,weighted.mean(tenure=="OwnLandandBuilding" | tenure=="Apartment",Weight,
+                       na.rm=TRUE),by=Decile1]
+  b<-MD[,weighted.mean(tenure=="OwnLandandBuilding" | tenure=="Apartment",Weight,
+                       na.rm=TRUE),by=c("Decile1","Region")]
 }
 
 
@@ -427,6 +432,7 @@ Table<-merge(Table,Table9,all = TRUE)
 Table<-merge(Table,Table10,all = TRUE)
 
 Table[is.na(Table)] <- 0 
+
 
 
 
