@@ -99,7 +99,7 @@ gram <-MD [Selected_Group==1,
              Roghan_Grams=weighted.mean(Roghan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Ghand_Grams=weighted.mean(Ghand_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Mahi_Grams=weighted.mean(Mahi_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
-            # Khoshkbar_Grams=weighted.mean(Khoshkbar_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
+             Khoshkbar_Grams=weighted.mean(Khoshkbar_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
              Panir_Grams=weighted.mean(Panir_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE)),by=c("Region")]
 
 
@@ -181,7 +181,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                                  (Mast_Price*Mast_Grams)+
                                  (Panir_Price*Panir_Grams)+
                                  (Roghan_Price*Roghan_Grams)+
-                                # (Khoshkbar_Price*Khoshkbar_Grams)+
+                                 (Khoshkbar_Price*Khoshkbar_Grams)+
                                  (Ghand_Price*Ghand_Grams))]
     
     MD <- merge(MD,MDP[,.(Region,cluster3,FPLine)],all.x=TRUE,by=c("Region","cluster3"))
