@@ -6,7 +6,7 @@
 rm(list=ls())
 
 startTime <- proc.time()
-cat("\n\n================ Breaking Durable goods in four section =====================================\n")
+cat("\n\n================ Breaking Durable goods in four groups =====================================\n")
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
