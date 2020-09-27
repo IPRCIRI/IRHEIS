@@ -8,7 +8,7 @@ HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 90.0
+startyear: 83.0
 endyear: 98.0
 baseBundleyear: 95.0
 OS: Windows
@@ -20,6 +20,7 @@ MDS_P1Cols: P1Cols
 MDS_P2Cols: P2Cols
 MDS_Geo2: Geo2
 MDS_Geo4: Geo4
+MDS_GeoX: GeoX
 MDS_EC_A: EduCodes-A
 MDS_EC_B: EduCodes-B
 MDS_EC_C: EduCodes-C
@@ -112,6 +113,43 @@ KCaloryNeed_NutInst_G8: 2200.0
 KCaloryNeed_NutInst_B9: 2350.0
 KCaloryNeed_NutInst_G9: 2000.0
 KCaloryNeed_lactating: 500.0
+nw:
+- OriginalFoodExpenditure
+- FoodOtherExpenditure
+- Cigar_Exp
+- Cloth_Exp
+- Amusement_Exp
+- Communication_Exp
+- House_Exp
+- Energy_Exp
+- Furniture_Exp
+- Hotel_Exp
+- Restaurant_Exp
+- Hygiene_Exp
+- Transportation_Exp
+- Other_Exp
+- Add_to_NonDurable
+- OwnedDurableItemsDepreciation
+w:
+- OriginalFoodExpenditure
+- FoodOtherExpenditure
+- Cigar_Exp
+- Cloth_Exp
+- Amusement_Exp
+- Communication_Exp
+- House_Exp
+- Energy_Exp
+- Furniture_Exp
+- Hotel_Exp
+- Restaurant_Exp
+- Hygiene_Exp
+- Transportation_Exp
+- Other_Exp
+- Add_to_NonDurable
+- OwnedDurableItemsDepreciation
+- Medical_Exp
+- Durable_NoDep
+- Durable_Emergency
 InitialPoorPercentile:
 - 1
 - 2
