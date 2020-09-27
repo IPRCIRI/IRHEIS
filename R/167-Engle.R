@@ -32,12 +32,12 @@ FinalClusterResults <- data.table(Year=NA_integer_,cluster3=NA_integer_,MetrPric
 
 
 
-for(year in (88:Settings$endyear)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
   
   #MD<-MD[Region=="Rural"]
   #MD<-MD[cluster3==7]
@@ -53,13 +53,6 @@ for(year in (88:Settings$endyear)){
                    FPLine=mean(FPLine))
                ,by=.(Region,cluster3)
                ]
-  
-  #x <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-   #               TOriginalFoodExpenditure_Per<1.2*FPLine &
-    #         cluster3==7]
-  
-#  a<-x$EngleH
- # hist(a)
 
   EngleD<-EngleD[,Year:=year]
   EngleDD <- EngleD
@@ -72,7 +65,7 @@ for(year in (88:Settings$endyear)){
 for(year in (Settings$startyear:Settings$endyear)){
   
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalFoodPoor.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
   
 
   #MD<-MD[,EngleH:=(TOriginalFoodExpenditure/Total_Exp_Month)]
