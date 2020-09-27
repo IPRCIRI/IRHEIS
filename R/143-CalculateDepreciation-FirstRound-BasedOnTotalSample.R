@@ -1,4 +1,4 @@
-# 142-CalculateDepreciation based on total sample averages
+# 143-CalculateDepreciation based on total sample averages
 # 
 # Copyright © 2020:  Arin Shahbazian
 # Licence: GPL-3
@@ -14,6 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 
+source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
 DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
                                       sheet=Settings$MDS_DurableItemsDepr))
 
@@ -23,20 +24,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",
                      year,"DurableData_Detail.rda"))
-  DurableValues <- DurableData_Detail[,.(Value=mean(Durable_Exp)),by=Item]
-  DurableDepr <- merge(DurableValues,DurableItems,by="Item")
-  DurableDepr[,DepreciationValue:=Value*Depri/100]
-  
+
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,
                    "OwnsDurableItems.rda"))
-  Ownsm <- melt(data = OwnsDurableItems,id.vars = "HHID",
-                measure.vars = names(OwnsDurableItems)[-1],
-                variable.name = "Item",value.name = "Owns")
-  Ownsm <- Ownsm[Owns==1]
+
   
-  D <- merge(Ownsm,DurableDepr,by="Item")
+  OwnedDurableItemsDepreciation <- 
+    Calculate_OwnedDurableItemsDepreciation(
+      DurableData_ExpDetail = DurableData_Detail,
+      DurableItems_OwningDetail = OwnsDurableItems,
+      by = "Item",
+      Decile = NULL,
+      DurableItems = DurableItems)
   
-  OwnedDurableItemsDepreciation <- D[,.(OwnedDurableItemsDepreciation=sum(.SD$DepreciationValue)),by=HHID]
   
   save(OwnedDurableItemsDepreciation,
        file=paste0(Settings$HEISProcessedPath,"Y",
