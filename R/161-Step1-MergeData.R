@@ -1,6 +1,6 @@
 #161-Step1-MergeData.R
 # 
-# Copyright © 2018: Majid Einian & Arin Shahbazian
+# Copyright © 2018-2020: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -22,19 +22,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodExpData.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
-  #  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
-  # HHWeights<- as.data.table(HHWeights)
-  # HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
-  # HHWeights[,Year:=NULL]
 
-  for(G in c("Cigars","Cloths","Amusements","Communications",
-             "Durables", "Educations", "Furnitures","Hotels",
-             "Energys","House", "Medicals","Hygienes","Transportations","Others",
-             "Restaurants"
-             ,"Durable_Detail","OwnedDurableItemsDepreciation"
-  )){
+  for(G in c("Cigars","Cloths","Amusements","Communications", 
+             "Educations", "Furnitures","Hotels","Energys","House", "Medicals",
+             "Hygienes","Transportations","Others", "Restaurants",
+             "DurableData_Detail","OwnedDurableItemsDepreciation"))
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
-  }
   
   FoodNutritionData <- FoodNutritionData[FoodKCaloriesHH>0]
   
@@ -55,31 +48,21 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,TransportationData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
-  MD<-merge(MD,Durable_Detail,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,DurableData_Detail,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OwnedDurableItemsDepreciation,by =c("HHID"),all=TRUE)
   
-
-
   #Calculate Monthly Total Expenditures 
-  nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp",
-          "Cloth_Exp","Amusement_Exp", "Communication_Exp", 
-          "House_Exp","Energy_Exp", "Furniture_Exp", "Hotel_Exp","Restaurant_Exp",
-          "Hygiene_Exp", "Transportation_Exp", "Other_Exp",
-          "Add_to_NonDurable" ,"OwnedDurableItemsDepreciation" )
-  w <- c(nw, "Medical_Exp",
-         "Durable_NoDep","Durable_Emergency")
-  
-  for (col in w)
+  for (col in Settings$w)
     MD[is.na(get(col)), (col) := 0]
-  MD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
-  MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
   
-  MD[,weighted.mean(Total_Exp_Month,Weight)]
-  MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
+  MD[,Total_Exp_Month := Reduce(`+`, .SD), .SDcols=Settings$w]
+  MD[,Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=Settings$nw]
+  
+  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
 }
 
 endtime <- proc.time()
-cat("\n\n============================\nIt took ")
-cat(endtime-starttime)
+cat("\n\n============================\nIt took",(endtime-starttime)[3],"seconds.")
