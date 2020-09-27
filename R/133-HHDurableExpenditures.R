@@ -53,6 +53,16 @@ for(year in (Settings$startyear:Settings$endyear)){
                                          "DurableData_Detail.rda"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
+  
+  itemslist <- c("cellphone","washer","dishwasher","car",
+                 "oven","tvbw","tvcr","refrigerator","frez_refrig","freezer",
+                 "computer","cooler_gas","cooler_gas_movable")
+  
+  for(item in itemslist)
+    if(!(item %in% names(HHHouseProperties))){
+      HHHouseProperties[,(item):=FALSE]
+    }
+  
   OwnsDurableItems <- HHHouseProperties[,.(HHID,
                                            Cellphone=cellphone*1,
                                            Washer=(washer|dishwasher)*1,
