@@ -23,42 +23,23 @@ for(year in (Settings$startyear:Settings$endyear)){
   # load data --------------------------------------
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodNonDurable.rda"))
   
-  FoodGrams<-TotalFoodNonDurable[,.(HHID,BreadGrams,
-                                     #BarbariPrice,
-                                     GrainGrams,
-                                    Rice_Khareji1Gram,
-                                    Rice_Khareji2Gram,
-                                    Rice_TaromGram,
-                                    Rice_AshGram,
-                                    Rice_NonameGram,
-                                    Rice_MahaliGram,
-                                    Rice_DomsiahGram,
-                                    Rice_KhoordeGram,
-                                     #Rice_DomsiahPrice,
-                                     MacaroniGram,
-                                     AdasGram,Loobia_ChitiGram,NokhodGram,
-                                     #Loobia_ChitiPrice,
-                                     SibzaminiGram,
-                                     VegetableShrubsGrams,
-                                     #KhiarPrice,
-                                     TreeFruitsGrams,
-                                     #CherryPrice,
-                                     LivestockGrams,
-                                    CowMeatGram,
-                                    SheepMeatGram,
-                                     #SheepMeatPrice,
-                                     PoultryMeat_MGram,
-                                     #Fish_North_FreshPrice,
-                                     Egg_MashinGram,
-                                     MilkGrams,MilkproductsGrams,
-                                     #Cheese_PasturizedPrice,
-                                     Oil_NabatiGram,
-                                     #Oil_AnimalPrice,
-                                     GhandGram,Oil_OliveGram,Oil_Nabati_OtherGram,
-                                    ShekarGram)]
   
   #FoodGrams[FoodGrams == 0] <- NA
-  
+  FoodGrams<-TotalFoodNonDurable[,.(HHID,LavashGram,TaftoonGram,BarbariGram,
+                            Bread_FantasyGram,Rice_TaromGram,
+                            Rice_AshGram,Rice_Khareji2Gram,
+                            Rice_DomsiahGram,AdasGram,Loobia_ChitiGram,
+                            Loobia_GhermezGram,NokhodGram,Sabzi_KhordanGram,
+                            Sabzi_AshGram,KahooGram,KhiarGram,
+                            Banana_CoconutGram,OrangeGram,CherryGram,
+                            AppleGram,CowMeatGram,SheepMeatGram,
+                            Fish_North_FreshGram,Fish_South_FreshGram,
+                            Fish_ConservedGram,Cheese_PasturizedGram,
+                            Cheese_NonPasturizedGram,Oil_AnimalGram,
+                            Oil_NabatiGram,Butter_Animal_PasturizedGram,
+                            Butter_NonAnimalGram,KeshmeshGram,
+                            NokhodchiGram,PistachioGram,TokhmeGram,
+                            GhandGram,ShekarGram)]
   save(FoodGrams,file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodGrams.rda"))
   
 }
