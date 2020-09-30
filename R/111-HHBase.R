@@ -14,7 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
 library(stringr)
-
+year <- 83
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -34,17 +34,18 @@ for(year in (Settings$startyear:Settings$endyear)){
     rm(RData,UData)
     setnames(HHBase,c("HHID","Region"))
     HHBase[,Year:=year]
-    if(year==74)
+    if(year==74){
       HHBase[,HHIDs:=formatC(HHID, width = 8, flag = "0")]
-    else if(year<77)
+    }else if(year<77){
       HHBase[,HHIDs:=formatC(HHID, width = 7, flag = "0")]
-    else if(year %in% 77:86)
+    }else if(year %in% 77:86){
       HHBase[,HHIDs:=formatC(HHID, width = 9, flag = "0")]
-    
-    if(year < 77)
+    }
+    if(year < 77){
       HHBase[,Quarter:=as.integer(str_sub(HHIDs,4,4))]
-    else
+    }else{
       HHBase[,Quarter:=as.integer(str_sub(HHIDs,6,6))]
+    }
     HHBase[,Month:=NA_integer_]
     
   }else{
@@ -68,7 +69,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   HHBase <- HHBase[!is.na(HHID)]
-  HHBase[,ProvinceCode:=as.integer(str_sub(HHIDs,2,3))]
+ # HHBase[,ProvinceCode:=as.integer(str_sub(HHIDs,2,3))]
   
   if(year <= 86 | year >= 92 ){
     HHBase[,CountyCode:=as.integer(str_sub(HHIDs,2,5))]
@@ -78,6 +79,62 @@ for(year in (Settings$startyear:Settings$endyear)){
     HHBase[,CountyCode:=as.integer(SHCode)]
   }
   
+  #Tehran-Alborz
+  if(year >76 & year < 92 ){ 
+    HHBase[CountyCode==2305, CountyCode:=3001] # Karaj
+    HHBase[CountyCode==2308, CountyCode:=3002] # Savojbolagh 
+  }
+  
+  
+  #Khorasan
+  if(year >76 & year < 87 ){ 
+    HHBase[CountyCode==901, CountyCode:=2801] # Esfarayen 
+    HHBase[CountyCode==902, CountyCode:=2802] # Bojnourd 
+    HHBase[CountyCode==909, CountyCode:=2804] # Shirvan 
+    HHBase[CountyCode==924, CountyCode:=2803] # Jajarm 
+    HHBase[CountyCode==925, CountyCode:=2806] # Maneh & Samalqan 
+    
+    HHBase[CountyCode==903, CountyCode:=2901] # Birjand 
+    HHBase[CountyCode==911, CountyCode:=2907] # Ferdows
+    HHBase[CountyCode==912, CountyCode:=2904] # Qaenat
+    HHBase[CountyCode==921, CountyCode:=2905] # Nehbandan
+    
+    
+    HHBase[CountyCode==2809, CountyCode:=2804] # Shirvan
+  }
+    if(year %in% 84:86){
+      HHBase[CountyCode==2824, CountyCode:=2803] # Jaram
+      HHBase[CountyCode==2809, CountyCode:=2804] # Shirvan
+      HHBase[CountyCode==2813, CountyCode:=2805] # Faruj     # Guess!
+      HHBase[CountyCode==2825, CountyCode:=2806] # Mane & Semelqan
+      
+      HHBase[CountyCode==2903, CountyCode:=2901] # Birjand
+      HHBase[CountyCode==2912, CountyCode:=2906] # Sarbishe  # Just a guess
+      HHBase[CountyCode==2921, CountyCode:=2905] # Nehbandan
+      HHBase[CountyCode==2911, CountyCode:=2903] # Serayan   # Just a guess
+      #HHBase[CountyCode==0911, CountyCode:=2907] # Ferdows
+    }
+    
+ 
+    
+  HHBase[CountyCode==2110, CountyCode:=2911] # Tabas
+  HHBase[CountyCode==2315, CountyCode:=3003] # Nazarabad
+  
+
+  # #Ghazvin
+  # if(year >76 & year < 82 ){ 
+  #   HHBase[CountyCode %in% c(2311),
+  #          NewArea:=26]
+  # }
+  # 
+  #Golestan
+  # if(year >76 & year < 82 ){ 
+  #   HHBase[CountyCode %in% c(212,203,209,211,213,217),
+  #          NewArea:=27]
+  # }
+  
+  HHBase[,ProvinceCode:=CountyCode %/% 100]
+  
   HHBase[,Year:=year]
   
   Geo2 <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_Geo2))
@@ -86,11 +143,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   Geo4 <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_Geo4))
   Geo4 <- Geo4[,.(CountyCode=as.numeric(Geo4),CountyName=CountyEn)]
-  HHBase <- merge(HHBase,Geo4,by="CountyCode")
   
+
+  HHBase <- merge(HHBase,Geo4,by="CountyCode",all.x = TRUE)
+
   HHBase <- HHBase[,.(HHID,Year,Quarter,Month,
                       Region,ProvinceCode,ProvinceName,
                       CountyCode,CountyName)]
+  
+#  print(table(HHBase[is.na(CountyName),CountyCode]))
+  
   
   HHBase[,NewArea:=ProvinceCode]
   HHBase[Region=="Urban" & 
@@ -107,44 +169,6 @@ for(year in (Settings$startyear:Settings$endyear)){
          NewArea:=-1]                              # Arak [0001] to not be 
                                                    #  confused with [01] Gilan
   
-  #Tehran-Alborz
-  if(year >76 & year < 92 ){ 
-    HHBase[ Region=="Urban" & CountyCode==2305,    # Karaj was a county of 
-            NewArea:=3001]                         #  Tehran before 1392
-  }
-  
-  if(year >76 & year < 92 ){
-    HHBase[CountyCode %in% c(2308,2315,2309),      # Alborz (ex. Karaj)
-           NewArea:=30]
-  }
-  
-  #Khorasan
-  if(year >76 & year < 87 ){ 
-    HHBase[Region=="Urban" & CountyCode %in% c(916),
-           NewArea:=916]
-  }
-  
-  if(year >76 & year < 87 ){ 
-    HHBase[CountyCode %in% c(901,902,909,924,925),
-           NewArea:=28]
-  }
-  
-  if(year >76 & year < 87 ){ 
-    HHBase[CountyCode %in% c(903,911,912,921),
-           NewArea:=29]
-  }
-  
-  #Ghazvin
-  if(year >76 & year < 82 ){ 
-    HHBase[CountyCode %in% c(2311),
-           NewArea:=26]
-  }
-  
-  #Golestan
-  if(year >76 & year < 82 ){ 
-    HHBase[CountyCode %in% c(212,203,209,211,213,217),
-           NewArea:=27]
-  }
 
   HHBase[,NewArea_Name:=NA_character_]
   HHBase[,NewArea_Name:=ifelse(NewArea==ProvinceCode,
