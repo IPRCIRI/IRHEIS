@@ -8,7 +8,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 
-for(year in 77:86){
+for(year in max(77,Settings$startyear):86){   # 77 i the first year with county data
   cat("\nYear",year)
   load(file=paste0(Settings$HEISProcessedPath,
                    "Y",year,"HHBase.rda"))
@@ -39,9 +39,9 @@ for(year in 77:86){
 
 for(year in 87:91){
   cat("\nYear",year)
-  DR <- data.table(read_excel(paste0("D:/Dropbox/HEIS/DataSummary/13",
+  DR <- data.table(read_excel(paste0("C:/Users/Majid/Dropbox/HEIS/HEIS-Share/DataSummary/13",
                                      year,"/SumR",year,".xlsx")))
-  DU <- data.table(read_excel(paste0("D:/Dropbox/HEIS/DataSummary/13",
+  DU <- data.table(read_excel(paste0("C:/Users/Majid/Dropbox/HEIS/HEIS-Share/DataSummary/13",
                                      year,"/SumU",year,".xlsx")))
   s <- "ADDRESS"
   if("shr" %in% names(DR))
@@ -83,13 +83,13 @@ for(year in 87:91){
                             "Y",year,"GeoInfo.rda"))
 }
 
-for(year in 92:Settings$endyear){
+for(year in 92:max(92,Settings$endyear)){
   cat("\nYear",year)
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   GeoInfo <- HHBase[,.(HHID,
                        Geo2=substr(HHID,2,3),
                        Geo4=substr(HHID,2,5))]
-  if(year %in% 95:96) GeoInfo[Geo4=="2909", Geo4:="2911"] # Tabas (3) # This is just a guess!
+  # if(year %in% 95:96) GeoInfo[Geo4=="2909", Geo4:="2911"] # Tabas (3) # This is just a guess!
   if(year >=97) cat("Check this line for, What is Tabas code for >=97?")
   cat(":\t",length(unique(GeoInfo$Geo2)))
   cat(":\t",GeoInfo[order(Geo2),Geo2][c(1,nrow(GeoInfo))])
@@ -100,7 +100,7 @@ for(year in 92:Settings$endyear){
 }
 
 
-for(year in 77:Settings$endyear){
+for(year in  max(77,Settings$startyear):Settings$endyear){
   cat("\nYear",year)
   load(file=paste0(Settings$HEISProcessedPath,
                             "Y",year,"GeoInfo.rda"))

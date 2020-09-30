@@ -26,7 +26,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   for(G in c("Cigars","Cloths","Amusements","Communications", 
              "Educations", "Furnitures","Hotels","Energys","House", "Medicals",
              "Hygienes","Transportations","Others", "Restaurants",
-             "DurableData_Detail","OwnedDurableItemsDepreciation"))
+             "Durable_4Groups","OwnedDurableItemsDepreciation"))
     load(file=paste0(Settings$HEISProcessedPath,"Y",year,G,".rda"))
   
   FoodNutritionData <- FoodNutritionData[FoodKCaloriesHH>0]
@@ -48,7 +48,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,TransportationData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OtherData,by =c("HHID"),all=TRUE)
   MD<-merge(MD,MedicalData,by =c("HHID"),all=TRUE)
-  MD<-merge(MD,DurableData_Detail,by =c("HHID"),all=TRUE)
+  MD<-merge(MD,Durable_4Groups,by =c("HHID"),all=TRUE)
   MD<-merge(MD,OwnedDurableItemsDepreciation,by =c("HHID"),all=TRUE)
   
   #Calculate Monthly Total Expenditures 

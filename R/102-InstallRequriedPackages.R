@@ -1,5 +1,4 @@
 # 102-Install Required Packagees
-# Builds the base data.table for households
 #
 # Copyright © 2016: Majid Einian
 # Licence: GPL-3
@@ -13,7 +12,8 @@ cat("\n\n================ Install Required Packages ============================
 
 
 pkglist <- c("yaml","RODBC","readxl","tools","foreign","data.table",
-             "stringr","XLConnect","sm","spatstat","ggplot2","haven",
+             "stringr","XLConnect","sm",#"spatstat",
+             "ggplot2","haven",
              "rworldmap","rgdal","xlsx","Hmisc","reldist","dplyr","reshape2",
              "tcltk","janitor",
              "caret","caretEnsemble",
