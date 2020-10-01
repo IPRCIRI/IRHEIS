@@ -14,6 +14,8 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
 library(stringr)
+library(readxl)
+
 year <- 83
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))

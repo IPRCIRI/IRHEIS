@@ -13,6 +13,7 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
 library(data.table)
+library(spatstat)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
