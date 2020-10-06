@@ -13,7 +13,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(writexl)
-
+library(ggplot2)
 
 FinalCountryResults <- data.table(Year = numeric(0), 
                                   SampleSize = integer(0), MeterPrice = numeric(0), 
@@ -181,27 +181,30 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(MD[, weighted.mean(FinalPoor0,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
   cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
-  #cat(MD[, sum(Weight*Size)],"\t")
-  
-  MD1<-MD[,.(HHID,FinalPoor)]
-  save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
-  
-  DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
-                   Total_Exp_Month_Per_nondurable<1.2*PovertyLine,
-                 .(.N,Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight),
-                   PovertyLine=mean(PovertyLine)),
-                 by=.(Region,NewArea_Name)]
-  
-  DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]  
-  ##  Total_Exp_Month/TOriginalFoodExpenditure  * FPLIne *(Total_Exp_Month_nondurable+Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable  )
-  MD <- merge(MD,DurableD[,.(NewArea_Name,Region,PovertyLine_Final)],by=c("Region","NewArea_Name"))
-  
-  Z1 <- MD[,.(Share=weighted.mean(TOriginalFoodExpenditure/FoodExpenditure,Weight)),by=FinalPoor]
-  Z1[,Year:=year]
-  
-  OriginalFoodShare <- rbind(OriginalFoodShare,Z1)
+
   
 }
+
+BigEngelTable[,Final_PovertyLine:=ifelse(Year==90,PovertyLine0*1.305*1.347*1.156*1.119*1.09*1.096*1.2*1.2,
+                                  ifelse(Year==91,PovertyLine0*1.347*1.156*1.119*1.09*1.096*1.2*1.2,
+                                  ifelse(Year==92,PovertyLine0*1.156*1.119*1.09*1.096*1.2*1.2,
+                                  ifelse(Year==93,PovertyLine0*1.119*1.09*1.096*1.2*1.2,
+                                  ifelse(Year==94,PovertyLine0*1.09*1.096*1.2*1.2,
+                                  ifelse(Year==95,PovertyLine0*1.096*1.2*1.2,
+                                  ifelse(Year==96,PovertyLine0*1.2*1.2,
+                                  ifelse(Year==97,PovertyLine0*1.2,PovertyLine0))))))))]
+
+BigEngelTable[,Final_PovertyLine_Mean:=mean(Final_PovertyLine),by=c("Region","NewArea_Name")]
+
+
+#Final<-BigEngelTable[Year==96]
+Final<-BigEngelTable[Year==98]
+
+Final1<-Final[Region=="Urban",.(Final_PovertyLine_Mean,NewArea_Name)]
+Final1$NewArea <- factor(Final1$NewArea, levels = Final1$NewArea[order(Final1$Final_PovertyLine_Mean)])
+ggplot(Final1, aes(x = Final1$NewArea, y = Final1$Final_PovertyLine_Mean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+
 #write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterResults.xlsx"),col_names=T)
 #write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
 #write_xlsx(FinalRegionResults,path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)

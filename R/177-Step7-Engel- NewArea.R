@@ -25,8 +25,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-MD[,EngelH:=(TOriginalFoodExpenditure/Total_Exp_Month)]
   
   
-  EngelD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
-                   TOriginalFoodExpenditure_Per<1.2*FPLine,
+  EngelD <- MD[ TOriginalFoodExpenditure_Per>0.7*FPLine &
+                   TOriginalFoodExpenditure_Per<1.3*FPLine,
                  .(.N,Engel=weighted.mean(EngelH,Weight),
                    FPLine=mean(FPLine))
                ,by=.(Region,NewArea_Name)]
