@@ -16,8 +16,8 @@ year<-Settings$baseBundleyear
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
 
-MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
-                             (Region=="Rural" & Decile==2),1,0)]
+MD[,Selected_Group:=ifelse((Region=="Urban" & (Decile==2 | Decile==3)) |
+                             (Region=="Rural" & (Decile==2 | Decile==3)),1,0)]
 
 Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
 Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
@@ -58,9 +58,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   BasketCost <- merge(BaseYearBasket,BasketPrice,by=c("FoodType","Region"))
   BasketCost[,Cost:=(StandardFGramspc/1000)*Price]
-  FPLineBasket <- BasketCost[,.(FPLine=sum(Cost)),by=NewArea_Name]
+  FPLineBasket <- BasketCost[,.(FPLine=sum(Cost)),by=c("Region","NewArea_Name")]
   
-  MD <- merge(MD,FPLineBasket,all.x=TRUE,by="NewArea_Name")
+  MD <- merge(MD,FPLineBasket,all.x=TRUE,by=c("Region","NewArea_Name"))
   
   MD[,FoodPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
 
