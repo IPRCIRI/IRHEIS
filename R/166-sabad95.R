@@ -1,4 +1,4 @@
-#703-Bundle 2100
+#703-Bundle 2100\
 # Builds the Food Groups data.table for households
 #
 # Copyright © 2019: Arin Shahbazian
@@ -24,7 +24,7 @@ OriginalFoodShare <- data.table(Year=NA_integer_,Share=NA_integer_)[0]
 year<-Settings$baseBundleyear
 
 load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
-
+BigFData[is.na(FGrams)]<-0
 goosht<-BigFData[FoodType=="Goosht"]
 goosht<-goosht[,Goosht_Grams:=FGrams*30 ]
 morgh<-BigFData[FoodType=="Morgh"]
@@ -79,12 +79,13 @@ MD<-merge(MD,mast[,.(HHID,Mast_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,tokhmemorgh[,.(HHID,Tokhmemorgh_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,mahi[,.(HHID,Mahi_Grams)],by=c("HHID"),all.x = T)
 MD<-merge(MD,khoshkbar[,.(HHID,Khoshkbar_Grams)],by=c("HHID"),all.x = T)
-
 MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
                              (Region=="Rural" & Decile==2),1,0)]
+for (col in c("Nan_Grams","Berenj_Grams","Goosht_Grams"))
+  MD[is.na(get(col)), (col) := 0]
 
 gram <-MD [Selected_Group==1,
-           .(Nan_Grams= weighted.mean(Nan_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
+           .(Nan_Grams= weighted.mean(Nan_Grams/EqSizeCalory,Weight*Size,na.rm = TRUE),
              Berenj_Grams= weighted.mean(Berenj_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Makarooni_Grams=weighted.mean(Makarooni_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
              Hoboobat_Grams=weighted.mean(Hoboobat_Grams/EqSizeCalory,Weight*Size,na.rm=TRUE),
