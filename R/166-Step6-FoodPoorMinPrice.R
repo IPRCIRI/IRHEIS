@@ -11,6 +11,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(spatstat)
+library(tidyr)
 year<-Settings$baseBundleyear
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
