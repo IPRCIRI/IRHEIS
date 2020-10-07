@@ -185,14 +185,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 }
 
-BigEngelTable[,Final_PovertyLine:=ifelse(Year==90,PovertyLine0*1.305*1.347*1.156*1.119*1.09*1.096*1.2*1.2,
-                                  ifelse(Year==91,PovertyLine0*1.347*1.156*1.119*1.09*1.096*1.2*1.2,
-                                  ifelse(Year==92,PovertyLine0*1.156*1.119*1.09*1.096*1.2*1.2,
-                                  ifelse(Year==93,PovertyLine0*1.119*1.09*1.096*1.2*1.2,
-                                  ifelse(Year==94,PovertyLine0*1.09*1.096*1.2*1.2,
-                                  ifelse(Year==95,PovertyLine0*1.096*1.2*1.2,
-                                  ifelse(Year==96,PovertyLine0*1.2*1.2,
-                                  ifelse(Year==97,PovertyLine0*1.2,PovertyLine0))))))))]
+load(file="Inflation9098.rda")
+BigEngelTable<-merge(BigEngelTable,Inflation9098,by="ProvinceCode")
+
+BigEngelTable[,Final_PovertyLine:=ifelse(Year==90,PovertyLine0*y9091*y9192*y9293*y9394*y9495*y9596*y9697*y9798,
+                                  ifelse(Year==91,PovertyLine0*y9192*y9293*y9394*y9495*y9596*y9697*y9798,
+                                  ifelse(Year==92,PovertyLine0*y9293*y9394*y9495*y9596*y9697*y9798,
+                                  ifelse(Year==93,PovertyLine0*y9394*y9495*y9596*y9697*y9798,
+                                  ifelse(Year==94,PovertyLine0*y9495*y9596*y9697*y9798,
+                                  ifelse(Year==95,PovertyLine0*y9596*y9697*y9798,
+                                  ifelse(Year==96,PovertyLine0*y9697*y9798,
+                                  ifelse(Year==97,PovertyLine0*y9798,PovertyLine0))))))))]
 
 BigEngelTable[,Final_PovertyLine_Mean:=mean(Final_PovertyLine),by=c("Region","NewArea_Name")]
 
