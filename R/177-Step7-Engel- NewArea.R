@@ -15,7 +15,7 @@ library(data.table)
 
 BigEngelTable <- data.table(Region=NA_character_,NewArea_Name=NA_integer_,
                             N=NA_integer_,Engel=NA_real_,
-                            FPLine=NA_real_,Year=NA_integer_)[0]
+                            FPLine=NA_real_,Year=NA_integer_,ProvinceCode=NA_integer_)[0]
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
@@ -29,7 +29,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                    TOriginalFoodExpenditure_Per<1.3*FPLine,
                  .(.N,Engel=weighted.mean(EngelH,Weight),
                    FPLine=mean(FPLine))
-               ,by=.(Region,NewArea_Name)]
+               ,by=.(Region,NewArea_Name,ProvinceCode)]
   
   save(EngelD,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngelD.rda"))
 
@@ -62,33 +62,7 @@ BigEngelTable[,PovertyLine0:=FPLine/Engel]
 save(BigEngelTable,file=paste0(Settings$HEISProcessedPath,"BigEngelTable2.rda"))
 
 
-# btm <- melt(BigEngelTable,id.vars = c("Year","NewArea_Name","Region"),
-#             measure.vars = c("Engel","ModifiedEngel"))
-# 
-# library(ggplot2)
-# library(gridExtra)
-# library(ggpubr)
-# 
-# plotlist <- list()
-# for(cl in 1:13){
-#   plt = ggplot(btm[NewArea_Name==cl,], 
-#                aes(x=Year,y=value,
-#                    fill=variable,color=variable,linetype=variable)) +
-#     geom_line() +
-#     geom_point() +
-#     annotate(geom="label", x=84, y=max(btm[NewArea_Name==cl,value])-.01, label=cl, color="red")+
-#     theme(legend.position = "none",
-#           axis.title.x=element_blank(),
-#           axis.title.y=element_blank())
-#   
-#   plotlist[[cl]] <- plt
-# }
-# plt = ggplot(btm[NewArea_Name==cl,], aes(x=Year,y=value,fill=variable,color=variable)) +
-#   geom_line() +
-#   geom_point()
-# leg <- get_legend(plt)
-# plotlist[[cl+1]] <- as_ggplot(leg)
-# do.call("grid.arrange", c(plotlist, ncol=2))
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took",(endtime-starttime)["elapsed"],"seconds")
