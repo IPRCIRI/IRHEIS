@@ -22,7 +22,8 @@ for(i in 1:nrow(TFoodGroups))
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
-  BigFData <- data.table(HHID=NA_integer_,FoodType=NA_character_,Price=NA_real_,
+  BigFData <- data.table(HHID=NA_integer_,FoodCode=NA_integer_,
+                         FoodType=NA_character_,Price=NA_real_,
                          Expenditure=NA_real_,FGrams=NA_real_,
                          FoodKCalories=NA_real_,
                          FoodProtein=NA_real_)[0]
@@ -74,7 +75,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     TF[is.na(Price), Price:= Expenditure/(FGrams/1000)]
     TF[is.na(FGrams),FGrams:=Expenditure/Price*1000]
     
-    TF[,Code:=NULL]
+    #TF[,Code:=NULL]
     TF[is.na(TF)] <- 0
     
     FData <- TF[,lapply(.SD,sum),by=HHID]
@@ -85,7 +86,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     FData[is.infinite(Price),Price:=NA]
     
     BigFData <- rbind(BigFData,
-                      FData[,.(HHID,FoodType,Price,Expenditure,FGrams,FoodKCalories,FoodProtein)])
+                      FData[,.(HHID,FoodCode=Code,FoodType,Price,Expenditure,FGrams,FoodKCalories,FoodProtein)])
     save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
     }
 }

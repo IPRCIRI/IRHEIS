@@ -9,8 +9,8 @@ starttime <- proc.time()
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
-library(data.table)
 library(spatstat)
+library(data.table)
 year<-Settings$baseBundleyear
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
@@ -51,9 +51,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   # Basket <- Bfd2[Selected_Group==1,
   #                .(FGramspc=weighted.mean(FGrams/EqSizeCalory,Weight*Size)),
   #                by=.(FoodType,cluster3)]
-  
-  BasketPrice <- Bfd2[Selected_Group==1 & !is.na(Price),
-                      .(Price=weighted.median(Price,Weight*Size,na.rm = TRUE)),
+  Bfd3 <- Bfd2[Selected_Group==1 & !is.na(Price),
+               .(Price=weighted.median(Price,Weight*Size,na.rm = TRUE)),
+               by=.(FoodCode,FoodType,Region,cluster3)]
+  BasketPrice <- Bfd3[!is.na(Price),
+                      .(Price=min(Price)),
                       by=.(FoodType,Region,cluster3)]
   
   BasketCost <- merge(BaseYearBasket,BasketPrice,by=c("FoodType","Region"))
