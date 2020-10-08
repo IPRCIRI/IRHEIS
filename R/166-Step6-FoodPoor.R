@@ -42,9 +42,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,Selected_Group:=ifelse((Decile==1) | (Decile==2) |
                                (Decile==3) | (Decile==4),1,0)]
   
-  Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
-  Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
-  Bfd2 <- merge(Bfd2,MD[,.(HHID,Region,Weight,Size,cluster3,
+  #Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
+  #Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
+  Bfd2 <- merge(BigFData,MD[,.(HHID,Region,Weight,Size,cluster3,
                            EqSizeCalory,Selected_Group)],by="HHID")
   Bfd2[is.na(Bfd2)]<-0
   Bfd2[Price<0.1,Price:=NA]

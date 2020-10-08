@@ -78,7 +78,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     #TF[,Code:=NULL]
     TF[is.na(TF)] <- 0
     
-    FData <- TF[,lapply(.SD,sum),by=HHID]
+    FData <- TF[,lapply(.SD,sum),by=.(HHID,Code)]
     FData[!is.na(FGrams), Price:=Expenditure/(FGrams/1000)]
     FData[, FoodType:=TFoodGroups[i,FoodType]]
     FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams/30]
