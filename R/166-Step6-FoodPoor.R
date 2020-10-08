@@ -48,14 +48,12 @@ for(year in (Settings$startyear:Settings$endyear)){
                            EqSizeCalory,Selected_Group)],by="HHID")
   Bfd2[is.na(Bfd2)]<-0
   Bfd2[Price<0.1,Price:=NA]
-  # Basket <- Bfd2[Selected_Group==1,
-  #                .(FGramspc=weighted.mean(FGrams/EqSizeCalory,Weight*Size)),
-  #                by=.(FoodType,cluster3)]
   Bfd3 <- Bfd2[Selected_Group==1 & !is.na(Price),
-               .(Price=weighted.median(Price,Weight*Size,na.rm = TRUE)),
-               by=.(FoodCode,FoodType,Region,cluster3)]
-  BasketPrice <- Bfd3[!is.na(Price),
-                      .(Price=min(Price)),
+               .(MedPrice=weighted.median(Price,Weight*Size*FGrams,na.rm = TRUE),
+                 MeanPrice=weighted.mean(Price,Weight*Size*FGrams,na.rm = TRUE)),
+               by=.(FoodType,Region,cluster3)]
+  BasketPrice <- Bfd3[!is.na(MeanPrice),
+                      .(Price=min(MeanPrice)),
                       by=.(FoodType,Region,cluster3)]
   
   BasketCost <- merge(BaseYearBasket,BasketPrice,by=c("FoodType","Region"))
@@ -66,7 +64,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,FoodPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
 
-  cat(unlist(MD[cluster3==1,.(FPLine,weighted.mean(FoodPoor))][1]))
+  cat(unlist(MD[cluster3==13,.(FPLine,weighted.mean(FoodPoor))][1]))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
 }
 
