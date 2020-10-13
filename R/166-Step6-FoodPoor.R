@@ -16,8 +16,8 @@ year<-Settings$baseBundleyear
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
 
-MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==3) |
-                             (Region=="Rural" & Decile==2),1,0)]
+MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==4) |
+                             (Region=="Rural" & Decile==3),1,0)]
 
 Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
 Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
@@ -39,7 +39,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
   
-  MD[,Selected_Group:=ifelse((Decile==1) | (Decile==2) |
+  MD[,Selected_Group:=ifelse((Decile==5) | (Decile==2) |
                                (Decile==3) | (Decile==4),1,0)]
   
   #Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
