@@ -203,7 +203,7 @@ BigEngelTable[,Final_PovertyLine_Mean:=mean(Final_PovertyLine),by=c("Region","Ne
 #Final<-BigEngelTable[Year==96]
 Final<-BigEngelTable[Year==98]
 
-Final1<-Final[Region=="Urban",.(Final_PovertyLine_Mean,NewArea_Name)]
+Final1<-Final[Region=="Rural",.(Final_PovertyLine_Mean,NewArea_Name)]
 Final1$NewArea <- factor(Final1$NewArea, levels = Final1$NewArea[order(Final1$Final_PovertyLine_Mean)])
 ggplot(Final1, aes(x = Final1$NewArea, y = Final1$Final_PovertyLine_Mean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
 
