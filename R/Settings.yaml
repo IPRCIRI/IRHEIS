@@ -22,6 +22,7 @@ MDS_P2Cols: P2Cols
 MDS_Geo2: Geo2
 MDS_Geo4: Geo4
 MDS_GeoX: GeoX
+MDS_GeoX_New: GeoX_New
 MDS_EC_A: EduCodes-A
 MDS_EC_B: EduCodes-B
 MDS_EC_C: EduCodes-C
