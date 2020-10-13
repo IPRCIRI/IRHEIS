@@ -14,8 +14,8 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 
-ClusterInfo <- data.table(read_excel(Settings$MetaDataFilePath,
-                                      sheet=Settings$MDS_GeoX))
+#ClusterInfo <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_GeoX))
+ClusterInfo <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_GeoX_New))
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
