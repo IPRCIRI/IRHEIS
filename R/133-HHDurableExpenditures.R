@@ -47,6 +47,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 #  }
   
   DurableData_Detail <- merge(TC,DurableItems,by="Code",all = TRUE)
+  DurableData_Detail <- DurableData_Detail[!is.na(HHID)]
   DurableData_Detail[is.na(Durable_Exp), Durable_Exp:=0]
   DurableData_Detail[is.na(Durable_Sale), Durable_Sale:=0]
   
