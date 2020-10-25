@@ -46,8 +46,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   TC[,Durable_Sale:=as.numeric(Durable_Sale)/12]
 #  }
   
-  DurableData_Detail <- merge(TC,DurableItems,by="Code")
-  DurableData_Detail[is.na(DurableData_Detail)] <- 0
+  DurableData_Detail <- merge(TC,DurableItems,by="Code",all = TRUE)
+  DurableData_Detail[is.na(Durable_Exp), Durable_Exp:=0]
+  DurableData_Detail[is.na(Durable_Sale), Durable_Sale:=0]
+  
   
   save(DurableData_Detail, file = paste0(Settings$HEISProcessedPath,"Y",year,
                                          "DurableData_Detail.rda"))
