@@ -20,32 +20,32 @@ FinalCountryResults <- data.table(Year = numeric(0),
                                   House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
                                   FoodKCaloriesHH_Per = numeric(0), Engel = numeric(0), Total_Exp_Month_Per = numeric(0), 
                                   Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0), 
-                                  PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
-                                  PovertyDepth = numeric(0))
+                                  PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), Durable_Adds_Final = numeric(0),
+                                  PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
 FinalRegionResults <- data.table(Year = numeric(0),
                                  Region=character(0),
                                  SampleSize = integer(0), MeterPrice = numeric(0), 
                                  House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
                                  FoodKCaloriesHH_Per = numeric(0), Engel = numeric(0), Total_Exp_Month_Per = numeric(0), 
-                                 Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0), 
+                                 Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0),  Durable_Adds_Final = numeric(0),
                                  PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
-                                 PovertyDepth = numeric(0))
+                                 PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
 FinalClusterResults <- data.table(Year = numeric(0),
                                   cluster3=character(0),
                                   SampleSize = integer(0), MeterPrice = numeric(0), 
                                   House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
                                   FoodKCaloriesHH_Per = numeric(0), Engel = numeric(0), Total_Exp_Month_Per = numeric(0), 
-                                  Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0), 
+                                  Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0),  Durable_Adds_Final = numeric(0),
                                   PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
-                                  PovertyDepth = numeric(0))
+                                  PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
 FinalProvinceResults <- data.table(Year = numeric(0),
                                    ProvinceName=character(0),
                                    SampleSize = integer(0), MeterPrice = numeric(0), 
                                    House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
                                    FoodKCaloriesHH_Per = numeric(0), Engel = numeric(0), Total_Exp_Month_Per = numeric(0), 
-                                   Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0), 
+                                   Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0),  Durable_Adds_Final = numeric(0),
                                    PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
-                                   PovertyDepth = numeric(0))
+                                   PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
 
 OriginalFoodShare <- data.table(Year=NA_integer_,Share=NA_integer_,FinalPoor=NA_integer_)[0]
 
@@ -76,6 +76,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per_nondurable)/PovertyLine)^2]
   
   
+  MD[,Durable_Adds_Final:=(Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable]
   
   ################Country##################
   
@@ -89,7 +90,8 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
               Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
               PovertyLine=weighted.mean(PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size))
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight))
   ]
   X2 <- MD[FinalPoor==1,
            .(PoorSampleSize=.N,
@@ -97,10 +99,11 @@ for(year in (Settings$startyear:Settings$endyear)){
              PovertyDepth=weighted.mean(FGT2M,Weight*Size)),
   ]
   X1[,Year:=year]
+  X1[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
   X2[,Year:=year]
   X <- merge(X1,X2,by="Year")
   FinalCountryResults <- rbind(FinalCountryResults,X)
-  
+
   ################Region##################
   X1 <- MD[,.(SampleSize=.N,
               MeterPrice=weighted.mean(MeterPrice,Weight,na.rm = TRUE),
@@ -112,7 +115,8 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
               Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
               PovertyLine=weighted.mean(PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size))
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight))
            ,by=Region]
   X2 <- MD[FinalPoor==1,
            .(PoorSampleSize=.N,
@@ -120,6 +124,7 @@ for(year in (Settings$startyear:Settings$endyear)){
              PovertyDepth=weighted.mean(FGT2M,Weight*Size)),
            ,by=Region]
   X1[,Year:=year]
+  X1[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","Region"))
   FinalRegionResults <- rbind(FinalRegionResults,X)
@@ -136,7 +141,8 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
               Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
               PovertyLine=weighted.mean(PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size))
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight))
            ,by=cluster3]
   X2 <- MD[FinalPoor==1,
            .(PoorSampleSize=.N,
@@ -146,6 +152,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
   X1[,Year:=year]
+  X1[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","cluster3"))
   FinalClusterResults <- rbind(FinalClusterResults,X)
@@ -161,7 +168,8 @@ for(year in (Settings$startyear:Settings$endyear)){
               Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
               Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
               PovertyLine=weighted.mean(PovertyLine,Weight*Size),
-              PovertyHCR=weighted.mean(FinalPoor,Weight*Size))
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight))
            ,by="ProvinceName"]
   X2 <- MD[FinalPoor==1,
            .(PoorSampleSize=.N,
@@ -171,6 +179,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
   X1[,Year:=year]
+  X1[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","ProvinceName"))
   FinalProvinceResults <- rbind(FinalProvinceResults,X)
@@ -186,6 +195,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
   
+ 
   DurableD<- MD[ Total_Exp_Month_Per_nondurable>0.8*PovertyLine &
                    Total_Exp_Month_Per_nondurable<1.2*PovertyLine,
                  .(.N,Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight),
@@ -202,6 +212,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   OriginalFoodShare <- rbind(OriginalFoodShare,Z1)
   
 }
+
 write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterResults.xlsx"),col_names=T)
 write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
 write_xlsx(FinalRegionResults,path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)
