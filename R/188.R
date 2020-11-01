@@ -13,7 +13,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(writexl)
-
+library(ggplot2)
 
 
 year<-98
@@ -72,11 +72,68 @@ year<-98
   MD[,FinalPoor0:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine0,1,0 )]
 
   A2<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
-            HCR=weighted.mean(FinalPoor,Weight)),by=c("ProvinceCode")]
-  A3<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
-            HCR=weighted.mean(FinalPoor,Weight)),by=c("Region","NewArea_Name")]
+            HCR=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")]
+
+  A2<-A2[,.(PovertyLine,ProvinceName,N)]
+  A2$ProvinceName <- factor(A2$ProvinceName, levels = A2$ProvinceName[order(A2$PovertyLine)])
+  ggplot(A2, aes(x = A2$ProvinceName, y = A2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+    geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 16000000)
+
   A4<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
-            HCR=weighted.mean(FinalPoor,Weight)),by=c("Region","ProvinceCode")]
+            HCR=weighted.mean(FinalPoor,Weight)),by=c("Region","ProvinceName")]
+  
+  A4<-A4[Region=="Urban",.(PovertyLine,ProvinceName,N)]
+  A4$ProvinceName <- factor(A4$ProvinceName, levels = A4$ProvinceName[order(A4$PovertyLine)])
+  ggplot(A4, aes(x = A4$ProvinceName, y = A4$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+    geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 18000000)
+
+    
+  A4<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
+            HCR=weighted.mean(FinalPoor,Weight)),by=c("Region","ProvinceName")]
+  
+  A4<-A4[Region=="Rural",.(PovertyLine,ProvinceName,N)]
+  A4$ProvinceName <- factor(A4$ProvinceName, levels = A4$ProvinceName[order(A4$PovertyLine)])
+  ggplot(A4, aes(x = A4$ProvinceName, y = A4$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+    geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 8000000)
+  
+  ###############################################################
+  ##############################################################
+  ###############################################################
+  
+  A2<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
+            HCR=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")]
+  
+  A2<-A2[,.(HCR,ProvinceName,N)]
+  A2$ProvinceName <- factor(A2$ProvinceName, levels = A2$ProvinceName[order(A2$HCR)])
+  ggplot(A2, aes(x = A2$ProvinceName, y = A2$HCR)) + theme_bw() + geom_bar(stat = "identity") +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+    geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 0.5)#+
+   # scale_y_continuous(breaks = c(0,0.1,0.2,0.3,0.4,0.5))
+  
+  A4<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
+            HCR=weighted.mean(FinalPoor,Weight)),by=c("Region","ProvinceName")]
+  
+  A4<-A4[Region=="Urban",.(HCR,ProvinceName,N)]
+  A4$ProvinceName <- factor(A4$ProvinceName, levels = A4$ProvinceName[order(A4$HCR)])
+  ggplot(A4, aes(x = A4$ProvinceName, y = A4$HCR)) + theme_bw() + geom_bar(stat = "identity") +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+    geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 0.5)
+  
+  
+  A4<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
+            HCR=weighted.mean(FinalPoor,Weight)),by=c("Region","ProvinceName")]
+  
+  A4<-A4[Region=="Rural",.(HCR,ProvinceName,N)]
+  A4$ProvinceName <- factor(A4$ProvinceName, levels = A4$ProvinceName[order(A4$HCR)])
+  ggplot(A4, aes(x = A4$ProvinceName, y = A4$HCR)) + theme_bw() + geom_bar(stat = "identity") +
+    theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+    geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 0.5)
+  
+    
+  
   
 
 endtime <- proc.time()
