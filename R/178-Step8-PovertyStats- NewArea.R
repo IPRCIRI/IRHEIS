@@ -200,18 +200,34 @@ BigEngelTable[,Final_PovertyLine:=ifelse(Year==90,PovertyLine0*y9091*y9192*y9293
 BigEngelTable[,Final_PovertyLine_Mean:=mean(Final_PovertyLine),by=c("Region","NewArea_Name")]
 
 
-#Final<-BigEngelTable[Year==96]
-Final<-BigEngelTable[Year==98]
+A2<-MD[,.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
+          HCR=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")]
+A2<-A2[,.(PovertyLine,ProvinceName,N)]
+A2$ProvinceName <- factor(A2$ProvinceName, levels = A2$ProvinceName[order(A2$PovertyLine)])
+ggplot(A2, aes(x = A2$ProvinceName, y = A2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+  geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 16000000)
 
-Final1<-Final[Region=="Rural",.(Final_PovertyLine_Mean,NewArea_Name)]
-Final1$NewArea <- factor(Final1$NewArea, levels = Final1$NewArea[order(Final1$Final_PovertyLine_Mean)])
-ggplot(Final1, aes(x = Final1$NewArea, y = Final1$Final_PovertyLine_Mean)) + theme_bw() + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))
+
+A2<-MD[Region=="Urban",.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
+          HCR=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")]
+A2<-A2[,.(PovertyLine,ProvinceName,N)]
+A2$ProvinceName <- factor(A2$ProvinceName, levels = A2$ProvinceName[order(A2$PovertyLine)])
+ggplot(A2, aes(x = A2$ProvinceName, y = A2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+  geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 16000000)
 
 
-#write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterResults.xlsx"),col_names=T)
-#write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
-#write_xlsx(FinalRegionResults,path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)
-#write_xlsx(FinalProvinceResults,path=paste0(Settings$HEISResultsPath,"/ProvinceResults.xlsx"),col_names=T)
+A2<-MD[Region=="Rural",.(.N,PovertyLine=weighted.mean(PovertyLine,Weight),
+          HCR=weighted.mean(FinalPoor,Weight)),by=c("ProvinceName")]
+A2<-A2[,.(PovertyLine,ProvinceName,N)]
+A2$ProvinceName <- factor(A2$ProvinceName, levels = A2$ProvinceName[order(A2$PovertyLine)])
+ggplot(A2, aes(x = A2$ProvinceName, y = A2$PovertyLine)) + theme_bw() + geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1))+
+  geom_text(aes(label=N),angle=90,vjust=0, hjust=-0.03) + ylim(0, 16000000)
+
+
+
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took",(endtime-starttime)["elapsed"],"seconds")
