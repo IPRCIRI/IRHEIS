@@ -93,6 +93,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,
                    "HHHouseProperties.rda"))
   HousePropData <- HHHouseProperties[,.(HHID,room,area)]
+  HousePropData[area==0,area:=NA]
 
   HouseData <- merge(HouseData,HousePropData,by = "HHID", all = TRUE)
   HouseData <- HouseData[,MeterPrice:=House_Exp/area]
