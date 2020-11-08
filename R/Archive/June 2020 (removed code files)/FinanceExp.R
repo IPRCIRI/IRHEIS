@@ -55,6 +55,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[is.na(MD)] <- 0
   
   MD[,Decile_Pop:=sum(Weight),by=Decile]
+  MD[Finance_Exp>0,having_vam_Pop:=sum(Weight)]
   MD[Finance_Exp>0,having_vam_Pop:=sum(Weight),by=Decile]
   MD[,having_vam:=ifelse(Finance_Exp>0,1,0)]
   MD[,weighted.mean(having_vam,Weight),by=Decile][order(Decile)]
@@ -63,6 +64,15 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,Y:=sum(Weight*Total_Exp_Month)]
   MD[as.numeric(Percentile)>97,X:=sum(Weight*Total_Exp_Month)]
   MD[,a:=X/Y]
+  
+  MD[,weighted.mean(having_vam,Weight)]
+  MD[CountyCode==2301,weighted.mean(having_vam,Weight*Size)]
+  MD[ProvinceCode==23,weighted.mean(having_vam,Weight)]
+  MD[,weighted.mean(having_vam,Weight),by=ProvinceCode][order(ProvinceCode)]
+  MD[having_vam==1,sum(Weight),by=ProvinceCode][order(ProvinceCode)]
+  
+  MD[Finance_Exp>0,weighted.mean(Finance_Exp*12/Total_Exp_Month,Weight)]
+  MD[Finance_Exp>0 & CountyCode==2301,weighted.mean(Finance_Exp*12/Total_Exp_Month,Weight)]
   
   }
 
