@@ -71,6 +71,12 @@ for(year in (Settings$startyear:Settings$endyear)){
     EXPenditure<-rbind(EXPenditure,EXP)
     MEAT<-rbind(MEAT,Meat)
   }
+  
+  cat(Bfd2[,weighted.mean(FGrams>0,Weight)],"\t")
+  Bfd2[,Decile:=NULL]
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
+ Bfd2<-merge(Bfd2,Deciles)
+Bfd2[,weighted.mean(FGrams/EqSizeCalory,Weight),by="Decile"][order(Decile)]
 }
 medEXP<-merge(medEXP,inflation,by=c("Year"))
 medEXP<-medEXP[,RealEXP:=V1/CPI*100]
