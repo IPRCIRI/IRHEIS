@@ -213,6 +213,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   
 }
 
+A1<-MD[,weighted.mean(Total_Exp_Month,Weight),by=Decile]
+A2<-MD[,weighted.mean(Total_Exp_Month,Weight),by=ProvinceCode]
+A3<-MD[,weighted.mean(Total_Exp_Month_Per,Weight),by=Decile]
+A4<-MD[,weighted.mean(Total_Exp_Month_Per,Weight),by=ProvinceCode]
+
+
 write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterResults.xlsx"),col_names=T)
 write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
 write_xlsx(FinalRegionResults,path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)
