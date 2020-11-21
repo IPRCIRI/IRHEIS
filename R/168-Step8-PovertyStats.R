@@ -189,7 +189,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
   cat(MD[, weighted.mean(FinalPoor0,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(FPLine,Weight*Size)],"\t")
+  cat(MD[, weighted.mean(FPLine,Weight*Size)],"\n")
   #cat(MD[, sum(Weight*Size)],"\t")
   
   MD1<-MD[,.(HHID,FinalPoor)]
@@ -211,13 +211,23 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   OriginalFoodShare <- rbind(OriginalFoodShare,Z1)
   
+  
+ # a<-MD[,weighted.mean(PovertyLine,Weight)]
+ # MD[,F_P:=ifelse(Total_Exp_Month_Per_nondurable < a,1,0 )]
+  #cat(MD[, weighted.mean(F_P,Weight*Size)],"\t")
 }
 
-A1<-MD[,weighted.mean(Total_Exp_Month,Weight),by=Decile]
-A2<-MD[,weighted.mean(Total_Exp_Month,Weight),by=ProvinceCode]
-A3<-MD[,weighted.mean(Total_Exp_Month_Per,Weight),by=Decile]
-A4<-MD[,weighted.mean(Total_Exp_Month_Per,Weight),by=ProvinceCode]
 
+
+#A1<-MD[,weighted.mean(Total_Exp_Month,Weight),by=Decile]
+#A2<-MD[,weighted.mean(Total_Exp_Month,Weight),by=ProvinceCode]
+#A3<-MD[,weighted.mean(Total_Exp_Month_Per,Weight),by=Decile]
+#A4<-MD[,weighted.mean(Total_Exp_Month_Per,Weight),by=ProvinceCode]
+
+#A5<-MD[,weighted.mean(Total_Exp_Month,Weight),by=c("Decile","ProvinceCode")]
+#A6<-MD[,weighted.mean(Total_Exp_Month_Per,Weight),by=c("Decile","ProvinceCode")]
+#write.csv(A5,file="A5.csv")
+#write.csv(A6,file="A6.csv")
 
 write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterResults.xlsx"),col_names=T)
 write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
