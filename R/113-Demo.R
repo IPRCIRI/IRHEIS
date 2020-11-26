@@ -149,10 +149,12 @@ for(year in years){
   P[,NKids:=ifelse(Age<15,1,0)]
   P[,NInfants:=ifelse(Age<=2,1,0)]
   P[,NInfants0:=ifelse(Age==0,1,0)]
+  P[,NStudents:=ifelse(Age<=18 & Age>=6,1,0)]
   
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
 
   P[,NElementary:= ifelse(EduLevel=="Elementary" & Student==TRUE,1,0)]
+  P[,NMiddle:= ifelse(EduLevel=="Middle" & Student==TRUE,1,0)]
   P[,NHigh:= ifelse(EduLevel=="High" & Student==TRUE,1,0)]
   P[,NCollege:=ifelse(EduLevel=="College" & Student==TRUE,1,0)]
   P[,NBachelors:=ifelse(EduLevel=="Bachelors" & Student==TRUE,1,0)]
@@ -209,7 +211,7 @@ for(year in years){
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
             .SDcols=c("Size","NKids","NInfants","NInfants0","NSmallKids",
-                      "NElementary","NHigh",
+                      "NElementary","NHigh","NMiddle","NStudents",
                       "NCollege","NBachelors","NMasters","NPhD","NUniv",
                       "NAge1B","NAge1G",
                       "NAge2B","NAge2G",

@@ -69,8 +69,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(MD[,.(weighted.mean(FinalPoor,Weight*Size))]$V1,"\t")
   MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
-  
-  
+  MD10<-MD[,.(HHID,NMiddle,NStudents)]
+  save(MD10,file=paste0(Settings$HEISProcessedPath,"Y",year,"school.rda"))
   
   MD[,FGT1M:=(PovertyLine-Total_Exp_Month_Per_nondurable)/PovertyLine]
   MD[,FGT2M:=((PovertyLine-Total_Exp_Month_Per_nondurable)/PovertyLine)^2]
