@@ -16,7 +16,7 @@ library(stringr)
 library(readxl)
 
 
-SubsidyTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_SubsidyWage))
+SubsidyTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Subsidy))
 
 
 for(year in (Settings$startyear:Settings$endyear)){
