@@ -24,7 +24,7 @@ for(year in (max(Settings$startyear,mst):Settings$endyear)){
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableData_Detail.rda"))
   
-  g1 <- DurableGroups[year >= StartYear & year <= EndYear && Group==1]$Code
+  g1 <- DurableGroups[year >= StartYear & year <= EndYear & Group==1]$Code
   g2 <- DurableGroups[year >= StartYear & year <= EndYear & Group==2]$Code
   g3 <- DurableGroups[year >= StartYear & year <= EndYear & Group==3]$Code
   g4 <- DurableGroups[year >= StartYear & year <= EndYear & Group==4]$Code
