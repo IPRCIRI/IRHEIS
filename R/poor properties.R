@@ -44,6 +44,7 @@ for(year in (Settings$startyear:Settings$endyear)){
            HSex=weighted.mean(HSex=="Female",Weight),
            HActivityState=weighted.mean(HActivityState=="Employed",Weight),
            Job_Code=weighted.mean(Job_Code==9,Weight,na.rm = TRUE),
+           Engle=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
            TFoodKCaloriesHH_Per=weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE),
            FoodProtein_Per=weighted.mean(FoodProtein_Per,Weight,na.rm = TRUE)),by=FinalPoor]
   

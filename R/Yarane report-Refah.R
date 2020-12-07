@@ -25,6 +25,7 @@ MD[,Percentile:=NULL]
 load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
 load(file = paste0(Settings$HEISProcessedPath,"Y",year,"AidWage.rda"))
 
+
 MD<-merge(MD,Deciles,all.x = TRUE)
 MD[,Decile:=Decile1]
 MD<-merge(MD,AidWageData,all.x = TRUE)
@@ -117,3 +118,12 @@ A<-MD[,weighted.mean(PoultryMeat_MGram/EqSizeCalory,Weight),by=Decile][order(Dec
 A<-MD[,weighted.mean(CowMeatGram/EqSizeCalory,Weight),by=Decile][order(Decile)]
 A<-MD[,weighted.mean(SheepMeatGram/EqSizeCalory,Weight),by=Decile][order(Decile)]
 A<-MD[,weighted.mean((Egg_MashinGram+Egg_NonMashinGram)/EqSizeCalory,Weight),by=Decile][order(Decile)]
+A<-MD[,weighted.mean((BreadGrams)/EqSizeCalory,Weight),by=Decile][order(Decile)]
+A<-MD[,weighted.mean((GrainGrams)/EqSizeCalory,Weight),by=Decile][order(Decile)]
+A<-MD[,weighted.mean((MilkGrams+MilkproductsGrams)/EqSizeCalory,Weight),by=Decile][order(Decile)]
+A<-MD[,weighted.mean((TreeFruitsGrams+JaliziFruitsGrams)/EqSizeCalory,Weight),by=Decile][order(Decile)]
+
+MD[as.numeric(Decile)<4,weighted.mean(Total_Exp_Month_Per,Weight)]
+MD[as.numeric(Decile)>7,weighted.mean(Total_Exp_Month_Per,Weight)]
+
+
