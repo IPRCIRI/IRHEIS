@@ -97,8 +97,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   P<-P1[,lapply(.SD,sum),by="HHID"]
   P<-P[,Knowledge:=ifelse(Lit>=100,0,1)]
   MD<-merge(MD,P[,.(HHID,Knowledge)],all.x = TRUE)
-  
 
+  
   
   MD[,Low_Calorie:=ifelse(FoodKCaloriesHH_Per<2100,1,0)]
   MD[,Low_Protein:=ifelse(FoodProtein_Per<60,1,0)]
@@ -136,6 +136,9 @@ for(year in (Settings$startyear:Settings$endyear)){
                           ( tvcr=="False" & oven=="False") |
                           ( tvcr=="False" & Yakhchal=="False") |
                           ( Yakhchal=="False" & oven=="False") ,1,0)]
+  
+  School<-MD[,.(HHID,Knowledge,No_Insurance,bathroom,pipewater)]
+  save(School,file=paste0(Settings$HEISProcessedPath,"Y",year,"tahsil.rda"))
   
   A4<-MD[,.(Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight,na.rm=TRUE)),by=ProvinceCode]
   
