@@ -6,7 +6,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Poverty Line =====================================\n")
+cat("\n\n================ Properties =====================================\n")
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
@@ -43,7 +43,8 @@ for(year in (Settings$startyear:Settings$endyear)){
            NEmployed=weighted.mean(NEmployed,Weight),
            HSex=weighted.mean(HSex=="Female",Weight),
            HActivityState=weighted.mean(HActivityState=="Employed",Weight),
-           Job_Code=weighted.mean(Job_Code==9,Weight,na.rm = TRUE),
+           Job_Code_Poor=weighted.mean(Job_Code==9,Weight,na.rm = TRUE),
+           Job_Code_Rich=weighted.mean(Job_Code==1 | Job_Code==2,Weight,na.rm = TRUE),
            Engle=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
            TFoodKCaloriesHH_Per=weighted.mean(TFoodKCaloriesHH_Per,Weight,na.rm = TRUE),
            FoodProtein_Per=weighted.mean(FoodProtein_Per,Weight,na.rm = TRUE)),by=FinalPoor]
