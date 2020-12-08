@@ -50,6 +50,8 @@ Poor[,Pop:=sum(Weight*Size)]
 a<-Poor[,.(sum(Weight*Size)/Pop),by=ProvinceName]
 a<-Poor[,.(sum(Weight*Size)/Pop2),by=ProvinceName]
 
+
+
 Pooldar[CountyCode==2301,weighted.mean(Total_Exp_Month_Per,Weight)]
 Pooldar[ProvinceCode==11,weighted.mean(Total_Exp_Month_Per,Weight)]
 
@@ -63,6 +65,32 @@ Pooldar[ProvinceCode==11,weighted.mean(FoodExpenditure_Per,Weight)]
 Poor[CountyCode==2301,weighted.mean(FoodExpenditure_Per,Weight)]
 Poor[ProvinceCode==11,weighted.mean(FoodExpenditure_Per,Weight)]
 
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Total2.rda"))
+
+Total<-Total[,.(HHID,Job_Main_Code_Pub,Job_Main_Code_Cooperative,Job_Main_Code_Prv,
+                Job_Main_Code_Buss,Job_Main_Code_Agri)]
+
+
+
+Total[Total==0]<-NA
+
+
+MD<-merge(MD,Total,by="HHID")
+MD[,Job_Code:=pmin(Job_Main_Code_Pub,Job_Main_Code_Cooperative,
+                   Job_Main_Code_Prv,
+                   Job_Main_Code_Buss,Job_Main_Code_Agri,na.rm = TRUE)]
+
+MD[,Government:=ifelse(is.na(Job_Main_Code_Pub),0,1)]
+
+Government<-MD[Government==1]
+Government2<-MD[Government==0]
+
+Government2[,weighted.mean(tenure=="OwnLandandBuilding" | tenure=="Apartment",Weight)]
+Government[,weighted.mean(tenure=="AgainstService",Weight)]
+
+Government[,Pop_G:=sum(Weight*Size)]
+Government2[,weighted.mean(car=="TRUE",Weight)]
+a<-Government[,.(a=sum(Weight*Size)/Pop_G),by=Decile]
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
