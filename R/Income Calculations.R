@@ -17,10 +17,12 @@ library(stats)
 library(spatstat)
 
 X1<-data.table(Year = numeric(0), Income = numeric(0), Exp = numeric(0),
-               Income_Per = numeric(0), Exp_Per = numeric(0),Decile= numeric(0))
+               Income_Per = numeric(0), Exp_Per = numeric(0), Income_Per_kari= numeric(0),
+               Decile= numeric(0))
 
 X2<-data.table(Year = numeric(0), Income = numeric(0), Exp = numeric(0),
-               Income_Per = numeric(0), Exp_Per = numeric(0),Region= NA_character_)
+               Income_Per = numeric(0), Income_Per_kari= numeric(0),
+               Exp_Per = numeric(0),Region= NA_character_)
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
@@ -65,7 +67,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   Data[is.na(Data)] <- 0
   Data[,Income_HH:=(PubWageNetIncomeY+PrvWageNetIncomeY+BussNetIncomeY+AgriNetIncomeY+
          aid+homemade+interest+intra+rent+retirement+Subsidy)/12]
+  Data[,Income_HH_kari:=(PubWageNetIncomeY+PrvWageNetIncomeY+BussNetIncomeY+AgriNetIncomeY)/12]
   Data[,Income_Per:=Income_HH/EqSizeOECD]
+  Data[,Income_Per_kari:=Income_HH_kari/EqSizeOECD]
   
  a1<- Data[,weighted.mean(Income_Per,Weight)]
  a1<- as.data.table(a1)
@@ -86,6 +90,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 
  A1<-Data[,.(Income=weighted.mean(Income_HH,Weight),
            Income_Per=weighted.mean(Income_HH/EqSizeOECD,Weight),
+           Income_Per_kari=weighted.mean(Income_Per_kari/EqSizeOECD,Weight),
            Exp=weighted.mean(Total_Exp_Month,Weight),
            Exp_Per=weighted.mean(Total_Exp_Month/EqSizeOECD,Weight)),by=Decile]
  
@@ -94,6 +99,7 @@ for(year in (Settings$startyear:Settings$endyear)){
  
  A2<-Data[,.(Income=weighted.mean(Income_HH,Weight),
              Income_Per=weighted.mean(Income_HH/EqSizeOECD,Weight),
+             Income_Per_kari=weighted.mean(Income_Per_kari/EqSizeOECD,Weight),
              Exp=weighted.mean(Total_Exp_Month,Weight),
              Exp_Per=weighted.mean(Total_Exp_Month/EqSizeOECD,Weight)),by=Region]
  
