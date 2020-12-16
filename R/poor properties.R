@@ -230,6 +230,31 @@ for(year in (Settings$startyear:Settings$endyear)){
     geom_text(aes(label=round(Knowledge,2)), position = position_dodge(width=0.9), vjust=-0.5)
   
   
+  ggplot(Data, aes(fill=factor(FinalPoor), y=Meat_Gram, x=Year)) + 
+    geom_bar(position="dodge", stat="identity") +
+    scale_x_continuous(breaks=seq(90,98,1))+
+    #scale_y_continuous(breaks=seq(0,120,10))+
+    theme(text = element_text(size=20))+
+    geom_text(aes(label=round(Meat_Gram,1)), position = position_dodge(width=0.9), vjust=-0.5)
+  
+  
+  ggplot(Data, aes(fill=factor(FinalPoor), y=Chicken_Gram, x=Year)) + 
+    geom_bar(position="dodge", stat="identity") +
+    scale_x_continuous(breaks=seq(90,98,1))+
+    #scale_y_continuous(breaks=seq(0,120,10))+
+    theme(text = element_text(size=20))+
+    geom_text(aes(label=round(Chicken_Gram,1)), position = position_dodge(width=0.9), vjust=-0.5)
+  
+  
+  ggplot(Data, aes(fill=factor(FinalPoor), y=Rice_Gram, x=Year)) + 
+    geom_bar(position="dodge", stat="identity") +
+    scale_x_continuous(breaks=seq(90,98,1))+
+    #scale_y_continuous(breaks=seq(0,120,10))+
+    theme(text = element_text(size=20))+
+    geom_text(aes(label=round(Rice_Gram,1)), position = position_dodge(width=0.9), vjust=-0.5)
+  
+  
+  
   B<-MD[,weighted.mean(FinalPoor,Weight),by=HSex]
   
   
@@ -294,34 +319,34 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
   Z<-Data2[Region=="Urban"]
-  png(file="C:/IRHEIS/R/11.png",width=1200, height=800)
-  ggplot(Z, aes(fill=factor(FinalPoor), y=Knowledge, x=Year)) + 
+  png(file="C:/IRHEIS/R/11.png",width=1200, height=750)
+  ggplot(Z, aes(fill=factor(FinalPoor), y=Rice_Gram, x=Year)) + 
     geom_bar(position="dodge", stat="identity") +
     scale_x_continuous(breaks=seq(90,98,1))+
     #scale_y_continuous(breaks=seq(0,0.7,0.1))+
     theme(text = element_text(size=20))+
-    geom_text(aes(label=round(Knowledge,2)), position = position_dodge(width=0.9), vjust=-0.5)
+    geom_text(aes(label=round(Rice_Gram,1)), position = position_dodge(width=0.9), vjust=-0.5)
   dev.off()
   
 
   Z<-Data2[Region=="Rural"]
-  png(file="C:/IRHEIS/R/12.png",width=1200, height=800)
-  ggplot(Z, aes(fill=factor(FinalPoor), y=Knowledge, x=Year)) + 
+  png(file="C:/IRHEIS/R/12.png",width=1200, height=750)
+  ggplot(Z, aes(fill=factor(FinalPoor), y=Rice_Gram, x=Year)) + 
     geom_bar(position="dodge", stat="identity") +
     scale_x_continuous(breaks=seq(90,98,1))+
    # scale_y_continuous(breaks=seq(0,0.7,0.1))+
     theme(text = element_text(size=20))+
-    geom_text(aes(label=round(Knowledge,2)), position = position_dodge(width=0.9), vjust=-0.5)
+    geom_text(aes(label=round(Rice_Gram,1)), position = position_dodge(width=0.9), vjust=-0.5)
   dev.off()
   
   Z<-Data3[Region2=="Sh_Tehran"]
-  png(file="C:/IRHEIS/R/13.png",width=1200, height=800)
-  ggplot(Z, aes(fill=factor(FinalPoor), y=Knowledge, x=Year)) + 
+  png(file="C:/IRHEIS/R/13.png",width=1200, height=750)
+  ggplot(Z, aes(fill=factor(FinalPoor), y=Rice_Gram, x=Year)) + 
     geom_bar(position="dodge", stat="identity") +
     scale_x_continuous(breaks=seq(90,98,1))+
    # scale_y_continuous(breaks=seq(0,0.7,0.1))+
     theme(text = element_text(size=20))+
-    geom_text(aes(label=round(Knowledge,2)), position = position_dodge(width=0.9), vjust=-0.5)
+    geom_text(aes(label=round(Rice_Gram,1)), position = position_dodge(width=0.9), vjust=-0.5)
   dev.off()
   
   
@@ -349,12 +374,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   Data4<-Data4[Region3=="Urban" | Region3=="Rural" | Region3=="Sh_Tehran" | Region3=="Sistan"]
   
   png(file="C:/IRHEIS/R/21.png",width=1200, height=750)
-  ggplot(Data4, aes(fill=factor(Region3), y=Knowledge, x=Year)) + 
+  ggplot(Data4, aes(fill=factor(Region3), y=Rice_Gram, x=Year)) + 
     geom_bar(position="dodge", stat="identity") +
     scale_x_continuous(breaks=seq(90,98,1))+
     # scale_y_continuous(breaks=seq(0,0.7,0.1))+
     theme(text = element_text(size=15))+
-    geom_text(aes(label=round(Knowledge,2)), position = position_dodge(width=0.9), vjust=-0.5)
+    geom_text(aes(label=round(Rice_Gram,1)), position = position_dodge(width=0.9), vjust=-0.5)
   dev.off()
   
 }

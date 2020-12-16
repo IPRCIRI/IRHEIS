@@ -57,14 +57,17 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"BigEngelTable.rda"))
   
-  
+  #MD<-MD[Region=="Rural"]
   
   MD <- merge(MD,BigEngelTable[Year==year,
                                .(cluster3,Region,
                                  PovertyLine,PovertyLine0,
                                  Engel,ModifiedEngel)],
               by=c("Region","cluster3"))
-  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
+  a<-MD[,weighted.mean(PovertyLine,Weight*Size)]
+  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < a,1,0 )]
+  MD<-MD[Region=="Urban"]
+ # MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD[,FinalPoor0:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine0,1,0 )]
   cat(MD[,.(weighted.mean(FinalPoor,Weight*Size))]$V1,"\t")
   MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month]
@@ -216,6 +219,8 @@ for(year in (Settings$startyear:Settings$endyear)){
  # MD[,F_P:=ifelse(Total_Exp_Month_Per_nondurable < a,1,0 )]
   #cat(MD[, weighted.mean(F_P,Weight*Size)],"\t")
 }
+
+#BigEngelTable2<-BigEngelTable[,A:=sum(N),by=Year]
 
 
 
