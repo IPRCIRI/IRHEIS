@@ -64,10 +64,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                                  PovertyLine,PovertyLine0,
                                  Engel,ModifiedEngel)],
               by=c("Region","cluster3"))
-  a<-MD[,weighted.mean(PovertyLine,Weight*Size)]
-  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < a,1,0 )]
-  MD<-MD[Region=="Urban"]
- # MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
+  MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD[,FinalPoor0:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine0,1,0 )]
   cat(MD[,.(weighted.mean(FinalPoor,Weight*Size))]$V1,"\t")
   MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month]
