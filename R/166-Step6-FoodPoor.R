@@ -11,6 +11,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(spatstat)
 library(data.table)
+BigsdTable <- data.table()
 year<-Settings$baseBundleyear
 
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
@@ -61,12 +62,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   FPLineBasket <- BasketCost[,.(FPLine=sum(Cost)),by=cluster3]
   
   MD <- merge(MD,FPLineBasket,all.x=TRUE,by="cluster3")
+  sd <- MD
+  sd <- sd[,FPLineBasketyear:=weighted.mean(FPLineBasket)]
+    sd <-sd[,Year:=year]
+  sd <- unique(sd[,.(Year,FPLineBasketyear)])
+  BigsdTable <- rbind(BigsdTable,sd)
+  
   
   MD[,FoodPoor:=ifelse(TOriginalFoodExpenditure_Per < FPLine,1,0)]
 
   cat(unlist(MD[cluster3==13,.(FPLine,weighted.mean(FoodPoor))][1]))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
 }
+
+library(writexl)
+
+#write_xlsx(BigsdTable,"E:/FPLinebasket.xlsx")
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took",
