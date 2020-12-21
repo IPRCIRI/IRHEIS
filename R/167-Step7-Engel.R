@@ -15,7 +15,8 @@ library(data.table)
 
 BigEngelTable <- data.table(Region=NA_character_,cluster3=NA_integer_,
                             N=NA_integer_,Engel=NA_real_,
-                            FPLine=NA_real_,Year=NA_integer_)[0]
+                            FPLine=NA_real_,Year=NA_integer_,WW=NA_real_)[0]
+BigEngelTable1 <- data.table()
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
@@ -32,10 +33,26 @@ for(year in (Settings$startyear:Settings$endyear)){
                ,by=.(Region,cluster3)]
   
   save(EngelD,file=paste0(Settings$HEISProcessedPath,"Y",year,"EngelD.rda"))
-
+  
+  Engel1 <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
+                  TOriginalFoodExpenditure_Per<1.2*FPLine,
+                .(.N,Engel=weighted.mean(EngelH,Weight))]
+  W <- MD[ ,.(.N,WW=sum(Weight)),by=.(Region,cluster3)]
+  
+  
+  
+  EngelD <- merge(EngelD,W[,.(cluster3,Region,WW)], by=c("cluster3","Region"))
   EngelD<-EngelD[,Year:=year]
+  Engel1<-Engel1[,Year:=year]
   BigEngelTable <- rbind(BigEngelTable,EngelD)
+  BigEngelTable1 <- rbind(BigEngelTable1,Engel1)
+  
 }
+
+
+library(writexl)
+
+#write_xlsx(BigEngelTable1,"E:/engle.xlsx")
 
 InflationData <- data.table(read_excel(path = Settings$InflationDataFilePath))
 InflationData[,F1 := (1+D2FoodInf)/(1+D2Inf)]
@@ -61,6 +78,10 @@ BigEngelTable[,PovertyLine0:=FPLine/Engel]
 
 save(BigEngelTable,file=paste0(Settings$HEISProcessedPath,"BigEngelTable.rda"))
 
+BigEngelTable1 <- BigEngelTable
+BigEngelTable1 <- BigEngelTable1[,M_En:=weighted.mean(ModifiedEngel,WW),by="Year"]
+BigEngelTable1 <- unique(BigEngelTable1[,.(Year,M_En)])
+#write_xlsx(BigEngelTable1,"E:/engle_modi.xlsx")
 
 # btm <- melt(BigEngelTable,id.vars = c("Year","cluster3","Region"),
 #             measure.vars = c("Engel","ModifiedEngel"))
