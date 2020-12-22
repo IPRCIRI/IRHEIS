@@ -15,6 +15,10 @@ library(data.table)
 library(writexl)
 library(ggplot2)
 
+Data11 <- data.table(Year = numeric(0),FinalPoor = numeric(0))
+Data12 <- data.table(Year = numeric(0),FinalPoor = numeric(0),Region= NA_character_)
+Data13 <- data.table(Year = numeric(0),FinalPoor = numeric(0),HMarritalState= NA_character_)
+
 Data <- data.table(Year = numeric(0),House = numeric(0),car = numeric(0),Knowledge= numeric(0),
                    Meat_Gram = numeric(0),Chicken_Gram = numeric(0),Rice_Gram= numeric(0),
                    internet = numeric(0),HEduYears = numeric(0),NEmployed = numeric(0),
@@ -105,6 +109,62 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[,Region3:=ifelse(NewArea_Name=="Sh_Tehran","Sh_Tehran",
                ifelse(ProvinceCode==11,"Sistan",
                ifelse(Region=="Urban","Urban","Rural")))]
+  
+  Female<-MD[HSex=="Female"]
+  Female[,Pop:=sum(Weight*Size)]
+  Female2<-Female[,.(share=sum(Weight*Size)/Pop),by=c("HMarritalState","FinalPoor")]
+  Female2[,Year:=98]
+  
+  ggplot(Female2, aes(fill=factor(FinalPoor), y=share, x=factor(HMarritalState))) + 
+    geom_bar(position="dodge", stat="identity") +
+    #scale_x_continuous(breaks=seq(90,98,1))+
+    scale_y_continuous(breaks=seq(0,0.7,0.1))+
+    theme(text = element_text(size=20))+
+    geom_text(aes(label=round(share,2)), position = position_dodge(width=0.9), vjust=-0.5)
+  
+  Female3<-Female[,.(FinalPoor=weighted.mean(FinalPoor==1,Weight))]
+  Female3[,Year:=year]
+  Data11 <- rbind(Data11,Female3)
+  ggplot(Data11, aes(fill=factor(FinalPoor), y=FinalPoor, x=Year)) + 
+    geom_bar(position="dodge", stat="identity") +
+    scale_x_continuous(breaks=seq(90,98,1))+
+    scale_y_continuous(breaks=seq(0,0.7,0.1))+
+    theme(text = element_text(size=20))+
+    geom_text(aes(label=round(FinalPoor,2)), position = position_dodge(width=0.9), vjust=-0.5)
+  
+  
+  Female4<-Female[,.(FinalPoor=weighted.mean(FinalPoor==1,Weight)),by="Region"]
+  Female4[,Year:=year]
+  Data12 <- rbind(Data12,Female4)
+  Data12<-Data12[Region=="Urban" | Region=="Rural"]
+  ggplot(Data12, aes(fill=factor(Region), y=FinalPoor, x=Year)) + 
+    geom_bar(position="dodge", stat="identity") +
+    scale_x_continuous(breaks=seq(90,98,1))+
+    scale_y_continuous(breaks=seq(0,0.7,0.1))+
+    theme(text = element_text(size=20))+
+    geom_text(aes(label=round(FinalPoor,2)), position = position_dodge(width=0.9), vjust=-0.5)
+  
+  
+  Female5<-Female[,.(FinalPoor=weighted.mean(FinalPoor==1,Weight)),by="HMarritalState"]
+  Female5[,Year:=year]
+  Data13 <- rbind(Data13,Female5)
+  Data13<-Data13[Year==90 | Year==91 | Year==92 | Year==93 | Year==94 | 
+                         Year==95 | Year==96 | Year==97 | Year==98]
+  ggplot(Data13, aes(fill=factor(HMarritalState), y=FinalPoor, x=Year)) + 
+    geom_bar(position="dodge", stat="identity") +
+    scale_x_continuous(breaks=seq(90,98,1))+
+    scale_y_continuous(breaks=seq(0,0.7,0.1))+
+    theme(text = element_text(size=15))+
+    geom_text(aes(label=round(FinalPoor,2)), position = position_dodge(width=0.9), vjust=-0.5)
+  
+  
+  ggplot(Female3, aes(fill=factor(FinalPoor), y=Government, x=Year)) + 
+    geom_bar(position="dodge", stat="identity") +
+    scale_x_continuous(breaks=seq(90,98,1))+
+    scale_y_continuous(breaks=seq(0,0.7,0.1))+
+    theme(text = element_text(size=20))+
+    geom_text(aes(label=round(Government,2)), position = position_dodge(width=0.9), vjust=-0.5)
+  
   
   A<-MD[,.(House=weighted.mean(tenure=="OwnLandandBuilding" | tenure=="Apartment",Weight),
            car=weighted.mean(car=="TRUE",Weight),
