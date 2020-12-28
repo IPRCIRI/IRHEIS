@@ -106,6 +106,8 @@ for(year in (Settings$startyear:Settings$endyear)){
  A2[,Year:=year]
  X2 <- rbind(X2,A2)
  
+ save(Data,file=paste0(Settings$HEISProcessedPath,"Y",year,
+                     "Activared.rda"))
  }
 
 
