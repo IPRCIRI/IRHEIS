@@ -63,7 +63,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD <- merge(MD,FPLineBasket,all.x=TRUE,by="cluster3")
   sd <- MD
-  sd <- sd[,FPLineBasketyear:=weighted.mean(FPLineBasket)]
+  sd <- sd[,FPLineBasketyear:=weighted.mean(FPLine)]
     sd <-sd[,Year:=year]
   sd <- unique(sd[,.(Year,FPLineBasketyear)])
   BigsdTable <- rbind(BigsdTable,sd)

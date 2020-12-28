@@ -181,12 +181,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD[,c("HHID",mdset),with=FALSE],SMD,by="HHID")
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
-  Decile_MD <- MD [,.(HHID,Total_Exp_Month_Per_nondurable,Size,Weight)]
-  Decile_MD <- Decile_MD[order(Total_Exp_Month_Per_nondurable)]
-  Decile_MD <- Decile_MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]
-  Decile_MD <- Decile_MD[,Decile_non_real:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  #Decile_MD <- MD [,.(HHID,Total_Exp_Month_Per_nondurable,Size,Weight)]
+  #Decile_MD <- Decile_MD[order(Total_Exp_Month_Per_nondurable)]
+  #Decile_MD <- Decile_MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]
+  #Decile_MD <- Decile_MD[,Decile_non_real:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
   #MD <- merge(MD,Decile_MD[,c("HHID","Decile_non_real")],by="HHID")
-  save(Decile_MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile_non_real.rda"))
+  #save(Decile_MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile_non_real.rda"))
 }
  
 endtime <- proc.time()
