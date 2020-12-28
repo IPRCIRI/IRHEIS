@@ -8,7 +8,7 @@ HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 90.0
+startyear: 96.0
 endyear: 98.0
 baseBundleyear: 95.0
 OS: Windows
