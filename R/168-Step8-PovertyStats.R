@@ -134,7 +134,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X1 <- MD[,.(SampleSize=.N,
               MeterPrice=weighted.mean(MeterPrice,Weight,na.rm = TRUE),
               House_Share=weighted.mean(House_Exp/Total_Exp_Month,Weight),
-              FPLine=weighted.mean(FPLine,Weight),
+              FPLine=weighted.mean(FPLine,Weight*Size),
               Bundle_Value=weighted.mean(Bundle_Value,Weight),
               FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
               Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
