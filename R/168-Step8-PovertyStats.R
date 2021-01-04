@@ -191,8 +191,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   #cat(MD[, weighted.mean(FinalPoor0,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
   #cat(MD[, weighted.mean(FPLine,Weight*Size)],"\n")
-  cat(MD[, weighted.mean(TFoodKCaloriesHH_Per,Weight)],"\t")
-  cat(MD[, weighted.median(TFoodKCaloriesHH_Per,Weight)],"\t")
+  cat(MD[, weighted.mean(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
+  cat(MD[, weighted.median(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
   #cat(MD[, sum(Weight*Size)],"\t")
   
   MD1<-MD[,.(HHID,FinalPoor)]
