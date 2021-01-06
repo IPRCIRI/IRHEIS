@@ -303,7 +303,11 @@ for(year in years){
   rm(P,B)
   save(HHI,year,file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
 #  save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
-}
+
+  HHI2<-HHI[NInfants0>0]
+ cat(HHI2[,weighted.mean(Lactating,Weight)]) 
+  
+  }
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ",(endtime-starttime)[3],"seconds")
