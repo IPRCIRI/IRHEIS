@@ -191,9 +191,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   #cat(MD[, weighted.mean(FinalPoor0,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
   #cat(MD[, weighted.mean(FPLine,Weight*Size)],"\n")
-  cat(MD[, weighted.mean(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
-  cat(MD[, weighted.median(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
+  #cat(MD[, weighted.mean(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
+ # cat(MD[, weighted.median(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
   #cat(MD[, sum(Weight*Size)],"\t")
+  cat(MD[, weighted.mean(Total_Exp_Month_Per,Weight*Size)],"\t")
+  cat(MD[, weighted.median(Total_Exp_Month_Per,Weight*Size)],"\t")
   
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
@@ -218,6 +220,9 @@ for(year in (Settings$startyear:Settings$endyear)){
  # a<-MD[,weighted.mean(PovertyLine,Weight)]
  # MD[,F_P:=ifelse(Total_Exp_Month_Per_nondurable < a,1,0 )]
   #cat(MD[, weighted.mean(F_P,Weight*Size)],"\t")
+  
+
+  
 }
 
 #BigEngelTable2<-BigEngelTable[,A:=sum(N),by=Year]

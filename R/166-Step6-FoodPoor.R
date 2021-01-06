@@ -73,6 +73,13 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   cat(unlist(MD[cluster3==13,.(FPLine,weighted.mean(FoodPoor))][1]))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
+  
+  Meat<-BigFData[FoodType=="Meat",.(HHID,FoodType,FGrams)]
+  Meat2 <- Meat[,lapply(.SD,sum),by=HHID,.SDcols=c("FGrams")]
+  Meat2<-merge(MD[,.(HHID,Size,EqSizeCalory,Weight)],Meat2,all.x=TRUE)
+  Meat2[is.na(Meat2)]<-0
+  cat(Meat2[,weighted.mean(FGrams/EqSizeCalory,Weight*Size)])
+  cat(Meat2[,weighted.median(FGrams/EqSizeCalory,Weight*Size)])
 }
 
 library(writexl)
