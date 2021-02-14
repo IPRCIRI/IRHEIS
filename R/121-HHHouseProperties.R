@@ -14,6 +14,8 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
 library(stringr)
+library(readxl)
+
 
 P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
 

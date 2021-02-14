@@ -13,7 +13,8 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(writexl)
-
+library(ggplot2)
+library(spatstat)
 
 FinalCountryResults <- data.table(Year = numeric(0), 
                                   SampleSize = integer(0), MeterPrice = numeric(0), 
@@ -66,7 +67,7 @@ for(year in (Settings$startyear:Settings$endyear)){
               by=c("Region","cluster3"))
   MD[,FinalPoor:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine,1,0 )]
   MD[,FinalPoor0:=ifelse(Total_Exp_Month_Per_nondurable < PovertyLine0,1,0 )]
-  cat(MD[,.(weighted.mean(FinalPoor,Weight*Size))]$V1,"\t")
+  #at(MD[,.(weighted.mean(FinalPoor,Weight*Size))]$V1,"\t")
   MD[,HHEngle:=TOriginalFoodExpenditure/Total_Exp_Month]
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
   MD10<-MD[,.(HHID,NMiddle,NStudents)]
@@ -134,7 +135,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   X1 <- MD[,.(SampleSize=.N,
               MeterPrice=weighted.mean(MeterPrice,Weight,na.rm = TRUE),
               House_Share=weighted.mean(House_Exp/Total_Exp_Month,Weight),
-              FPLine=weighted.mean(FPLine,Weight),
+              FPLine=weighted.mean(FPLine,Weight*Size),
               Bundle_Value=weighted.mean(Bundle_Value,Weight),
               FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
               Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
@@ -187,10 +188,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   ####################################################
   
   cat(MD[, weighted.mean(FinalPoor,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(FinalPoor0,Weight*Size)],"\t")
+  #cat(MD[, weighted.mean(FinalPoor0,Weight*Size)],"\t")
   cat(MD[, weighted.mean(PovertyLine,Weight*Size)],"\t")
-  cat(MD[, weighted.mean(FPLine,Weight*Size)],"\n")
+  #cat(MD[, weighted.mean(FPLine,Weight*Size)],"\n")
+  #cat(MD[, weighted.mean(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
+ # cat(MD[, weighted.median(TFoodKCaloriesHH_Per,Weight*Size)],"\t")
   #cat(MD[, sum(Weight*Size)],"\t")
+  cat(MD[, weighted.mean(Total_Exp_Month_Per,Weight*Size)],"\t")
+  cat(MD[, weighted.median(Total_Exp_Month_Per,Weight*Size)],"\t")
   
   MD1<-MD[,.(HHID,FinalPoor)]
   save(MD1,file=paste0(Settings$HEISProcessedPath,"Y",year,"POORS.rda"))
@@ -215,6 +220,9 @@ for(year in (Settings$startyear:Settings$endyear)){
  # a<-MD[,weighted.mean(PovertyLine,Weight)]
  # MD[,F_P:=ifelse(Total_Exp_Month_Per_nondurable < a,1,0 )]
   #cat(MD[, weighted.mean(F_P,Weight*Size)],"\t")
+  
+
+  
 }
 
 #BigEngelTable2<-BigEngelTable[,A:=sum(N),by=Year]
@@ -235,6 +243,12 @@ write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterRes
 write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
 write_xlsx(FinalRegionResults,path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)
 write_xlsx(FinalProvinceResults,path=paste0(Settings$HEISResultsPath,"/ProvinceResults.xlsx"),col_names=T)
+
+ggplot(MD, aes(HEduYears)) + geom_density(aes(weights=Weight))
+
+ggplot(MD) + 
+  geom_density(aes(x = HEduYears, weight = Weight), color = "green") +
+  geom_density(aes(x = HEduYears), color = "blue")
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took",(endtime-starttime)["elapsed"],"seconds")
