@@ -27,10 +27,8 @@ years_to_extract <- setdiff(needed_years,existing_years)
 files_to_extract <- compressed_file_names_df[
   compressed_file_names_df$Year %in% years_to_extract,]$CompressedFileName
 
-if(Settings$OS=="Windows"){
-#  cmdline <- paste0(normalizePath("../exe/unrar/UnRAR.exe")," e -y ") # Use unrar binary
-   cmdline <- paste0(normalizePath("../exe/7z/7z.exe")," e -y ")      # Use 7-zip binary
-}
+cmdline <- paste0(normalizePath("../exe/7z/7z.exe")," e -y ")      # Use 7-zip binary
+
 
 cwd <- getwd()
 dir.create("temp")
