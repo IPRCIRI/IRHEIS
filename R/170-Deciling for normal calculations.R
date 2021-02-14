@@ -1,159 +1,28 @@
-#170-Deciling for normal calculations.R
+#164-Step 4-FindInitialPoor.R
 # 
-# Copyright © 2018:Majid Einian & Arin Shahbazian
+# Copyright © 2020:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Deciling for normal calculations =====================================\n")
+cat("\n\n================ Deciling =====================================\n")
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
-#library(readxl)
+library(readxl)
 library(data.table)
-library(ggplot2)
-
-for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+#library(ggplot2)
+#library(compare)
+source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
+# Function Defs ---------------------------------------------------------------------------------
+CalcTornqvistIndex <- function(DataTable){
   
-
-  # load data --------------------------------------
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
-
-  
-  ###Nominal- Country
-  MD<- MD[order(Total_Exp_Month_Per_nondurable)]  #Deciling in Country(Nominal)
-  MD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  MD[,Decile:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10)]
-  MD[,Percentile:=cut(crw2,breaks=seq(0,1,.01),labels=1:100)]
-  
-  
-  A1<-MD[(`71111`+`71112`+`71116`+`71117`>0),
-                .(A1=weighted.mean(`71111`+`71112`+`71116`+
-                                     `71117`,Weight)),by=Decile]
-  A2<-MD[(`91128`+`91129`>0),
-                .(A2=weighted.mean(`91128`+`91129`,Weight)),by=Decile]
-  A3<-MD[`53112`>0 ,.(A3=weighted.mean(`53112`,Weight)),by=Decile]
-  A4<-MD[`53116`>0 , .(A4=weighted.mean(`53116`,Weight)),by=Decile]
-  A5<-MD[`53113`>0 ,.(A5=weighted.mean(`53113`,Weight)),by=Decile]
-  A6<-MD[`82113`>0, .(A6=weighted.mean(`82113`,Weight)),by=Decile]
-  A7<-MD[`53125`>0,.(A7=weighted.mean(`53125`,Weight)),by=Decile]
-  A8<-MD[`91311`>0 ,.(A8= weighted.mean(`91311`,Weight)),by=Decile]
-  A9<-MD[`72111`>0,.(A9=weighted.mean(`72111`,Weight)),by=Decile]
-  if (year!=90 & year!=92 & year!=93 & year!=95){
-    A10<-MD[`72118`>0 ,.(A10=weighted.mean(`72118`,Weight)),by=Decile]
-  }
-  A11<-MD[`72319`>0 ,.(A11=weighted.mean(`72319`,Weight)),by=Decile]
-  
-  MD<-merge(MD,A1,by="Decile")
-  MD<-merge(MD,A2,by="Decile")
-  MD<-merge(MD,A3,by="Decile")
-  MD<-merge(MD,A4,by="Decile")
-  MD<-merge(MD,A5,by="Decile")
-  MD<-merge(MD,A6,by="Decile")
-  MD<-merge(MD,A7,by="Decile")
-  MD<-merge(MD,A8,by="Decile")
-  MD[,A8:=as.numeric(A8)]
-  MD<-merge(MD,A9,by="Decile")
-  if (year!=90 & year!=92 & year!=93 & year!=95){
-    MD<-merge(MD,A10,by="Decile")
-  }
-  MD<-merge(MD,A11,by="Decile")
-  
-  MD[car=="True",Added1:=A1]
-  MD[tvcr=="True",Added2:=A2]
-  MD[freezer=="True" | frez_refrig=="True" | refrigerator=="True",
-     Added3:=A3]
-  MD[oven=="True",Added4:=A4]
-  MD[washer=="True",Added5:=A5]
-  MD[cellphone=="True",Added6:=A6]
-  MD[cooler_gas=="True",Added7:=A7]
-  MD[computer=="True",Added8:=A8]
-  MD[car=="True",Added9:=A9]
-  if (year!=90 & year!=92 & year!=93 & year!=95){
-    MD[car=="True",Added10:=A10]
-  }
-  MD[car=="True",Added11:=A11]
-  
-  x<-MD[,.(HHID,Decile,car,Added1)]
-  
-  if (year!=90 & year!=92 & year!=93 & year!=95){ 
-    dep <- c( "71111", "71112","71116", "71117",
-              "91128", "91129","53112", "53116",
-              "53113", "82113","53125", "91311",
-              "72111", "72118","72319")
-  }
-  
-  if (year==90 | year==92 | year==93 | year==95){
-    dep <- c( "71111", "71112","71116", "71117",
-              "91128", "91129","53112", "53116",
-              "53113", "82113","53125", "91311",
-              "72111","72319")
-  }
-  
-  MD[, Total_Depreciated_Durable := Reduce(`+`, .SD), .SDcols=dep]
-  MD[is.na(MD)] <- 0
-  
-  if (year!=90 & year!=92 & year!=93 & year!=95){
-    MD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
-                Added7+Added8+Added9+Added10+Added11]
-  }
-  if (year==90 | year==92 | year==93 | year==95){
-    MD[,Added:=Added1+Added2+Added3+Added4+Added5+Added6+
-                Added7+Added8+Added9+Added11]
-  }
-  
-  #Calculate Monthly Total Expenditures 
-  nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp", "Cloth_Exp",
-          "Amusement_Exp", "Communication_Exp", 
-          "HouseandEnergy_Exp", "Furniture_Exp", "HotelRestaurant_Exp", "Hygiene_Exp", 
-          "Transportation_Exp", "Other_Exp"
-          ,"Add_to_NonDurable"
-          ,"Added"
-          #, "Total_Depreciated_Durable"
-  )
-  w <- c(nw, "Medical_Exp",
-         "Durable_NoDep","Durable_Emergency")
-  
-  
-  MD[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=w]
-  MD[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=nw]
-  
-  MD[,weighted.mean(Total_Exp_Month,Weight)]
-  MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)]
-  
-  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
-  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
-  
-  ###################################################################
-  
-  
-  
-  
-  SMD <- MD[,.(HHID,Region,ProvinceCode,
-               ServiceExp,FoodExpenditure,Total_Exp_Month,
-               NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
-               # Total_Exp_Month_Per_nondurable2,TFoodExpenditure_Per2,
-               Durable_Exp,
-               TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_NutritionInstitute,
-               Weight,MetrPrice,Size,EqSizeOECD)]
-  
-  #Choose one of these
-  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_NutritionInstitute/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_WorldBank/TFoodKCaloriesHH_Per]
-  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_NutritionInstitute/TFoodKCaloriesHH_Per]
-  
-  
-  SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
-  
-  
-  X <- SMD[,.(N=.N,wi1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
-                    wi2=weighted.mean(ServiceExp/Total_Exp_Month,Weight,na.rm = TRUE),
+  X <- DataTable[,.(N=.N,wi1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+                    wi2=weighted.mean(House_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
                     pi1=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
-                    pi2=weighted.mean(MetrPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
+                    pi2=weighted.mean(MeterPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
   
   X[,wi:=wi1+wi2]
   X[,wi1:=wi1/wi]
@@ -169,87 +38,115 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   X[,TornqvistIndex:= exp(   (wk1+wi1)/2 * log(pi1/pk1) + (wk2+wi2)/2 * log(pi2/pk2)  )      ]
   
-  SMD<-merge(SMD,X,by=c("Region","NewArea_Name"))
-  
-  SMD[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/TornqvistIndex] 
-  
-
-  ###Real- Country
-  SMD<- SMD[order(Total_Exp_Month_Per_nondurable_Real)]   #Deciling in Country
-  SMD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  SMD[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  SMD[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
- 
-
-  
-  Deciles<-SMD[,.(HHID,Decile,Percentile)]
-  
-  save(Deciles,file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
-  
-  DT<-MD[,.(Size=weighted.mean(Size,Weight),
-         Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
-         Number=sum(Weight)),by=Decile]
-  
-  DT2<-MD[,.(Size=weighted.mean(Size,Weight),
-            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-            Number=sum(Weight)),by=c("Decile","Region")]
-  
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"cluster.rda"))
- MD<-merge(MD,cluster,by="HHID")
-  
-  DT3<-MD[,.(Size=weighted.mean(Size,Weight),
-             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-             Number=sum(Weight)),by=c("cluster3","Decile")]
-  #write.csv(DT3,file = "DT3.csv")
-  
-  DT4<-MD[,.(Size=weighted.mean(Size,Weight),
-             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-             Number=sum(Weight)),by=c("cluster3")]
-  
-  DT5<-MD[,.(Size=weighted.mean(Size,Weight),
-             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-             Number=sum(Weight)),by=c("ProvinceName")]
-  
-  Geo4 <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_Geo4))
-  Geo4 <- Geo4[,.(CountyCode=as.numeric(Geo4),CapitalCounty)]
-  MD <- merge(MD,Geo4,by="CountyCode")
-  
-  MD[,Markaz_Ostan:=ifelse(CountyCapital=="Yes",1,0)]
-  
-  DT6<-MD[,.(Size=weighted.mean(Size,Weight),
-             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-             Number=sum(Weight)),by=c("Markaz_Ostan","ProvinceName","ProvinceCode")]
-
- MD[,County_Pop:=sum(Weight*Size),by="County_Name"]
- 
- DT7<-MD[County_Pop<100000,.(Size=weighted.mean(Size,Weight),
-            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-            Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
- 
- DT8<-MD[County_Pop<300000 & County_Pop>100000,.(Size=weighted.mean(Size,Weight),
-                             Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-                             Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
-
- DT9<-MD[County_Pop<1000000 & County_Pop>300000,.(Size=weighted.mean(Size,Weight),
-                                                 Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-                                                 Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
- 
- DT10<-MD[ County_Pop>1000000,.(Size=weighted.mean(Size,Weight),
-                                                 Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-                                                 Number=sum(Weight)),by=c("ProvinceName","ProvinceCode")]
- 
- DT11<-MD[,.(Size=weighted.mean(Size,Weight),
-            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-            Number=sum(Weight)),by=c("ProvinceName","Decile")]
-# write.csv(DT11,file = "DT11.csv")
- 
- DT12<-MD[,.(Size=weighted.mean(Size,Weight),
-            Total_Exp_Month=weighted.mean(Total_Exp_Month,Weight),
-            Number=sum(Weight)),by=c("Markaz_Ostan","Decile")]
- 
+  return(X[,.(Region,NewArea_Name,PriceIndex=TornqvistIndex)])
 }
 
+
+DoDeciling <- function(DataTable,PriceIndexDT){
+  
+  if("PriceIndex" %in% names(DataTable)){
+    DataTable <- DataTable[,PriceIndex:=NULL]
+  }
+  DataTable <- merge(DataTable,PriceIndexDT,by=c("Region","NewArea_Name"))
+  
+  
+  DataTable <- DataTable[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
+  
+  DataTable <- DataTable[order(Total_Exp_Month_Per_nondurable_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
+  DataTable <- DataTable[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  DataTable <- DataTable[,xr25th:=.SD[25,Total_Exp_Month_Per_nondurable_Real],by=.(Region,NewArea_Name)]
+  DataTable <- DataTable[,First25:=ifelse(Total_Exp_Month_Per_nondurable_Real<=xr25th,1,0)]
+  #Calculate deciles by weights
+  DataTable <- DataTable[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  DataTable <- DataTable[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  DataTable[,crw:=NULL]
+  DataTable[,xr25th:=NULL]
+  
+  return(DataTable)
+}
+
+UpdateForDurableDepr <- function(DataTable,ODIDep){
+  DataTable[,OwnedDurableItemsDepreciation:=NULL]
+  DataTable <- merge(DataTable,ODIDep)
+  
+  for (col in Settings$w)
+    DataTable[is.na(get(col)), (col) := 0]
+  
+  DataTable[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=Settings$w]
+  DataTable[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=Settings$nw]
+  
+  DataTable[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
+  DataTable[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
+}
+
+DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
+                                      sheet=Settings$MDS_DurableItemsDepr))
+
+for(year in (Settings$startyear:Settings$endyear)){
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  
+  # load data --------------------------------------
+  load(file = paste0(Settings$HEISProcessedPath,"Y",
+                     year,"DurableData_Detail.rda"))
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,
+                   "OwnsDurableItems.rda"))
+  
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
+  
+  SMD <- MD[,.(HHID,Region,
+               House_Exp,FoodExpenditure,Total_Exp_Month,
+               NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
+               TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_NutritionInstitute,
+               Weight,MeterPrice,Size,EqSizeOECD
+               ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
+               Amusement_Exp, Communication_Exp, 
+               Energy_Exp, Furniture_Exp, Hotel_Exp,Restaurant_Exp, Hygiene_Exp, 
+               Transportation_Exp, Other_Exp
+               ,Add_to_NonDurable,Medical_Exp,
+               Durable_NoDep,Durable_Emergency,OwnedDurableItemsDepreciation)]
+  
+  
+  #Choose one of these
+  SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_WorldBank/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Calorie_Need_NutritionInstitute/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_WorldBank/TFoodKCaloriesHH_Per]
+  #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_NutritionInstitute/TFoodKCaloriesHH_Per]
+  
+  
+  SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
+  
+  # S1<-SMD[,.(HHID,Region,NewArea_Name,TFoodKCaloriesHH_Per,Bundle_Value)]
+  
+  
+  PriceDT <- CalcTornqvistIndex(SMD)
+  
+  SMD <- DoDeciling(SMD,PriceDT)
+  
+  OwnedDurableItemsDepreciation <- 
+    Calculate_OwnedDurableItemsDepreciation(
+      DurableData_ExpDetail = DurableData_Detail,
+      DurableItems_OwningDetail = OwnsDurableItems,
+      by = c("Item","Decile"),
+      Decile = SMD[,.(HHID,Decile)],
+      DurableItems = DurableItems)
+  
+  SMD <- UpdateForDurableDepr(SMD,OwnedDurableItemsDepreciation)
+  
+  mdset <- setdiff(names(MD),names(SMD))
+  Decile <- merge(MD[,c("HHID",mdset),with=FALSE],SMD,by="HHID")
+  Decile <-Decile[,.(HHID,Decile)]
+  save(Decile,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile.rda"))
+  
+  #Decile_MD <- MD [,.(HHID,Total_Exp_Month_Per_nondurable,Size,Weight)]
+  #Decile_MD <- Decile_MD[order(Total_Exp_Month_Per_nondurable)]
+  #Decile_MD <- Decile_MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]
+  #Decile_MD <- Decile_MD[,Decile_non_real:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  #MD <- merge(MD,Decile_MD[,c("HHID","Decile_non_real")],by="HHID")
+  #save(Decile_MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile_non_real.rda"))
+}
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
