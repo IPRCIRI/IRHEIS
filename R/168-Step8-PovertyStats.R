@@ -39,14 +39,19 @@ FinalClusterResults <- data.table(Year = numeric(0),
                                   Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0),  Durable_Adds_Final = numeric(0),
                                   PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
                                   PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
-FinalProvinceResults <- data.table(Year = numeric(0),
-                                   ProvinceName=character(0),
-                                   SampleSize = integer(0), MeterPrice = numeric(0), 
-                                   House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
-                                   FoodKCaloriesHH_Per = numeric(0), Engel = numeric(0), Total_Exp_Month_Per = numeric(0), 
-                                   Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0),  Durable_Adds_Final = numeric(0),
-                                   PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
-                                   PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
+FinalProvinceResults <- data.table()
+#numeric(0),
+#ProvinceName=character(0),
+#SampleSize = integer(0), MeterPrice = numeric(0), 
+#House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
+#FoodKCaloriesHH_Per = numeric(0), Engel = numeric(0), Total_Exp_Month_Per = numeric(0), 
+#Total_Exp_Month_Per_nondurable = numeric(0), PovertyLine = numeric(0),  Durable_Adds_Final = numeric(0),
+#PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
+                                   
+
+FinalDecileResults <- data.table()
+
+
 
 OriginalFoodShare <- data.table(Year=NA_integer_,Share=NA_integer_,FinalPoor=NA_integer_)[0]
 
@@ -165,6 +170,8 @@ for(year in (Settings$startyear:Settings$endyear)){
               FPLine=weighted.mean(FPLine,Weight),
               Bundle_Value=weighted.mean(Bundle_Value,Weight),
               FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
+              FoodProtein_Per=weighted.mean(FoodProtein_Per,Weight),
+              
               Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
               Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
               Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
@@ -184,6 +191,34 @@ for(year in (Settings$startyear:Settings$endyear)){
   X2[,Year:=year]
   X <- merge(X1,X2,by=c("Year","ProvinceName"))
   FinalProvinceResults <- rbind(FinalProvinceResults,X)
+
+  ################Province##################
+  X1 <- MD[,.(SampleSize=.N,
+              MeterPrice=weighted.mean(MeterPrice,Weight,na.rm = TRUE),
+              House_Share=weighted.mean(House_Exp/Total_Exp_Month,Weight),
+              FPLine=weighted.mean(FPLine,Weight),
+              Bundle_Value=weighted.mean(Bundle_Value,Weight),
+              FoodKCaloriesHH_Per=weighted.mean(FoodKCaloriesHH_Per,Weight),
+              FoodProtein_Per=weighted.mean(FoodProtein_Per,Weight),
+              Engel=weighted.mean(TOriginalFoodExpenditure/Total_Exp_Month,Weight),
+              Total_Exp_Month_Per=weighted.mean(Total_Exp_Month_Per,Weight),
+              Total_Exp_Month_Per_nondurable=weighted.mean(Total_Exp_Month_Per_nondurable,Weight),
+              PovertyLine=weighted.mean(PovertyLine,Weight*Size),
+              PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
+              Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight))
+           ,by="Decile"]
+  X2 <- MD[FinalPoor==1,
+           .(PoorSampleSize=.N,
+             PovertyGap=weighted.mean(FGT1M,Weight*Size),
+             PovertyDepth=weighted.mean(FGT2M,Weight*Size)),
+           ,by="Decile"]
+  
+  
+  X1[,Year:=year]
+  X1[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
+  X2[,Year:=year]
+  X <- merge(X1,X2,by=c("Year","Decile"),all.x = TRUE)
+  FinalDecileResults <- rbind(FinalDecileResults,X)
   
   ####################################################
   
@@ -243,6 +278,7 @@ write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterRes
 write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
 write_xlsx(FinalRegionResults,path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)
 write_xlsx(FinalProvinceResults,path=paste0(Settings$HEISResultsPath,"/ProvinceResults.xlsx"),col_names=T)
+write_xlsx(FinalDecileResults,path=paste0(Settings$HEISResultsPath,"/DecileResults.xlsx"),col_names=T)
 
 ggplot(MD, aes(HEduYears)) + geom_density(aes(weights=Weight))
 
