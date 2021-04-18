@@ -26,8 +26,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BussIncome.rda"))
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"AgriWages.rda"))
    load(file=paste0(Settings$HEISProcessedPath,"Y",year,"OtherIncome.rda"))
-   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
-   
+
    PubWageData[,Sector:=NULL]
    PrvWageData[,Sector:=NULL]
    BussIncomeData[,Sector:=NULL]
@@ -40,8 +39,7 @@ for(year in (Settings$startyear:Settings$endyear)){
    IncomeTable <- merge(IncomeTable,BussIncomeData,by="HHID",all.x = TRUE)
    IncomeTable <- merge(IncomeTable,AgriIncomeData,by="HHID",all.x = TRUE)
    IncomeTable <- merge(IncomeTable,OtherIncomeData,by="HHID",all.x = TRUE)
-   IncomeTable <- merge(IncomeTable,SubsidyWageData,by="HHID",all.x = TRUE)
-   
+
    
    IncomeTable <- IncomeTable[,lapply(.SD, function(x){x[is.na(x)]<-0;return(x)})]
    
