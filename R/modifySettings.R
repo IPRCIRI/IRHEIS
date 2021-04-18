@@ -1,10 +1,5 @@
 library(yaml)
-OS <- ifelse(version$os=="linux-gnu","Linux","Windows")
-if(OS=="Linux"){
-  HEISPath         = "/media/majid/Document/HEIS/"
-}else{
- HEISPath           = "C:/HEIS/"
-}
+HEISPath           = "C:/HEIS/"
 HEISCompressedPath = paste0(HEISPath,"DataCompressed/")
 HEISAccessPath     = paste0(HEISPath,"DataAccess/")
 HEISRawPath        = paste0(HEISPath,"DataRaw/")
@@ -34,7 +29,6 @@ Settings <- list(HEISPath          =HEISPath,
                  startyear=90,
                  endyear=98,
                  baseBundleyear=95,
-                 OS=OS,
                  # RawDataWebAddress ="http://www.amar.org.ir/Portals/0/amarmozuii/hazinedaramad/",
                  RawDataWebAddress ="https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/",
                  MetaDataFilePath  = "../Data/MetaData.xlsx",
