@@ -52,8 +52,8 @@ draw_flow_rectangle <- function(DT,year){
 # import yearly DataTables ,keep needed columns 
 # and append them to create total DataTable
 years = Settings$startyear:Settings$endyear
-years = append(years, 89, after = 0)
-years_test <- 89:90
+# years = append(years, 89, after = 0)
+years_test <- 90:91
 data_total <- data.table()
 wb_decile <- createWorkbook()
 wb_poor <- createWorkbook()
@@ -61,11 +61,11 @@ wb_foodpoor <- createWorkbook()
 for(year in years){
   if (year %in% list(91,96,98)) next
   cat(paste0("\n------------------------------\nYear:",year,"-->",year+1,"\n"))
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
-  base_year = MD[,c("HHID", "Year", "Decile", "Percentile", "InitialPoor", "FoodPoor",
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
+  base_year = MD[,c("HHID", "Year", "Decile", "Percentile", "FinalPoor", "FoodPoor",
                "Size", "Weight")]
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year+1,"FoodPoor.rda"))
-  target_year = MD[,c("HHID", "Year", "Decile","Percentile", "InitialPoor", "FoodPoor",
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year+1,"FinalPoor.rda"))
+  target_year = MD[,c("HHID", "Year", "Decile","Percentile", "FinalPoor", "FoodPoor",
                     "Size", "Weight")]
   data_total<-rbind(base_year,target_year)
 
@@ -85,7 +85,7 @@ for(year in years){
   
   #reshape long panel to wide panel data
   data_wide<-reshape(data_total, direction = "wide", sep = "_",
-                     v.names  = c("Size","Decile","Percentile","InitialPoor",
+                     v.names  = c("Size","Decile","Percentile","FinalPoor",
                                   "FoodPoor","Weight_panel", "Weight"),
                      drop = c("weight_tot", "weight_tot_panel", "duplicates"),
                      timevar = "Year", idvar = "HHID")
@@ -118,15 +118,31 @@ for(year in years){
   # create movement columns. {first column=status in base year}
   # {second column= status in target year} 
   # {third column= percentage of individuals in each part who change their status}
-  text_base<-paste0("InitialPoor_",year)
-  text_target<-paste0("InitialPoor_",year+1)
+  text_base<-paste0("FinalPoor_",year)
+  text_target<-paste0("FinalPoor_",year+1)
   data_wide[,pop:=sum(Weight_panel*Size),by=c(text_base)]
-  movement_poor<-data_wide[,round(sum(Weight_panel*Size/pop*100), digits=1),by=c(text_base, text_target)]
+  movement_poor<-data_wide[,round(sum(Weight_panel*Size), digits=1),by=c(text_base, text_target)]
   movement_poor<-movement_poor[order(eval(ep(text_base)), eval(ep(text_target)))]
-  
   poor_matrix<-as.data.frame.matrix(xtabs(V1~., movement_poor))
+  
+  poor_matrix["2"] = poor_matrix["0"]
+  poor_matrix["3"] = poor_matrix["0"]
+  poor_matrix["4"] = poor_matrix["0"]
+  poor_matrix["5"] = poor_matrix["0"]
+
+  poor_matrix[1,3] = poor_matrix[1,1]/(poor_matrix[1,1]+poor_matrix[2,1])*100
+  poor_matrix[2,3] = poor_matrix[2,1]/(poor_matrix[1,1]+poor_matrix[2,1])*100
+  poor_matrix[1,4] = poor_matrix[1,2]/(poor_matrix[1,2]+poor_matrix[2,2])*100
+  poor_matrix[2,4] = poor_matrix[2,2]/(poor_matrix[1,2]+poor_matrix[2,2])*100
+
+  poor_matrix[1,5] = poor_matrix[1,1]/(poor_matrix[1,1]+poor_matrix[1,2])*100
+  poor_matrix[1,6] = poor_matrix[1,2]/(poor_matrix[1,1]+poor_matrix[1,2])*100
+  poor_matrix[2,5] = poor_matrix[2,1]/(poor_matrix[2,1]+poor_matrix[2,2])*100
+  poor_matrix[2,6] = poor_matrix[2,2]/(poor_matrix[2,1]+poor_matrix[2,2])*100
+  poor_matrix = round(poor_matrix, digits = 1)
+  
   rownames(poor_matrix) = c("NotPoor","Poor")
-  colnames(poor_matrix) = c("NotPoor","Poor")
+  colnames(poor_matrix) = c("NotPoor","Poor","NotPoor_p1","Poor_p1","NotPoor_p2","Poor_p2")
   rownames(poor_matrix) = paste0(year,"_",rownames(poor_matrix))
   colnames(poor_matrix) = paste0(year+1,"_",colnames(poor_matrix))
   sheet_name =  paste0(year,"_",year+1)
@@ -140,17 +156,40 @@ for(year in years){
   text_base<-paste0("FoodPoor_",year)
   text_target<-paste0("FoodPoor_",year+1)
   data_wide[,pop:=sum(Weight_panel*Size),by=c(text_base)]
-  movement_foodpoor<-data_wide[,round(sum(Weight_panel*Size/pop*100), digits=1),by=c(text_base, text_target)]
+  movement_foodpoor<-data_wide[,round(sum(Weight_panel*Size), digits=1),by=c(text_base, text_target)]
   movement_foodpoor<-movement_foodpoor[order(eval(ep(text_base)), eval(ep(text_target)))]
   
   foodpoor_matrix<-as.data.frame.matrix(xtabs(V1~., movement_foodpoor))
+  foodpoor_matrix["2"] = foodpoor_matrix["0"]
+  foodpoor_matrix["3"] = foodpoor_matrix["0"]
+  foodpoor_matrix["4"] = foodpoor_matrix["0"]
+  foodpoor_matrix["5"] = foodpoor_matrix["0"]
+  
+  foodpoor_matrix[1,3] = foodpoor_matrix[1,1]/(foodpoor_matrix[1,1]+foodpoor_matrix[2,1])*100
+  foodpoor_matrix[2,3] = foodpoor_matrix[2,1]/(foodpoor_matrix[1,1]+foodpoor_matrix[2,1])*100
+  foodpoor_matrix[1,4] = foodpoor_matrix[1,2]/(foodpoor_matrix[1,2]+foodpoor_matrix[2,2])*100
+  foodpoor_matrix[2,4] = foodpoor_matrix[2,2]/(foodpoor_matrix[1,2]+foodpoor_matrix[2,2])*100
+  
+  foodpoor_matrix[1,5] = foodpoor_matrix[1,1]/(foodpoor_matrix[1,1]+foodpoor_matrix[1,2])*100
+  foodpoor_matrix[1,6] = foodpoor_matrix[1,2]/(foodpoor_matrix[1,1]+foodpoor_matrix[1,2])*100
+  foodpoor_matrix[2,5] = foodpoor_matrix[2,1]/(foodpoor_matrix[2,1]+foodpoor_matrix[2,2])*100
+  foodpoor_matrix[2,6] = foodpoor_matrix[2,2]/(foodpoor_matrix[2,1]+foodpoor_matrix[2,2])*100
+  foodpoor_matrix = round(foodpoor_matrix, digits = 1)
+  
   rownames(foodpoor_matrix) = c("NotFoodPoor","FoodPoor")
-  colnames(foodpoor_matrix) = c("NotFoodPoor","FoodPoor")
+  colnames(foodpoor_matrix) = c("NotFoodPoor","FoodPoor","NotFoodPoor_p1","FoodPoor_p1","NotFoodPoor_p2","FoodPoor_p2")
   rownames(foodpoor_matrix) = paste0(year,"_",rownames(foodpoor_matrix))
   colnames(foodpoor_matrix) = paste0(year+1,"_",colnames(foodpoor_matrix))
   sheet_name =  paste0(year,"_",year+1)
   sheet = createSheet(wb_foodpoor, sheetName = sheet_name)
   addDataFrame(foodpoor_matrix,sheet = sheet)
+  
+  base0 = paste0("Size_",year)
+  base1 = paste0("Size_",year+1)
+  data_wide$diff_size = data_wide[,..base0] - data_wide[,..base1]
+  png(file=paste0(Settings$HEISResultsPath,year,"hist.png"))
+  hist(data_wide$diff_size, freq=FALSE, ylim = c(0,0.9))
+  dev.off()
 }
 saveWorkbook(wb_decile, paste0(Settings$HEISResultsPath,"decile_movement.xlsx"))
 saveWorkbook(wb_poor, paste0(Settings$HEISResultsPath,"poor_movement.xlsx"))
