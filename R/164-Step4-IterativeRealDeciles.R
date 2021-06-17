@@ -1,4 +1,4 @@
-#164-Step 4-FindInitialPoor.R
+#164-Step4-IterativeRealDeciles.R
 # 
 # Copyright © 2020:Majid Einian & Arin Shahbazian
 # Licence: GPL-3
@@ -19,24 +19,25 @@ source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
 # Function Defs ---------------------------------------------------------------------------------
 CalcTornqvistIndex <- function(DataTable){
   
-  X <- DataTable[,.(N=.N,wi1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
-                    wi2=weighted.mean(House_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
-                    pi1=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
-                    pi2=weighted.mean(MeterPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
+  X <- DataTable[,.(N=.N,wj1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+                    wj2=weighted.mean(House_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+                    pj1=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
+                    pj2=weighted.mean(MeterPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
   
-  X[,wi:=wi1+wi2]
-  X[,wi1:=wi1/wi]
-  X[,wi2:=wi2/wi]
+  X[,wj:=wj1+wj2]
+  X[,wj1:=wj1/wj]
+  X[,wj2:=wj2/wj]
   XTeh<-X[NewArea_Name=="Sh_Tehran"]
-  wk1<-XTeh$wi1   # k == Sh_Tehran
-  wk2<-XTeh$wi2
-  pk1<-XTeh$pi1
-  pk2<-XTeh$pi2
+  wk1<-XTeh$wj1   # k == Sh_Tehran
+  wk2<-XTeh$wj2
+  pk1<-XTeh$pj1
+  pk2<-XTeh$pj2
   
-  X[,SimpleIndex:= .5 * pi1/pk1 + .5 * pi2/pk2]
-  X[,AnotherIndex:= wi1 * pi1/pk1 + wi2 * pi2/pk2]
+  X[,SimpleIndex:= .5 * pj1/pk1 + .5 * pj2/pk2]
+  X[,AnotherIndex:= wj1 * pj1/pk1 + wj2 * pj2/pk2]
   
-  X[,TornqvistIndex:= exp(   (wk1+wi1)/2 * log(pi1/pk1) + (wk2+wi2)/2 * log(pi2/pk2)  )      ]
+  X[,TornqvistIndex:= exp( (wk1+wj1)/2 * log(pj1/pk1) + 
+                             (wk2+wj2)/2 * log(pj2/pk2) ) ]
   
   return(X[,.(Region,NewArea_Name,PriceIndex=TornqvistIndex)])
 }
