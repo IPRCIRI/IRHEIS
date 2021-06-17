@@ -16,15 +16,15 @@ tfs <- paste0("+proj=lcc +lat_1=30 +lat_2=36 +lat_0=24 +lon_0=54 ",
               "+x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs ",
               "+ellps=WGS84 +towgs84=0,0,0")      # Transformation to make all shapefiles in one coordinate system
 
-o <- capture.output(Seas <- readOGR("Shapefiles/1385",   
+o <- capture.output(Seas <- readOGR("../IranProvinceMap/Shapefiles/1385",   
                                     layer = "Sea"))           # Maps of Caspian Sea, Persian Gulf, & Oman Sea
 Seas <- spTransform(Seas,CRS(tfs))
 
-o <- capture.output(Lakes <- readOGR("Shapefiles/1385",       # Maps of Lakes
+o <- capture.output(Lakes <- readOGR("../IranProvinceMap/Shapefiles/1385",       # Maps of Lakes
                                      layer = "Lake"))
 Lakes <- spTransform(Lakes,CRS(tfs))
 
-o <- capture.output(ProvMap <- readOGR("Shapefiles/OSM",      # Maps of provinces based on latest admin. areas. 
+o <- capture.output(ProvMap <- readOGR("../IranProvinceMap/Shapefiles/OSM",      # Maps of provinces based on latest admin. areas. 
                                        layer = "Iran_AL4"))       # extracted from openstreetmaps.org
 ProvMap <- spTransform(ProvMap,CRS(tfs))
 
