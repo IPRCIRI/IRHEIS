@@ -21,6 +21,7 @@ library(hrbrthemes)
 library(circlize)
 library(networkD3)
 
+# This functions gets text and gives it back as a R Code.
 ep <- function(t){
   return((parse(text=t)))
 }
@@ -49,21 +50,28 @@ draw_flow_rectangle <- function(DT,year){
 }
 
 
-# import yearly DataTables ,keep needed columns 
+# import yearly DataTables ,keep needed columns
 # and append them to create total DataTable
 years = Settings$startyear:Settings$endyear
-# years = append(years, 89, after = 0)
 years_test <- 90:91
 data_total <- data.table()
 wb_decile <- createWorkbook()
 wb_poor <- createWorkbook()
 wb_foodpoor <- createWorkbook()
+wb_movement_ts <- createWorkbook()
+movement_time_series = data.table(base_year=integer(),target_year=integer(),
+                                  double_poor=numeric(), double_poor_p=numeric(),
+                                  poor_rescue=numeric(),fall_to_poor = numeric(),
+                                  doulble_fpoor=numeric(), doulble_fpoor_p=numeric(),
+                                  fpoor_rescue=numeric(), fall_to_fpoor= numeric())
 for(year in years){
   if (year %in% list(91,96,98)) next
   cat(paste0("\n------------------------------\nYear:",year,"-->",year+1,"\n"))
+  #  load base year
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
   base_year = MD[,c("HHID", "Year", "Decile", "Percentile", "FinalPoor", "FoodPoor",
                "Size", "Weight")]
+  # load target year
   load(file=paste0(Settings$HEISProcessedPath,"Y",year+1,"FinalPoor.rda"))
   target_year = MD[,c("HHID", "Year", "Decile","Percentile", "FinalPoor", "FoodPoor",
                     "Size", "Weight")]
@@ -79,8 +87,8 @@ for(year in years){
   data_total[, weight_tot := sum(Weight), by = c("Year")]
   data_total[, Weight_panel:= Weight*weight_tot/weight_tot_panel]
   
-  # remove families who were present only one-time in the dataset
-  # in two consecutive years
+  # remove families who were present only one-time in the datasets of
+  # the two consecutive years
   data_total<-data_total[duplicates==TRUE][order(HHID, Year)]
   
   #reshape long panel to wide panel data
@@ -90,6 +98,7 @@ for(year in years){
                      drop = c("weight_tot", "weight_tot_panel", "duplicates"),
                      timevar = "Year", idvar = "HHID")
   
+  # adjust weight and size of the households
   text <- paste0("Weight_panel:= (Weight_panel_",year,"+Weight_panel_",year+1,")/2")
   data_wide[,eval(ep(text))]
   
@@ -125,24 +134,42 @@ for(year in years){
   movement_poor<-movement_poor[order(eval(ep(text_base)), eval(ep(text_target)))]
   poor_matrix<-as.data.frame.matrix(xtabs(V1~., movement_poor))
   
+  # add new columns to movement matrix
   poor_matrix["2"] = poor_matrix["0"]
   poor_matrix["3"] = poor_matrix["0"]
   poor_matrix["4"] = poor_matrix["0"]
   poor_matrix["5"] = poor_matrix["0"]
-
+  poor_matrix["6"] = poor_matrix["0"]
+  poor_matrix["7"] = poor_matrix["0"]
+  
+  # create a matrix that its elements are in percent 
+  # and the sum of the columns is 100%
   poor_matrix[1,3] = poor_matrix[1,1]/(poor_matrix[1,1]+poor_matrix[2,1])*100
   poor_matrix[2,3] = poor_matrix[2,1]/(poor_matrix[1,1]+poor_matrix[2,1])*100
   poor_matrix[1,4] = poor_matrix[1,2]/(poor_matrix[1,2]+poor_matrix[2,2])*100
   poor_matrix[2,4] = poor_matrix[2,2]/(poor_matrix[1,2]+poor_matrix[2,2])*100
 
+  # create a matrix that its elements are in percent 
+  # and the sum of the rows is 100%
   poor_matrix[1,5] = poor_matrix[1,1]/(poor_matrix[1,1]+poor_matrix[1,2])*100
   poor_matrix[1,6] = poor_matrix[1,2]/(poor_matrix[1,1]+poor_matrix[1,2])*100
   poor_matrix[2,5] = poor_matrix[2,1]/(poor_matrix[2,1]+poor_matrix[2,2])*100
   poor_matrix[2,6] = poor_matrix[2,2]/(poor_matrix[2,1]+poor_matrix[2,2])*100
+
+  
+  # create a matrix that its elements are in percent 
+  # and the sum of the all of its elements is 100%
+  sum_pop = (poor_matrix[1,1]+poor_matrix[1,2]+
+               poor_matrix[2,1]+poor_matrix[2,2])
+  poor_matrix[1,7] = poor_matrix[1,1]/ sum_pop*100
+  poor_matrix[1,8] = poor_matrix[1,2]/sum_pop*100
+  poor_matrix[2,7] = poor_matrix[2,1]/sum_pop*100
+  poor_matrix[2,8] = poor_matrix[2,2]/sum_pop*100  
   poor_matrix = round(poor_matrix, digits = 1)
   
   rownames(poor_matrix) = c("NotPoor","Poor")
-  colnames(poor_matrix) = c("NotPoor","Poor","NotPoor_p1","Poor_p1","NotPoor_p2","Poor_p2")
+  colnames(poor_matrix) = c("NotPoor","Poor","NotPoor_p1","Poor_p1",
+                            "NotPoor_p2","Poor_p2","NotPoor_p3","Poor_p3")
   rownames(poor_matrix) = paste0(year,"_",rownames(poor_matrix))
   colnames(poor_matrix) = paste0(year+1,"_",colnames(poor_matrix))
   sheet_name =  paste0(year,"_",year+1)
@@ -160,30 +187,71 @@ for(year in years){
   movement_foodpoor<-movement_foodpoor[order(eval(ep(text_base)), eval(ep(text_target)))]
   
   foodpoor_matrix<-as.data.frame.matrix(xtabs(V1~., movement_foodpoor))
+  
+  # add new columns to movement matrix
   foodpoor_matrix["2"] = foodpoor_matrix["0"]
   foodpoor_matrix["3"] = foodpoor_matrix["0"]
   foodpoor_matrix["4"] = foodpoor_matrix["0"]
   foodpoor_matrix["5"] = foodpoor_matrix["0"]
+  foodpoor_matrix["6"] = foodpoor_matrix["0"]
+  foodpoor_matrix["7"] = foodpoor_matrix["0"]
   
+  # create a matrix that its elements are in percent 
+  # and the sum of the columns is 100%  
   foodpoor_matrix[1,3] = foodpoor_matrix[1,1]/(foodpoor_matrix[1,1]+foodpoor_matrix[2,1])*100
   foodpoor_matrix[2,3] = foodpoor_matrix[2,1]/(foodpoor_matrix[1,1]+foodpoor_matrix[2,1])*100
   foodpoor_matrix[1,4] = foodpoor_matrix[1,2]/(foodpoor_matrix[1,2]+foodpoor_matrix[2,2])*100
   foodpoor_matrix[2,4] = foodpoor_matrix[2,2]/(foodpoor_matrix[1,2]+foodpoor_matrix[2,2])*100
-  
+
+  # create a matrix that its elements are in percent 
+  # and the sum of the rows is 100%  
   foodpoor_matrix[1,5] = foodpoor_matrix[1,1]/(foodpoor_matrix[1,1]+foodpoor_matrix[1,2])*100
   foodpoor_matrix[1,6] = foodpoor_matrix[1,2]/(foodpoor_matrix[1,1]+foodpoor_matrix[1,2])*100
   foodpoor_matrix[2,5] = foodpoor_matrix[2,1]/(foodpoor_matrix[2,1]+foodpoor_matrix[2,2])*100
   foodpoor_matrix[2,6] = foodpoor_matrix[2,2]/(foodpoor_matrix[2,1]+foodpoor_matrix[2,2])*100
   foodpoor_matrix = round(foodpoor_matrix, digits = 1)
+
+  # create a matrix that its elements are in percent 
+  # and the sum of the all of its elements is 100%
+  sum_pop = (foodpoor_matrix[1,1]+foodpoor_matrix[1,2]+
+               foodpoor_matrix[2,1]+foodpoor_matrix[2,2])
+  foodpoor_matrix[1,7] = foodpoor_matrix[1,1]/ sum_pop*100
+  foodpoor_matrix[1,8] = foodpoor_matrix[1,2]/sum_pop*100
+  foodpoor_matrix[2,7] = foodpoor_matrix[2,1]/sum_pop*100
+  foodpoor_matrix[2,8] = foodpoor_matrix[2,2]/sum_pop*100  
+  foodpoor_matrix = round(foodpoor_matrix, digits = 1)  
   
   rownames(foodpoor_matrix) = c("NotFoodPoor","FoodPoor")
-  colnames(foodpoor_matrix) = c("NotFoodPoor","FoodPoor","NotFoodPoor_p1","FoodPoor_p1","NotFoodPoor_p2","FoodPoor_p2")
+  colnames(foodpoor_matrix) = c("NotFoodPoor","FoodPoor","NotFoodPoor_p1","FoodPoor_p1",
+                                "NotFoodPoor_p2","FoodPoor_p2","NotFoodPoor_p3","FoodPoor_p3")
   rownames(foodpoor_matrix) = paste0(year,"_",rownames(foodpoor_matrix))
   colnames(foodpoor_matrix) = paste0(year+1,"_",colnames(foodpoor_matrix))
   sheet_name =  paste0(year,"_",year+1)
   sheet = createSheet(wb_foodpoor, sheetName = sheet_name)
   addDataFrame(foodpoor_matrix,sheet = sheet)
+
+  ######PART 4: Movement time series###################################
+  # create Time-series of important cells in the movement matrices.
+  double_poor = poor_matrix[2,2]
+  double_poor_p = poor_matrix[2,8]
+  poor_rescue = poor_matrix[2,5]
+  fall_to_poor = poor_matrix [1,6]
+  double_fpoor = foodpoor_matrix[2,2]
+  double_fpoor_p = foodpoor_matrix[2,8]
+  fpoor_rescue = foodpoor_matrix[2,5]
+  fall_to_fpoor = foodpoor_matrix [1,6]
+  movement_time_series<-rbind(movement_time_series,
+                              list(year,year+1,double_poor,double_poor_p,poor_rescue,
+                                   fall_to_poor,double_fpoor,double_fpoor_p,
+                                   fpoor_rescue,fall_to_fpoor))
+
   
+  # here I check the reliability of the data.
+  #if the households which have the same ID in the two consecutive years
+  # are really the same households, then their size may not change
+  # considerably. so by drawing the histogram of the difference of the
+  # size of a household in this two years I anticipate a distribution of mean Zero
+  # which is concenterated near zero.
   base0 = paste0("Size_",year)
   base1 = paste0("Size_",year+1)
   data_wide$diff_size = data_wide[,..base0] - data_wide[,..base1]
@@ -194,6 +262,9 @@ for(year in years){
 saveWorkbook(wb_decile, paste0(Settings$HEISResultsPath,"decile_movement.xlsx"))
 saveWorkbook(wb_poor, paste0(Settings$HEISResultsPath,"poor_movement.xlsx"))
 saveWorkbook(wb_foodpoor, paste0(Settings$HEISResultsPath,"foodpoor_movement.xlsx"))
+sheet = createSheet(wb_movement_ts, sheetName = 'movemetn time-series')
+addDataFrame(movement_time_series, sheet = sheet)
+saveWorkbook(wb_movement_ts, paste0(Settings$HEISResultsPath,"movement_time_series.xlsx"))
 
 
 
