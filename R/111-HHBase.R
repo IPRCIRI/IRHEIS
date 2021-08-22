@@ -16,7 +16,7 @@ library(data.table)
 library(stringr)
 library(readxl)
 
-year <- 98
+year <- 99
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -51,13 +51,13 @@ for(year in (Settings$startyear:Settings$endyear)){
     HHBase[,Month:=NA_integer_]
     
   }else{
-    RData <- Tables[[paste0("R",year,"DATA")]][,c(1:2),with=FALSE]
+    RData <- Tables[[paste0("R",year,"DATA")]][,c(1,2,4),with=FALSE]
     RData[, Region:=factor(x="Rural",levels=c("Urban","Rural"))]
-    UData <- Tables[[paste0("U",year,"DATA")]][,c(1:2),with=FALSE]
+    UData <- Tables[[paste0("U",year,"DATA")]][,c(1,2,4),with=FALSE]
     UData[, Region:=factor(x="Urban",levels=c("Urban","Rural"))]
     HHBase <- rbind(RData, UData)
     rm(RData,UData)
-    setnames(HHBase,c("HHID","Month","Region"))
+    setnames(HHBase,c("HHID","Month","Weight","Region"))
     HHBase[,Month:=ifelse(Month==1,12,Month - 1)]
     HHBase[HHID=="10107019605" & year==97,Month:=2]  # Odd Month (-1) in 1397
     if(length(which(HHBase$Month<=0))>0)
@@ -149,6 +149,11 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   HHBase <- merge(HHBase,Geo4,by="CountyCode",all.x = TRUE)
 
+  if(year >=99){
+    HHWeights <- HHBase[,.(HHID,Weight,Year)]
+    save(HHWeights,file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  }
+
   HHBase <- HHBase[,.(HHID,Year,Quarter,Month,
                       Region,ProvinceCode,ProvinceName,
                       CountyCode,CountyName)]
@@ -177,8 +182,10 @@ for(year in (Settings$startyear:Settings$endyear)){
                                ProvinceName,
                                paste0("Sh_",CountyName))]
   HHBase[,NewArea_Name:=as.factor(NewArea_Name)]
-
   
+  
+ 
+    
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 
   cat(HHBase[,.N])
