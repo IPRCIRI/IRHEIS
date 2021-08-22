@@ -82,7 +82,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(Meat2[,weighted.median(FGrams/EqSizeCalory,Weight*Size)])
 }
 
-library(writexl)
+#library(writexl)
 
 #write_xlsx(BigsdTable,"E:/FPLinebasket.xlsx")
 

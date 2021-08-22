@@ -50,7 +50,7 @@ FinalProvinceResults <- data.table(Year = numeric(0),
 
 OriginalFoodShare <- data.table(Year=NA_integer_,Share=NA_integer_,FinalPoor=NA_integer_)[0]
 
-year<-98
+year<-99
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
