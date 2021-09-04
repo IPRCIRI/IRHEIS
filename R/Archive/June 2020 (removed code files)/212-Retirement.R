@@ -34,13 +34,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TRetirementW,n,names(Retirementwt)[x])
   }
-  pcols <- intersect(names(TRetirementW),c("HHID","Code","retirement"))
+  pcols <- intersect(names(TRetirementW),c("HHID","Code","retirement","IndivNo"))
   TRetirementW <- TRetirementW[,pcols,with=FALSE]
   if(year %in% 63:68){
     TRetirementW <- TRetirementW[Code %in% Retirementwt$StartCode:Retirementwt$EndCode]
   }
   
   TRetirementW[is.na(TRetirementW)] <- 0
+  save(TRetirementW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TRetirementW.rda"))
+  
   RetirementWageData <- TRetirementW[,lapply(.SD,sum),by=HHID]
   save(RetirementWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"RetirementWage.rda"))
 }

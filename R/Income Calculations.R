@@ -28,12 +28,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
   #load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodCon.rda"))
   #load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Durables.rda"))
   #load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
-  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Decile_Nominal.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"Deciles_Nonreal.rda"))
   
   load( file = paste0(Settings$HEISProcessedPath,"Y",year,"PubWage.rda"))
   load( file = paste0(Settings$HEISProcessedPath,"Y",year,"PrvWages.rda"))
@@ -48,9 +48,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   load( file = paste0(Settings$HEISProcessedPath,"Y",year,"RetirementWage.rda"))
   load( file = paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
   load( file = paste0(Settings$HEISProcessedPath,"Y",year,"Total_Income.rda"))
-  
-  Data<-merge(MD[,.(HHID,Region,ProvinceCode,Size,EqSizeOECD,Weight,Total_Exp_Month_Per,Total_Exp_Month)],Decile_Nominal
-              ,by="HHID",all.x = TRUE)
+ # Decile<-as.data.table(Decile)
+  Data<-MD[,.(HHID,Region,ProvinceCode,Size,EqSizeOECD,Weight,Total_Exp_Month_Per,Total_Exp_Month_Per_nondurable,Add_to_NonDurable,Total_Exp_Month)]
   Data<-merge(Data,PubWageData[,.(HHID,PubWageNetIncomeY)],by="HHID",all.x = TRUE)
   Data<-merge(Data,PrvWageData[,.(HHID,PrvWageNetIncomeY)],by="HHID",all.x = TRUE)
   Data<-merge(Data,BussIncomeData[,.(HHID,BussNetIncomeY)],by="HHID",all.x = TRUE)
@@ -67,11 +66,16 @@ for(year in (Settings$startyear:Settings$endyear)){
   Data[is.na(Data)] <- 0
   Data[,Income_HH:=(PubWageNetIncomeY+PrvWageNetIncomeY+BussNetIncomeY+AgriNetIncomeY+
          aid+homemade+interest+intra+rent+retirement+Subsidy)/12]
+  
   Data[,Income_HH_kari:=(PubWageNetIncomeY+PrvWageNetIncomeY+BussNetIncomeY+AgriNetIncomeY)/12]
   Data[,Income_Per:=Income_HH/EqSizeOECD]
   Data[,Income_Per_kari:=Income_HH_kari/EqSizeOECD]
-  
- a1<- Data[,weighted.mean(Income_Per,Weight)]
+  Data<-Data[order(Total_Exp_Month_Per_nondurable)]
+  Data<-as.data.table(Data)
+ # Data <- Data[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  #Data <- Data[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  Data<-merge(Data,NRMD,by="HHID",all.x = TRUE)
+ a1<- Data[,weighted.mean(Income_HH,Weight)]
  a1<- as.data.table(a1)
  b1<- Data[,weighted.mean(Income_Per,Weight),by=Region]
  c1<- Data[,weighted.mean(Income_Per,Weight),by=Decile][order(Decile)]

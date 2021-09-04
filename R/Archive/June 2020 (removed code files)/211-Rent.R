@@ -34,12 +34,14 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TRentW,n,names(Rentwt)[x])
   }
-  pcols <- intersect(names(TRentW),c("HHID","Code","rent"))
+  pcols <- intersect(names(TRentW),c("HHID","Code","rent","IndivNo"))
   TRentW <- TRentW[,pcols,with=FALSE]
   if(year %in% 63:68){
     TRentW <- TRentW[Code %in% Rentwt$StartCode:Rentwt$EndCode]
   }
   TRentW[is.na(TRentW)] <- 0
+  save(TRentW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TRentW.rda"))
+  
   RentWageData <- TRentW[,lapply(.SD,sum),by=HHID]
   save(RentWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"RentWage.rda"))
 }
