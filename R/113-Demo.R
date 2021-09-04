@@ -254,7 +254,8 @@ for(year in years){
   PSum[is.na(InfantMilkExpenditure), InfantMilkExpenditure := 0]
   PSum<-PSum[,Lactating:=ifelse(NInfants0>0 & InfantMilkExpenditure==0,1,0)]
   
-  PSum[,Calorie_Need_WorldBank:=NAge1B*Settings$KCaloryNeed_B1+
+  PSum[,Calorie_Need_WorldBank:=
+         NAge1B*Settings$KCaloryNeed_B1+
          NAge2B*Settings$KCaloryNeed_B2+
          NAge3B*Settings$KCaloryNeed_B3+
          NAge4B*Settings$KCaloryNeed_B4+
@@ -276,7 +277,8 @@ for(year in years){
          NAge10G*Settings$KCaloryNeed_G10+
          Lactating*(Settings$KCaloryNeed_lactating)]
   
-  PSum[,Calorie_Need_NutritionInstitute:=NAge1_NutInst_B*Settings$KCaloryNeed_NutInst_B1+
+  PSum[,Calorie_Need_NutritionInstitute:=
+         NAge1_NutInst_B*Settings$KCaloryNeed_NutInst_B1+
          NAge2_NutInst_B*Settings$KCaloryNeed_NutInst_B2+
          NAge3_NutInst_B*Settings$KCaloryNeed_NutInst_B3+
          NAge4_NutInst_B*Settings$KCaloryNeed_NutInst_B4+
