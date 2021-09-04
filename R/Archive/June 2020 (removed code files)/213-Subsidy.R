@@ -34,12 +34,14 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TSubsidyW,n,names(Subsidywt)[x])
   }
-  pcols <- intersect(names(TSubsidyW),c("HHID","dimension","Subsidy"))
+  pcols <- intersect(names(TSubsidyW),c("HHID","IndivNo","dimension","Subsidy"))
   TSubsidyW <- TSubsidyW[,pcols,with=FALSE]
   
 
   
   TSubsidyW[is.na(TSubsidyW)] <- 0
+  save(TSubsidyW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TSubsidyW.rda"))
+  
    SubsidyWageData <- TSubsidyW[,lapply(.SD,sum),by=HHID]
    save(SubsidyWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"Subsidy.rda"))
 }

@@ -127,6 +127,7 @@ for(year in years){
     P1[,MarritalState:=factor(MarritalState,1:4,
                               c("Married","Widowed","Divorced","Bachelor"))]
   }
+  save(P1,file=paste0(Settings$HEISProcessedPath,"Y",year,"MembersProperties.rda"))
   
   P <- copy(P1)
   
@@ -147,15 +148,20 @@ for(year in years){
   P[,Size:=1]
   P[,Kids:=ifelse(Relationship=="Child",1,0)]
   P[,NKids:=ifelse(Age<15,1,0)]
+  P[,NKids1:=ifelse(Age<11,1,0)]
   P[,NInfants:=ifelse(Age<=2,1,0)]
   P[,NInfants0:=ifelse(Age==0,1,0)]
+  P[,Bahremand:=ifelse(Student=="TRUE",1,0)]
   P[,NStudents:=ifelse(Age<=18 & Age>=6,1,0)]
-  
+  P[,UN18All:=ifelse(Age<=18,1,0)]
+  P[,UN18:=ifelse(Age<=18,1,0)]
+  P[,NEduParent:=ifelse((Relationship=="Head" | Relationship=="Spouse") & (EduYears>11),1,0)]
+  P[,NEduOther:=ifelse((Relationship=="Parent" | Relationship=="Sister/Brother" | Relationship=="Other Family" | Relationship=="Non-Family") & (EduYears>11),1,0)]
+  P[,Mother:=ifelse(Relationship=="Spouse",1,0)]
   P[,NSmallKids:=ifelse(Age>=3 & Age<=13, 1, 0)]
-
-  P[,NElementary:= ifelse(EduLevel=="Elementary" & Student==TRUE,1,0)]
-  P[,NMiddle:= ifelse(EduLevel=="Middle" & Student==TRUE,1,0)]
-  P[,NHigh:= ifelse(EduLevel=="High" & Student==TRUE,1,0)]
+  P[,NElementary:= ifelse(EduLevel1=="Elementary" & Student==TRUE,1,0)]
+  P[,NMiddle:= ifelse(EduLevel1=="Middle" & Student==TRUE,1,0)]
+  P[,NHigh:= ifelse(EduLevel1=="High" & Student==TRUE,1,0)]
   P[,NCollege:=ifelse(EduLevel=="College" & Student==TRUE,1,0)]
   P[,NBachelors:=ifelse(EduLevel=="Bachelors" & Student==TRUE,1,0)]
   P[,NMasters:=ifelse(EduLevel=="Masters" & Student==TRUE,1,0)]
@@ -163,6 +169,12 @@ for(year in years){
   P[,NUniv:=NCollege+NBachelors+NMasters+NPhD]
   P[,NLiterate:=ifelse(EduLevel!="Illiterate",1,0)]
   P[,NEmployed:=ifelse(ActivityState=="Employed",1,0)]
+  P[,NUnEmployed:=ifelse(ActivityState=="Unemployed",1,0)]
+  
+    P[,NYHigh:=ifelse((Age>17 & Age<25) & ((EduLevel1=="Illiterate") | (EduLevel1=="Elementary") | (EduLevel1=="Middle") | EduLevel1=="High"),1,0)]
+  P[,NY:=ifelse((Age>17 & Age<25),1,0)]
+  P[,NKElementary:=ifelse((Age>11 & Age<18) & ((EduLevel1=="Illiterate")),1,0)]
+  P[,NK:=ifelse((Age>11 & Age<18),1,0)]
   
   #Age Groups 1
   P[,NAge1B:=ifelse(Age==0 & Sex=="Male",1,0)]
@@ -210,9 +222,9 @@ for(year in years){
   P[,NAge9_NutInst_G:=ifelse(Age>60 & Sex=="Female",1,0)]
   
   PSum <- P[,lapply(.SD,sum,na.rm=TRUE),
-            .SDcols=c("Size","NKids","NInfants","NInfants0","NSmallKids",
-                      "NElementary","NHigh","NMiddle","NStudents",
-                      "NCollege","NBachelors","NMasters","NPhD","NUniv",
+            .SDcols=c("Size","NKids","NInfants","NInfants0","NSmallKids","NKids1","UN18","UN18All","NKElementary","NK",
+                      "NElementary","NHigh","NMiddle","NStudents","Bahremand","Mother","NEduParent","NEduOther",
+                      "NCollege","NBachelors","NMasters","NPhD","NUniv","NYHigh","NY",
                       "NAge1B","NAge1G",
                       "NAge2B","NAge2G",
                       "NAge3B","NAge3G",
@@ -234,10 +246,10 @@ for(year in years){
                       "NAge9_NutInst_B","NAge9_NutInst_G",
                       "NDabestan","NRahnamayi",
                       "NDabirestan","NPish",
-                      "NEmployed","NLiterate"),
+                      "NEmployed","NUnEmployed","NLiterate"),
             by="HHID"]
-  
-  
+ UnEmployed<-PSum[,.(HHID,NUnEmployed)] 
+  save(UnEmployed,year,file=paste0(Settings$HEISProcessedPath,"Y",year,"UnEmployed.rda"))
   PSum<- merge(PSum,TInfantMilk,by="HHID",all.x = TRUE)
   PSum[is.na(InfantMilkExpenditure), InfantMilkExpenditure := 0]
   PSum<-PSum[,Lactating:=ifelse(NInfants0>0 & InfantMilkExpenditure==0,1,0)]

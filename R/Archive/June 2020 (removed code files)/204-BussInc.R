@@ -29,7 +29,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   UTbussW <- Tables[[paste0("U",year,tab)]]
   RTbussW <- Tables[[paste0("R",year,tab)]]
   TbussW <- rbind(UTbussW,RTbussW,fill=TRUE)
-  save(TbussW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TbussW.rda"))
   
   
   for(n in names(TbussW)){
@@ -37,7 +36,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TbussW,n,names(busswt)[x])
   }
-  pcols <- intersect(names(TbussW),c("HHID","IndivNo","WorkType","BSector","BussNetIncomeY"))
+  pcols <- intersect(names(TbussW),c("HHID","IndivNo","WorkType","BSector","BussNetIncomeY","JobCode"))
   TbussW <- TbussW[,pcols,with=FALSE]
   
   
@@ -54,7 +53,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 
    TbussW[is.na(TbussW)] <- 0
    TbussW2<-TbussW[WorkType==4,.(HHID,WorkType)]
-   save(TbussW2, file = paste0(Settings$HEISProcessedPath,"Y",year,"TbussW2.rda"))
+   save(TbussW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TbussW.rda"))
    
    
    BussIncomeData <- TbussW[,.(BussNetIncomeY=sum(BussNetIncomeY),

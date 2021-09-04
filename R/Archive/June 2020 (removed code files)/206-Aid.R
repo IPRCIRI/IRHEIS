@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TAidW,n,names(Aidwt)[x])
   }
-  pcols <- intersect(names(TAidW),c("HHID","Code","aid"))
+  pcols <- intersect(names(TAidW),c("HHID","Code","aid","IndivNo"))
   TAidW <- TAidW[,pcols,with=FALSE]
   if(year %in% 63:68){
     TAidW <- TAidW[Code %in% Aidwt$StartCode:Aidwt$EndCode]
@@ -43,7 +43,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     TAidW[,aid:=as.numeric(aid)]
   }
   TAidW[is.na(TAidW)] <- 0
-  AidWageData <- TAidW[,lapply(.SD,sum),by=HHID]
+  save(TAidW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TAidW.rda"))
+  
+    AidWageData <- TAidW[,lapply(.SD,sum),by=HHID]
   save(AidWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"AidWage.rda"))
 }
 endtime <- proc.time()
