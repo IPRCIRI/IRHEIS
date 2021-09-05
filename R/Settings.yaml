@@ -8,8 +8,12 @@ HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 99.0
+startyear: 90.0
 endyear: 99.0
+startmonth: 0.0
+endmonth: 0.0
+predictionyear: 99.0
+predictionmonth: 0.0
 baseBundleyear: 95.0
 OS: Windows
 RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/
