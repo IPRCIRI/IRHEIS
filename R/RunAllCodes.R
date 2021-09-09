@@ -1,6 +1,6 @@
 #source("modifySettings.R")
 #source("104-ExtractAccessFiles.R")
-#source("105-ReadWriteIntoR.R")
+source("105-ReadWriteIntoR.R")
 source("111-HHBase.R")
 source("112-InfantMilkExpenditures.R")
 source("113-Demo.R")
