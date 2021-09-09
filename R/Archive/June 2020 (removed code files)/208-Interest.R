@@ -34,13 +34,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TInterestW,n,names(Interestwt)[x])
   }
-  pcols <- intersect(names(TInterestW),c("HHID","Code","interest"))
+  pcols <- intersect(names(TInterestW),c("HHID","Code","interest","IndivNo"))
   TInterestW <- TInterestW[,pcols,with=FALSE]
   if(year %in% 63:68){
     TInterestW <- TInterestW[Code %in% Interestwt$StartCode:Interestwt$EndCode]
   }
   TInterestW[is.na(TInterestW)] <- 0
-  InterestWageData <- TInterestW[,lapply(.SD,sum),by=HHID]
+  save(TInterestW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TInterestW.rda"))
+  
+   InterestWageData <- TInterestW[,lapply(.SD,sum),by=HHID]
   save(InterestWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"InterestWage.rda"))
 }
 endtime <- proc.time()

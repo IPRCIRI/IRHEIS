@@ -34,13 +34,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(THomemadeW,n,names(Homemadewt)[x])
   }
-  pcols <- intersect(names(THomemadeW),c("HHID","Code","homemade"))
+  pcols <- intersect(names(THomemadeW),c("HHID","Code","homemade","IndivNo"))
   THomemadeW <- THomemadeW[,pcols,with=FALSE]
   if(year %in% 63:68){
     THomemadeW <- THomemadeW[Code %in% Homemadewt$StartCode:Homemadewt$EndCode]
   }
 
   THomemadeW[is.na(THomemadeW)] <- 0
+  save(THomemadeW, file = paste0(Settings$HEISProcessedPath,"Y",year,"THomemadeW.rda"))
+  
   HomemadeWageData <- THomemadeW[,lapply(.SD,sum),by=HHID]
   save(HomemadeWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"HomemadeWage.rda"))
 }

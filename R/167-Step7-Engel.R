@@ -17,7 +17,7 @@ BigEngelTable <- data.table(Region=NA_character_,cluster3=NA_integer_,
                             N=NA_integer_,Engel=NA_real_,
                             FPLine=NA_real_,Year=NA_integer_,WW=NA_real_)[0]
 BigEngelTable1 <- data.table()
-
+Settings$startyear<-Settings$startyear-2
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   

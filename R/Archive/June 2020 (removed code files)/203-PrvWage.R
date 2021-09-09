@@ -53,9 +53,8 @@ for(year in 84:98){#(Settings$startyear:Settings$endyear)){
   }
   
   TprvW <- rbind(RTprvW,UTprvW,fill=TRUE)
-  save(TprvW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TprvW.rda"))
   
-  pcols <- intersect(names(TprvW),c("HHID","IndivNo","WageSector","PrvWageNetIncomeY"))
+  pcols <- intersect(names(TprvW),c("HHID","IndivNo","WageSector","PrvWageNetIncomeY","JobCode"))
   TprvW <- TprvW[,pcols,with=FALSE]
   
   # Consider Cooperative sector as prviate sector
@@ -85,6 +84,7 @@ for(year in 84:98){#(Settings$startyear:Settings$endyear)){
   
   TprvW[is.na(TprvW)] <- 0
   TprvW <- TprvW[PrvWageNetIncomeY>0]
+  save(TprvW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TprvW.rda"))
   
   PrvWageData <- TprvW[,.(PrvWageNetIncomeY=sum(PrvWageNetIncomeY),
                           PrvEarners=.N,
