@@ -19,7 +19,7 @@ library(readxl)
 
 PubWageTable <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_PubWage))
 
-
+year<-98
 for(year in 84:98){#(Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
@@ -53,12 +53,11 @@ for(year in 84:98){#(Settings$startyear:Settings$endyear)){
   }
   
   TpubW <- rbind(RTpubW,UTpubW,fill=TRUE)
-  save(TpubW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TpubW.rda"))
   
   
   #  print(names(TpubW))
   
-  pcols <- intersect(names(TpubW),c("HHID","IndivNo","WageSector","HoursPerDay","DayPerWeek","PubWageNetIncomeY"))
+  pcols <- intersect(names(TpubW),c("HHID","IndivNo","WageSector","HoursPerDay","DayPerWeek","PubWageNetIncomeY","JobCode"))
   #pcols <- intersect(names(TpubW),c("HHID","indiv","shaghel","shoghl","current_shoghl","faaliat","section","hour_in_day","day_in_week","gross_income_m","gross_income_y","mostameri_m","mostameri_y","gheyremostameri_m","gheyremostameri_y","net_income_m","net_income_y"))
   TpubW <- TpubW[,pcols,with=FALSE]
   
@@ -83,6 +82,8 @@ for(year in 84:98){#(Settings$startyear:Settings$endyear)){
   if("HoursPerDay" %in% names(TpubW)){
     print(year)
   }
+  save(TpubW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TpubW.rda"))
+  
   PubWageData <- TpubW[,.(PubWageNetIncomeY=sum(PubWageNetIncomeY),
                           Hours=sum(HoursPerDay*DayPerWeek),
                           PubEarners=.N,

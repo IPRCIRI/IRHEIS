@@ -34,7 +34,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TAgriW,n,names(Agriwt)[x])
   }
-  pcols <- intersect(names(TAgriW),c("HHID","IndivNo","WorkType","BSector","AgriNetIncomeY"))
+  pcols <- intersect(names(TAgriW),c("HHID","IndivNo","WorkType","BSector","AgriNetIncomeY","JobCode"))
   TAgriW <- TAgriW[,pcols,with=FALSE]
   
   if(year <= 68){
@@ -49,7 +49,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   TAgriW[is.na(TAgriW)] <- 0
   TAgriW2<-TAgriW[WorkType==4,.(HHID,WorkType)]
-  save(TAgriW2, file = paste0(Settings$HEISProcessedPath,"Y",year,"TAgriW2.rda"))
+  save(TAgriW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TAgriW.rda"))
   
   
   AgriIncomeData <- TAgriW[,.(AgriNetIncomeY=sum(AgriNetIncomeY),
