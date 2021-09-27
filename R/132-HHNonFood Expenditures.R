@@ -70,7 +70,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
 
-  ty <- HouseTables[Year==year][,1:8]
+  ty <- HouseTables[Year==year][,1:10]
   tab <- ty$Table
   
   UTL <- Tables[[paste0("U",year,tab)]]
@@ -85,6 +85,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   TL <- TL[,pcols,with=FALSE]
   TL <- TL[Code %in% ty$StartCode:ty$EndCode]
   TL[,House_Exp:=as.numeric(House_Exp)]
+  mcs <- ty$MainCodes
+  mcs <- substr(mcs,1,nchar(mcs)-1)
+  maincodes <- eval(parse(text=paste0("c(",mcs,")")))
+  rmcs <- ty$RM
+  rmcs <- substr(rmcs,1,nchar(rmcs)-1)
+  rmcodes <- eval(parse(text=paste0("c(",rmcs,")")))
+  TLx <- TL[Code %in% maincodes]
+  TLx <- TLx[,.(House_Exp=sum(House_Exp)),by=.(HHID,Code)]
+  TLx[Code %in% rmcodes,Code:=max(rmcodes)]
+  TLx[,hhmincode:=min(Code),by=HHID]
+  TLx <- TLx[Code==hhmincode]
+  TLx <- TLx[,.(MainHouse_Exp=sum(House_Exp)),by=.(HHID)]
+  
   TL[,Code:=NULL]
   TL[is.na(TL)] <- 0
   
@@ -94,9 +107,10 @@ for(year in (Settings$startyear:Settings$endyear)){
                    "HHHouseProperties.rda"))
   HousePropData <- HHHouseProperties[,.(HHID,room,area)]
   HousePropData[area==0,area:=NA]
+  HousePropData <- merge(HousePropData,TLx,by = "HHID", all = TRUE)
+  HousePropData <- HousePropData[,MeterPrice:=MainHouse_Exp/area]
 
   HouseData <- merge(HouseData,HousePropData,by = "HHID", all = TRUE)
-  HouseData <- HouseData[,MeterPrice:=House_Exp/area]
   HouseData <- HouseData[,.(HHID,House_Exp,MeterPrice)]
   save(HouseData, file=paste0(Settings$HEISProcessedPath,"Y",year,"House.rda"))
 }
