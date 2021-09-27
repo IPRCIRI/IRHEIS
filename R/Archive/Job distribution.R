@@ -17,7 +17,7 @@ year<-98
 #for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FINALPOORS.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Total2.rda"))
   T2<-Total[,.(HHID,G01,G02,G03,G04,G05,G06,G07,G08,G09,G101,
               G102,G103,G104,G105,G11,G12,G13,G041,G042,G044,G045,

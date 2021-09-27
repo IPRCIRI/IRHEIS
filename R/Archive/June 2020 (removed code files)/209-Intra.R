@@ -34,13 +34,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TIntraW,n,names(Intrawt)[x])
   }
-  pcols <- intersect(names(TIntraW),c("HHID","Code","intra"))
+  pcols <- intersect(names(TIntraW),c("HHID","Code","intra","IndivNo"))
   TIntraW <- TIntraW[,pcols,with=FALSE]
   if(year %in% 63:68){
     TIntraW <- TIntraW[Code %in% Intrawt$StartCode:Intrawt$EndCode]
   }
   
   TIntraW[is.na(TIntraW)] <- 0
+  save(TIntraW, file = paste0(Settings$HEISProcessedPath,"Y",year,"TIntraW.rda"))
+  
   IntraWageData <- TIntraW[,lapply(.SD,sum),by=HHID]
   save(IntraWageData, file = paste0(Settings$HEISProcessedPath,"Y",year,"IntraWage.rda"))
 }

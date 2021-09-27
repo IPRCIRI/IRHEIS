@@ -40,7 +40,7 @@ FinalClusterResults <- data.table(Year = numeric(0),
                                   PovertyHCR = numeric(0), PoorSampleSize = integer(0), PovertyGap = numeric(0), 
                                   PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
 FinalProvinceResults <- data.table(Year = numeric(0),
-                                   ProvinceName=character(0),
+                                   ProvinceName=character(0), Province=character(0),
                                    SampleSize = integer(0), MeterPrice = numeric(0), 
                                    House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
                                    FoodKCaloriesHH_Per = numeric(0), Engel = numeric(0), Total_Exp_Month_Per = numeric(0), 
@@ -49,8 +49,10 @@ FinalProvinceResults <- data.table(Year = numeric(0),
                                    PovertyDepth = numeric(0),PovertyLine_Final= numeric(0))
 
 OriginalFoodShare <- data.table(Year=NA_integer_,Share=NA_integer_,FinalPoor=NA_integer_)[0]
+ProvinceFarsiNames<-as.data.table(read_excel("../Data/ProvinceFarsiNames.xlsx", 
+                                sheet = "Sheet2"))
 
-year<-99
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -172,12 +174,14 @@ for(year in (Settings$startyear:Settings$endyear)){
               PovertyHCR=weighted.mean(FinalPoor,Weight*Size),
               Durable_Adds_Final=weighted.mean((Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable,Weight))
            ,by="ProvinceName"]
-  X2 <- MD[FinalPoor==1,
+  X1<-merge(X1,ProvinceFarsiNames[,.(ProvinceName,Province)],by=c("ProvinceName"))
+  
+   X2 <- MD[FinalPoor==1,
            .(PoorSampleSize=.N,
              PovertyGap=weighted.mean(FGT1M,Weight*Size),
              PovertyDepth=weighted.mean(FGT2M,Weight*Size)),
            ,by="ProvinceName"]
-  
+    
   
   X1[,Year:=year]
   X1[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]
@@ -209,6 +213,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   DurableD[,PovertyLine_Final:=PovertyLine*(1+Durable_Adds_Final)]  
   ##  Total_Exp_Month/TOriginalFoodExpenditure  * FPLIne *(Total_Exp_Month_nondurable+Durable_NoDep+Durable_Emergency)/Total_Exp_Month_nondurable  )
+  save(DurableD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPovertyLine.rda"))
+  
   MD <- merge(MD,DurableD[,.(cluster3,Region,PovertyLine_Final)],by=c("Region","cluster3"))
   
   Z1 <- MD[,.(Share=weighted.mean(TOriginalFoodExpenditure/FoodExpenditure,Weight)),by=FinalPoor]

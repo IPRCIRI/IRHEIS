@@ -30,6 +30,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   UOtherIncomeData <- Tables[[paste0("U",year,tab)]]
   ROtherIncomeData <- Tables[[paste0("R",year,tab)]]
   OtherIncomeData <- rbind(UOtherIncomeData,ROtherIncomeData,fill=TRUE)
+  
   OtherIncomeData <- OtherIncomeData[,lapply(.SD, as.numeric)]
 
   if(!is.na(OtherITb$Code)){  # 63 to 68

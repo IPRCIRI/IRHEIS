@@ -27,7 +27,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   Bfd2<-Bfd2[FoodType=="Meat"]
   Bfd2<-Bfd2[order(FGrams)]
-  Meat<-as.data.table(Bfd2[,weighted.median(FGrams/EqSizeCalory,Weight*Size)])
+  Meat<-as.data.table(Bfd2[,weighted.mean(FGrams/EqSizeCalory,Weight*Size)])
   Meat<-Meat[,Year:=year]
   
   Bfd2 <- Bfd2[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
@@ -56,7 +56,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-MD[order(Total_Exp_Month_Per)]
   MedianEXP<-as.data.table(MD[,weighted.median(Total_Exp_Month_Per,Weight*Size)])
   MedianEXP<-MedianEXP[,Year:=year]
-  if (year==90){
+  if (year==Settings$startyear){
     BASKET<-BaseYearBasket
     CALORY<-Calory
     Cal<-C
@@ -75,7 +75,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(Bfd2[,weighted.mean(FGrams>0,Weight)],"\t")
   Bfd2[,Decile:=NULL]
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
- Bfd2<-merge(Bfd2,Deciles)
+ Bfd2<-merge(Bfd2,Decile,by="HHID")
 Bfd2[,weighted.mean(FGrams/EqSizeCalory,Weight),by="Decile"][order(Decile)]
 }
 medEXP<-merge(medEXP,inflation,by=c("Year"))

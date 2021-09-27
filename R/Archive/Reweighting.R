@@ -74,3 +74,10 @@ if (year==98){
   Weight_R<-MD[Region=="Rural",sum(Weight*Size)/1000]
   MD[,Weight:=ifelse(Region=="Urban",Weight*Pop_U98/Weight_U,Weight*Pop_R98/Weight_R)]   
 }
+
+Pop<-MD[,sum(Weight*Size),by=c("CountyName")]
+Geoo <- as.data.table(read_excel("C:/HEIS/DataResults/Geo.xlsx",
+                                 sheet = "Sheet1"))
+
+Pop<-merge(Pop,Geoo[,.(CountyName,Province,County)],by=c("CountyName"))
+write_xlsx(Pop,path=paste0(Settings$HEISResultsPath,"/Pop.xlsx"),col_names=T)

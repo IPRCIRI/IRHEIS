@@ -27,10 +27,20 @@ Bfd2 <- merge(Bfd2,MD[,.(HHID,Region,Weight,Size,
 Bfd2[is.na(Bfd2)]<-0
 Bfd2[Price<0.1,Price:=NA]
 
-BaseYearBasket <- Bfd2[Selected_Group==1,
-                       .(FGramspc=weighted.mean(FGrams/EqSizeCalory,Weight*Size),
-                         FKCalspc=weighted.mean(FoodKCalories/EqSizeCalory,Weight*Size)),
-                       by=.(FoodType,Region)]
+BaseYearBasket <- Bfd2[,
+                       .(FGrams_0=sum(FGrams),
+                         FoodKCalories_0=sum(FoodKCalories),
+                         Region=first(Region), Weight=first(Weight),
+                         Size=first(Size), EqSizeCalory=first(EqSizeCalory),
+                         Selected_Group=first(Selected_Group)),
+                       by=.(HHID,FoodType)]
+BaseYearBasket <- BaseYearBasket[Selected_Group==1,
+                                 .(FGramspc=weighted.mean(FGrams_0/EqSizeCalory,
+                                                          Weight*Size),
+                                   FKCalspc=weighted.mean(FoodKCalories_0/EqSizeCalory,
+                                                          Weight*Size)),
+                                 by=.(FoodType,Region)]
+
 BaseYearBasket[,BasketCals:=sum(FKCalspc),by=Region]
 BaseYearBasket[,StandardFGramspc:=FGramspc*Settings$KCaloryNeed_Adult_WorldBank/BasketCals]
 
@@ -49,6 +59,13 @@ for(year in (Settings$startyear:Settings$endyear)){
                            EqSizeCalory,Selected_Group)],by="HHID")
   Bfd2[is.na(Bfd2)]<-0
   Bfd2[Price<0.1,Price:=NA]
+  Bfd2 <- Bfd2[,
+               .(Price=weighted.mean(Price,Weight*Size*FGrams,na.rm = TRUE),
+                 FGrams=sum(FGrams),
+                 cluster3=first(cluster3),
+                 Region=first(Region), Weight=first(Weight),
+                 Size=first(Size),Selected_Group=first(Selected_Group)),
+               by=.(HHID,FoodType)]
   Bfd3 <- Bfd2[Selected_Group==1 & !is.na(Price),
                .(MedPrice=weighted.median(Price,Weight*Size*FGrams,na.rm = TRUE),
                  MeanPrice=weighted.mean(Price,Weight*Size*FGrams,na.rm = TRUE)),
@@ -89,3 +106,4 @@ for(year in (Settings$startyear:Settings$endyear)){
 endtime <- proc.time()
 cat("\n\n============================\nIt took",
     (endtime-starttime)["elapsed"]," seconds")
+
