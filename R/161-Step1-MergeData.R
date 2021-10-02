@@ -14,7 +14,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 
-for(year in (Settings$startyear:Settings$endyear)){
+for(year in (88:99)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))

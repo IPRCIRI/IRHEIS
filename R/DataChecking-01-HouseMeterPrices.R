@@ -4,6 +4,9 @@ starttime <- proc.time()
 cat("\n\n================ Nominal to Real =====================================\n")
 
 library(yaml)
+mydir <- "E:/Refah Economy/IRHEIS-master update30-9/IRHEIS-master/R"
+setwd(mydir)
+
 Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
@@ -11,7 +14,7 @@ library(data.table)
 library(ggplot2)
 
 bigMD <- data.table()
-for(year in (Settings$startyear:Settings$endyear)){
+for(year in (88:99)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
