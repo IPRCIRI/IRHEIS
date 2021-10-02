@@ -16,6 +16,8 @@ library(writexl)
 library(ggplot2)
 library(spatstat)
 
+
+
 FinalCountryResults <- data.table(Year = numeric(0), 
                                   SampleSize = integer(0), MeterPrice = numeric(0), 
                                   House_Share = numeric(0), FPLine = numeric(0), Bundle_Value = numeric(0), 
@@ -53,7 +55,7 @@ ProvinceFarsiNames<-as.data.table(read_excel("../Data/ProvinceFarsiNames.xlsx",
                                 sheet = "Sheet2"))
 
 
-for(year in (Settings$startyear:Settings$endyear)){
+for(year in (90:99)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------

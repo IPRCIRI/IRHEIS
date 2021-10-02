@@ -8,7 +8,6 @@ rm(list=ls())
 starttime <- proc.time()
 cat("\n\n================ Saving Cluster Info===============================\n")
 library(yaml)
-
 Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
@@ -17,7 +16,7 @@ library(data.table)
 #ClusterInfo <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_GeoX))
 ClusterInfo <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_GeoX_New))
 
-for(year in (Settings$startyear:Settings$endyear)){
+for(year in (88:99)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 
