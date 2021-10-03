@@ -247,10 +247,10 @@ for(year in (90:99)){
 #write.csv(A5,file="A5.csv")
 #write.csv(A6,file="A6.csv")
 
-write_xlsx(FinalClusterResults,path=paste0(Settings$HEISResultsPath,"/ClusterResults.xlsx"),col_names=T)
-write_xlsx(FinalCountryResults,path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
-write_xlsx(FinalRegionResults,path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)
-write_xlsx(FinalProvinceResults,path=paste0(Settings$HEISResultsPath,"/ProvinceResults.xlsx"),col_names=T)
+write_xlsx(FinalClusterResults[Year>Settings$startyear+2,],path=paste0(Settings$HEISResultsPath,"/ClusterResults.xlsx"),col_names=T)
+write_xlsx(FinalCountryResults[Year>Settings$startyear+2,],path=paste0(Settings$HEISResultsPath,"/CountryResults.xlsx"),col_names=T)
+write_xlsx(FinalRegionResults[Year>Settings$startyear+2,],path=paste0(Settings$HEISResultsPath,"/RegionResults.xlsx"),col_names=T)
+write_xlsx(FinalProvinceResults[Year>Settings$startyear+2,],path=paste0(Settings$HEISResultsPath,"/ProvinceResults.xlsx"),col_names=T)
 
 ggplot(MD, aes(HEduYears)) + geom_density(aes(weights=Weight))
 
