@@ -18,11 +18,16 @@ library(data.table)
 source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
 # Function Defs ---------------------------------------------------------------------------------
 CalcTornqvistIndex <- function(DataTable){
+  DataTable <- SMD
+  DataTable <- DataTable[,MeterPrice:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
+                                       ,NA,MeterPrice)]
+  DataTable <- DataTable[,House_Exp:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
+                                       ,NA,House_Exp)]
   
-  X <- DataTable[,.(N=.N,wj1=weighted.mean(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
-                    wj2=weighted.mean(House_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
-                    pj1=weighted.mean(Bundle_Value,Weight,na.rm = TRUE),
-                    pj2=weighted.mean(MeterPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
+  X <- DataTable[,.(N=.N,wj1=weighted.median(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
+                    wj2=weighted.median(House_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
+                    pj1=weighted.median(Bundle_Value,Weight,na.rm = TRUE),
+                    pj2=weighted.median(MeterPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
   
   X[,wj:=wj1+wj2]
   X[,wj1:=wj1/wj]
@@ -96,6 +101,7 @@ for(year in (88:99)){
   
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
   SMD <- MD[,.(HHID,Region,
                  House_Exp,FoodExpenditure,Total_Exp_Month,
@@ -108,6 +114,7 @@ for(year in (88:99)){
                  Transportation_Exp, Other_Exp
                  ,Add_to_NonDurable,Medical_Exp,
                  Durable_NoDep,Durable_Emergency,OwnedDurableItemsDepreciation)]
+  SMD <- merge(SMD,HHHouseProperties[,.(HHID,tenure)],by="HHID")
 
 
   #Choose one of these
