@@ -8,8 +8,8 @@ HEISWeightsPath: ../Data/SamplingWeights/
 HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
-startyear: 90.0
-endyear: 99.0
+startyear: 98.0
+endyear: 98.0
 startmonth: 0.0
 endmonth: 0.0
 predictionyear: 99.0
@@ -20,6 +20,8 @@ RawDataWebAddress: https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95
 MetaDataFilePath: ../Data/MetaData.xlsx
 GeoInfoFilePath: ../Data/GeoInfo.Shahrestan.xlsx
 InflationDataFilePath: ../Data/inflation.xlsx
+PriceCodesFilePath: ../Data/PriceCodes.xlsx
+CPIPath: ../Data/CPI/
 MDS_CFN: CompressedFileNames
 MDS_P1Cols: P1Cols
 MDS_P2Cols: P2Cols
