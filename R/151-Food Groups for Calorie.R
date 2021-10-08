@@ -3,6 +3,7 @@
 #
 # Copyright © 2018-2020: Arin Shahbazian & Majid Einian
 # Licence: GPL-3
+#Total Food Groups Considered to calory be calculated
 
 rm(list=ls())
 starttime <- proc.time()
@@ -14,12 +15,12 @@ library(stringr)
 library(readxl)
 
 cat("\n\n================ FoodGroups =====================================\n")
-TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_FoodGroups))
+TFoodGroups <- data.table(read_excel(Settings$MetaDataFTFilePath,Settings$MDS_FoodGroups))
 FoodTypeTables <- list()
 for(i in 1:nrow(TFoodGroups))
-  FoodTypeTables[[i]] <- data.table(read_excel(Settings$MetaDataFilePath,sheet=TFoodGroups[i,SheetName]))
+  FoodTypeTables[[i]] <- data.table(read_excel(Settings$MetaDataFTFilePath,sheet=TFoodGroups[i,SheetName]))
 
-for(year in (Settings$startyear:Settings$endyear)){
+for(year in (88:99)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   BigFData <- data.table(HHID=NA_integer_,FoodCode=NA_integer_,

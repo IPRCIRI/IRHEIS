@@ -18,7 +18,8 @@ BigEngelTable <- data.table(Region=NA_character_,cluster3=NA_integer_,
                             FPLine=NA_real_,Year=NA_integer_,WW=NA_real_)[0]
 BigEngelTable1 <- data.table()
 Settings$startyear<-Settings$startyear-2
-for(year in (Settings$startyear:Settings$endyear)){
+
+for(year in (88:99)){
   cat(paste0("\nYear:",year,"\t"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
