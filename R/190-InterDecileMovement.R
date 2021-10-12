@@ -26,6 +26,54 @@ ep <- function(t){
   return((parse(text=t)))
 }
 
+# This Function merges a public_sector column to data. public_sector is
+# a dummy variable that is 1 if at least one member of the household works
+# in public sector and 0 otherwise.
+add_public_sector <- function(year, datatable){
+  library(yaml)
+  Settings <- yaml.load_file("Settings.yaml")
+  library(haven)
+  library(readxl)
+  library(data.table)
+  library(stringr)
+  
+  P1Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P1Cols))
+  
+  pub_wage_meta <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_PubWage))
+  buss_wage_meta <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_BussInc))
+  
+  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
+
+  pub_wage_meta_y <-pub_wage_meta[Year==year]
+  buss_wage_meta_y<- buss_wage_meta[Year==year]
+  pubw_t_name <-pub_wage_meta_y$Table
+  buss_t_name <- buss_wage_meta_y$Table
+  Upubt <- Tables[[paste0("U",year,pubw_t_name)]]
+  Rpubt <- Tables[[paste0("R",year,pubw_t_name)]]
+  Ubusst <- Tables[[paste0("U",year,buss_t_name)]]
+  Rbusst <- Tables[[paste0("R",year,buss_t_name)]]
+  Tpubt <- rbind(Upubt, Rpubt)
+  Tbusst <- rbind(Ubusst, Rbusst)
+  #Twage
+  for(n in names(Tpubt)){
+    x <- which(pub_wage_meta_y==n)
+    if(length(x)>0)
+      setnames(Tpubt,n,names(pub_wage_meta_y)[x])
+  }
+  for(n in names(Tbusst)){
+    x <- which(buss_wage_meta_y==n)
+    if(length(x)>0)
+      setnames(Tbusst,n,names(buss_wage_meta_y)[x])
+  }
+  Twage = rbind(Tpubt, Tbusst, fill=TRUE)
+  # Twage[,HHID:=as.character(HHID)]
+  Twage[, pub_sector:= fifelse(WageSector==1,1,0,na = 0)]
+  Twage2 <- Twage[,c('HHID','pub_sector')]
+  Twage3 <- Twage2[,.(public_sec= fifelse(sum(pub_sector)>0,1,0)), by='HHID']
+  datatable <- merge(datatable, Twage3, by = "HHID", all.x=TRUE)
+  return(datatable) 
+}
 
 draw_flow_rectangle <- function(DT,year){
   colnames(DT) <- c("source", "target", "value") 
@@ -50,6 +98,7 @@ draw_flow_rectangle <- function(DT,year){
 }
 
 
+public_boolean = TRUE
 # import yearly DataTables ,keep needed columns
 # and append them to create total DataTable
 years = Settings$startyear:Settings$endyear
@@ -71,33 +120,48 @@ for(year in years){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
   base_year = MD[,c("HHID", "Year", "Decile", "Percentile", "FinalPoor", "FoodPoor",
                "Size", "Weight")]
+  if (public_boolean){
+    base_year = add_public_sector(year, base_year)
+  }
   # load target year
   load(file=paste0(Settings$HEISProcessedPath,"Y",year+1,"FinalPoor.rda"))
   target_year = MD[,c("HHID", "Year", "Decile","Percentile", "FinalPoor", "FoodPoor",
                     "Size", "Weight")]
+  if (public_boolean){
+    target_year = add_public_sector(year+1, target_year)
+  }
   data_total<-rbind(base_year,target_year)
 
   # duplicated HHIDs are the families who are in the dataset for two
   # consecutive year
   data_total[, duplicates := .N > 1, by = c("HHID")]
-  
+  data_total[, public_sec:=fifelse(is.na(public_sec),0,public_sec)]
   # adjust the weight of the duplicated families to represent 
   # the whole dateset.
-  data_total[, weight_tot_panel := sum(Weight), by = c("Year", "duplicates")]
-  data_total[, weight_tot := sum(Weight), by = c("Year")]
+  if (public_boolean){
+    data_total[, weight_tot_panel := sum(Weight*Size*public_sec), by = c("Year", "duplicates")]
+    data_total[, weight_tot := sum(Weight*Size*public_sec), by = c("Year")]
+  } else{
+    data_total[, weight_tot_panel := sum(Weight*Size), by = c("Year", "duplicates")]
+    data_total[, weight_tot := sum(Weight*Size), by = c("Year")]
+  }
   data_total[, Weight_panel:= Weight*weight_tot/weight_tot_panel]
   
   # remove families who were present only one-time in the datasets of
   # the two consecutive years
   data_total<-data_total[duplicates==TRUE][order(HHID, Year)]
-  
+
+
   #reshape long panel to wide panel data
   data_wide<-reshape(data_total, direction = "wide", sep = "_",
-                     v.names  = c("Size","Decile","Percentile","FinalPoor",
+                     v.names  = c("public_sec","Size","Decile","Percentile","FinalPoor",
                                   "FoodPoor","Weight_panel", "Weight"),
                      drop = c("weight_tot", "weight_tot_panel", "duplicates"),
                      timevar = "Year", idvar = "HHID")
-  
+  text <- paste0("data_wide <- data_wide[public_sec_",year,"==1 & public_sec_",year+1,"==1]")
+  if (public_boolean){
+    eval(ep(text)) 
+  }
   # adjust weight and size of the households
   text <- paste0("Weight_panel:= (Weight_panel_",year,"+Weight_panel_",year+1,")/2")
   data_wide[,eval(ep(text))]
