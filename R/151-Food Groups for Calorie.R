@@ -9,6 +9,12 @@ starttime <- proc.time()
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
 
+leapyears <- c(seq(1280,1308,by=4),
+               seq(1313,1341,by=4),
+               seq(1346,1370,by=4),
+               seq(1375,1403,by=4),
+               seq(1408,1469,by=4))
+
 library(data.table)
 library(stringr)
 library(readxl)
@@ -28,7 +34,13 @@ for(year in (Settings$startyear:Settings$endyear)){
                          FoodKCalories=NA_real_,
                          FoodProtein=NA_real_)[0]
   
+  
+  
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
+  load(file = paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  
+  DayCount <- HHBase[,.(HHID,Days=ifelse(Month<=6,31,ifelse(Month<=11,30,ifelse(Year %in% leapyears,30,29))))]
+  
   
   for(i in 1:nrow(TFoodGroups)){
     cat(paste0(TFoodGroups[i,SheetName],", "),"\t")
@@ -81,8 +93,9 @@ for(year in (Settings$startyear:Settings$endyear)){
     FData <- TF[,lapply(.SD,sum),by=.(HHID,Code)]
     FData[!is.na(FGrams), Price:=Expenditure/(FGrams/1000)]
     FData[, FoodType:=TFoodGroups[i,FoodType]]
-    FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams/30]
-    FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams/30]
+    FData <- merge(FData,DayCount)
+    FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams/Days]
+    FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams/Days]
     FData[is.infinite(Price),Price:=NA]
     
     BigFData <- rbind(BigFData,
