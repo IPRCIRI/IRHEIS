@@ -27,7 +27,7 @@ for(section in sections_names){
   SectionTables <- data.table(read_excel(Settings$MetaDataFilePath,
                                          sheet=section_sheet))
   
-  for(year in (Settings$startyear:Settings$endyear)){
+  for(year in (88:99)){
     cat(paste0("\n------------------------------\nYear:",year,"\n"))
     load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
     st <- SectionTables[Year==year]
@@ -65,7 +65,7 @@ for(section in sections_names){
 cat("\n\n================ Section4:HHHouse =====================================\n")
 HouseTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_House))
 
-for(year in (Settings$startyear:Settings$endyear)){
+for(year in (88:99)){
   cat(paste0("\n------------------------------\nYear:",year,"\t"))
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))

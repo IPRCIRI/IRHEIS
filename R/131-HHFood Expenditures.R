@@ -15,9 +15,9 @@ library(data.table)
 library(stringr)
 library(readxl)
 
-FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Food))
+FoodTables <- data.table(read_excel(Settings$MetaDataFTFilePath,sheet=Settings$MDS_Food))
 
-for (year in (Settings$startyear:Settings$endyear)){
+for (year in (88:99)){
   cat(paste0("\n------------------------------\nYear:", year, "\n"))
   load(file = paste0(Settings$HEISRawPath, "Y", year, "Raw.rda"))
   ft <- FoodTables[Year == year]
