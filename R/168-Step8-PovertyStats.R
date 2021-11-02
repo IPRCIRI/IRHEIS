@@ -55,7 +55,7 @@ ProvinceFarsiNames<-as.data.table(read_excel("../Data/ProvinceFarsiNames.xlsx",
                                 sheet = "Sheet2"))
 
 
-for(year in (90:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   # load data --------------------------------------

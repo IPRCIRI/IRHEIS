@@ -19,7 +19,7 @@ DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$
 
 mst <- min(DurableGroups$StartYear)
 
-for(year in (max(88,mst):99)){
+for(year in (max(Settings$startyear,mst):Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableData_Detail.rda"))

@@ -15,7 +15,7 @@ library(readxl)
 library(data.table)
 library(spatstat)
 
-for(year in (88:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN2.rda"))
