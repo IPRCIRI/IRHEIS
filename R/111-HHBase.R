@@ -16,7 +16,7 @@ library(data.table)
 library(stringr)
 library(readxl)
 
-year <- 99
+#year <- 99
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
