@@ -23,7 +23,7 @@ DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
                                       sheet=Settings$MDS_DurableItems))
 
 
-for(year in (88:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   ct <- DurableTables[Year==year]

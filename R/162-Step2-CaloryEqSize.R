@@ -15,7 +15,7 @@ library(readxl)
 library(data.table)
 
 
-for(year in (88:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   cat("\n")
   

@@ -18,8 +18,8 @@ library(readxl)
 
 
 P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
-year<-90
-for(year in 88:99){    
+#year<-90
+for(year in (Settings$startyear:Settings$endyear)){    
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   

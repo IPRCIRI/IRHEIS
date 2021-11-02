@@ -16,7 +16,7 @@ library(data.table)
 #ClusterInfo <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_GeoX))
 ClusterInfo <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_GeoX_New))
 
-for(year in (88:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
 

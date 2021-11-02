@@ -89,7 +89,7 @@ UpdateForDurableDepr <- function(DataTable,ODIDep){
 DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
                                       sheet=Settings$MDS_DurableItemsDepr))
 
-for(year in (88:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   # load data --------------------------------------

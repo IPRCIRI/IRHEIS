@@ -13,7 +13,7 @@ library(data.table)
 library(readxl)
 
 cat("\n\n================ FoodGroups =====================================\n")
-for(year in (88:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))

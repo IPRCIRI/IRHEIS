@@ -18,8 +18,8 @@ source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
 DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
                                       sheet=Settings$MDS_DurableItemsDepr))
 
-year <- 98
-for(year in (88:99)){
+#year <- 98
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",

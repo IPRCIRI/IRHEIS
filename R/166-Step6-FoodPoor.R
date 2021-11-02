@@ -44,7 +44,7 @@ BaseYearBasket <- BaseYearBasket[Selected_Group==1,
 BaseYearBasket[,BasketCals:=sum(FKCalspc),by=Region]
 BaseYearBasket[,StandardFGramspc:=FGramspc*Settings$KCaloryNeed_Adult_WorldBank/BasketCals]
 
-for(year in (88:99)){
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
