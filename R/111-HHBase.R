@@ -16,7 +16,7 @@ library(data.table)
 library(stringr)
 library(readxl)
 
-#year <- 99
+year <- 99
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -151,7 +151,8 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   if(year >=99){
     HHWeights <- HHBase[,.(HHID,Weight,Year)]
-    save(HHWeights,file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+    save(HHWeights,file=paste0(Settings$HEISWeightsPath,
+                               Settings$HEISWeightFileName,year,".rda"))
   }
 
   HHBase <- HHBase[,.(HHID,Year,Quarter,Month,
@@ -183,8 +184,6 @@ for(year in (Settings$startyear:Settings$endyear)){
                                paste0("Sh_",CountyName))]
   HHBase[,NewArea_Name:=as.factor(NewArea_Name)]
   
-  
- 
     
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
 
@@ -194,3 +193,51 @@ for(year in (Settings$startyear:Settings$endyear)){
 endtime <- proc.time()
 cat("\n\n============================\nIt took ")
 cat((endtime-starttime)[3])
+
+
+
+for(year in (Settings$startyear:Settings$endyear)){
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
+  cat("\n",year,":",(length(unique(HHBase$CountyCode))))
+  HHBase[,Geo4:=str_pad(CountyCode, 4, pad = "0")]
+  
+  if(year %in% 84:86){
+    HHBase[Geo4=="2824", Geo4:="2803"] # Jaram
+    HHBase[Geo4=="2809", Geo4:="2804"] # Shirvan
+    HHBase[Geo4=="2813", Geo4:="2805"] # Faruj     # Guess!
+    HHBase[Geo4=="2825", Geo4:="2806"] # Mane & Semelqan
+    
+    HHBase[Geo4=="2903", Geo4:="2901"] # Birjand
+    HHBase[Geo4=="2912", Geo4:="2906"] # Sarbishe  # Just a guess
+    HHBase[Geo4=="2921", Geo4:="2905"] # Nehbandan
+    HHBase[Geo4=="2911", Geo4:="2903"] # Serayan   # Just a guess
+    #HHBase[Geo4=="0911", Geo4:="2907"] # Ferdows
+  }
+  
+  
+  if(year %in% 87:91){
+    D[Geo2=="30" & Geo4=="2305", Geo4:="3001"]
+    D[Geo2=="30" & Geo4=="2308", Geo4:="3002"]
+    D[Geo2=="30" & Geo4=="2315", Geo4:="3003"]
+  }
+  
+  HHBase[,FGeo4:=Geo4]
+  
+  HHBase[Geo4=="0901", FGeo4:="2801"] # Esfarayen
+  HHBase[Geo4=="0902", FGeo4:="2802"] # Bojnourd
+  HHBase[Geo4=="0903", FGeo4:="2901"] # Birjand
+  HHBase[Geo4=="0909", FGeo4:="2804"] # Shirvan
+  HHBase[Geo4=="0910", FGeo4:="2911"] # Tabas (1)
+  HHBase[Geo4=="0911", FGeo4:="2907"] # Ferdows
+  HHBase[Geo4=="0912", FGeo4:="2904"] # Qaenat
+  HHBase[Geo4=="0921", FGeo4:="2905"] # Nehbandan
+  HHBase[Geo4=="0924", FGeo4:="2803"] # Jajarm
+  HHBase[Geo4=="0925", FGeo4:="2806"] # Mane & Semelqan
+  HHBase[Geo4=="2110", FGeo4:="2911"] # Tabas (2)
+  HHBase[Geo4=="2305", FGeo4:="3001"] # Karaj
+  HHBase[Geo4=="2308", FGeo4:="3002"] # Savojbolaq
+  HHBase[Geo4=="2315", FGeo4:="3003"] # Nazarabad
+  
+  HHBase[,FGeo2:=substr(FGeo4,1,2)]
+  
+}
