@@ -39,8 +39,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   
-  DayCount <- HHBase[,.(HHID,Days=ifelse(Month<=6,31,ifelse(Month<=11,30,ifelse(Year %in% leapyears,30,29))))]
-  
+  if(length(which(is.na(HHBase$Month)))>1){     # For years withouout month info`
+    DayCount <- HHBase[,.(HHID,Days=ifelse(Quarter<=2,31,30))]
+  }else{
+    DayCount <- HHBase[,.(HHID,
+                          Days=ifelse(Month<=6,31,
+                                      ifelse(Month<=11,30,
+                                             ifelse(Year %in% leapyears,30,29))))]
+  }
   
   for(i in 1:nrow(TFoodGroups)){
     cat(paste0(TFoodGroups[i,SheetName],", "),"\t")
@@ -100,8 +106,11 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     BigFData <- rbind(BigFData,
                       FData[,.(HHID,FoodCode=Code,FoodType,Price,Expenditure,FGrams,FoodKCalories,FoodProtein)])
-    save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
-    }
+    
+  }
+  save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+  cat("\n\n++========++\n||",nrow(BigFData[!is.na(FoodKCalories)]),"||\n++========++\n")
+  
 }
 endtime <- proc.time()
 cat("\n\n==============Finish==============\nIt took ",(endtime-starttime)[3],"seconds.")
