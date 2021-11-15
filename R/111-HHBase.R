@@ -200,6 +200,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   cat("\n",year,":",(length(unique(HHBase$CountyCode))))
   HHBase[,Geo4:=str_pad(CountyCode, 4, pad = "0")]
+  HHBase[,Geo2:=str_pad(ProvinceCode, 2, pad = "0")]
   
   if(year %in% 84:86){
     HHBase[Geo4=="2824", Geo4:="2803"] # Jaram
@@ -216,9 +217,9 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
   if(year %in% 87:91){
-    D[Geo2=="30" & Geo4=="2305", Geo4:="3001"]
-    D[Geo2=="30" & Geo4=="2308", Geo4:="3002"]
-    D[Geo2=="30" & Geo4=="2315", Geo4:="3003"]
+    HHBase[Geo2=="30" & Geo4=="2305", Geo4:="3001"]
+    HHBase[Geo2=="30" & Geo4=="2308", Geo4:="3002"]
+    HHBase[Geo2=="30" & Geo4=="2315", Geo4:="3003"]
   }
   
   HHBase[,FGeo4:=Geo4]
