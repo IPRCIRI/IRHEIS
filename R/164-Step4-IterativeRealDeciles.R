@@ -18,7 +18,7 @@ library(data.table)
 source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
 # Function Defs ---------------------------------------------------------------------------------
 CalcTornqvistIndex <- function(DataTable){
-  DataTable <- SMD
+  #DataTable <- SMD
   DataTable <- DataTable[,MeterPrice:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
                                        ,NA,MeterPrice)]
   DataTable <- DataTable[,House_Exp:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
