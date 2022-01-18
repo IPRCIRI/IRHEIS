@@ -22,7 +22,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
-  ty <- HouseTables[Year==year][,1:7]
+  ty <- HouseTables[Year==year]
   tab <- ty$Table
   
   UTL <- Tables[[paste0("U",year,tab)]]
@@ -33,10 +33,10 @@ for(year in (Settings$startyear:Settings$endyear)){
     if(length(x)>0)
       setnames(TL,n,names(ty)[x])
   }
-  pcols <- intersect(names(TL),c("HHID","Code","ServiceExp"))
+  pcols <- intersect(names(TL),c("HHID","Code","House_Exp"))
   TL <- TL[,pcols,with=FALSE]
-  TL <- TL[Code %in% ty$StartCode:ty$EndCode]
-  TL[,ServiceExp:=as.numeric(ServiceExp)]
+  TL <- TL[Code %in% ty$OwnedHouseServiceStartCode:ty$OwnedHouseServiceEndCode]
+  TL[,House_Exp:=as.numeric(House_Exp)]
 
   TL[,Code:=NULL]
 
