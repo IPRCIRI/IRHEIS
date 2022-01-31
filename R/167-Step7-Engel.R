@@ -17,15 +17,20 @@ BigEngelTable <- data.table(Region=NA_character_,cluster3=NA_integer_,
                             N=NA_integer_,Engel=NA_real_,
                             FPLine=NA_real_,Year=NA_integer_,WW=NA_real_)[0]
 BigEngelTable1 <- data.table()
-Settings$startyear<-Settings$startyear-2
+#Settings$startyear<-Settings$startyear-2
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
   
-  MD<-MD[,EngelH:=(TOriginalFoodExpenditure/Total_Exp_Month)]
-  
+  MD<-MD[,EngelH:=TOriginalFoodExpenditure/Total_Exp_Month]
+  MD[is.na(Durable_Dep),Durable_Dep:=0]
+  sm <- MD[TOriginalFoodExpenditure_Per>0.8*FPLine &
+               TOriginalFoodExpenditure_Per<1.2*FPLine,
+     .(.N, mean(Durable_Dep),mean(OwnedDurableItemsDepreciation))]
+  sm[,V3:=V2/V1]
+  cat(unlist(sm))
   
   EngelD <- MD[ TOriginalFoodExpenditure_Per>0.8*FPLine &
                    TOriginalFoodExpenditure_Per<1.2*FPLine,
