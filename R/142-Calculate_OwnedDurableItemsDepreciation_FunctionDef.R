@@ -2,7 +2,17 @@ Calculate_OwnedDurableItemsDepreciation <- function(DurableData_ExpDetail,
                                                     DurableItems_OwningDetail,
                                                     by="Item",
                                                     Decile=NULL,
-                                                    DurableItems=NA){
+                                                    DurableItems=NA,
+                                                    g2=c(53111, 53112, 53113,
+                                                         53116, 53125, 53129, 
+                                                         53132, 53216, 71111, 
+                                                         71112, 71116, 71117, 
+                                                         71211, 71311, 71312, 
+                                                         72111, 72118, 72119, 
+                                                         82111, 82113, 91111, 
+                                                         91112, 91113, 91114, 
+                                                         91115, 91117, 91122, 
+                                                         91128, 91129, 91311)){
   
   Ownsm <- melt(data = DurableItems_OwningDetail,id.vars = "HHID",
                 measure.vars = names(DurableItems_OwningDetail)[-1],
@@ -15,14 +25,13 @@ Calculate_OwnedDurableItemsDepreciation <- function(DurableData_ExpDetail,
     DurableData_ExpDetail <- merge(DurableData_ExpDetail,Decile,by="HHID")
     Ownsm <- merge(Ownsm,Decile,by="HHID")
     
-    DurableDepr <- data.table(expand.grid(Item=DurableItems$Item,Decile=factor(1:10)))
+    DurableDepr <- data.table(expand.grid(Item=DurableItems$Item,
+                                          Decile=factor(1:10)))
   }
-  # if(is.na(DurableItems)){
-  #   library(readxl)
-  #   DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
-  #                                         sheet=Settings$MDS_DurableItemsDepr))
-  # }
-  DurableValues <- DurableData_ExpDetail[,.(Value=mean(Durable_Exp)),by=by]
+
+  DurableValues <- DurableData_ExpDetail[Code %in% g2
+                                         ,.(Value=mean(Durable_Exp))
+                                         ,by=by]
   DurableDepr <- merge(DurableDepr,DurableValues,by=by,all.x = TRUE)
   DurableDepr <- merge(DurableDepr,DurableItems,by="Item")
   
@@ -53,7 +62,8 @@ Calculate_OwnedDurableItemsDepreciation <- function(DurableData_ExpDetail,
   }
   D <- merge(Ownsm,DurableDepr,by=by)
   
-  OwnedDurableItemsDepreciation <- D[,.(OwnedDurableItemsDepreciation=sum(.SD$DepreciationValue)),by=HHID]
+  OwnedDurableItemsDepreciation <- D[,.(OwnedDurableItemsDepreciation=
+                                          sum(.SD$DepreciationValue)),by=HHID]
   
   return(OwnedDurableItemsDepreciation)
 }
