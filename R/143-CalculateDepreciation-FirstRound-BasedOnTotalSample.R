@@ -23,7 +23,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",
-                     year,"DurableData_Detail.rda"))
+                     year,"DurableData_NetDetail.rda"))
 
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,
                    "OwnsDurableItems.rda"))
@@ -31,7 +31,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   OwnedDurableItemsDepreciation <- 
     Calculate_OwnedDurableItemsDepreciation(
-      DurableData_ExpDetail = DurableData_Detail,
+      DurableData_ExpDetail = DD,
       DurableItems_OwningDetail = OwnsDurableItems,
       by = "Item",
       Decile = NULL,
