@@ -103,17 +103,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
-  SMD <- MD[,.(HHID,Region,
-                 House_Exp,FoodExpenditure,Total_Exp_Month,
-                 NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
-                 TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_NutritionInstitute,
-                 Weight,MeterPrice,Size,EqSizeOECD
-                 ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
-                 Amusement_Exp, Communication_Exp, 
-                 Energy_Exp, Furniture_Exp, Hotel_Exp,Restaurant_Exp, Hygiene_Exp, 
-                 Transportation_Exp, Other_Exp
-                 ,Add_to_NonDurable,Medical_Exp,
-                 Durable_NoDep,Durable_Emergency,OwnedDurableItemsDepreciation)]
+  SMD <- MD[,c("HHID", "Region", "FoodExpenditure", "Total_Exp_Month", "NewArea", 
+               "NewArea_Name",
+               Settings$w,
+               "Total_Exp_Month_Per_nondurable",
+               "TOriginalFoodExpenditure_Per", 
+               "TFoodKCaloriesHH_Per", 
+               "Calorie_Need_WorldBank", "Calorie_Need_NutritionInstitute", 
+               "Weight", "MeterPrice", "Size", "EqSizeOECD"),with=FALSE]
   SMD <- merge(SMD,HHHouseProperties[,.(HHID,tenure)],by="HHID")
 
 
