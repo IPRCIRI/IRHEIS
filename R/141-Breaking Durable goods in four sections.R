@@ -24,15 +24,36 @@ for(year in (max(Settings$startyear,mst):Settings$endyear)){
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableData_Detail.rda"))
   
+  DDIs <- DurableData_Detail[!is.na(Item)
+                             ,.(Code=first(Code),
+                                Durable_Exp=sum(Durable_Exp),
+                                Durable_Sale=sum(Durable_Sale))
+                             ,by=.(HHID,Item)]
+  DDIs[,Net_Durable_Exp:=Durable_Exp-Durable_Sale]
+  DDIs[Net_Durable_Exp<0,Net_Durable_Exp:=0]
+  
+  DDNs <- DurableData_Detail[is.na(Item)
+                             ,.(Durable_Exp=sum(Durable_Exp),
+                                Durable_Sale=sum(Durable_Sale),
+                                Item=NA_character_)
+                             ,by=.(HHID,Code)]
+  DDNs[,Net_Durable_Exp:=Durable_Exp-Durable_Sale]
+  DDNs[Net_Durable_Exp<0,Net_Durable_Exp:=0]
+  
+  DD <- rbind(DDIs,DDNs)
+  
+  save(DD,file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableData_NetDetail.rda"))
+  
+  
   g1 <- DurableGroups[year >= StartYear & year <= EndYear & Group==1]$Code
   g2 <- DurableGroups[year >= StartYear & year <= EndYear & Group==2]$Code
   g3 <- DurableGroups[year >= StartYear & year <= EndYear & Group==3]$Code
   g4 <- DurableGroups[year >= StartYear & year <= EndYear & Group==4]$Code
   
-  D1 <- DurableData_Detail[Code %in% g1, .(Add_to_NonDurable = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
-  D2 <- DurableData_Detail[Code %in% g2, .(Durable_Dep = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
-  D3 <- DurableData_Detail[Code %in% g3, .(Durable_NoDep = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
-  D4 <- DurableData_Detail[Code %in% g4, .(Durable_Emergency = sum(Durable_Exp,na.rm = TRUE)),by=HHID]
+  D1 <- DD[Code %in% g1, .(Add_to_NonDurable = sum(Net_Durable_Exp,na.rm = TRUE)),by=HHID]
+  D2 <- DD[Code %in% g2, .(Durable_Dep = sum(Net_Durable_Exp,na.rm = TRUE)),by=HHID]
+  D3 <- DD[Code %in% g3, .(Durable_NoDep = sum(Net_Durable_Exp,na.rm = TRUE)),by=HHID]
+  D4 <- DD[Code %in% g4, .(Durable_Emergency = sum(Net_Durable_Exp,na.rm = TRUE)),by=HHID]
   
   Durable_4Groups <- merge(D1,D2,all=TRUE)
   Durable_4Groups <- merge(Durable_4Groups,D3,all=TRUE)
@@ -42,7 +63,7 @@ for(year in (max(Settings$startyear,mst):Settings$endyear)){
   
   gunion <- union(union(g1,g2),union(g3,g4))
   
-  Dx <- DurableData_Detail[! (Code %in% gunion),]
+  Dx <- DD[! (Code %in% gunion),]
   if(nrow(Dx)>0) print(table(Dx[,Code]))
   
   save(Durable_4Groups, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durable_4Groups.rda"))
