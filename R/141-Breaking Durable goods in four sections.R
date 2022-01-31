@@ -64,7 +64,7 @@ for(year in (max(Settings$startyear,mst):Settings$endyear)){
   gunion <- union(union(g1,g2),union(g3,g4))
   
   Dx <- DD[! (Code %in% gunion),]
-  if(nrow(Dx)>0) print(table(Dx[,Code]))
+  if(nrow(Dx)>0) dput(unique(Dx[,Code]))
   
   save(Durable_4Groups, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durable_4Groups.rda"))
   
