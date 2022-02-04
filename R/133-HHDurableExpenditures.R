@@ -1,7 +1,7 @@
 # 133-HHDurableExpenditures.R
 # Builds the Durbable Expenditures detailed data.table for households
 #
-# Copyright © 2017-2020: Arin Shahbazian, Majid Einian
+# Copyright © 2017-2022: Majid Einian & Arin Shahbazian 
 # Licence: GPL-3
 
 rm(list=ls())
@@ -58,6 +58,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
   itemslist <- c("cellphone","washer","dishwasher","car",
+                 "motorcycle","bike","radio","cassette",
                  "oven","tvbw","tvcr","refrigerator","frez_refrig","freezer",
                  "computer","cooler_gas","cooler_gas_movable")
   
@@ -68,16 +69,26 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   OwnsDurableItems <- HHHouseProperties[,.(HHID,
                                            Cellphone=cellphone*1,
+                                           Telephone=phone*1,
                                            Washer=(washer|dishwasher)*1,
                                            Car_Repair=car*1,
                                            Car_Tire=car*1,
                                            Oven=oven*1,
                                            TV=(tvbw |tvcr)*1,
-                                           Refrigrator=(refrigerator|frez_refrig|freezer)*1,
+                                           Refrigrator=refrigerator*1,
+                                           Freezer=(frez_refrig|freezer)*1,
+                                           Vacuum=vacuum*1,
+                                           Fan=fan*1,
+                                           SewingM=sewing*1,
                                            Car=car*1,
+                                           Motorcycle=motorcycle*1,
+                                           Bike=bike*1,
+                                           RadioCassette=(radio|cassette)*1,
+                                           VCR_DVD=vcr*1,
                                            Computer=computer*1,
                                            AC=(cooler_gas |cooler_gas_movable)*1,
-                                           Car_Motor=car*1)]
+                                           Car_Motor=car*1,
+                                           Other=1)]
   
   save(OwnsDurableItems,file=paste0(Settings$HEISProcessedPath,"Y",year,
                                     "OwnsDurableItems.rda"))
