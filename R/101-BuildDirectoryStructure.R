@@ -1,5 +1,5 @@
 # 101-BuildDirectoryStructure
-# Builds the base data.table for households
+# Builds the needed directory structure
 #
 # Copyright © 2016: Majid Einian
 # Licence: GPL-3
