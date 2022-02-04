@@ -1,6 +1,6 @@
 #161-Step1-MergeData.R
 # 
-# Copyright © 2018-2020: Majid Einian & Arin Shahbazian
+# Copyright © 2018-2022: Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -52,14 +52,14 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD<-merge(MD,OwnedDurableItemsDepreciation,by =c("HHID"),all=TRUE)
   
   #Calculate Monthly Total Expenditures 
-  for (col in Settings$w)
+  for (col in union(Settings$ExpenditureCols,Settings$ConsumptionCols))
     MD[is.na(get(col)), (col) := 0]
   
-  MD[,Total_Exp_Month := Reduce(`+`, .SD), .SDcols=Settings$w]
-  MD[,Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=Settings$nw]
+  MD[,Total_Expenditure_Month := Reduce(`+`, .SD), .SDcols=Settings$ExpenditureCols]
+  MD[,Total_Consumption_Month := Reduce(`+`, .SD), .SDcols=Settings$ConsumptionCols]
   
-  MD[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
-  MD[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
+  MD[,Total_Expenditure_Month_per:=Total_Expenditure_Month/EqSizeOECD]
+  MD[,Total_Consumption_Month_per:=Total_Consumption_Month/EqSizeOECD]
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
 }

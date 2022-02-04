@@ -1,10 +1,12 @@
+# modifySettings.R
+# use this file to modify Settings.yaml, 
+# do not edit Settings.yaml directly
+# 
+# Copyright © 2015-2022: Majid Einian
+# Licence: GPL-3
+
 library(yaml)
-OS <- ifelse(version$os=="linux-gnu","Linux","Windows")
-if(OS=="Linux"){
-  HEISPath         = "/media/majid/Document/HEIS/"
-}else{
- HEISPath           = "C:/HEIS/"
-}
+HEISPath           = "C:/HEIS/"
 HEISCompressedPath = paste0(HEISPath,"DataCompressed/")
 HEISAccessPath     = paste0(HEISPath,"DataAccess/")
 HEISRawPath        = paste0(HEISPath,"DataRaw/")
@@ -12,14 +14,15 @@ HEISProcessedPath  = paste0(HEISPath,"DataProcessed/")
 HEISResultsPath    = paste0(HEISPath,"DataResults/")
 D80LinkDest        = paste0(HEISAccessPath,"D80Link.accdb")
 
-
-nw <- c("OriginalFoodExpenditure","FoodOtherExpenditure", "Cigar_Exp",
-        "Cloth_Exp","Amusement_Exp", "Communication_Exp", "House_Exp",
-        "Energy_Exp", "Furniture_Exp", "Hotel_Exp","Restaurant_Exp",
-        "Hygiene_Exp", "Transportation_Exp", "Other_Exp",
-        "Add_to_NonDurable" ,"OwnedDurableItemsDepreciation")
-w <- c(nw, "Medical_Exp",
-       "Durable_NoDep","Durable_Emergency")
+NNCols <- c("FoodOtherExpenditure", "Cigar_Exp",
+            "Cloth_Exp","Amusement_Exp", "Communication_Exp", "House_Exp",
+            "Energy_Exp", "Furniture_Exp", "Hotel_Exp","Restaurant_Exp",
+            "Hygiene_Exp", "Transportation_Exp", "Other_Exp",
+            "Add_to_NonDurable")
+ConsumptionCols <- c("OriginalFoodExpenditure",NNCols,
+                     "OwnedDurableItemsDepreciation")
+ExpenditureCols <- c("OriginalFoodExpenditure",NNCols,
+                     "Medical_Exp","Durable_Dep","Durable_NoDep","Durable_Emergency")
 
 Settings <- list(HEISPath          =HEISPath,
                  HEISCompressedPath=HEISCompressedPath,
@@ -145,9 +148,9 @@ Settings <- list(HEISPath          =HEISPath,
                  KCaloryNeed_NutInst_B9 = 2350,
                  KCaloryNeed_NutInst_G9 = 2000,
                  KCaloryNeed_lactating = 500,
-                 nw=nw,
-                 w=w,
-                 InitialPoorPercentile= 1:35,
+                 ConsumptionCols=ConsumptionCols,
+                 ExpenditureCols=ExpenditureCols,
+                 InitialPoorPercentileMax= 35,
                  SectorsNumbers    = 1:5,
                  SectorsNames      = c("Public","Cooperative","Private","BussP","Agri"),
                  D80LinkSource     ="../Data/D80Link.accdb",
