@@ -4,7 +4,7 @@
 # needed for each household (Based on calorie need tables by the World Bank and
 # and the Nutrition Institute)
 #
-# Copyright © 2016-2020: Majid Einian and Zahra Shahidi and ?
+# Copyright © 2016-2022: Majid Einian & Zahra Shahidi
 # License: GPL-3
 rm(list=ls())
 
@@ -17,6 +17,8 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(stringr)
+
+source("000-FunctionDefs.R")
 
 P1Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P1Cols))
 
@@ -57,8 +59,7 @@ for(year in years){
   ind <- which(!is.na(a))[-1]
   setnames(P1,a[ind],names(a[ind]))
   
-  f <- function(x){as.numeric(str_trim(x))}
-  P1 <- P1[, lapply(.SD, f)] #  , .SDcols=which(sapply(P1, class)=="character")]
+  P1 <- P1[, lapply(.SD, trim_to_number)] #  , .SDcols=which(sapply(P1, class)=="character")]
 
 
   P1[is.na(Age),Age:=0L]

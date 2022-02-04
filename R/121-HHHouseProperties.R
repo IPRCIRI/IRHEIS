@@ -1,7 +1,7 @@
 # 121-HHHouseProperties.R
 # Builds the House Properties data.table for households
 #
-# Copyright © 2019-2020: Arin Shahbazian, Majid Einian
+# Copyright © 2019-2022: Arin Shahbazian & Majid Einian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -36,8 +36,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   ind <- which(!is.na(a))[-1]
   setnames(P2,a[ind],names(a[ind]))
   
-  f <- function(x){as.numeric(str_trim(x))}
-  P2 <- P2[, lapply(.SD, f)] 
+  P2 <- P2[, lapply(.SD, trim_to_number)] 
   
   P2[is.na(P2)]<-0  
   
@@ -109,10 +108,11 @@ for(year in (Settings$startyear:Settings$endyear)){
     P2<-P2[,Cooler_Gas:=ifelse(cooler_gas==12,TRUE,FALSE)]
     P2<-P2[,SewageNetwork:=ifelse(seweragenetwork==13,TRUE,FALSE)]
     P2<-P2[,Car:=ifelse(car==1,TRUE,FALSE)]
-    P2<-P2[,MotorCycle:=ifelse(motorcycle==1,TRUE,FALSE)]
+    P2<-P2[,Motorcycle:=ifelse(motorcycle==1,TRUE,FALSE)]
     
     P2<-P2[,phone:= Phone]
     P2<-P2[,bike:= Bike]
+    P2<-P2[,motorcycle:=Motorcycle]
     P2<-P2[,radio:= Radio ]
     P2<-P2[,cassette:= Cassette ]
     P2<-P2[,tvbw:= Tvbw ]
