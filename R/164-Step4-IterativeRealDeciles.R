@@ -1,6 +1,6 @@
 #164-Step4-IterativeRealDeciles.R
 # 
-# Copyright © 2020:Majid Einian & Arin Shahbazian
+# Copyright © 2020-2022 :Majid Einian & Arin Shahbazian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -15,86 +15,18 @@ library(readxl)
 library(data.table)
 #library(ggplot2)
 #library(compare)
-source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
-# Function Defs ---------------------------------------------------------------------------------
-CalcTornqvistIndex <- function(DataTable){
-  #DataTable <- SMD
-  DataTable <- DataTable[,MeterPrice:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
-                                       ,NA,MeterPrice)]
-  DataTable <- DataTable[,House_Exp:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
-                                       ,NA,House_Exp)]
-  
-  X <- DataTable[,.(N=.N,wj1=weighted.median(FoodExpenditure/Total_Exp_Month,Weight,na.rm = TRUE),
-                    wj2=weighted.median(House_Exp/Total_Exp_Month,Weight,na.rm = TRUE),
-                    pj1=weighted.median(Bundle_Value,Weight,na.rm = TRUE),
-                    pj2=weighted.median(MeterPrice,Weight,na.rm = TRUE)),by=.(Region,NewArea_Name)]
-  
-  X[,wj:=wj1+wj2]
-  X[,wj1:=wj1/wj]
-  X[,wj2:=wj2/wj]
-  XTeh<-X[NewArea_Name=="Sh_Tehran"]
-  wk1<-XTeh$wj1   # k == Sh_Tehran
-  wk2<-XTeh$wj2
-  pk1<-XTeh$pj1
-  pk2<-XTeh$pj2
-  
-  X[,SimpleIndex:= .5 * pj1/pk1 + .5 * pj2/pk2]
-  X[,AnotherIndex:= wj1 * pj1/pk1 + wj2 * pj2/pk2]
-  
-  X[,TornqvistIndex:= exp( (wk1+wj1)/2 * log(pj1/pk1) + 
-                             (wk2+wj2)/2 * log(pj2/pk2) ) ]
-  
-  return(X[,.(Region,NewArea_Name,PriceIndex=TornqvistIndex)])
-}
+source("000-FunctionDefs.R")
 
-
-DoDeciling <- function(DataTable,PriceIndexDT){
-  
-  if("PriceIndex" %in% names(DataTable)){
-    DataTable <- DataTable[,PriceIndex:=NULL]
-  }
-  DataTable <- merge(DataTable,PriceIndexDT,by=c("Region","NewArea_Name"))
-  
-  
-  DataTable <- DataTable[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
-   
-  DataTable <- DataTable[order(Total_Exp_Month_Per_nondurable_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
-  DataTable <- DataTable[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  DataTable <- DataTable[,xr25th:=.SD[25,Total_Exp_Month_Per_nondurable_Real],by=.(Region,NewArea_Name)]
-  DataTable <- DataTable[,First25:=ifelse(Total_Exp_Month_Per_nondurable_Real<=xr25th,1,0)]
-  #Calculate deciles by weights
-  DataTable <- DataTable[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  DataTable <- DataTable[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
-  DataTable[,crw:=NULL]
-  DataTable[,xr25th:=NULL]
-  
-  return(DataTable)
-}
-
-UpdateForDurableDepr <- function(DataTable,ODIDep){
-  DataTable[,OwnedDurableItemsDepreciation:=NULL]
-  DataTable <- merge(DataTable,ODIDep)
-  
-  for (col in Settings$w)
-    DataTable[is.na(get(col)), (col) := 0]
-  
-  DataTable[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=Settings$w]
-  DataTable[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=Settings$nw]
-  
-  DataTable[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
-  DataTable[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
-}
-
-DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
-                                      sheet=Settings$MDS_DurableItemsDepr))
+DurableItemsDepr <- data.table(read_excel(Settings$MetaDataFilePath,
+                                          sheet=Settings$MDS_DurableItemsDepr))
+DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_DurableGroups))
 
 for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  cat(paste0("\n------------------------------\nYear:",year,";"))
   
   # load data --------------------------------------
   load(file = paste0(Settings$HEISProcessedPath,"Y",
-                     year,"DurableData_Detail.rda"))
+                     year,"DurableData_NetDetail.rda"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,
                    "OwnsDurableItems.rda"))
@@ -103,13 +35,18 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
-  SMD <- MD[,c("HHID", "Region", "FoodExpenditure", "Total_Exp_Month", "NewArea", 
+  SMD <- MD[,c("HHID", "Region", "NewArea", 
                "NewArea_Name",
-               Settings$w,
-               "Total_Exp_Month_Per_nondurable",
-               "TOriginalFoodExpenditure_Per", 
+               union(Settings$ExpenditureCols,Settings$ConsumptionCols),
+               "FoodExpenditure", 
+               "TOriginalFoodExpenditure_Per",
+               "Total_Expenditure_Month",
+               "Total_Expenditure_Month_per",
+               "Total_Consumption_Month", 
+               "Total_Consumption_Month_per", 
                "TFoodKCaloriesHH_Per", 
-               "Calorie_Need_WorldBank", "Calorie_Need_NutritionInstitute", 
+               "Calorie_Need_WorldBank",
+               "Calorie_Need_NutritionInstitute", 
                "Weight", "MeterPrice", "Size", "EqSizeOECD"),with=FALSE]
   SMD <- merge(SMD,HHHouseProperties[,.(HHID,tenure)],by="HHID")
 
@@ -120,33 +57,47 @@ for(year in (Settings$startyear:Settings$endyear)){
   #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_WorldBank/TFoodKCaloriesHH_Per]
   #SMD[,Bundle_Value:=TOriginalFoodExpenditure_Per*Settings$KCaloryNeed_Adult_NutritionInstitute/TFoodKCaloriesHH_Per]
   
+  SMD <- SMD[TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
   
-  SMD <- SMD[Bundle_Value<=5000000 | TFoodKCaloriesHH_Per>=300] #arbitrary measures, TODO: check in diff years
-  
- # S1<-SMD[,.(HHID,Region,NewArea_Name,TFoodKCaloriesHH_Per,Bundle_Value)]
-  
-  
-  PriceDT <- CalcTornqvistIndex(SMD)
+  PriceDTBasedOnTotalSample <- CalcTornqvistIndex(SMD)
 
-  SMD <- DoDeciling(SMD,PriceDT)
+  GDC <- DoDeciling(HHDT = SMD,
+                    PriceIndexDT = PriceDTBasedOnTotalSample,
+                    OrderingVar = "Consumption",
+                    Size = "_per")[,.(HHID,
+                                      First25=First25,
+                                      Dcil_Gen_Cons_PAdj=Decile,         #Decile_General_Consumption_PriceAdj
+                                      Pctl_Gen_Cons_PAdj=Percentile)]
+  GDX <- DoDeciling(HHDT = SMD,
+                    PriceIndexDT = PriceDTBasedOnTotalSample,
+                    OrderingVar = "Expenditure",
+                    Size = "_per")[,.(HHID,
+                                      Dcil_Gen_Exp_PAdj=Decile,
+                                      Pctl_Gen_Exp_PAdj=Percentile)]
+  SMD <- merge(SMD,GDC)
+  SMD <- merge(SMD,GDX)
+ 
+  #table(SMD[,.(Dcil_Gen_Cons_PAdj,Dcil_Gen_Exp_PAdj)])
+  g2 <- DurableGroups[year >= StartYear & year <= EndYear & Group==2]$Code
   
   OwnedDurableItemsDepreciation <- 
     Calculate_OwnedDurableItemsDepreciation(
-      DurableData_ExpDetail = DurableData_Detail,
+      DurableData_ExpDetail = DD,
       DurableItems_OwningDetail = OwnsDurableItems,
       by = c("Item","Decile"),
-      Decile = SMD[,.(HHID,Decile)],
-      DurableItems = DurableItems)
+      Decile = SMD[,.(HHID,Decile=Dcil_Gen_Cons_PAdj)],
+      DurableItems = DurableItemsDepr,
+      g2 = g2)
   
   SMD <- UpdateForDurableDepr(SMD,OwnedDurableItemsDepreciation)
 
-  SMD <- SMD[,IPboPct:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
+  SMD <- SMD[,IPboPct:=ifelse(Pctl_Gen_Cons_PAdj %in% 1:Settings$InitialPoorPercentileMax,1,0)]
   # IPboPct : InitialPoorBasedOnRealIterativePercentile
   # IPboPctLI: InitialPoorBasedOnRealIterativePercentileLastIteration
-
+  
   SMD[,IPboPctLI:=1]
   i <- 0
-  while(SMD[,sum((IPboPct-IPboPctLI)^2)]>0.001*nrow(SMD) & i <15){
+  while(SMD[,sum((IPboPct-IPboPctLI)^2)]>0.002*nrow(SMD) & i <20){
     i <- i+1
     SMD[,IPboPctLI:=IPboPct]
     
@@ -160,25 +111,49 @@ for(year in (Settings$startyear:Settings$endyear)){
     PriceDTBasedOnThisIterationPoor <- CalcTornqvistIndex(SMDIterationPoor)
 
     #   print(PriceDTBasedOnThisIterationPoor[Region=="Rural" & NewArea_Name=="Semnan",])
-    SMD <- DoDeciling(SMD,PriceDTBasedOnThisIterationPoor)
+    IPDC <- DoDeciling(HHDT = SMD,
+                      PriceIndexDT = PriceDTBasedOnThisIterationPoor,
+                      OrderingVar = "Consumption",
+                      Size = "_per")[,.(HHID,
+                                        First25=First25,
+                                        Dcil_TIP_Cons_PAdj=Decile,         #Decile_ThisIterationPoor_Consumption_PriceAdj
+                                        Pctl_TIP_Cons_PAdj=Percentile)]
+    SMD[,First25:=NULL]
+    SMD[,Dcil_TIP_Cons_PAdj:=NULL]
+    SMD[,Pctl_TIP_Cons_PAdj:=NULL]
+    SMD <- merge(SMD,IPDC)
+    
     
     OwnedDurableItemsDepreciation <- 
       Calculate_OwnedDurableItemsDepreciation(
-        DurableData_ExpDetail = DurableData_Detail,
+        DurableData_ExpDetail = DD,
         DurableItems_OwningDetail = OwnsDurableItems,
         by = c("Item","Decile"),
-        Decile = SMD[,.(HHID,Decile)],
-        DurableItems = DurableItems)
-    
+        Decile = SMD[,.(HHID,Decile=Dcil_TIP_Cons_PAdj)],
+        DurableItems = DurableItemsDepr,
+        g2 = g2)
+
     SMD <- UpdateForDurableDepr(SMD,OwnedDurableItemsDepreciation)
     
 
-    SMD <- SMD[,IPboPct:=ifelse(Percentile %in% Settings$InitialPoorPercentile,1,0)]
+    SMD <- SMD[,IPboPct:=ifelse(Pctl_TIP_Cons_PAdj %in% 1:Settings$InitialPoorPercentileMax,1,0)]
     
-    cat("\n",i,":",SMD[,sum((IPboPct-IPboPctLI)^2)])
+    cat(",\t",i,":",SMD[,sum((IPboPct-IPboPctLI)^2)])
   }
   
   setnames(SMD,"IPboPct","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
+  
+  setnames(SMD,"Dcil_TIP_Cons_PAdj","Dcil_IP_Cons_PAdj") # This Iteration Poor => Initial Poor
+  setnames(SMD,"Pctl_TIP_Cons_PAdj","Pctl_IP_Cons_PAdj") 
+  
+  
+  IPDX <- DoDeciling(HHDT = SMD,
+                     PriceIndexDT = PriceDTBasedOnThisIterationPoor,
+                     OrderingVar = "Expenditure",
+                     Size = "_per")[,.(HHID,
+                                       Dcil_IP_Exp_PAdj=Decile,        
+                                       Pctl_IP_Exp_PAdj=Percentile)]
+  SMD <- merge(SMD,IPDX)
   
   SMD <- SMD[,setdiff(names(SMD),c("First25","IPboPctLI")),with=FALSE]
   
@@ -186,12 +161,26 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD <- merge(MD[,c("HHID",mdset),with=FALSE],SMD,by="HHID")
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
-  #Decile_MD <- MD [,.(HHID,Total_Exp_Month_Per_nondurable,Size,Weight)]
-  #Decile_MD <- Decile_MD[order(Total_Exp_Month_Per_nondurable)]
-  #Decile_MD <- Decile_MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]
-  #Decile_MD <- Decile_MD[,Decile_non_real:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  #MD <- merge(MD,Decile_MD[,c("HHID","Decile_non_real")],by="HHID")
-  #save(Decile_MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile_non_real.rda"))
+  Deciles <- MD[,.(HHID,Weight,Size,
+                   Total_Consumption_Month_per,Total_Expenditure_Month_per,
+                   Dcil_Gen_Cons_PAdj, Pctl_Gen_Cons_PAdj, 
+                   Dcil_Gen_Exp_PAdj, Pctl_Gen_Exp_PAdj,
+                   Dcil_IP_Cons_PAdj, Pctl_IP_Cons_PAdj,  
+                   Dcil_IP_Exp_PAdj, Pctl_IP_Exp_PAdj)]
+  
+  Deciles <- Deciles[order(Total_Consumption_Month_per)]  
+  Deciles <- Deciles[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  Deciles <- Deciles[,Dcil_Gen_Cons_Nominal:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  Deciles <- Deciles[,Pctl_Gen_Cons_Nominal:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  Deciles <- Deciles[order(Total_Expenditure_Month_per)]  
+  Deciles <- Deciles[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  Deciles <- Deciles[,Dcil_Gen_Exp_Nominal:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  Deciles <- Deciles[,Pctl_Gen_Exp_Nominal:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  Deciles[,crw:=NULL]
+  
+  save(Deciles,file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
 }
  
 endtime <- proc.time()
