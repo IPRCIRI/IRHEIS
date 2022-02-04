@@ -1,6 +1,6 @@
 # 143-CalculateDepreciation based on total sample averages
 # 
-# Copyright © 2020:  Arin Shahbazian
+# Copyright © 2020-2022:  Arin Shahbazian & Majid Einian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -14,13 +14,15 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 
-source("142-Calculate_OwnedDurableItemsDepreciation_FunctionDef.R")
-DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
+source("000-FunctionDefs.R")
+DurableItemsDepr <- data.table(read_excel(Settings$MetaDataFilePath,
                                       sheet=Settings$MDS_DurableItemsDepr))
+DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_DurableGroups))
 
-#year <- 98
+
+#year <- 83
 for(year in (Settings$startyear:Settings$endyear)){
-  cat(paste0("\n------------------------------\nYear:",year,"\n"))
+  cat(paste0("\nYear:",year,"\t"))
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",
                      year,"DurableData_NetDetail.rda"))
@@ -28,16 +30,20 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,
                    "OwnsDurableItems.rda"))
 
-  
+  g2 <- DurableGroups[year >= StartYear & year <= EndYear & Group==2]$Code
+  #setdiff(g2,DurableItems$)
   OwnedDurableItemsDepreciation <- 
     Calculate_OwnedDurableItemsDepreciation(
       DurableData_ExpDetail = DD,
       DurableItems_OwningDetail = OwnsDurableItems,
       by = "Item",
       Decile = NULL,
-      DurableItems = DurableItems)
+      DurableItems = DurableItemsDepr,
+      g2 = g2)
   
-  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durable_4Groups.rda"))
+  A <- merge(Durable_4Groups,OwnedDurableItemsDepreciation,by="HHID")
+  cat(A[,.(mean(OwnedDurableItemsDepreciation)/mean(Durable_Dep))]$V1)
   save(OwnedDurableItemsDepreciation,
        file=paste0(Settings$HEISProcessedPath,"Y",
                    year,"OwnedDurableItemsDepreciation.rda"))
