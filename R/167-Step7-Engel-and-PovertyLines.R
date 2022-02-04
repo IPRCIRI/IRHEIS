@@ -44,7 +44,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   EngelD <- EngelD[,Year:=year]
 
   BigEngelTable <- rbind(BigEngelTable,EngelD)
-
 }
 
 InflationData <- data.table(read_excel(path = Settings$InflationDataFilePath,
@@ -53,7 +52,6 @@ InflationData[,F1 := (1+D2FoodInf)/(1+D2Inf)]
 InflationData<-InflationData[order(Year)]
 InflationData[,l.F1:=data.table::shift(F1)]
 InflationData[,F2 := F1*l.F1]
-
 
 BigEngelTable<-merge(BigEngelTable,InflationData,by="Year")
 BigEngelTable<-BigEngelTable[order(Year,cluster3)]
@@ -76,17 +74,17 @@ BigEngelTable[is.na(ModifiedEngel),ModifiedEngel:=(Engel+EngelX+EngelX2)/3]
 BigEngelTable[,PovertyLine:=FPLine/ModifiedEngel]
 #BigEngelTable[,PovertyLine0:=FPLine/Engel]
 
-BigEngelTable[is.na(l.OER) & is.na(OER), ModOER:=OER]
-BigEngelTable[!is.na(l.OER) & is.na(OER), ModOER:=(OER+l.OER)/2]
+BigEngelTable[is.na(l.OER) & is.na(l2.OER), ModOER:=OER]
+BigEngelTable[!is.na(l.OER) & is.na(l2.OER), ModOER:=(OER+l.OER)/2]
 BigEngelTable[is.na(ModOER), ModOER:=(OER+l.OER+l2.OER)/3]
 
-BigEngelTable[is.na(l.DSC) & is.na(DSC), ModDSC:=DSC]
-BigEngelTable[!is.na(l.DSC) & is.na(DSC), ModDSC:=(DSC+l.DSC)/2]
+BigEngelTable[is.na(l.DSC) & is.na(l2.DSC), ModDSC:=DSC]
+BigEngelTable[!is.na(l.DSC) & is.na(l2.DSC), ModDSC:=(DSC+l.DSC)/2]
 BigEngelTable[is.na(ModDSC), ModDSC:=(DSC+l.DSC+l2.DSC)/3]
 
 BigEngelTable[,CMPovLine:=PovertyLine*(1-ModOER+ModDSC)]
 
-BigEngelTable[,.(PovertyLine,FPLine,CMPovLine)]
+#View(BigEngelTable[,.(Year,cluster3,PovertyLine,FPLine,CMPovLine)])
 
 save(BigEngelTable,file=paste0(Settings$HEISProcessedPath,"BigEngelTable.rda"))
 
