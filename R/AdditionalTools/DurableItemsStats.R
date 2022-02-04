@@ -16,20 +16,21 @@ library(data.table)
 
 DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
                                       sheet=Settings$MDS_DurableItems))
-
+year <- 83
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file = paste0(Settings$HEISProcessedPath,"Y",
-                     year,"DurableData_Detail.rda"))
+                     year,"DurableData_NetDetail.rda"))
   
   load(file=paste0(Settings$HEISWeightsPath,
                    Settings$HEISWeightFileName,year,".rda"))
   HHWeights<- as.data.table(HHWeights)
   HHWeights<-HHWeights[,HHID:=as.numeric(HHID)]
   HHWeights[,Year:=NULL]
-  DurableData_Detail<-merge(DurableData_Detail,HHWeights,by="HHID")
-  
+  DurableData_Detail<-merge(DD,HHWeights,by="HHID")
+  DurableData_Detail[is.na(Item),Item:="Other"]
+  table(DurableData_Detail$Item,useNA = "always")
   AVX <- DurableData_Detail[Durable_Exp>0,
                             .(Exp=weighted.mean(Durable_Exp,Weight)),
                             by=Item]
@@ -37,17 +38,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                             .(Sale=weighted.mean(Durable_Sale,Weight)),
                             by=Item]
   
-  DurableBought <- dcast(DurableData_Detail[Durable_Exp>0],HHID ~ Item,
-                         value.var = "Durable_Exp",fun.aggregate = length)
-  DurableSold <- dcast(DurableData_Detail[Durable_Sale>0],HHID ~ Item,
-                       value.var = "Durable_Sale",fun.aggregate = length)
-  Bought <- merge(DurableBought,HHWeights,all.y = TRUE)
-  Bought[is.na(Bought)] <- 0
-  BoughtStats <- Bought[,lapply(.SD, weighted.mean,Weight),
-                        .SDcols=2:(ncol(Bought)-1)]
-  Sold <- merge(DurableSold,HHWeights,all.y = TRUE)
-  Sold[is.na(Sold)] <- 0
-  SoldStats <- Sold[,lapply(.SD, weighted.mean,Weight),.SDcols=2:(ncol(Sold)-1)]
+  Boughtm <- DurableData_Detail[,.(Bought=.SD[Durable_Exp>0,sum(Weight)]/sum(HHWeights$Weight)),by=Item]
+  Soldm <- DurableData_Detail[,.(Sold=.SD[Durable_Sale>0,sum(Weight)]/sum(HHWeights$Weight)),by=Item]
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,
                                     "OwnsDurableItems.rda"))
@@ -57,15 +49,13 @@ for(year in (Settings$startyear:Settings$endyear)){
                           .SDcols=2:(ncol(OwnsDurableItems)-1)]
   Hasm <- melt(Has,measure.vars = names(Has),
                variable.name = "Item",value.name = "Has")
-  Boughtm <- melt(BoughtStats,measure.vars = names(BoughtStats),
-                  variable.name = "Item",value.name = "Bought")
-  Soldm <- melt(SoldStats,measure.vars = names(SoldStats),
-                variable.name = "Item",value.name = "Sold")
   
-  DurableItemsStats <- merge(AVX,AVS)
-  DurableItemsStats <- merge(DurableItemsStats,Boughtm)
-  DurableItemsStats <- merge(DurableItemsStats,Soldm)
-  DurableItemsStats <- merge(DurableItemsStats,Hasm)
+  print(setdiff(AVX$Item,AVS$Item))
+  print(setdiff(AVX$Item,AVS$Item))
+  DurableItemsStats <- merge(AVX,AVS,by="Item",all = TRUE)
+  DurableItemsStats <- merge(DurableItemsStats,Boughtm,all = TRUE)
+  DurableItemsStats <- merge(DurableItemsStats,Soldm,all = TRUE)
+  DurableItemsStats <- merge(DurableItemsStats,Hasm,all = TRUE)
   save(DurableItemsStats, file=paste0(Settings$HEISProcessedPath,"Y",year,
                                       "DurableItemsStats.rda"))
 }
@@ -89,12 +79,11 @@ ADT[,ltmean:=HasMean/BoughtMean]
 ADT[,ltmedian:=HasMedian/BoughtMedian]
 
 View(ADT)
-View(BigDT)
-View(BigDT[,.(LifeTimeAverage=mean(LifeTime)),by=Item])
-
-ggplot(BigDT,aes(x=LifeTime)) +
-  geom_histogram(position = "identity")+
-  facet_grid(.~Item)
-
+#View(BigDT)
+XDT <- (BigDT[Has>0,.(LifeTimeAverage=mean(LifeTime,na.rm=TRUE),
+              LifeTimeMedian=median(LifeTime,na.rm=TRUE),
+              ScrapShareAverage=mean(ScrapShare,na.rm=TRUE),
+              ScrapShareMedian=median(ScrapShare,na.rm=TRUE)),by=Item])
+View(XDT)
 endTime <- proc.time()
 cat("\n\n=========================\nIt took",(endTime-startTime)[3], "seconds.")
