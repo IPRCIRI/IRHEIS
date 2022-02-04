@@ -1,3 +1,11 @@
+
+Decile_MD <- MD [,.(HHID,Total_Consumption_Month_per,Size,Weight)]
+Decile_MD <- Decile_MD[order(Total_Consumption_Month_per)]
+Decile_MD <- Decile_MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]
+Decile_MD <- Decile_MD[,Decile_non_real:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+#MD <- merge(MD,Decile_MD[,c("HHID","Decile_non_real")],by="HHID")
+save(Decile_MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile_non_real.rda"))
+
 #164-Step 4-FindInitialPoor.R
 # 
 # Copyright © 2020:Majid Einian & Arin Shahbazian
@@ -6,7 +14,7 @@
 rm(list=ls())
 
 starttime <- proc.time()
-cat("\n\n================ Deciling =====================================\n")
+cat("\n\n================ Nominal to Real =====================================\n")
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
@@ -48,21 +56,12 @@ DoDeciling <- function(DataTable,PriceIndexDT){
     DataTable <- DataTable[,PriceIndex:=NULL]
   }
   DataTable <- merge(DataTable,PriceIndexDT,by=c("Region","NewArea_Name"))
-  
-  
-  DataTable <- DataTable[,Total_Exp_Month_Per_nondurable_Real:=Total_Exp_Month_Per_nondurable/PriceIndex] 
-  
-  DataTable <- DataTable[order(Total_Exp_Month_Per_nondurable_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
+    DataTable <- DataTable[,Total_Consumption_Month_per_Real:=Total_Consumption_Month_per/PriceIndex] 
+  DataTable <- DataTable[order(Total_Consumption_Month_per_Real)]  # I removed Region from ordering, deciling is not divided into rural/urban (M.E. 5/11/2020)
   DataTable <- DataTable[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  DataTable <- DataTable[,xr25th:=.SD[25,Total_Exp_Month_Per_nondurable_Real],by=.(Region,NewArea_Name)]
-  DataTable <- DataTable[,First25:=ifelse(Total_Exp_Month_Per_nondurable_Real<=xr25th,1,0)]
   #Calculate deciles by weights
   DataTable <- DataTable[,Decile:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
   DataTable <- DataTable[,Percentile:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
-  DataTable[,crw:=NULL]
-  DataTable[,xr25th:=NULL]
-  
   return(DataTable)
 }
 
@@ -74,31 +73,26 @@ UpdateForDurableDepr <- function(DataTable,ODIDep){
     DataTable[is.na(get(col)), (col) := 0]
   
   DataTable[, Total_Exp_Month := Reduce(`+`, .SD), .SDcols=Settings$w]
-  DataTable[, Total_Exp_Month_nondurable := Reduce(`+`, .SD), .SDcols=Settings$nw]
+  DataTable[, Total_Consumption_Month := Reduce(`+`, .SD), .SDcols=Settings$nw]
   
   DataTable[,Total_Exp_Month_Per:=Total_Exp_Month/EqSizeOECD]
-  DataTable[,Total_Exp_Month_Per_nondurable:=Total_Exp_Month_nondurable/EqSizeOECD]
+  DataTable[,Total_Consumption_Month_per:=Total_Consumption_Month/EqSizeOECD]
 }
 
 DurableItems <- data.table(read_excel(Settings$MetaDataFilePath,
                                       sheet=Settings$MDS_DurableItemsDepr))
-
+year<- 98
 for(year in (Settings$startyear:Settings$endyear)){
+  
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
-  # load data --------------------------------------
-  load(file = paste0(Settings$HEISProcessedPath,"Y",
-                     year,"DurableData_Detail.rda"))
-  
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,
-                   "OwnsDurableItems.rda"))
-  
-  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableData_Detail.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"OwnsDurableItems.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   
   SMD <- MD[,.(HHID,Region,
                House_Exp,FoodExpenditure,Total_Exp_Month,
-               NewArea,NewArea_Name,Total_Exp_Month_Per_nondurable,TOriginalFoodExpenditure_Per,
+               NewArea,NewArea_Name,Total_Consumption_Month_per,TOriginalFoodExpenditure_Per,
                TFoodKCaloriesHH_Per,Calorie_Need_WorldBank,Calorie_Need_NutritionInstitute,
                Weight,MeterPrice,Size,EqSizeOECD
                ,OriginalFoodExpenditure,FoodOtherExpenditure, Cigar_Exp, Cloth_Exp,
@@ -135,17 +129,22 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD <- UpdateForDurableDepr(SMD,OwnedDurableItemsDepreciation)
   
-  mdset <- setdiff(names(MD),names(SMD))
-  Decile <- merge(MD[,c("HHID",mdset),with=FALSE],SMD,by="HHID")
-  Decile <-Decile[,.(HHID,Decile)]
-  save(Decile,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile.rda"))
+  SMD <- SMD[,IPboPct:=ifelse(Percentile %in% 1:Settings$InitialPoorPercentileMax,1,0)]
+  # IPboPct : InitialPoorBasedOnRealIterativePercentile
+  # IPboPctLI: InitialPoorBasedOnRealIterativePercentileLastIteration
   
-  #Decile_MD <- MD [,.(HHID,Total_Exp_Month_Per_nondurable,Size,Weight)]
-  #Decile_MD <- Decile_MD[order(Total_Exp_Month_Per_nondurable)]
-  #Decile_MD <- Decile_MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]
-  #Decile_MD <- Decile_MD[,Decile_non_real:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  #MD <- merge(MD,Decile_MD[,c("HHID","Decile_non_real")],by="HHID")
-  #save(Decile_MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"Decile_non_real.rda"))
+  SMD[,IPboPctLI:=1]
+  
+  setnames(SMD,"IPboPct","InitialPoor")  # or maybe InitialPoorBasedOnRealIterativePercentile !
+  
+  SMD <- SMD[,setdiff(names(SMD),c("First25","IPboPctLI")),with=FALSE]
+  
+  mdset <- setdiff(names(MD),names(SMD))
+  MD <- merge(MD[,c("HHID",mdset),with=FALSE],SMD,by="HHID")
+  Decile_R <- MD[,.(HHID,Percentile,Decile,Region)]
+  save(Decile_R,file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles_real.rda"))
+  cat(MD[,sum(Weight*Size)])
+  
 }
 
 endtime <- proc.time()

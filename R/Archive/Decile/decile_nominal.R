@@ -23,13 +23,13 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   
   ###Nominal- Country
-  MD<- MD[order(Region, Total_Exp_Month_Per_nondurable)]  #Deciling in Countrym region(Nominal)
+  MD<- MD[order(Region, Total_Consumption_Month_per)]  #Deciling in Countrym region(Nominal)
   MD <- MD[,crw2:=cumsum(Weight*Size)/sum(Weight*Size),by=Region]  # Cumulative Relative Weight
   
   MD[,Decile:=cut(crw2,breaks = seq(0,1,.1),labels = 1:10),by=Region]
   MD[,Percentile:=cut(crw2,breaks=seq(0,1,.01),labels=1:100),by=Region]
-  MD1 <- MD[,.(Region,crw2,Total_Exp_Month_Per_nondurable,Weight,Size,Decile)]
-  MD1 <- MD1[,.(Texp_per_Decile=sum(Total_Exp_Month_Per_nondurable*Weight*Size)/sum(Weight*Size)),by=c("Decile","Region")]
+  MD1 <- MD[,.(Region,crw2,Total_Consumption_Month_per,Weight,Size,Decile)]
+  MD1 <- MD1[,.(Texp_per_Decile=sum(Total_Consumption_Month_per*Weight*Size)/sum(Weight*Size)),by=c("Decile","Region")]
   MD1 <- MD1[, Year:=year]
   Dcile <- rbind(Dcile,MD1)
   

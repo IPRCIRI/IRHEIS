@@ -211,7 +211,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   MD[, Total_Exp_Month_behdasht := Reduce(`+`, .SD), .SDcols=b]
   MD[, Total_Exp_Month_zirs := Reduce(`+`, .SD), .SDcols=zirs]
   #cat(MD[,weighted.mean(Total_Exp_Month,Weight)])
-#  cat(MD[,weighted.mean(Total_Exp_Month_nondurable,Weight)])
+#  cat(MD[,weighted.mean(Total_Consumption_Month,Weight)])
   MD<-merge(MD,HHWeights)
   MD1 <- MD[,.(HHID,Total_Exp_Month_ND,Total_Exp_Month_durable,Weight,Region,Size, Durable_Exp,
                 Total_Exp_Month_ND ,Total_Exp_Month_durable, Total_Exp_Month_food , Total_Exp_Month_house,
