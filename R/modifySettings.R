@@ -42,12 +42,12 @@ Settings <- list(HEISPath          =HEISPath,
                  predictionyear= 99,
                  predictionmonth= 0,
                  
-                 OS=OS,
                  # RawDataWebAddress ="http://www.amar.org.ir/Portals/0/amarmozuii/hazinedaramad/",
                  RawDataWebAddress ="https://www.amar.org.ir/Portals/0/amarmozuii/re_DataRaw_63_95_Info/",
                  MetaDataFilePath  = "../Data/MetaData.xlsx",
                  GeoInfoFilePath   = "../Data/Archive/GeoInfo.Shahrestan.xlsx",
                  InflationDataFilePath = "../Data/inflation.xlsx",
+                 InflationDataSheet= "Data",
                  MDS_CFN           = "CompressedFileNames",              # MetaData Sheet: Compressed File Names
                  MDS_P1Cols        = "P1Cols",                           # MetaData Sheet: Columns of P1 Table
                  MDS_P2Cols        = "P2Cols",
