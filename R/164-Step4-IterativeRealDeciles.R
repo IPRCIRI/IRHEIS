@@ -159,6 +159,21 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   mdset <- setdiff(names(MD),names(SMD))
   MD <- merge(MD[,c("HHID",mdset),with=FALSE],SMD,by="HHID")
+  
+  MD <- MD[order(Total_Consumption_Month_per)]  
+  MD <- MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  MD <- MD[,Dcil_Gen_Cons_Nominal:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  MD <- MD[,Pctl_Gen_Cons_Nominal:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  MD <- MD[order(Total_Expenditure_Month_per)]  
+  MD <- MD[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
+  MD <- MD[,Dcil_Gen_Exp_Nominal:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
+  MD <- MD[,Pctl_Gen_Exp_Nominal:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
+  
+  MD[,crw:=NULL]
+  
+  
+  
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
   Deciles <- MD[,.(HHID,Weight,Size,
@@ -166,19 +181,9 @@ for(year in (Settings$startyear:Settings$endyear)){
                    Dcil_Gen_Cons_PAdj, Pctl_Gen_Cons_PAdj, 
                    Dcil_Gen_Exp_PAdj, Pctl_Gen_Exp_PAdj,
                    Dcil_IP_Cons_PAdj, Pctl_IP_Cons_PAdj,  
-                   Dcil_IP_Exp_PAdj, Pctl_IP_Exp_PAdj)]
-  
-  Deciles <- Deciles[order(Total_Consumption_Month_per)]  
-  Deciles <- Deciles[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  Deciles <- Deciles[,Dcil_Gen_Cons_Nominal:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  Deciles <- Deciles[,Pctl_Gen_Cons_Nominal:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
-  Deciles <- Deciles[order(Total_Expenditure_Month_per)]  
-  Deciles <- Deciles[,crw:=cumsum(Weight*Size)/sum(Weight*Size)]  # Cumulative Relative Weight
-  Deciles <- Deciles[,Dcil_Gen_Exp_Nominal:=cut(crw,breaks = seq(0,1,.1),labels = 1:10)]
-  Deciles <- Deciles[,Pctl_Gen_Exp_Nominal:=cut(crw,breaks=seq(0,1,.01),labels=1:100)]
-  
-  Deciles[,crw:=NULL]
+                   Dcil_IP_Exp_PAdj, Pctl_IP_Exp_PAdj,
+                   Dcil_Gen_Cons_Nominal,Pctl_Gen_Cons_Nominal,
+                   Dcil_Gen_Exp_Nominal,Pctl_Gen_Exp_Nominal)]
   
   save(Deciles,file=paste0(Settings$HEISProcessedPath,"Y",year,"Deciles.rda"))
 }
