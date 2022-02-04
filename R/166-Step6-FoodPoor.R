@@ -1,7 +1,7 @@
 # 166-Step6-FoodPoor.R: Calculate base year basket cost in current year prices 
 #                  for each cluster. and find FoodPoor
 #
-# Copyright © 2019-2020: Arin Shahbazian & Majid Einian
+# Copyright © 2019-2022: Arin Shahbazian & Majid Einian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -17,8 +17,8 @@ year<-Settings$baseBundleyear
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
 load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
 
-MD[,Selected_Group:=ifelse((Region=="Urban" & Decile==4) |
-                             (Region=="Rural" & Decile==3),1,0)]
+MD[,Selected_Group:=ifelse((Region=="Urban" & Dcil_IP_Cons_PAdj==4) |
+                             (Region=="Rural" & Dcil_IP_Cons_PAdj==3),1,0)]
 
 Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
 Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
@@ -50,8 +50,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
   
-  MD[,Selected_Group:=ifelse((Decile==5) | (Decile==2) |
-                               (Decile==3) | (Decile==4),1,0)]
+  MD[,Selected_Group:=ifelse(Dcil_IP_Cons_PAdj %in% 2:5,1,0)]
   
   #Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
   #Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
@@ -91,12 +90,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(unlist(MD[cluster3==13,.(FPLine,weighted.mean(FoodPoor))][1]))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
   
-  Meat<-BigFData[FoodType=="Meat",.(HHID,FoodType,FGrams)]
-  Meat2 <- Meat[,lapply(.SD,sum),by=HHID,.SDcols=c("FGrams")]
-  Meat2<-merge(MD[,.(HHID,Size,EqSizeCalory,Weight)],Meat2,all.x=TRUE)
-  Meat2[is.na(Meat2)]<-0
-  cat(Meat2[,weighted.mean(FGrams/EqSizeCalory,Weight*Size)])
-  cat(Meat2[,weighted.median(FGrams/EqSizeCalory,Weight*Size)])
+  # Meat<-BigFData[FoodType=="Meat",.(HHID,FoodType,FGrams)]
+  # Meat2 <- Meat[,lapply(.SD,sum),by=HHID,.SDcols=c("FGrams")]
+  # Meat2<-merge(MD[,.(HHID,Size,EqSizeCalory,Weight)],Meat2,all.x=TRUE)
+  # Meat2[is.na(Meat2)]<-0
+  # cat(Meat2[,weighted.mean(FGrams/EqSizeCalory,Weight*Size)])
+  # cat(Meat2[,weighted.median(FGrams/EqSizeCalory,Weight*Size)])
 }
 
 #library(writexl)
