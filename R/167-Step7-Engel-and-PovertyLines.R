@@ -82,7 +82,7 @@ BigEngelTable[is.na(l.DSC) & is.na(l2.DSC), ModDSC:=DSC]
 BigEngelTable[!is.na(l.DSC) & is.na(l2.DSC), ModDSC:=(DSC+l.DSC)/2]
 BigEngelTable[is.na(ModDSC), ModDSC:=(DSC+l.DSC+l2.DSC)/3]
 
-BigEngelTable[,CMPovLine:=PovertyLine*(1-ModOER+ModDSC)]
+BigEngelTable[,CMPovLine:=PovertyLine*(1-OER+DSC)]
 
 #View(BigEngelTable[,.(Year,cluster3,PovertyLine,FPLine,CMPovLine)])
 

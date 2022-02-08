@@ -6,7 +6,7 @@
 rm(list=ls())
 
 startTime <- proc.time()
-cat("\n\n================ Breaking Durable goods in four groups =====================================\n")
+cat("\n\n=========== Breaking Durable goods in four groups =================\n")
 
 library(yaml)
 Settings <- yaml.load_file("Settings.yaml")
@@ -15,7 +15,8 @@ library(readxl)
 library(stringr)
 library(data.table)
 
-DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_DurableGroups))
+DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,
+                                       sheet=Settings$MDS_DurableGroups))
 
 mst <- min(DurableGroups$StartYear)
 
@@ -42,7 +43,8 @@ for(year in (max(Settings$startyear,mst):Settings$endyear)){
   
   DD <- rbind(DDIs,DDNs)
   
-  save(DD,file=paste0(Settings$HEISProcessedPath,"Y",year,"DurableData_NetDetail.rda"))
+  save(DD,file=paste0(Settings$HEISProcessedPath,"Y",year,
+                      "DurableData_NetDetail.rda"))
   
   
   g1 <- DurableGroups[year >= StartYear & year <= EndYear & Group==1]$Code
@@ -67,7 +69,6 @@ for(year in (max(Settings$startyear,mst):Settings$endyear)){
   if(nrow(Dx)>0) dput(unique(Dx[,Code]))
   
   save(Durable_4Groups, file=paste0(Settings$HEISProcessedPath,"Y",year,"Durable_4Groups.rda"))
-  
 }
 
 endTime <- proc.time()

@@ -83,8 +83,8 @@ Calculate_OwnedDurableItemsDepreciation <- function(DurableData_ExpDetail,
                                           Decile=factor(1:10)))
   }
   
-  DurableValues <- DurableData_ExpDetail[Code %in% g2 & Net_Durable_Exp>0
-                                         ,.(.N,Value=mean(Net_Durable_Exp))
+  DurableValues <- DurableData_ExpDetail[Code %in% g2 & Durable_Exp>0
+                                         ,.(.N,Value=mean(Durable_Exp))
                                          ,by=by]
   DurableValues[is.na(Item),Item:="Other"]
   DurableDepr <- merge(DurableDepr,DurableValues,by=by,all.x = TRUE)
