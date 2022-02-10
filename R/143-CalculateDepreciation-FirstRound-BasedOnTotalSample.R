@@ -29,7 +29,13 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,
                    "OwnsDurableItems.rda"))
+  
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
 
+  HHWeights <- data.table(HHWeights)
+  HHWeights[,HHID:=as.numeric(HHID)]
+  
+  
   g2 <- DurableGroups[year >= StartYear & year <= EndYear & Group==2]$Code
   #setdiff(g2,DurableItems$)
   OwnedDurableItemsDepreciation <- 
@@ -39,7 +45,8 @@ for(year in (Settings$startyear:Settings$endyear)){
       by = "Item",
       Decile = NULL,
       DurableItems = DurableItemsDepr,
-      g2 = g2)
+      g2 = g2,
+      Weights = HHWeights[,.(HHID,Weight)])
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Durable_4Groups.rda"))
   A <- merge(Durable_4Groups,OwnedDurableItemsDepreciation,by="HHID")

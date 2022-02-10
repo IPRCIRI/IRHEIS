@@ -65,6 +65,7 @@ for(year in ((Settings$startyear+2):Settings$endyear)){
     PovStatsList[[GroupingVarName]] <- rbind(PovStatsList[[GroupingVarName]],X)
   }
 }
+cat("\n\n")
 print(PovStatsList[["Country"]][,.(Year,PovertyLine,PovertyHCR,PovertyGap,PovertyDepth)])
 
 write_xlsx(PovStatsList,path = paste0(Settings$HEISResultsPath,"/AllResults.xlsx"))

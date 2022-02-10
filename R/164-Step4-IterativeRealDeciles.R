@@ -35,6 +35,12 @@ for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN3.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHHouseProperties.rda"))
   
+  load(file=paste0(Settings$HEISWeightsPath,Settings$HEISWeightFileName,year,".rda"))
+  
+  HHWeights <- data.table(HHWeights)
+  HHWeights[,HHID:=as.numeric(HHID)]
+  
+  
   SMD <- MD[,c("HHID", "Region", "NewArea", 
                "NewArea_Name",
                union(Settings$ExpenditureCols,Settings$ConsumptionCols),
@@ -87,7 +93,8 @@ for(year in (Settings$startyear:Settings$endyear)){
       by = c("Item","Decile"),
       Decile = SMD[,.(HHID,Decile=Dcil_Gen_Cons_PAdj)],
       DurableItems = DurableItemsDepr,
-      g2 = g2)
+      g2 = g2,
+      Weights = HHWeights[,.(HHID,Weight)])
   
   SMD <- UpdateForDurableDepr(SMD,OwnedDurableItemsDepreciation)
 
@@ -131,7 +138,8 @@ for(year in (Settings$startyear:Settings$endyear)){
         by = c("Item","Decile"),
         Decile = SMD[,.(HHID,Decile=Dcil_TIP_Cons_PAdj)],
         DurableItems = DurableItemsDepr,
-        g2 = g2)
+        g2 = g2,
+        Weights = HHWeights[,.(HHID,Weight)])
 
     SMD <- UpdateForDurableDepr(SMD,OwnedDurableItemsDepreciation)
     
