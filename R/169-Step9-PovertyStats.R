@@ -17,9 +17,8 @@ library(writexl)
 #TODO: move this to the right position
 ProvinceFarsiNames<-as.data.table(read_excel("../Data/ProvinceFarsiNames.xlsx",  
                                              sheet = "Sheet2"))
-
-Groupings <- list(NULL,"Region","cluster3","Province","Dcil_Gen_Cons_Nominal")
-names(Groupings) <- c("Country","Region","Cluster","Province","NominalDecile")
+Groupings <- list(NULL,"Region","cluster3","Province","Dcil_Gen_Cons_Nominal","HouseStatus")
+names(Groupings) <- c("Country","Region","Cluster","Province","NominalDecile","HouseStatus")
 PovStatsList <- list()
 for(GroupingVarName in names(Groupings)){
   PovStatsList[[GroupingVarName]] <- data.table()
@@ -29,6 +28,11 @@ for(year in ((Settings$startyear+2):Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
+  
+  
+  MD[tenure %in% c("OwnLandandBuilding","Apartment"),HouseStatus:="Owns"]
+  MD[tenure %in% c("Rented","Mortgage"),HouseStatus:="Rent"]
+  MD[is.na(HouseStatus),HouseStatus:="Other"]
   
   MD[,FGT1M:=(CMPovLine-Total_Consumption_Month_per)/CMPovLine]
   MD[,FGT2M:=((CMPovLine-Total_Consumption_Month_per)/CMPovLine)^2]
