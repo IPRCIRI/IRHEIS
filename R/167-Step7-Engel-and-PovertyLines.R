@@ -65,7 +65,7 @@ BigEngelTable[,EngelX2:=l2.Engel*F2]
 BigEngelTable[,l.OER:=data.table::shift(OER),by=cluster3]
 BigEngelTable[,l2.OER:=data.table::shift(OER,2),by=cluster3]
 BigEngelTable[,l.DSC:=data.table::shift(DSC),by=cluster3]
-BigEngelTable[,l2.DSC:=data.table::shift(DSC),by=cluster3]
+BigEngelTable[,l2.DSC:=data.table::shift(DSC,2),by=cluster3]
 
 BigEngelTable[is.na(EngelX) & is.na(EngelX2),ModifiedEngel:=Engel]
 BigEngelTable[!is.na(EngelX) & is.na(EngelX2),ModifiedEngel:=(Engel+EngelX)/2]
