@@ -32,6 +32,11 @@ for(year in ((Settings$startyear+2):Settings$endyear)){
   MD[,FinalPoor:=ifelse(Total_Consumption_Month_per < CMPovLine,1,0 )]
 
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FinalPoor.rda"))
+  
+  haven::write_dta(MD[,.(HHID,FinalPoor)],
+                   path = paste0(Settings$HEISProcessedPath,
+                                 "Y",year,"FinalPoor.dta"),version = 15,
+                   label = "Identified Poor by MajlisResearcCenter Method")
 
 }
 

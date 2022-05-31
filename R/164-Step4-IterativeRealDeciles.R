@@ -184,7 +184,8 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoor.rda"))
   
-  Deciles <- MD[,.(HHID,Weight,Size,
+  Deciles <- MD[,.(HHID,Weight,Size,EqSizeOECD,
+                   Total_Consumption_Month,Total_Expenditure_Month,
                    Total_Consumption_Month_per,Total_Expenditure_Month_per,
                    Dcil_Gen_Cons_PAdj, Pctl_Gen_Cons_PAdj, 
                    Dcil_Gen_Exp_PAdj, Pctl_Gen_Exp_PAdj,
