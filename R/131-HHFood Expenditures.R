@@ -1,8 +1,10 @@
-# 131-HHFoods.R
+# 131-HHFood Expenditures.R
 # Builds the Food expenditures data.table for households
 #
 # Copyright © 2017: Arin Shahbazian
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
 # Licence: GPL-3
+# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 

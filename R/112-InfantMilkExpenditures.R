@@ -3,7 +3,9 @@
 # This is used later to identify lactating women
 #
 # Copyright © 2019-2020: Zahra Shahidi, Majid Einian
-# License: GPL-3
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
+# Licence: GPL-3
+# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 

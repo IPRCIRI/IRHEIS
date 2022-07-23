@@ -1,7 +1,9 @@
-#165-Step 5- Clustering.R ----- Clusters are predefined now, not calculated here
+#165-Step 5-AddClusterInfo.R ----- Clusters are predefined now, not calculated here
 # 
 # Copyright © 2018: Majid Einian & Arin Shahbazian
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
 # Licence: GPL-3
+# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 

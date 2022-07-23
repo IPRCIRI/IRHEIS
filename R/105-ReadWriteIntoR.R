@@ -2,7 +2,9 @@
 # Read and Save All Tables into R Format
 #
 # Copyright © 2015: Majid Einian
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
 # Licence: GPL-3
+# For information on how to use and cite the results, see ResultsUsageLicence.md
 # 
 rm(list=ls())
 

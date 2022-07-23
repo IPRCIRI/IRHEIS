@@ -1,7 +1,9 @@
 #161-Step1-MergeData.R
 # 
 # Copyright © 2018-2022: Majid Einian & Arin Shahbazian
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
 # Licence: GPL-3
+# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 
