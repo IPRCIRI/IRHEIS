@@ -37,7 +37,7 @@ for(year in ((Settings$startyear+2):Settings$endyear)){
                   SampleSize=.N,
                   StudyVar=weighted.mean(get(StudyVar),Weight,na.rm=TRUE)),
                by=c("FinalPoor",GroupingVar)]
-      X1w <- cbind(year,dcast(X1,formula(paste0(ifelse(is.null(GroupingVar),"",GroupingVar)," ~ FinalPoor")),value.var = "StudyVar"))
+      X1w <- dcast(X1,formula(paste0("Year",ifelse(is.null(GroupingVar),"",paste0("+",GroupingVar)),"~ FinalPoor")),value.var = "StudyVar")
       PovStatsList[[paste0(VarName,"-",GroupingVarName)]] <- rbind(PovStatsList[[paste0(VarName,"-",GroupingVarName)]],X1w)
     }
   }
