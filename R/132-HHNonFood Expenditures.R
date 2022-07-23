@@ -49,6 +49,12 @@ for(section in sections_names){
     }
     
     TS[,(paste0(section,"_Exp")):=as.numeric(get(paste0(section,"_Exp")))]
+    
+    if(tab=="P3S13"){
+      TS[,(paste0(section,"_Exp")):=get(paste0(section,"_Exp"))/12]
+      #cat("======*****========")
+    }
+    
     TS[,Code:=NULL]
     TS[is.na(TS)] <- 0
     
