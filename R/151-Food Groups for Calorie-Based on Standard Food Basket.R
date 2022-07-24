@@ -2,9 +2,6 @@
 # Builds the Food Groups data.table for households
 
 #Nutrients Quantities Has been added
-# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
-# Licence: GPL-3
-# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 starttime <- proc.time()
@@ -23,7 +20,7 @@ library(stringr)
 library(readxl)
 
 cat("\n\n================ FoodGroups =====================================\n")
-TFoodGroups <- data.table(read_excel("E:/Refah Economy/Food Basket/rev03 (total Nutritions)/Book1.xlsx",Settings$MDS_FoodGroups))
+TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_FoodGroupsTotalNutrition))
 FoodTypeTables <- list()
 for(i in 1:nrow(TFoodGroups))
   FoodTypeTables[[i]] <- data.table(read_excel(Settings$MetaDataFilePath,sheet=TFoodGroups[i,SheetName]))
