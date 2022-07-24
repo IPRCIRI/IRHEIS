@@ -33,6 +33,7 @@ MDS_EC_C: EduCodes-C
 MDS_EC_D: EduCodes-D
 MDS_Food: FoodTables
 MDS_FoodGroups: FoodGroupTables
+MDS_FoodGroupsTotalNutrition: FoodGroupTablesTotalNutrition
 MDS_InfantMilk: InfantMilkTables
 MDS_Cigar: CigarTables
 MDS_Cloth: ClothTables
