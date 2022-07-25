@@ -18,7 +18,7 @@ Groupings <- list(NULL,"Region")
 names(Groupings) <- c("Country","Region")
 Variables <- c("HEmployed","HLiterate","HEduYears","HAge")
 PovStatsList <- list()
-for(VarName in names(Variables)){
+for(VarName in Variables){
   for(GroupingVarName in names(Groupings)){
     
     PovStatsList[[paste0(VarName,"-",GroupingVarName)]] <- data.table()
