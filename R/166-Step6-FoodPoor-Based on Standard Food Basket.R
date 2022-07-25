@@ -1,6 +1,8 @@
 # 166-Step6-FoodPoor.R: Calculate Food Poor based on standard food basket (25 percent deviate from food basket)
 #
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
 # Licence: GPL-3
+# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 starttime <- proc.time()
@@ -13,6 +15,7 @@ library(isotone)
 BigsdTable <- data.table()
 
 BaseYearBasket <- data.table(read_excel(paste0(Settings$HEISResultsPath,"/FoodBasketStatsList.xlsx"),sheet = "25"))
+
 
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
