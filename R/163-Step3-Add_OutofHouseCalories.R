@@ -30,7 +30,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   #Calculate per_Calory from Restaurants
   MD[,Calory_Price:=(OriginalFoodExpenditure_Per/FoodKCaloriesHH_Per)]
-  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight,na.rm = TRUE),by=.(Region,NewArea)]
+  MD[,Calory_Price_Area:=weighted.median(Calory_Price,Weight),by=.(Region,NewArea)]
   MD[,RestaurantKCalories:=(Settings$OutFoodKCXShare*Restaurant_Exp)/Calory_Price_Area]
   MD[is.na(RestaurantKCalories),RestaurantKCalories:=0]
   
