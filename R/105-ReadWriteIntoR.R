@@ -12,6 +12,7 @@ starttime <- proc.time()
 cat("\n\n================ ReadWriteIntoR =====================================\n")
 
 library(yaml)
+
 Settings <- yaml.load_file("Settings.yaml")
 
 file.copy(from = Settings$D80LinkSource, to = Settings$D80LinkDest, overwrite = TRUE)
@@ -40,6 +41,10 @@ for(year in (Settings$startyear:Settings$endyear)){
     Tables[[tbl]] <- D
   }
   names(Tables) <- toupper(names(Tables))
+  ### 1400 change to 100
+  if (year==100){
+    names(Tables) <- gsub('1400','100',names(Tables))
+  }
 #  Tables[[paste0("RU",year,"Weights")]] <- AllWeights[(Year==year),]
   close(cns)
   save(Tables,file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))

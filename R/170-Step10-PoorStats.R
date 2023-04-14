@@ -1,6 +1,6 @@
 # 170-Step10-PoorStats.R
 # 
-# Copyright Â© 2022:Majid Einian
+# Copyright © 2022:Majid Einian
 # Licence: GPL-3
 
 rm(list=ls())
@@ -8,6 +8,7 @@ rm(list=ls())
 starttime <- proc.time()
 cat("\n\n================ Comparing the poor and non-poor ==================\n")
 library(yaml)
+
 Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
@@ -18,12 +19,14 @@ Groupings <- list(NULL,"Region")
 names(Groupings) <- c("Country","Region")
 Variables <- c("HEmployed","HLiterate","HEduYears","HAge")
 PovStatsList <- list()
-for(VarName in Variables){
+names(Variables) <- c("HEmployed","HLiterate","HEduYears","HAge")
+for(VarName in names(Variables)){
   for(GroupingVarName in names(Groupings)){
     
     PovStatsList[[paste0(VarName,"-",GroupingVarName)]] <- data.table()
   }
 }
+#year <- 99
 for(year in ((Settings$startyear+2):Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   
@@ -37,8 +40,9 @@ for(year in ((Settings$startyear+2):Settings$endyear)){
                   SampleSize=.N,
                   StudyVar=weighted.mean(get(StudyVar),Weight,na.rm=TRUE)),
                by=c("FinalPoor",GroupingVar)]
-      X1w <- dcast(X1,formula(paste0("Year",ifelse(is.null(GroupingVar),"",paste0("+",GroupingVar)),"~ FinalPoor")),value.var = "StudyVar")
-      PovStatsList[[paste0(VarName,"-",GroupingVarName)]] <- rbind(PovStatsList[[paste0(VarName,"-",GroupingVarName)]],X1w)
+      X1w <- cbind(year,dcast(X1,formula(paste0(ifelse(is.null(GroupingVar),"...",GroupingVar)," ~ FinalPoor"))
+                              ,value.var = "StudyVar"))
+      PovStatsList[[paste0(StudyVar,"-",GroupingVarName)]] <- rbind(PovStatsList[[paste0(StudyVar,"-",GroupingVarName)]],X1w)
     }
   }
 }
@@ -48,4 +52,3 @@ write_xlsx(PovStatsList,path = paste0(Settings$HEISResultsPath,"/PoorStats.xlsx"
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took",(endtime-starttime)["elapsed"],"seconds")
-

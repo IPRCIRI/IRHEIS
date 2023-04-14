@@ -17,11 +17,14 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(stringr)
+# sections_names <- c("Education")
+# section <- c("Education")
 
 sections_names <- c("Cigar","Cloth","Communication","Energy","Furniture",
                     "Hygiene","Medical","Transportation","Communication",
                     "Amusement","Education","Hotel","Restaurant","Other",
                     "Investment")
+
 # House has different code / durables are in another file
 for(section in sections_names){
   section_sheet <- eval(parse(text = paste0("Settings$MDS_",section)))

@@ -22,7 +22,7 @@ source("000-FunctionDefs.R")
 
 
 P2Cols <- data.table(read_excel(Settings$MetaDataFilePath, Settings$MDS_P2Cols))
-#year<-90
+year<-100
 for(year in (Settings$startyear:Settings$endyear)){    
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
@@ -43,7 +43,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   P2 <- P2[, lapply(.SD, trim_to_number)] 
   
   P2[is.na(P2)]<-0  
-  
   P2[,tenure :=factor(tenure, levels=1:7, 
                       labels=c("OwnLandandBuilding","Apartment","Rented",
                                "Mortgage","AgainstService",
@@ -167,7 +166,6 @@ for(year in (Settings$startyear:Settings$endyear)){
   for (var in booleanvars) P2[, (var):= get(var)==1]
   }
   HHHouseProperties<-P2
-   
   save(HHHouseProperties, file=paste0(Settings$HEISProcessedPath,"Y",year,
                                       "HHHouseProperties.rda"))
 }

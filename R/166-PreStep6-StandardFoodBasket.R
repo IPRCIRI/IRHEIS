@@ -72,29 +72,29 @@ for (i in seq(15,30,by=5)) {
   
   #### 15 percent deviation from standard food basket
   if (i==15) {
-    SelectedSample <- SelectedSample[(FKCalspc>1785 & FKCalspc<2415   & FoodProteinpc>58.20 & FoodProteinpc<78.74  & FoodVitaminApc>589.612 & FoodVitaminApc<797.71 &
-                                        FoodRiboflavinpc>0.9018 & FoodRiboflavinpc<1.2201 & FoodFepc>10.891 & FoodFepc<14.7359 & FoodCalciumpc>557.63 & FoodCalciumpc<754.44),]
+    SelectedSample <- SelectedSample[(FKCalspc> Settings$KCaloryNeed_NutInst_L15 & FKCalspc<Settings$KCaloryNeed_NutInst_H15   & FoodProteinpc>Settings$ProteinNeed_NutInst_L15 & FoodProteinpc<Settings$ProteinNeed_NutInst_H15  & FoodVitaminApc>Settings$VitaminANeed_NutInst_L15 & FoodVitaminApc<Settings$VitaminANeed_NutInst_H15 &
+                                        FoodRiboflavinpc>Settings$RiboflavinNeed_NutInst_L15 & FoodRiboflavinpc<Settings$RiboflavinNeed_NutInst_H15 & FoodFepc>Settings$FeNeed_NutInst_L15 & FoodFepc<Settings$FeNeed_NutInst_H15 & FoodCalciumpc>Settings$CalciumNeed_NutInst_L15 & FoodCalciumpc<Settings$CalciumNeed_NutInst_H15),]
     
   }
   
   ####20 Percent deviation from standard food basket
   if (i==20) {
-    SelectedSample <- SelectedSample[(FKCalspc>1680 & FKCalspc<2520   & FoodProteinpc>54.78 & FoodProteinpc<82.17  & FoodVitaminApc>555 & FoodVitaminApc<832.4 &
-                                        FoodRiboflavinpc>0.848 & FoodRiboflavinpc<1.273 & FoodFepc>10.25 & FoodFepc<15.37 & FoodCalciumpc>524.83 & FoodCalciumpc<787.24),]
+    SelectedSample <- SelectedSample[(FKCalspc>Settings$KCaloryNeed_NutInst_L20 & FKCalspc<Settings$KCaloryNeed_NutInst_H20   & FoodProteinpc>Settings$ProteinNeed_NutInst_L20 & FoodProteinpc<Settings$ProteinNeed_NutInst_H20  & FoodVitaminApc>Settings$VitaminANeed_NutInst_L20 & FoodVitaminApc<Settings$VitaminANeed_NutInst_H20 &
+                                        FoodRiboflavinpc>Settings$RiboflavinNeed_NutInst_L20 & FoodRiboflavinpc<Settings$RiboflavinNeed_NutInst_H20 & FoodFepc>Settings$FeNeed_NutInst_L20 & FoodFepc<Settings$FeNeed_NutInst_H20 & FoodCalciumpc>Settings$CalciumNeed_NutInst_L20 & FoodCalciumpc<Settings$CalciumNeed_NutInst_H20),]
     
   }
   ####25 Percent deviation from standard food basket
   if (i==25) {
-    SelectedSample <- SelectedSample[(FKCalspc>1575 & FKCalspc<2625   & FoodProteinpc>51.35 & FoodProteinpc<85.59  & FoodVitaminApc>520.24 & FoodVitaminApc<867.07 &
-                                        FoodRiboflavinpc>0.7957 & FoodRiboflavinpc<1.326 & FoodFepc>9.61 & FoodFepc<16.01 & FoodCalciumpc>492 & FoodCalciumpc<820),]
+    SelectedSample <- SelectedSample[(FKCalspc>Settings$KCaloryNeed_NutInst_L25 & FKCalspc<Settings$KCaloryNeed_NutInst_H25   & FoodProteinpc>Settings$ProteinNeed_NutInst_L25 & FoodProteinpc<Settings$ProteinNeed_NutInst_H25  & FoodVitaminApc>Settings$VitaminANeed_NutInst_L25 & FoodVitaminApc<Settings$VitaminANeed_NutInst_H25 &
+                                        FoodRiboflavinpc>Settings$RiboflavinNeed_NutInst_L25 & FoodRiboflavinpc<Settings$RiboflavinNeed_NutInst_H25 & FoodFepc>Settings$FeNeed_NutInst_L25 & FoodFepc<Settings$FeNeed_NutInst_H25 & FoodCalciumpc>Settings$CalciumNeed_NutInst_L25 & FoodCalciumpc<Settings$CalciumNeed_NutInst_H25),]
     
     
   }
   
   ####30 Percent deviation from standard food basket
   if (i==30) {
-    SelectedSample <- SelectedSample[(FKCalspc>1470 & FKCalspc<2730   & FoodProteinpc>48 & FoodProteinpc<89  & FoodVitaminApc>485.5 & FoodVitaminApc<901.7 &
-                                        FoodRiboflavinpc>0.742 & FoodRiboflavinpc<1.38 & FoodFepc>8.97 & FoodFepc<16.658 & FoodCalciumpc>459.22 & FoodCalciumpc<852.84),]
+    SelectedSample <- SelectedSample[(FKCalspc>Settings$KCaloryNeed_NutInst_L30 & FKCalspc<Settings$KCaloryNeed_NutInst_H30   & FoodProteinpc>Settings$ProteinNeed_NutInst_L30 & FoodProteinpc<Settings$ProteinNeed_NutInst_H30  & FoodVitaminApc>Settings$VitaminANeed_NutInst_L30 & FoodVitaminApc<Settings$VitaminANeed_NutInst_H30 &
+                                        FoodRiboflavinpc>Settings$RiboflavinNeed_NutInst_L30 & FoodRiboflavinpc<Settings$RiboflavinNeed_NutInst_H30 & FoodFepc>Settings$FeNeed_NutInst_L30 & FoodFepc<Settings$FeNeed_NutInst_H30 & FoodCalciumpc>Settings$CalciumNeed_NutInst_L30 & FoodCalciumpc<Settings$CalciumNeed_NutInst_H30),]
     
   }
   

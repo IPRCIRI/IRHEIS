@@ -22,7 +22,7 @@ source("000-FunctionDefs.R")
 DurableItemsDepr <- data.table(read_excel(Settings$MetaDataFilePath,
                                           sheet=Settings$MDS_DurableItemsDepr))
 DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_DurableGroups))
-
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,";"))
   
@@ -106,7 +106,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   SMD[,IPboPctLI:=1]
   i <- 0
-  while(SMD[,sum((IPboPct-IPboPctLI)^2)]>0.002*nrow(SMD) & i <20){
+  while(SMD[,sum((IPboPct-IPboPctLI)^2)]>0.001*nrow(SMD) & i <50){
     i <- i+1
     SMD[,IPboPctLI:=IPboPct]
     

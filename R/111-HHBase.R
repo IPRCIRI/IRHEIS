@@ -2,9 +2,7 @@
 # Builds the base data.table for households
 #
 # Copyright © 2016-2020: Majid Einian
-# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
 # Licence: GPL-3
-# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 
@@ -12,23 +10,25 @@ starttime <- proc.time()
 cat("\n\n================ HHBase =====================================\n")
 
 library(yaml)
+
 Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
 library(stringr)
 library(readxl)
 
-year <- 99
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   
   if(year >86 & year < 92 ){ 
-  load(file=paste0(Settings$HEISCountyCodePath,"Y",year,
-                   Settings$HEISCountyCodeFileName,".rda"))
+    load(file=paste0(Settings$HEISCountyCodePath,"Y",year,
+                     Settings$HEISCountyCodeFileName,".rda"))
   }
-  
+  class(Tables[[3]])
+  list(Tables)
   if(year < 87){           # RxxData & UxxData tables are provided Since 1387
     RData <- Tables[[paste0("R",year,"P2")]][,1,with=FALSE]
     RData[, Region:=factor(x="Rural",levels=c("Urban","Rural"))]
@@ -52,7 +52,7 @@ for(year in (Settings$startyear:Settings$endyear)){
     }
     HHBase[,Month:=NA_integer_]
     
-  }else{
+  }else if(year<100){
     RData <- Tables[[paste0("R",year,"DATA")]][,c(1,2,4),with=FALSE]
     RData[, Region:=factor(x="Rural",levels=c("Urban","Rural"))]
     UData <- Tables[[paste0("U",year,"DATA")]][,c(1,2,4),with=FALSE]
@@ -66,6 +66,23 @@ for(year in (Settings$startyear:Settings$endyear)){
       stop("Odd Month Number Here!")
     HHBase[,Quarter:=(Month-1)%/%3+1]
     HHBase[,HHIDs:=as.character(HHID)]
+  } else {
+    RData <- Tables[[paste0("R",year,"DATA")]][,c(1,2,3),with=FALSE]
+    RData[, Region:=factor(x="Rural",levels=c("Urban","Rural"))]
+    UData <- Tables[[paste0("U",year,"DATA")]][,c(1,2,3),with=FALSE]
+    UData[, Region:=factor(x="Urban",levels=c("Urban","Rural"))]
+    setnames(RData,"fasl","Fasl")
+    HHBase <- rbind(RData, UData)
+    rm(RData,UData)
+    setnames(HHBase,c("HHID","Quarter","Weight","Region"))
+    HHBase[,Month:=NA_integer_]
+    
+    # HHBase[,Month:=ifelse(Month==1,12,Month - 1)]
+    # HHBase[HHID=="10107019605" & year==97,Month:=2]  # Odd Month (-1) in 1397
+    # if(length(which(HHBase$Month<=0))>0)
+    #   stop("Odd Month Number Here!")
+    # HHBase[,Quarter:=(Month-1)%/%3+1]
+    HHBase[,HHIDs:=as.character(HHID)]
   }
   
   if(year >86 & year < 92 ){ 
@@ -73,7 +90,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   }
   
   HHBase <- HHBase[!is.na(HHID)]
- # HHBase[,ProvinceCode:=as.integer(str_sub(HHIDs,2,3))]
+  # HHBase[,ProvinceCode:=as.integer(str_sub(HHIDs,2,3))]
   
   if(year <= 86 | year >= 92 ){
     HHBase[,CountyCode:=as.integer(str_sub(HHIDs,2,5))]
@@ -106,21 +123,21 @@ for(year in (Settings$startyear:Settings$endyear)){
     
     HHBase[CountyCode==2809, CountyCode:=2804] # Shirvan
   }
-    if(year %in% 84:86){
-      HHBase[CountyCode==2824, CountyCode:=2803] # Jaram
-      HHBase[CountyCode==2809, CountyCode:=2804] # Shirvan
-      HHBase[CountyCode==2813, CountyCode:=2805] # Faruj     # Guess!
-      HHBase[CountyCode==2825, CountyCode:=2806] # Mane & Semelqan
-      
-      HHBase[CountyCode==2903, CountyCode:=2901] # Birjand
-      HHBase[CountyCode==2912, CountyCode:=2906] # Sarbishe  # Just a guess
-      HHBase[CountyCode==2921, CountyCode:=2905] # Nehbandan
-      HHBase[CountyCode==2911, CountyCode:=2903] # Serayan   # Just a guess
-      #HHBase[CountyCode==0911, CountyCode:=2907] # Ferdows
-    }
+  if(year %in% 84:86){
+    HHBase[CountyCode==2824, CountyCode:=2803] # Jaram
+    HHBase[CountyCode==2809, CountyCode:=2804] # Shirvan
+    HHBase[CountyCode==2813, CountyCode:=2805] # Faruj     # Guess!
+    HHBase[CountyCode==2825, CountyCode:=2806] # Mane & Semelqan
     
- 
-    
+    HHBase[CountyCode==2903, CountyCode:=2901] # Birjand
+    HHBase[CountyCode==2912, CountyCode:=2906] # Sarbishe  # Just a guess
+    HHBase[CountyCode==2921, CountyCode:=2905] # Nehbandan
+    HHBase[CountyCode==2911, CountyCode:=2903] # Serayan   # Just a guess
+    #HHBase[CountyCode==0911, CountyCode:=2907] # Ferdows
+  }
+  
+  
+  
   HHBase[CountyCode==2110, CountyCode:=2911] # Tabas
   HHBase[CountyCode==2315, CountyCode:=3003] # Nazarabad
   
@@ -147,23 +164,30 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   Geo4 <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_Geo4))
   Geo4 <- Geo4[,.(CountyCode=as.numeric(Geo4),CountyName=CountyEn)]
+  HHBase[ProvinceCode==07,unique(CountyCode)]
+  HHBase[ProvinceCode==07,length(unique(CountyCode))]
   
-
+  
   HHBase <- merge(HHBase,Geo4,by="CountyCode",all.x = TRUE)
-
+  
   if(year >=99){
     HHWeights <- HHBase[,.(HHID,Weight,Year)]
     save(HHWeights,file=paste0(Settings$HEISWeightsPath,
                                Settings$HEISWeightFileName,year,".rda"))
   }
+  
+  if(year >99){
+    HHBase <- HHBase[,.(HHID,Year,Quarter,Month,
+                        Region,ProvinceCode,ProvinceName,
+                        CountyCode,CountyName)]
+  }else {
+    HHBase <- HHBase[,.(HHID,Year,Quarter,Month,
+                        Region,ProvinceCode,ProvinceName,
+                        CountyCode,CountyName)]
+  }
+  
+  #  print(table(HHBase[is.na(CountyName),CountyCode]))
 
-  HHBase <- HHBase[,.(HHID,Year,Quarter,Month,
-                      Region,ProvinceCode,ProvinceName,
-                      CountyCode,CountyName)]
-  
-#  print(table(HHBase[is.na(CountyName),CountyCode]))
-  
-  
   HHBase[,NewArea:=ProvinceCode]
   HHBase[Region=="Urban" & 
            CountyCode %in% c(2301,303,             # Tehran (County), Tabriz,
@@ -177,18 +201,18 @@ for(year in (Settings$startyear:Settings$endyear)){
          NewArea:=CountyCode]
   HHBase[Region=="Urban" & CountyCode ==1, 
          NewArea:=-1]                              # Arak [0001] to not be 
-                                                   #  confused with [01] Gilan
+  #  confused with [01] Gilan
   
-
+  
   HHBase[,NewArea_Name:=NA_character_]
   HHBase[,NewArea_Name:=ifelse(NewArea==ProvinceCode,
                                ProvinceName,
                                paste0("Sh_",CountyName))]
   HHBase[,NewArea_Name:=as.factor(NewArea_Name)]
   
-    
+  
   save(HHBase, file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
-
+  
   cat(HHBase[,.N])
 }
 
@@ -197,6 +221,7 @@ cat("\n\n============================\nIt took ")
 cat((endtime-starttime)[3])
 
 
+year <- 100
 
 for(year in (Settings$startyear:Settings$endyear)){
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))

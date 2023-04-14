@@ -1,8 +1,8 @@
-# 166-Step6-FoodPoor.R: Calculate Food Poor based on standard food basket (25 percent deviate from food basket)
+# 166-Step6-FoodPoor.R: Calculate base year basket cost in current year prices 
+#                  for each cluster. and find FoodPoor
 #
-# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
+# Copyright © 2019-2022: Arin Shahbazian & Majid Einian
 # Licence: GPL-3
-# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 starttime <- proc.time()
@@ -11,10 +11,39 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(spatstat)
 library(data.table)
-library(isotone)
 BigsdTable <- data.table()
+year<-Settings$baseBundleyear
 
-BaseYearBasket <- data.table(read_excel(paste0(Settings$HEISResultsPath,"/FoodBasketStatsList.xlsx"),sheet = "25"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
+load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+
+MD[,Selected_Group:=ifelse((Region=="Urban" & Dcil_IP_Cons_PAdj==4) |
+                             (Region=="Rural" & Dcil_IP_Cons_PAdj==3),1,0)]
+
+Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
+Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
+Bfd2 <- merge(Bfd2,MD[,.(HHID,Region,Weight,Size,
+                         EqSizeCalory,Selected_Group)],by="HHID")
+Bfd2[is.na(Bfd2)]<-0
+Bfd2[Price<0.1,Price:=NA]
+
+BaseYearBasket <- Bfd2[,
+                       .(FGrams_0=sum(FGrams),
+                         FoodKCalories_0=sum(FoodKCalories),
+                         Region=first(Region), Weight=first(Weight),
+                         Size=first(Size), EqSizeCalory=first(EqSizeCalory),
+                         Selected_Group=first(Selected_Group)),
+                       by=.(HHID,FoodType)]
+BaseYearBasket <- BaseYearBasket[Selected_Group==1,
+                                 .(FGramspc=weighted.mean(FGrams_0/EqSizeCalory,
+                                                          Weight*Size),
+                                   FKCalspc=weighted.mean(FoodKCalories_0/EqSizeCalory,
+                                                          Weight*Size)),
+                                 by=.(FoodType,Region)]
+
+BaseYearBasket[,BasketCals:=sum(FKCalspc),by=Region]
+BaseYearBasket[,StandardFGramspc:=FGramspc*Settings$KCaloryNeed_Adult_WorldBank/BasketCals]
+
 
 
 #Reweighting
@@ -53,13 +82,12 @@ Pop_R97<- 20754
 Pop_R98<- 20708
 Pop_R99<- 20648
 Pop_R100 <- 20179
-BasketCostSereis <- data.table()
-#year <- 100
+
+
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InitialPoorClustered.rda"))
-  
   
   if (year==90){
     Weight_U<-MD[Region=="Urban",sum(Weight*Size)/1000]
@@ -126,11 +154,13 @@ for(year in (Settings$startyear:Settings$endyear)){
     Weight_R<-MD[Region=="Rural",sum(Weight*Size)/1000]
     MD[,Weight:=ifelse(Region=="Urban",Weight*Pop_U100/Weight_U,Weight*Pop_R100/Weight_R)]   
   }
-
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFDataTotalNutrition.rda"))
+  
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
   
   MD[,Selected_Group:=ifelse(Dcil_IP_Cons_PAdj %in% 2:5,1,0)]
   
+  #Bfd2 <- data.table(expand.grid(HHID=MD$HHID,FoodType=unique(BigFData$FoodType)))
+  #Bfd2 <- merge(Bfd2,BigFData,all.x = TRUE)
   Bfd2 <- merge(BigFData,MD[,.(HHID,Region,Weight,Size,cluster3,
                            EqSizeCalory,Selected_Group)],by="HHID")
   Bfd2[is.na(Bfd2)]<-0
@@ -150,14 +180,8 @@ for(year in (Settings$startyear:Settings$endyear)){
                       .(Price=min(MeanPrice)),
                       by=.(FoodType,Region,cluster3)]
   
- 
-  BasketCost <- merge(BaseYearBasket,BasketPrice,by=c("FoodType"))
+  BasketCost <- merge(BaseYearBasket,BasketPrice,by=c("FoodType","Region"))
   BasketCost[,Cost:=(StandardFGramspc/1000)*Price]
-  # BasketCost[,Year:=year]
-  # BasketCostSereis <- rbind(BasketCostSereis,BasketCost)
-  #   
-
-  
   FPLineBasket <- BasketCost[,.(FPLine=sum(Cost)),by=cluster3]
   
   MD <- merge(MD,FPLineBasket,all.x=TRUE,by="cluster3")
@@ -173,5 +197,19 @@ for(year in (Settings$startyear:Settings$endyear)){
   cat(unlist(MD[cluster3==13,.(FPLine,weighted.mean(FoodPoor))][1]))
   save(MD,file=paste0(Settings$HEISProcessedPath,"Y",year,"FoodPoor.rda"))
   
+  # Meat<-BigFData[FoodType=="Meat",.(HHID,FoodType,FGrams)]
+  # Meat2 <- Meat[,lapply(.SD,sum),by=HHID,.SDcols=c("FGrams")]
+  # Meat2<-merge(MD[,.(HHID,Size,EqSizeCalory,Weight)],Meat2,all.x=TRUE)
+  # Meat2[is.na(Meat2)]<-0
+  # cat(Meat2[,weighted.mean(FGrams/EqSizeCalory,Weight*Size)])
+  # cat(Meat2[,weighted.median(FGrams/EqSizeCalory,Weight*Size)])
 }
+
+#library(writexl)
+
+#write_xlsx(BigsdTable,"E:/FPLinebasket.xlsx")
+
+endtime <- proc.time()
+cat("\n\n============================\nIt took",
+    (endtime-starttime)["elapsed"]," seconds")
 

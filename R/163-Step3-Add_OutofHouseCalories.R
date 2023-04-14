@@ -16,7 +16,7 @@ Settings <- yaml.load_file("Settings.yaml")
 library(readxl)
 library(data.table)
 library(spatstat)
-
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -24,7 +24,11 @@ for(year in (Settings$startyear:Settings$endyear)){
   
  
   MD[,FoodExpenditure_Per :=FoodExpenditure/EqSizeCalory]
+  MD[,FoodExpenditure_PerSize :=FoodExpenditure/Size]
+  
   MD[,OriginalFoodExpenditure_Per :=OriginalFoodExpenditure/EqSizeCalory]
+  MD[,OriginalFoodExpenditure_PerSize :=OriginalFoodExpenditure/Size]
+  
   MD[,FoodKCaloriesHH_Per:=FoodKCaloriesHH/EqSizeCalory]
   MD[,FoodProtein_Per:=FoodProteinHH/EqSizeCalory]
   

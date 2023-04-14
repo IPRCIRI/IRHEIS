@@ -3,9 +3,7 @@
 # This is used later to identify lactating women
 #
 # Copyright © 2019-2020: Zahra Shahidi, Majid Einian
-# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
-# Licence: GPL-3
-# For information on how to use and cite the results, see ResultsUsageLicence.md
+# License: GPL-3
 
 rm(list=ls())
 
@@ -17,14 +15,14 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
 library(data.table)
-
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
-
+  
   load(file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
   InfantMilkTables <- data.table(read_excel(Settings$MetaDataFilePath,
                                             sheet=Settings$MDS_InfantMilk))
-
+  
   imt <- InfantMilkTables[Year == year]
   tab <- imt$Table
   if (is.na(tab))
@@ -46,7 +44,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                                as.numeric(InfantMilkExpenditure)]
   TInfantMilk[is.na(TInfantMilk)] <- 0
   TInfantMilk <- TInfantMilk[,lapply(.SD,sum),by=HHID]
-
+  
   save(TInfantMilk,file = paste0(Settings$HEISProcessedPath,
                                  "Y",year,"InfantMilk.rda"))
 } 

@@ -76,5 +76,6 @@ print(PovStatsList[["Country"]][,.(Year,PovertyLine,PovertyHCR,PovertyGap,Povert
 
 write_xlsx(PovStatsList,path = paste0(Settings$HEISResultsPath,"/AllResults.xlsx"))
 
+
 endtime <- proc.time()
 cat("\n\n============================\nIt took",(endtime-starttime)["elapsed"],"seconds")

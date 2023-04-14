@@ -15,13 +15,18 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
 library(data.table)
-
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
-  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+  load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFDataTotalNutrition.rda"))
   FoodNutritionData <- BigFData[,.(FoodKCaloriesHH=sum(FoodKCalories),
-                       FoodProteinHH=sum(FoodProtein)),by=HHID]
+                       FoodProteinHH=sum(FoodProtein),
+                       FoodVitaminAHH=sum(FoodVitaminA),
+                       FoodRiboflavinHH=sum(FoodRiboflavin),
+                       FoodFeHH=sum(FoodFe),
+                       FoodCalciumHH=sum(FoodCalcium)),by=HHID]
+  
   
   FoodNutritionData <- FoodNutritionData[FoodKCaloriesHH<100000] # arbitrary removal of outliers 
   # TODO: remove households that had some event (religious, weddings, ...) instead of this arbitrary removal

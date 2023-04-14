@@ -18,6 +18,7 @@ library(stringr)
 library(readxl)
 
 FoodTables <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_Food))
+#year<-100
 
 for (year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:", year, "\n"))

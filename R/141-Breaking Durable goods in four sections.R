@@ -21,7 +21,7 @@ DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,
                                        sheet=Settings$MDS_DurableGroups))
 
 mst <- min(DurableGroups$StartYear)
-
+#year <- 100
 for(year in (max(Settings$startyear,mst):Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   

@@ -15,7 +15,7 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
 library(data.table)
-
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   
@@ -62,6 +62,10 @@ for(year in (Settings$startyear:Settings$endyear)){
   
   MD[,Total_Expenditure_Month_per:=Total_Expenditure_Month/EqSizeOECD]
   MD[,Total_Consumption_Month_per:=Total_Consumption_Month/EqSizeOECD]
+  
+  MD[,Total_Expenditure_Month_perSize:=Total_Expenditure_Month/Size]
+  MD[,Total_Consumption_Month_perSize:=Total_Consumption_Month/Size]
+  
   
   save(MD, file=paste0(Settings$HEISProcessedPath,"Y",year,"Merged4CBN1.rda"))
 }

@@ -4,8 +4,8 @@
 # needed for each household (Based on calorie need tables by the World Bank and
 # and the Nutrition Institute)
 #
-# Copyright Â© 2016-2022: Majid Einian & Zahra Shahidi
-# Copyright Â© 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
+# Copyright © 2016-2022: Majid Einian & Zahra Shahidi
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
 # Licence: GPL-3
 # For information on how to use and cite the results, see ResultsUsageLicence.md
 
@@ -15,6 +15,7 @@ starttime <- proc.time()
 cat("\n\n================== Demographics & Calorie Need ====================\n")
 
 library(yaml)
+
 Settings <- yaml.load_file("Settings.yaml")
 
 library(readxl)
@@ -31,8 +32,8 @@ EduCodesC <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_C))
 EduCodesD <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_EC_D))
 
 years <- Settings$startyear:Settings$endyear
-
-for(year in years){
+#year <- 100
+for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"HHBase.rda"))
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"InfantMilk.rda"))
@@ -49,7 +50,7 @@ for(year in years){
   }else if(year >=97){
     EduCodeT <- EduCodesD
   }
-
+  
   P1 <- rbind(Tables[[paste0("R",year,"P1")]],Tables[[paste0("U",year,"P1")]])
   nP1 <- names(P1)
   if(length(which(sapply(P1, is.character)))>0){
@@ -63,8 +64,8 @@ for(year in years){
   setnames(P1,a[ind],names(a[ind]))
   
   P1 <- P1[, lapply(.SD, trim_to_number)] #  , .SDcols=which(sapply(P1, class)=="character")]
-
-
+  
+  
   P1[is.na(Age),Age:=0L]
   P1[,Relationship :=factor(Relationship, levels=1:9, 
                             labels=c("Head","Spouse","Child","Child-in-Law",
@@ -93,12 +94,12 @@ for(year in years){
   P1[,EduYears:=EduCodeT$yoe[match(EduCode,EduCodeT$Code)]]
   P1$EduYears[P1$Literate==FALSE] <- 0
   P1[,EduLevel0:=cut(EduYears,breaks=c(-1,0,6,12,22),
-                    labels= c("Illiterate","Primary","Secondary","University"))]
+                     labels= c("Illiterate","Primary","Secondary","University"))]
   P1[,EduLevel1:=cut(EduYears,breaks=c(-1,0,6,9,11,12,22),
                      labels= c("Illiterate","Elementary","Middle","High","Pre","University"))]
   P1[,EduLevel:=cut(EduYears,breaks=c(-1,0,6,12,14,16,18,23),
-                     labels= c("Illiterate","Primary","Secondary",
-                               "College","Bachelors","Masters","PhD"))]
+                    labels= c("Illiterate","Primary","Secondary",
+                              "College","Bachelors","Masters","PhD"))]
   
   P1[,ActivityState:=as.numeric(substr(as.character(ActivityState),1,1))]
   
@@ -148,7 +149,7 @@ for(year in years){
   
   B <- B[!is.na(HActivityState) & !is.na(HLiterate)]
   
-### Define Age Groups ==========================================  
+  ### Define Age Groups ==========================================  
   P[,Size:=1]
   P[,Kids:=ifelse(Relationship=="Child",1,0)]
   P[,NKids:=ifelse(Age<15,1,0)]
@@ -175,7 +176,7 @@ for(year in years){
   P[,NEmployed:=ifelse(ActivityState=="Employed",1,0)]
   P[,NUnEmployed:=ifelse(ActivityState=="Unemployed",1,0)]
   
-    P[,NYHigh:=ifelse((Age>17 & Age<25) & ((EduLevel1=="Illiterate") | (EduLevel1=="Elementary") | (EduLevel1=="Middle") | EduLevel1=="High"),1,0)]
+  P[,NYHigh:=ifelse((Age>17 & Age<25) & ((EduLevel1=="Illiterate") | (EduLevel1=="Elementary") | (EduLevel1=="Middle") | EduLevel1=="High"),1,0)]
   P[,NY:=ifelse((Age>17 & Age<25),1,0)]
   P[,NKElementary:=ifelse((Age>11 & Age<18) & ((EduLevel1=="Illiterate")),1,0)]
   P[,NK:=ifelse((Age>11 & Age<18),1,0)]
@@ -252,7 +253,7 @@ for(year in years){
                       "NDabirestan","NPish",
                       "NEmployed","NUnEmployed","NLiterate"),
             by="HHID"]
- UnEmployed<-PSum[,.(HHID,NUnEmployed)] 
+  UnEmployed<-PSum[,.(HHID,NUnEmployed)] 
   save(UnEmployed,year,file=paste0(Settings$HEISProcessedPath,"Y",year,"UnEmployed.rda"))
   PSum<- merge(PSum,TInfantMilk,by="HHID",all.x = TRUE)
   PSum[is.na(InfantMilkExpenditure), InfantMilkExpenditure := 0]
@@ -312,20 +313,20 @@ for(year in years){
   #                     Calorie_Need_NutritionInstitute=weighted.mean(Calorie_Need2,Weight)),by="HHID"]
   
   HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.5,
-                               1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
+                            1 + (Size-NKids-1)*0.7 + (NKids)*0.5)]
   #HHI[,EqSizeOECD := ifelse(Size==NKids,1+(NKids-1)*0.3,
   #                         1 + (Size-NKids-1)*0.5 + (NKids)*0.3)]
   #HHI[,EqSizeOECD := sqrt(Size)]
   HHI <- HHI[!is.na(HLiterate)]
-
+  
   rm(P,B)
   save(HHI,year,file=paste0(Settings$HEISProcessedPath,"Y",year,"HHI.rda"))
-#  save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
-
-  HHI2<-HHI[NInfants0>0]
- cat(HHI2[,weighted.mean(Lactating,Weight)]) 
+  #  save(Calorie_Need,file=paste0(Settings$HEISProcessedPath,"Y",year,"Calorie_Need.rda"))
   
-  }
+  HHI2<-HHI[NInfants0>0]
+  cat(HHI2[,weighted.mean(Lactating,Weight)]) 
+  
+}
 
 endtime <- proc.time()
 cat("\n\n============================\nIt took ",(endtime-starttime)[3],"seconds")

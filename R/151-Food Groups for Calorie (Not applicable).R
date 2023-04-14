@@ -1,12 +1,14 @@
 # 151-Food Groups for calorie.R ---- and for prices
 # Builds the Food Groups data.table for households
-
-#Nutrients Quantities Has been added
+#
+# Copyright © 2018-2020: Arin Shahbazian & Majid Einian
+# Copyright © 2016-2022: Majlis Research Center (The Research Center of Islamic Legislative Assembly)
+# Licence: GPL-3
+# For information on how to use and cite the results, see ResultsUsageLicence.md
 
 rm(list=ls())
 starttime <- proc.time()
 library(yaml)
-
 Settings <- yaml.load_file("Settings.yaml")
 
 leapyears <- c(seq(1280,1308,by=4),
@@ -20,15 +22,19 @@ library(stringr)
 library(readxl)
 
 cat("\n\n================ FoodGroups =====================================\n")
-TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_FoodGroupsTotalNutrition))
+TFoodGroups <- data.table(read_excel(Settings$MetaDataFilePath,Settings$MDS_FoodGroups))
 FoodTypeTables <- list()
 for(i in 1:nrow(TFoodGroups))
   FoodTypeTables[[i]] <- data.table(read_excel(Settings$MetaDataFilePath,sheet=TFoodGroups[i,SheetName]))
-
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
- 
-  BigFData <- data.table()
+  
+  BigFData <- data.table(HHID=NA_integer_,FoodCode=NA_integer_,
+                         FoodType=NA_character_,Price=NA_real_,
+                         Expenditure=NA_real_,FGrams=NA_real_,
+                         FoodKCalories=NA_real_,
+                         FoodProtein=NA_real_)[0]
   
   
   
@@ -37,6 +43,7 @@ for(year in (Settings$startyear:Settings$endyear)){
   if (year==100) {
     HHBase[,Month:=NA]
   }
+  
   if(length(which(is.na(HHBase$Month)))>1){     # For years withouout month info`
     DayCount <- HHBase[,.(HHID,Days=ifelse(Quarter<=2,31,30))]
   }else{
@@ -45,7 +52,7 @@ for(year in (Settings$startyear:Settings$endyear)){
                                       ifelse(Month<=11,30,
                                              ifelse(Year %in% leapyears,30,29))))]
   }
-  #i <- 1
+  
   for(i in 1:nrow(TFoodGroups)){
     cat(paste0(TFoodGroups[i,SheetName],", "),"\t")
     
@@ -98,23 +105,15 @@ for(year in (Settings$startyear:Settings$endyear)){
     FData[!is.na(FGrams), Price:=Expenditure/(FGrams/1000)]
     FData[, FoodType:=TFoodGroups[i,FoodType]]
     FData <- merge(FData,DayCount)
-    
     FData[, FoodKCalories:=TFoodGroups[i,KCalories]*FGrams/Days]
     FData[, FoodProtein:=TFoodGroups[i,Protein]*FGrams/Days]
-    FData[, FoodVitaminA:=TFoodGroups[i,VitaminA]*FGrams/Days]
-    FData[, FoodRiboflavin:=TFoodGroups[i,Riboflavin]*FGrams/Days]
-    FData[, FoodFe:=TFoodGroups[i,Fe]*FGrams/Days]
-    FData[, FoodCalcium:=TFoodGroups[i,Calcium]*FGrams/Days]
-    
-    
     FData[is.infinite(Price),Price:=NA]
     
     BigFData <- rbind(BigFData,
-                      FData[,.(HHID,FoodCode=Code,FoodType,Price,Expenditure,FGrams,FoodKCalories,FoodProtein,
-                               FoodVitaminA,FoodRiboflavin,FoodFe,FoodCalcium)])
+                      FData[,.(HHID,FoodCode=Code,FoodType,Price,Expenditure,FGrams,FoodKCalories,FoodProtein)])
     
   }
-  save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFDataTotalNutrition.rda"))
+  save(BigFData, file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
   cat("\n\n++========++\n||",nrow(BigFData[!is.na(FoodKCalories)]),"||\n++========++\n")
   
 }

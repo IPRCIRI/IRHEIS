@@ -22,7 +22,7 @@ DurableItemsDepr <- data.table(read_excel(Settings$MetaDataFilePath,
 DurableGroups <- data.table(read_excel(Settings$MetaDataFilePath,sheet=Settings$MDS_DurableGroups))
 
 
-#year <- 83
+#year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\nYear:",year,"\t"))
   

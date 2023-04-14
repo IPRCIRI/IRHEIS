@@ -13,11 +13,11 @@ Settings <- yaml.load_file("Settings.yaml")
 
 library(data.table)
 library(readxl)
-
+#year <- 100
 cat("\n\n================ FoodGroups =====================================\n")
 for(year in (Settings$startyear:Settings$endyear)){
   cat(paste0("\n------------------------------\nYear:",year,"\n"))
-  load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFData.rda"))
+  load( file = paste0(Settings$HEISProcessedPath,"Y",year,"BigFDataTotalNutrition.rda"))
   load(file = paste0(Settings$HEISProcessedPath,"Y",year,"TotalFoodExp.rda"))
   
   BigFData[,OriginalFoodExpenditure:=Expenditure]
