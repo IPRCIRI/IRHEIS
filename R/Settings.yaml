@@ -9,7 +9,7 @@ HEISWeightFileName: HHWeights
 HEISCountyCodePath: ../Data/CountyCodes8791/
 HEISCountyCodeFileName: ShCode
 startyear: 83.0
-endyear: 99.0
+endyear: 100.0
 baseBundleyear: 95.0
 startmonth: 0.0
 endmonth: 0.0
@@ -101,6 +101,27 @@ KCaloryNeed_B9: 2460.0
 KCaloryNeed_G9: 1990.0
 KCaloryNeed_B10: 2010.0
 KCaloryNeed_G10: 1780.0
+
+ProteinNeed_B1: 12.6
+ProteinNeed_G1: 11.7
+ProteinNeed_B2: 13.9
+ProteinNeed_G2: 13.1
+ProteinNeed_B3: 13.9
+ProteinNeed_G3: 13.5
+ProteinNeed_B4: 15.7
+ProteinNeed_G4: 15.3
+ProteinNeed_B5: 26.2
+ProteinNeed_G5: 26.5
+ProteinNeed_B6: 49.3
+ProteinNeed_G6: 60
+ProteinNeed_B7: 65.5
+ProteinNeed_G7: 58.2
+ProteinNeed_B8: 66
+ProteinNeed_G8: 59
+ProteinNeed_B9: 66
+ProteinNeed_G9: 59
+
+
 KCaloryNeed_NutInst_B1: 705.0
 KCaloryNeed_NutInst_G1: 643.0
 KCaloryNeed_NutInst_B2: 948.0
@@ -120,6 +141,66 @@ KCaloryNeed_NutInst_G8: 2200.0
 KCaloryNeed_NutInst_B9: 2350.0
 KCaloryNeed_NutInst_G9: 2000.0
 KCaloryNeed_lactating: 500.0
+
+
+KCaloryNeed_NutInst_L15: 1785
+KCaloryNeed_NutInst_H15: 2415
+KCaloryNeed_NutInst_L20: 1680
+KCaloryNeed_NutInst_H20: 2520
+KCaloryNeed_NutInst_L25: 1575
+KCaloryNeed_NutInst_H25: 2625
+KCaloryNeed_NutInst_L30: 1470
+KCaloryNeed_NutInst_H30: 2730
+
+ProteinNeed_NutInst_L15: 58.20
+ProteinNeed_NutInst_H15: 78.74
+ProteinNeed_NutInst_L20: 54.78
+ProteinNeed_NutInst_H20: 82.17
+ProteinNeed_NutInst_L25: 51.35
+ProteinNeed_NutInst_H25: 85.59
+ProteinNeed_NutInst_L30: 48
+ProteinNeed_NutInst_H30: 89
+
+
+VitaminANeed_NutInst_L15: 589.612
+VitaminANeed_NutInst_H15: 797.71
+VitaminANeed_NutInst_L20: 555
+VitaminANeed_NutInst_H20: 832.4
+VitaminANeed_NutInst_L25: 520.24
+VitaminANeed_NutInst_H25: 867.07
+VitaminANeed_NutInst_L30: 485.5
+VitaminANeed_NutInst_H30: 901.7
+
+RiboflavinNeed_NutInst_L15: 0.9018
+RiboflavinNeed_NutInst_H15: 1.2201
+RiboflavinNeed_NutInst_L20: 0.848
+RiboflavinNeed_NutInst_H20: 1.273
+RiboflavinNeed_NutInst_L25: 0.7957
+RiboflavinNeed_NutInst_H25: 1.326
+RiboflavinNeed_NutInst_L30: 0.742
+RiboflavinNeed_NutInst_H30: 1.38
+
+
+FeNeed_NutInst_L15: 10.891
+FeNeed_NutInst_H15: 14.7359
+FeNeed_NutInst_L20: 10.25
+FeNeed_NutInst_H20: 15.37
+FeNeed_NutInst_L25: 9.61
+FeNeed_NutInst_H25: 16.01
+FeNeed_NutInst_L30: 8.97
+FeNeed_NutInst_H30: 16.658
+
+
+CalciumNeed_NutInst_L15: 557.63
+CalciumNeed_NutInst_H15: 754.44
+CalciumNeed_NutInst_L20: 524.83
+CalciumNeed_NutInst_H20: 787.24
+CalciumNeed_NutInst_L25: 492
+CalciumNeed_NutInst_H25: 820
+CalciumNeed_NutInst_L30: 459.22
+CalciumNeed_NutInst_H30: 852.84
+
+
 ConsumptionCols:
 - OriginalFoodExpenditure
 - FoodOtherExpenditure
