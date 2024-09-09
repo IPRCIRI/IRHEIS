@@ -41,10 +41,16 @@ for(year in (Settings$startyear:Settings$endyear)){
     Tables[[tbl]] <- D
   }
   names(Tables) <- toupper(names(Tables))
-  ### 1400 change to 100
-  if (year==100){
-    names(Tables) <- gsub('1400','100',names(Tables))
-  }
+  ### years after 1400 change to 100 and more
+  #if (year==100){
+    #names(Tables) <- gsub('1400','100',names(Tables))
+ # }
+
+  
+  if (year >= 100){
+    newyear <- paste0('10', substr(year, 2, 2))
+    names(Tables) <- gsub(year, newyear, names(Tables))
+  
 #  Tables[[paste0("RU",year,"Weights")]] <- AllWeights[(Year==year),]
   close(cns)
   save(Tables,file=paste0(Settings$HEISRawPath,"Y",year,"Raw.rda"))
