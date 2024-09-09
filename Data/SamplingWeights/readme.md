@@ -23,3 +23,7 @@ https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights93.rd
 https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights94.rda
 https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights95.rda
 https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights96.rda
+https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights97.rda
+https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights98.rda
+https://github.com/IPRCIRI/IRHEIS/raw/master/Data/SamplingWeights/HHWeights99.rda
+
