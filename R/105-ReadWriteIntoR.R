@@ -48,8 +48,7 @@ for(year in (Settings$startyear:Settings$endyear)){
 
   
   if (year >= 100){
-    newyear <- paste0('10', substr(year, 2, 2))
-    names(Tables) <- gsub(year, newyear, names(Tables))
+    names(Tables) <- gsub('14','1',names(Tables))}
   
 #  Tables[[paste0("RU",year,"Weights")]] <- AllWeights[(Year==year),]
   close(cns)
