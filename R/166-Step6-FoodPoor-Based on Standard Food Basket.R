@@ -35,6 +35,8 @@ Pop_U97 <- 61329
 Pop_U98 <- 62367
 Pop_U99 <- 63390
 Pop_U100 <- 63876
+Pop_U101 <- 64655
+Pop_U102 <- 65427
 
 Pop_R84 <- 22294
 Pop_R85 <- 22235.8
@@ -53,6 +55,9 @@ Pop_R97<- 20754
 Pop_R98<- 20708
 Pop_R99<- 20648
 Pop_R100 <- 20179
+Pop_R101 <- 20045
+Pop_R102 <- 19902
+
 BasketCostSereis <- data.table()
 #year <- 100
 for(year in (Settings$startyear:Settings$endyear)){
@@ -126,6 +131,19 @@ for(year in (Settings$startyear:Settings$endyear)){
     Weight_R<-MD[Region=="Rural",sum(Weight*Size)/1000]
     MD[,Weight:=ifelse(Region=="Urban",Weight*Pop_U100/Weight_U,Weight*Pop_R100/Weight_R)]   
   }
+
+  if (year==101){
+    Weight_U<-MD[Region=="Urban",sum(Weight*Size)/1000]
+    Weight_R<-MD[Region=="Rural",sum(Weight*Size)/1000]
+    MD[,Weight:=ifelse(Region=="Urban",Weight*Pop_U101/Weight_U,Weight*Pop_R101/Weight_R)]   
+  }
+  
+  if (year==102){
+    Weight_U<-MD[Region=="Urban",sum(Weight*Size)/1000]
+    Weight_R<-MD[Region=="Rural",sum(Weight*Size)/1000]
+    MD[,Weight:=ifelse(Region=="Urban",Weight*Pop_U102/Weight_U,Weight*Pop_R102/Weight_R)]   
+  }
+  
 
   load(file=paste0(Settings$HEISProcessedPath,"Y",year,"BigFDataTotalNutrition.rda"))
   
