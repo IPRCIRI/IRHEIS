@@ -136,6 +136,7 @@ Calculate_OwnedDurableItemsDepreciation <- function(DurableData_ExpDetail,
 
 CalcTornqvistIndex <- function(DataTable){
   #DataTable <- SMD
+  DataTable <- copy(DataTable)
   DataTable <- DataTable[,MeterPrice:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
                                              ,NA,MeterPrice)]
   DataTable <- DataTable[,House_Exp:=ifelse(tenure=="Free"|tenure=="Other"|tenure=="AgainstService"
